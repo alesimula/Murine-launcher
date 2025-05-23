@@ -23,12 +23,13 @@ public class CustomFeatureFlags implements FeatureFlags {
 
     @Override
     public boolean allAppsBlur() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean allAppsSheetForHandheld() {
-        return false;
+        return getValue(Flags.FLAG_ALL_APPS_BLUR,
+                FeatureFlags::allAppsBlur);
     }
 
     @Override

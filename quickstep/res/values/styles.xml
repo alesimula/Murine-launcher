@@ -222,24 +222,40 @@
         <item name="android:colorControlHighlight">?attr/workspaceTextColor</item>
     </style>
 
-    <style name="OverviewActionButton"
-        parent="@android:style/Widget.DeviceDefault.Button.Borderless">
-        <item name="android:paddingTop">4dp</item>
-        <item name="android:paddingBottom">4dp</item>
+    <style name="OverviewActionsContainer">
+        <item name="buttonStyle">@style/OverviewActionButton</item>
+        <item name="android:buttonStyle">@style/OverviewActionButton</item>
+    </style>
+
+    <style name="OverviewActionsContainerBlur">
+        <item name="buttonStyle">@style/OverviewActionButton.Blur</item>
+        <item name="android:buttonStyle">@style/OverviewActionButton.Blur</item>
+    </style>
+
+    <style name="OverviewActionButton" parent="@android:style/Widget.DeviceDefault.Button.Borderless">
+        <item name="android:maxHeight">@dimen/overview_actions_height</item>
+        <item name="android:paddingVertical">4dp</item>
+        <item name="android:paddingHorizontal">@dimen/overview_actions_button_horizontal_padding
+        </item>
+        <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/overview_button</item>
         <item name="android:drawableTint">@color/overview_button</item>
         <item name="android:tint">?android:attr/textColorPrimary</item>
         <item name="android:drawablePadding">8dp</item>
         <item name="android:textAllCaps">false</item>
+        <item name="android:textFontWeight">600</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:colorControlHighlight">?attr/workspaceTextColor</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:background">@drawable/overview_action_button_background</item>
     </style>
 
-    <style name="OverviewClearAllButton" parent="@android:style/Widget.DeviceDefault.Button">
-        <item name="android:background">@drawable/bg_overview_clear_all_button</item>
-        <item name="android:minWidth">96dp</item>
-        <item name="android:minHeight">48dp</item>
-        <item name="android:paddingStart">12dp</item>
-        <item name="android:paddingEnd">12dp</item>
-        <item name="android:stateListAnimator">@null</item>
+    <style name="OverviewActionButton.Blur">
+        <item name="android:background">@drawable/overview_action_button_background_blur</item>
     </style>
 
     <!-- Icon displayed on the taskbar -->
@@ -326,15 +342,64 @@
         <item name="android:lineHeight">20sp</item>
     </style>
 
-    <style name="WidgetPickerActivityTheme" parent="@android:style/Theme.DeviceDefault.DayNight">
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowAnimationStyle">@android:style/Animation</item>
-
-        <item name="widgetsTheme">@style/WidgetContainerTheme</item>
-        <item name="pageIndicatorDotColor">@color/page_indicator_dot_color_light</item>
+    <style name="TextAppearance.Nudge.Title" parent="@android:style/TextAppearance.DeviceDefault.DialogWindowTitle">
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:fontFamily">google-sans</item>
+        <item name="android:textSize">24sp</item>
     </style>
+
+    <style name="TextAppearance.Nudge.Subtext" parent="android:TextAppearance.Material.Body1">
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:fontFamily">google-sans-text</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="Nudge.Button.Primary" parent="@android:style/Widget.Material.Button">
+        <item name="android:background">@drawable/button_nudge_colored</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:minHeight">36dp</item>
+    </style>
+
+    <style name="Nudge.Button.Secondary" parent="@android:style/Widget.Material.Button">
+        <item name="android:background">@drawable/button_nudge_colored</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:minHeight">36dp</item>
+    </style>
+
+    <style name="AllAppsBlurStyle">
+        <item name="allAppsScrimColor">@androidprv:color/shade_panel_scrim_color</item>
+        <item name="groupHighlight">@androidprv:color/surface_effect_1</item>
+        <item name="focusHighlight">@androidprv:color/surface_effect_2</item>
+        <item name="allAppsSurfaceLow">@androidprv:color/surface_effect_0</item>
+        <item name="allAppsSurfaceHighest">@androidprv:color/surface_effect_2</item>
+        <item name="allAppsUnselectedTab">@androidprv:color/surface_effect_2</item>
+        <item name="allappsHeaderProtectionColor">@androidprv:color/surface_effect_1</item>
+        <item name="privateSpaceSettingsColor">@androidprv:color/surface_effect_2</item>
+        <item name="privateSpaceDividerColor">@androidprv:color/surface_effect_3</item>
+        <item name="bottomSheetDragHandleColor">@color/materialColorOnSurface</item>
+    </style>
+
+    <!-- Currently All Apps fallback should only change the panel background color, but not
+    other surface effects. The background color is handled in ActivityAllAppsContainerView. -->
+    <style name="AllAppsBlurFallbackStyle" parent="AllAppsBlurStyle" />
+
+    <style name="OverviewBlurStyle">
+        <item name="overviewScrimColor">?attr/overviewScrimColorBlur</item>
+        <item name="overviewActionsContainerStyle">@style/OverviewActionsContainerBlur</item>
+        <item name="overviewActionButtonStyle">@style/OverviewActionButton.Blur</item>
+        <item name="overviewScrimForegroundPrimary">?attr/overviewScrimForegroundPrimaryBlur</item>
+        <item name="overviewScrimForegroundSecondary">?attr/overviewScrimForegroundSecondaryBlur
+        </item>
+    </style>
+
+    <style name="OverviewBlurFallbackStyle">
+        <item name="overviewScrimColor">?attr/overviewScrimColorFallback</item>
+        <item name="overviewActionsContainerStyle">@style/OverviewActionsContainer</item>
+        <item name="overviewActionButtonStyle">@style/OverviewActionButton</item>
+        <item name="overviewScrimForegroundPrimary">@android:color/transparent</item>
+        <item name="overviewScrimForegroundSecondary">@android:color/transparent</item>
+    </style>
+
 </resources>

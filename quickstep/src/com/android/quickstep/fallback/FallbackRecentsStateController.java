@@ -140,7 +140,7 @@ public class FallbackRecentsStateController implements StateHandler<RecentsState
                     getOverviewInterpolator(state));
         }
 
-        setter.setViewBackgroundColor(mRecentsViewContainer.getScrimView(),
+        setter.setScrimColors(mRecentsViewContainer.getScrimView(),
                 state.getScrimColor(mRecentsViewContainer.asContext()),
                 config.getInterpolator(ANIM_SCRIM_FADE, LINEAR));
         if (isSplitSelectionState(state)) {

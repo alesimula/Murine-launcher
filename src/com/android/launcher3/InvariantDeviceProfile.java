@@ -248,7 +248,6 @@ public class InvariantDeviceProfile {
     public int gridType;
     public String dbFile;
     public int defaultLayoutId;
-    public int demoModeLayoutId;
     public boolean[] inlineQsb = new boolean[COUNT_SIZES];
 
     /**
@@ -376,7 +375,6 @@ public class InvariantDeviceProfile {
         dbFile = closestProfile.dbFile;
         gridType = closestProfile.gridType;
         defaultLayoutId = closestProfile.defaultLayoutId;
-        demoModeLayoutId = closestProfile.demoModeLayoutId;
 
         numFolderRows = closestProfile.numFolderRows;
         numFolderColumns = closestProfile.numFolderColumns;
@@ -979,7 +977,6 @@ public class InvariantDeviceProfile {
         private final String dbFile;
 
         private final int defaultLayoutId;
-        private final int demoModeLayoutId;
 
         private final boolean isScalable;
         private final boolean mIsDualGrid;
@@ -1018,16 +1015,14 @@ public class InvariantDeviceProfile {
                 numRows = gridSize.mNumRows;
                 dbFile = gridSize.mDbFile;
                 defaultLayoutId = gridSize.mDefaultLayoutId;
-                demoModeLayoutId = gridSize.mDemoModeLayoutId;
             } else {
                 numRows = a.getInt(R.styleable.GridDisplayOption_numRows, 0);
                 numColumns = a.getInt(R.styleable.GridDisplayOption_numColumns, 0);
                 dbFile = a.getString(R.styleable.GridDisplayOption_dbFile);
                 defaultLayoutId = a.getResourceId(
                         R.styleable.GridDisplayOption_defaultLayoutId, 0);
-                demoModeLayoutId = a.getResourceId(
-                        R.styleable.GridDisplayOption_demoModeLayoutId, defaultLayoutId);
             }
+
 
             numSearchContainerColumns = a.getInt(
                     R.styleable.GridDisplayOption_numSearchContainerColumns, numColumns);
@@ -1209,7 +1204,6 @@ public class InvariantDeviceProfile {
         final float mMinDeviceHeightPx;
         final String mDbFile;
         final int mDefaultLayoutId;
-        final int mDemoModeLayoutId;
 
 
         GridSize(Context context, AttributeSet attrs) {
@@ -1222,8 +1216,6 @@ public class InvariantDeviceProfile {
             mDbFile = a.getString(R.styleable.GridSize_dbFile);
             mDefaultLayoutId = a.getResourceId(
                     R.styleable.GridSize_defaultLayoutId, 0);
-            mDemoModeLayoutId = a.getResourceId(
-                    R.styleable.GridSize_demoModeLayoutId, mDefaultLayoutId);
 
             a.recycle();
         }

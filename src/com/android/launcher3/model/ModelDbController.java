@@ -649,12 +649,8 @@ public class ModelDbController {
     }
 
     private DefaultLayoutParser getDefaultLayoutParser(LauncherWidgetHolder widgetHolder) {
-        int defaultLayout = mIdp.demoModeLayoutId != 0
-                && mContext.getSystemService(UserManager.class).isDemoUser()
-                ? mIdp.demoModeLayoutId : mIdp.defaultLayoutId;
-
         return new DefaultLayoutParser(mContext, widgetHolder,
-                mOpenHelper, mContext.getResources(), defaultLayout);
+                mOpenHelper, mContext.getResources(), mIdp.defaultLayoutId);
     }
 
     private ConstantItem<Boolean> getEmptyDbCreatedKey() {

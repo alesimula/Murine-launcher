@@ -7,6 +7,8 @@ public final class Flags {
     /** @hide */
     public static final String FLAG_ENABLE_ADDITIONAL_HOME_ANIMATIONS = "com.android.launcher3.enable_additional_home_animations";
     /** @hide */
+    public static final String FLAG_ALL_APPS_BLUR = "com.android.launcher3.all_apps_blur";
+    /** @hide */
     public static final String FLAG_ENABLE_CATEGORIZED_WIDGET_SUGGESTIONS = "com.android.launcher3.enable_categorized_widget_suggestions";
     /** @hide */
     public static final String FLAG_ENABLE_CURSOR_HOVER_STATES = "com.android.launcher3.enable_cursor_hover_states";

@@ -275,8 +275,9 @@ public class NoButtonQuickSwitchTouchController implements TouchController,
         xAnim.setFloat(mRecentsView, ADJACENT_PAGE_HORIZONTAL_OFFSET, scaleAndOffset[1], LINEAR);
         // Use QuickSwitchState instead of OverviewState to determine scrim color,
         // since we need to take potential taskbar into account.
-        xAnim.setViewBackgroundColor(mLauncher.getScrimView(),
-                QUICK_SWITCH_FROM_HOME.getWorkspaceScrimColor(mLauncher), LINEAR);
+        xAnim.setScrimColors(mLauncher.getScrimView(),
+                QUICK_SWITCH_FROM_HOME.getWorkspaceScrimColor(mLauncher),
+                LINEAR);
         if (!mRecentsView.hasTaskViews()) {
             xAnim.addFloat(mRecentsView, CONTENT_ALPHA, 0f, 1f, LINEAR);
         }

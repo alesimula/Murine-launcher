@@ -45,6 +45,7 @@ import com.android.launcher3.taskbar.LauncherTaskbarUIController;
 import com.android.launcher3.uioverrides.QuickstepLauncher;
 import com.android.launcher3.util.DisplayController;
 import com.android.launcher3.util.NavigationMode;
+import com.android.launcher3.views.ScrimColors;
 import com.android.quickstep.GestureState.GestureEndTarget;
 import com.android.quickstep.orientation.RecentsPagedOrientationHandler;
 import com.android.quickstep.util.AnimatorControllerWithResistance;
@@ -320,7 +321,8 @@ public final class LauncherActivityInterface extends
     }
 
     @Override
-    protected int getOverviewScrimColorForState(QuickstepLauncher activity, LauncherState state) {
+    protected ScrimColors getOverviewScrimColorForState(QuickstepLauncher activity,
+            LauncherState state) {
         return state.getWorkspaceScrimColor(activity);
     }
 
