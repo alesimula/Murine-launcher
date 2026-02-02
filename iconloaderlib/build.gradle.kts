@@ -28,6 +28,7 @@ android {
 }
 
 dependencies {
+    api(project(":flags"))
     implementation(libs.core)
     implementation(libs.annotation)
 }

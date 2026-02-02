@@ -1,7 +1,18 @@
-# Created by .ignore support plugin (hsz.mobi)
-.gradle
-.idea
-build
-Launcher3_mx.iml
-gradlew
-gradlew.bat
+db_files
+*.iml
+.project
+.classpath
+.project.properties
+gen/
+tests/stress/gen/
+WallpaperPicker/gen/
+WallpaperPicker/.project.properties
+bin/
+.idea/
+.gradle/
+.kotlin/
+local.properties
+gradle/
+build/
+gradlew*
+.DS_Store

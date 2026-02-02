@@ -134,6 +134,9 @@ public class NavbarButtonsViewController implements TaskbarControllers.LoggableT
 
     private final Rect mTempRect = new Rect();
 
+    public static final boolean PROP_CAN_RENDER_GESTURAL_NAV_BUTTONS =
+            SystemProperties.getBoolean("persist.sys.ime.can_render_gestural_nav_buttons", true);
+
     /** Whether the IME Switcher button is visible. */
     private static final int FLAG_IME_SWITCHER_BUTTON_VISIBLE = 1 << 0;
     /** Whether the IME is visible. */
@@ -311,7 +314,7 @@ public class NavbarButtonsViewController implements TaskbarControllers.LoggableT
         mNavButtonsView.setLayoutParams(navButtonsViewLayoutParams);
 
         mIsImeRenderingNavButtons =
-                InputMethodService.canImeRenderGesturalNavButtons() && mContext.imeDrawsImeNavBar();
+                PROP_CAN_RENDER_GESTURAL_NAV_BUTTONS && mContext.imeDrawsImeNavBar();
         if (!mIsImeRenderingNavButtons) {
             // IME switcher
             final int switcherResId = Flags.imeSwitcherRevamp()

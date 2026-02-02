@@ -68,6 +68,7 @@ import androidx.annotation.VisibleForTesting;
 import com.android.launcher3.dagger.ApplicationContext;
 import com.android.launcher3.dagger.LauncherAppComponent;
 import com.android.launcher3.dagger.LauncherAppSingleton;
+import com.android.launcher3.taskbar.NavbarButtonsViewController;
 import com.android.launcher3.util.DaggerSingletonObject;
 import com.android.launcher3.util.DaggerSingletonTracker;
 import com.android.launcher3.util.DisplayController;
@@ -119,9 +120,6 @@ public class RecentsAnimationDeviceState implements DisplayInfoChangeListener, E
     private final RotationTouchHelper mRotationTouchHelper;
     private final TaskStackChangeListener mPipListener;
     // Cache for better performance since it doesn't change at runtime.
-    private final boolean mCanImeRenderGesturalNavButtons =
-            InputMethodService.canImeRenderGesturalNavButtons();
-
     private @SystemUiStateFlags long mSystemUiStateFlags = QuickStepContract.SYSUI_STATE_AWAKE;
     private final Map<Integer, Long> mSysUIStateFlagsPerDisplay = new ConcurrentHashMap<>();
     private NavigationMode mMode = THREE_BUTTONS;
@@ -626,7 +624,7 @@ public class RecentsAnimationDeviceState implements DisplayInfoChangeListener, E
 
     /** Returns whether IME is rendering nav buttons, and IME is currently showing. */
     public boolean isImeRenderingNavButtons() {
-        return mCanImeRenderGesturalNavButtons && mMode == NO_BUTTON
+        return NavbarButtonsViewController.PROP_CAN_RENDER_GESTURAL_NAV_BUTTONS && mMode == NO_BUTTON
                 && ((getSysuiStateFlag() & SYSUI_STATE_IME_VISIBLE) != 0);
     }
 

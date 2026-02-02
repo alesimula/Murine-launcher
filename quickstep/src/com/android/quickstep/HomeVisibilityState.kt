@@ -56,9 +56,10 @@ class HomeVisibilityState {
                         )
                     }
                     override fun onDisplayInsetsChanged(insetsState: InsetsState) {
-                        val bottomInset = insetsState.calculateInsets(insetsState.displayFrame,
-                                WindowInsets.Type.navigationBars(), false).bottom
-                        navbarInsetPosition = insetsState.displayFrame.bottom - bottomInset
+                        val displayFrame = insetsState.displayFrame
+                        val bottomInset = insetsState.calculateInsets(displayFrame, displayFrame,
+                            WindowInsets.Type.navigationBars(), false,).bottom
+                        navbarInsetPosition = displayFrame.bottom - bottomInset
                     }
                 }
             )

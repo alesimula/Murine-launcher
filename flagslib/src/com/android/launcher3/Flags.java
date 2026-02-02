@@ -169,6 +169,214 @@ public final class Flags {
         return FEATURE_FLAGS.enablePredictiveBackGesture();
     }
 
+    public static boolean restoreArchivedAppIconsFromDb() {
+        return FEATURE_FLAGS.restoreArchivedAppIconsFromDb();
+    }
+
+    public static boolean showTaskbarPinningPopupFromAnywhere() {
+        return FEATURE_FLAGS.showTaskbarPinningPopupFromAnywhere();
+    }
+
+    public static boolean enableMultiInstanceMenuTaskbar() {
+        return FEATURE_FLAGS.enableMultiInstanceMenuTaskbar();
+    }
+
+    public static boolean enableDesktopExplodedView() {
+        return FEATURE_FLAGS.enableDesktopExplodedView();
+    }
+
+    public static boolean enableLargeDesktopWindowingTile() {
+        return FEATURE_FLAGS.enableLargeDesktopWindowingTile();
+    }
+
+    public static boolean useNewIconForArchivedApps() {
+        return FEATURE_FLAGS.useNewIconForArchivedApps();
+    }
+
+    public static boolean ignoreThreeFingerTrackpadForNavHandleLongPress() {
+        return FEATURE_FLAGS.ignoreThreeFingerTrackpadForNavHandleLongPress();
+    }
+
+    public static boolean enableAltTabKqsOnConnectedDisplays() {
+        return FEATURE_FLAGS.enableAltTabKqsOnConnectedDisplays();
+    }
+
+    public static boolean enableOverviewCommandHelperTimeout() {
+        return FEATURE_FLAGS.enableOverviewCommandHelperTimeout();
+    }
+
+    public static boolean enableLauncherOverviewInWindow() {
+        return FEATURE_FLAGS.enableLauncherOverviewInWindow();
+    }
+
+    public static boolean predictiveBackToHomePolish() {
+        return FEATURE_FLAGS.predictiveBackToHomePolish();
+    }
+
+    public static boolean coordinateWorkspaceScale() {
+        return FEATURE_FLAGS.coordinateWorkspaceScale();
+    }
+
+    public static boolean enableOverviewBackgroundWallpaperBlur() {
+        return FEATURE_FLAGS.enableOverviewBackgroundWallpaperBlur();
+    }
+
+    public static boolean msdlFeedback() {
+        return FEATURE_FLAGS.msdlFeedback();
+    }
+
+    public static boolean enableSeparateExternalDisplayTasks() {
+        return FEATURE_FLAGS.enableSeparateExternalDisplayTasks();
+    }
+
+    public static boolean enableHoverOfChildElementsInTaskview() {
+        return FEATURE_FLAGS.enableHoverOfChildElementsInTaskview();
+    }
+
+    public static boolean oneGridSpecs() {
+        return FEATURE_FLAGS.oneGridSpecs();
+    }
+
+    public static boolean restoreArchivedShortcuts() {
+        return FEATURE_FLAGS.restoreArchivedShortcuts();
+    }
+
+    public static boolean enableStrictMode() {
+        return FEATURE_FLAGS.enableStrictMode();
+    }
+
+    public static boolean enableTieredWidgetsByDefaultInPicker() {
+        return FEATURE_FLAGS.enableTieredWidgetsByDefaultInPicker();
+    }
+
+    public static boolean enableLauncherVisualRefresh() {
+        return FEATURE_FLAGS.enableLauncherVisualRefresh();
+    }
+
+    public static boolean syncAppLaunchWithTaskbarStash() {
+        return FEATURE_FLAGS.syncAppLaunchWithTaskbarStash();
+    }
+
+    public static boolean enableExpressiveDismissTaskMotion() {
+        return FEATURE_FLAGS.enableExpressiveDismissTaskMotion();
+    }
+
+    public static boolean enableGrowthNudge() {
+        return FEATURE_FLAGS.enableGrowthNudge();
+    }
+
+    public static boolean enableDesktopWindowingCarouselDetach() {
+        return FEATURE_FLAGS.enableDesktopWindowingCarouselDetach();
+    }
+
+    public static boolean taskbarOverflow() {
+        return FEATURE_FLAGS.taskbarOverflow();
+    }
+
+    public static boolean enableMouseInteractionChanges() {
+        return FEATURE_FLAGS.enableMouseInteractionChanges();
+    }
+
+    public static boolean removeExcludeFromScreenMagnificationFlagUsage() {
+        return FEATURE_FLAGS.removeExcludeFromScreenMagnificationFlagUsage();
+    }
+
+    public static boolean enableTaskbarBehindShade() {
+        return FEATURE_FLAGS.enableTaskbarBehindShade();
+    }
+
+    public static boolean enableGestureNavHorizontalTouchSlop() {
+        return FEATURE_FLAGS.enableGestureNavHorizontalTouchSlop();
+    }
+
+    public static boolean enableContainerReturnAnimations() {
+        return FEATURE_FLAGS.enableContainerReturnAnimations();
+    }
+
+    public static boolean enableDesktopTaskAlphaAnimation() {
+        return FEATURE_FLAGS.enableDesktopTaskAlphaAnimation();
+    }
+
+    public static boolean enableShowEnabledShortcutsInAccessibilityMenu() {
+        return FEATURE_FLAGS.enableShowEnabledShortcutsInAccessibilityMenu();
+    }
+
+    public static boolean enableStateManagerProtoLog() {
+        return FEATURE_FLAGS.enableStateManagerProtoLog();
+    }
+
+    public static boolean extendibleThemeManager() {
+        return FEATURE_FLAGS.extendibleThemeManager();
+    }
+
+    public static boolean enableContrastTiles() {
+        return FEATURE_FLAGS.enableContrastTiles();
+    }
+
+    public static boolean removeAppsRefreshOnRightClick() {
+        return FEATURE_FLAGS.removeAppsRefreshOnRightClick();
+    }
+
+    public static boolean useSystemRadiusForAppWidgets() {
+        return FEATURE_FLAGS.useSystemRadiusForAppWidgets();
+    }
+
+    public static boolean enableActiveGestureProtoLog() {
+        return FEATURE_FLAGS.enableActiveGestureProtoLog();
+    }
+
+    public static boolean enableAllAppsButtonInHotseat() {
+        return FEATURE_FLAGS.enableAllAppsButtonInHotseat();
+    }
+
+    public static boolean oneGridRotationHandling() {
+        return FEATURE_FLAGS.oneGridRotationHandling();
+    }
+
+    public static boolean allAppsBlur() {
+        return FEATURE_FLAGS.allAppsBlur();
+    }
+
+    public static boolean letterFastScroller() {
+        return FEATURE_FLAGS.letterFastScroller();
+    }
+
+    public static boolean multilineSearchBar() {
+        return FEATURE_FLAGS.multilineSearchBar();
+    }
+
+    public static boolean enableDismissPredictionUndo() {
+        return FEATURE_FLAGS.enableDismissPredictionUndo();
+    }
+
+    public static boolean enableGestureNavOnConnectedDisplays() {
+        return FEATURE_FLAGS.enableGestureNavOnConnectedDisplays();
+    }
+
+    public static boolean enablePinningAppWithContextMenu() {
+        return FEATURE_FLAGS.enablePinningAppWithContextMenu();
+    }
+
+    public static boolean predictiveBackToHomeBlur() {
+        return FEATURE_FLAGS.predictiveBackToHomeBlur();
+    }
+
+    public static boolean workSchedulerInWorkProfile() {
+        return FEATURE_FLAGS.workSchedulerInWorkProfile();
+    }
+
+    public static boolean navigateToChildPreference() {
+        return FEATURE_FLAGS.navigateToChildPreference();
+    }
+
+    public static boolean accessibilityScrollOnAllapps() {
+        return FEATURE_FLAGS.accessibilityScrollOnAllapps();
+    }
+
+    public static boolean enableRecentsWindowProtoLog() {
+        return FEATURE_FLAGS.enableRecentsWindowProtoLog();
+    }
+
     public static boolean enablePrivateSpace() {
         return FEATURE_FLAGS.enablePrivateSpace();
     }

@@ -59,13 +59,13 @@ android {
     productFlavors {
         aosp {
             dimension "app"
-            applicationId 'com.android.launcher3'
+            applicationId 'app.murinelauncher'
             testApplicationId 'com.android.launcher3.tests'
         }
 
         l3go {
             dimension "app"
-            applicationId 'com.android.launcher3'
+            applicationId 'app.murinelauncher'
             testApplicationId 'com.android.launcher3.tests'
         }
 
@@ -97,15 +97,15 @@ android {
             }
         }
 
-        androidTest {
-            res.srcDirs = ['tests/res']
-            java.srcDirs = ['tests/src', 'tests/tapl']
-            manifest.srcFile "tests/AndroidManifest-common.xml"
-        }
-
-        androidTestDebug {
-            manifest.srcFile "tests/AndroidManifest.xml"
-        }
+        //androidTest {
+        //    res.srcDirs = ['tests/res']
+        //    java.srcDirs = ['tests/src', 'tests/tapl']
+        //    manifest.srcFile "tests/AndroidManifest-common.xml"
+        //}
+//
+        //androidTestDebug {
+        //    manifest.srcFile "tests/AndroidManifest.xml"
+        //}
 
         aosp {
             java.srcDirs = ['src_flags', 'src_shortcuts_overrides']
@@ -166,28 +166,46 @@ kapt {
 allprojects {
     ext {
         daggerVersion = '2.56.2'
-        addFrameworkJar = { String name ->
+        def addFrameworkJarInternal = { Project proj, String name ->
             def frameworkJar = new File(FRAMEWORK_PREBUILTS_DIR, name)
             if (!frameworkJar.exists()) {
-                throw new IllegalArgumentException("Framework jar path ${frameworkJar.path} doesn't exist")
+                return
             }
-            gradle.projectsEvaluated {
-                tasks.withType(JavaCompile).configureEach {
-                    classpath = files(frameworkJar, classpath)
+            proj.dependencies {
+                compileOnly proj.files(frameworkJar)
+            }
+            proj.gradle.projectsEvaluated {
+                proj.tasks.withType(JavaCompile).configureEach {
+                    classpath = proj.files(frameworkJar) + classpath
                 }
-                tasks.withType(KotlinCompile).configureEach {
-                    libraries.from(files(frameworkJar))
+                proj.tasks.withType(KotlinCompile).configureEach {
+                    // Prepend framework jar to the Kotlin compilation classpath
+                    libraries.setFrom(proj.files(frameworkJar) + libraries.getFrom())
                 }
             }
-            dependencies {
-                compileOnly files(frameworkJar)
+        }
+
+        afterEvaluate { proj ->
+            if (proj.plugins.hasPlugin('com.android.application') || proj.plugins.hasPlugin('com.android.library')) {
+                addFrameworkJarInternal(proj, 'framework-16.jar')
+
+                proj.dependencies {
+                    // Apply all shared prebuilt jars to every module
+                    // Use compileOnly to avoid desugaring/R8 errors with framework stubs
+                    compileOnly proj.fileTree(dir: FRAMEWORK_PREBUILTS_DIR, include: ['*.jar'], exclude: ['framework-16.jar'])
+
+                    // Common androidx/libs available everywhere
+                    implementation libs.androidx.core.ktx
+                    implementation libs.annotation
+                    implementation libs.kotlinx.coroutines
+                }
             }
         }
 
         compileOnlyCommonJars = {
             dependencies {
-                compileOnly fileTree(dir: FRAMEWORK_PREBUILTS_DIR, include: 'SystemUI-core.jar')
-                compileOnly fileTree(dir: FRAMEWORK_PREBUILTS_DIR, include: 'SystemUI-statsd.jar')
+                compileOnly fileTree(dir: FRAMEWORK_PREBUILTS_DIR, include: 'SystemUI-core-16.jar')
+                compileOnly fileTree(dir: FRAMEWORK_PREBUILTS_DIR, include: 'SystemUI-statsd-16.jar')
             }
         }
     }
