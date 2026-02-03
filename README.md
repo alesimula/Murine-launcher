@@ -1,17 +1,17 @@
 # Launcher3
 
-## 更新：20251014
-* android16-s2-release
-* https://android.googlesource.com/platform/packages/apps/Launcher3/+/refs/heads/android16-s2-release
+## 更新：20251214
+* android16-qpr2-release
+* https://android.googlesource.com/platform/packages/apps/Launcher3/+/refs/heads/android16-qpr2-release
 
 ## 说明
 目前支持编译：
-AospWithQuickstep
-L3goWithQuickstep
+暂无法编译
 
 ## 主要分支
 
-* main (android16-s2-release)--Android-16
+* main (android16-qpr2-release)--Android-16
+* Launcher3-16-s2-release (android16-s2-release)
 * Launcher3-15-qc（高通版本，可以编译Quickstep版本）
 * Launcher3-15-s1-release (android15-s1-release)
 * Launcher3-14-s2-release (android14-s2-release)
@@ -34,10 +34,11 @@ https://cs.android.com/android/platform/superproject/+/master:packages/apps/Laun
 
 ## 依赖库
 ### wmshell 
+// https://android.googlesource.com/platform/frameworks/base/
 > // frameworks/base/libs/WindowManager/Shell
 
 ### systemui
-// https://android.googlesource.com/platform/frameworks/libs/systemui/+/refs/heads/android16-s2-release
+// https://android.googlesource.com/platform/frameworks/libs/systemui/
 // frameworks/libs/systemui
 * aconfig/
 * ambientlib/
