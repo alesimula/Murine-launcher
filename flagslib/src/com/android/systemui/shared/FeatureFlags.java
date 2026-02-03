@@ -12,7 +12,8 @@ public interface FeatureFlags {
     
     
     boolean exampleSharedFlag();
-    
+
+    boolean threeButtonCornerSwipe();
     
     boolean returnAnimationFrameworkLibrary();
     

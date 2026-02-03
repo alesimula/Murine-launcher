@@ -196,6 +196,11 @@ public final class FeatureFlagsImpl implements FeatureFlags {
     }
 
     @Override
+    public boolean enableCreateAnyBubble() {
+        return false;
+    }
+
+    @Override
     
     
     public boolean enableBubbleStashing() {
@@ -354,6 +359,21 @@ public final class FeatureFlagsImpl implements FeatureFlags {
         }
         return enableTaskbarNavbarUnification;
 
+    }
+
+    @Override
+    public boolean enableDynamicInsetsForAppLaunch() {
+        return false;
+    }
+
+    @Override
+    public boolean enableShellTopTaskTracking() {
+        return false;
+    }
+
+    @Override
+    public boolean enableFlexibleSplit() {
+        return false;
     }
 
     @Override

@@ -19,6 +19,8 @@ import static com.android.launcher3.Flags.enableOverviewBackgroundWallpaperBlur;
 import static com.android.launcher3.Flags.enableScalingRevealHomeAnimation;
 
 import android.app.WallpaperManager;
+import android.gui.EarlyWakeupInfo;
+import android.os.Binder;
 import android.os.IBinder;
 import android.util.FloatProperty;
 import android.util.Log;
@@ -107,6 +109,10 @@ public class BaseDepthController {
     protected boolean mWaitingOnSurfaceValidity;
 
     private SurfaceControl mBlurSurface = null;
+    /**
+     * Info for early wakeup requests to SurfaceFlinger.
+     */
+    private EarlyWakeupInfo mEarlyWakeupInfo = new EarlyWakeupInfo();
 
     public BaseDepthController(Launcher activity) {
         mLauncher = activity;
@@ -128,7 +134,8 @@ public class BaseDepthController {
                     .setHidden(false)
                     .build();
         }
-
+        mEarlyWakeupInfo.token = new Binder();
+        mEarlyWakeupInfo.trace = BaseDepthController.class.getName();
     }
 
     protected void setCrossWindowBlursEnabled(boolean isEnabled) {
@@ -208,10 +215,10 @@ public class BaseDepthController {
         // SurfaceFlinger will adjust its internal offsets to avoid jank.
         boolean wantsEarlyWakeUp = depth > 0 && depth < 1;
         if (wantsEarlyWakeUp && !mInEarlyWakeUp) {
-            transaction.setEarlyWakeupStart();
+            transaction.setEarlyWakeupStart(mEarlyWakeupInfo);
             mInEarlyWakeUp = true;
         } else if (!wantsEarlyWakeUp && mInEarlyWakeUp) {
-            transaction.setEarlyWakeupEnd();
+            transaction.setEarlyWakeupEnd(mEarlyWakeupInfo);
             mInEarlyWakeUp = false;
         }
 

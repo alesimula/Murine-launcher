@@ -118,6 +118,23 @@ public final class Utilities {
     public static final String[] EMPTY_STRING_ARRAY = new String[0];
     public static final Person[] EMPTY_PERSON_ARRAY = new Person[0];
 
+    public static final boolean ATLEAST_O = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
+
+    public static final boolean ATLEAST_O_MR1 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1;
+
+    public static final boolean ATLEAST_P = Build.VERSION.SDK_INT >= VERSION_CODES.P;
+
+    public static final boolean ATLEAST_Q = Build.VERSION.SDK_INT >= VERSION_CODES.Q;
+
+    @ChecksSdkIntAtLeast(api = VERSION_CODES.R)
+    public static final boolean ATLEAST_R = Build.VERSION.SDK_INT >= Build.VERSION_CODES.R;
+
+    @ChecksSdkIntAtLeast(api = VERSION_CODES.S)
+    public static final boolean ATLEAST_S = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S;
+
+    @ChecksSdkIntAtLeast(api = VERSION_CODES.S_V2)
+    public static final boolean ATLEAST_S_V2 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S_V2;
+
     @ChecksSdkIntAtLeast(api = VERSION_CODES.TIRAMISU, codename = "T")
     public static final boolean ATLEAST_T = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU;
 
@@ -127,6 +144,14 @@ public final class Utilities {
     @ChecksSdkIntAtLeast(api = VERSION_CODES.VANILLA_ICE_CREAM, codename = "V")
     public static final boolean ATLEAST_V = Build.VERSION.SDK_INT
             >= VERSION_CODES.VANILLA_ICE_CREAM;
+
+    @ChecksSdkIntAtLeast(api = VERSION_CODES.BAKLAVA)
+    public static final boolean ATLEAST_BAKLAVA = Build.VERSION.SDK_INT >= VERSION_CODES.BAKLAVA;
+
+    @ChecksSdkIntAtLeast(api = 36, codename = "BAKLAVA_1")
+    public static final boolean ATLEAST_BAKLAVA_1 =
+            (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA)
+                    && (Build.VERSION.SDK_INT_FULL >= 3600001);
 
     /**
      * Set on a motion event dispatched from the nav bar. See {@link MotionEvent#setEdgeFlags(int)}.

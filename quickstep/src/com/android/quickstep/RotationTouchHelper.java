@@ -30,6 +30,8 @@ import static com.android.launcher3.util.NavigationMode.THREE_BUTTONS;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.hardware.display.DisplayManager;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
 
@@ -133,6 +135,7 @@ public class RotationTouchHelper implements DisplayInfoChangeListener {
     private boolean mInOverview;
     private boolean mTaskListFrozen;
     private final Context mContext;
+    private Context mDisplayContext;
 
     @Inject
     RotationTouchHelper(@ApplicationContext Context context,
@@ -146,14 +149,18 @@ public class RotationTouchHelper implements DisplayInfoChangeListener {
         //  default display.
         mDisplayId = DEFAULT_DISPLAY;
 
+        // Create a display-bound context to avoid UnsupportedOperationException when obtaining display
+        Display display = mContext.getSystemService(DisplayManager.class).getDisplay(mDisplayId);
+        mDisplayContext = display != null ? mContext.createDisplayContext(display) : mContext;
+
         Resources resources = mContext.getResources();
         mOrientationTouchTransformer = new OrientationTouchTransformer(resources, mMode,
-                () -> QuickStepContract.getWindowCornerRadius(mContext));
+                () -> QuickStepContract.getWindowCornerRadius(mDisplayContext));
 
         // Register for navigation mode and rotation changes
         mDisplayController.addChangeListenerForDisplay(this, mDisplayId);
         DisplayController.Info info = mDisplayController.getInfoForDisplay(mDisplayId);
-        onDisplayInfoChanged(context, info, CHANGE_ALL);
+        onDisplayInfoChanged(mDisplayContext, info, CHANGE_ALL);
 
         mOrientationListener = new OrientationEventListener(mContext) {
             @Override
@@ -232,6 +239,7 @@ public class RotationTouchHelper implements DisplayInfoChangeListener {
 
     @Override
     public void onDisplayInfoChanged(Context context, Info info, int flags) {
+        mDisplayContext = context;
         if ((flags & (CHANGE_ROTATION | CHANGE_ACTIVE_SCREEN | CHANGE_NAVIGATION_MODE
                 | CHANGE_SUPPORTED_BOUNDS)) != 0) {
             mDisplayRotation = info.rotation;

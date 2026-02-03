@@ -57,5 +57,8 @@ project(':msdl').projectDir = new File(rootDir, 'msdllib')
 include ':flags'
 project(':flags').projectDir = new File(rootDir, 'flagslib')
 
+include ':HiddenApi'
+project(':HiddenApi').projectDir = new File(rootDir, 'hidden-api')
+
 include ':systemUIPluginCore'
 include ':androidx-lib'

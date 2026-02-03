@@ -14,6 +14,8 @@ public final class Flags {
     public static final String FLAG_SHADE_ALLOW_BACK_GESTURE = "com.android.systemui.shared.shade_allow_back_gesture";
     /** @hide */
     public static final String FLAG_SIDEFPS_CONTROLLER_REFACTOR = "com.android.systemui.shared.sidefps_controller_refactor";
+    /** @hide */
+    public static final String FLAG_THREE_BUTTON_CORNER_SWIPE = "com.android.systemui.shared.three_button_corner_swipe";
     
     
     public static boolean bouncerAreaExclusion() {
@@ -42,6 +44,10 @@ public final class Flags {
     
     
     public static boolean sidefpsControllerRefactor() {
+        return FEATURE_FLAGS.sidefpsControllerRefactor();
+    }
+
+    public static boolean threeButtonCornerSwipe() {
         return FEATURE_FLAGS.sidefpsControllerRefactor();
     }
 

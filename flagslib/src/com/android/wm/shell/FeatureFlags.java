@@ -15,6 +15,9 @@ public interface FeatureFlags {
     
     
     boolean enableBubbleBar();
+
+
+    boolean enableCreateAnyBubble();
     
     
     boolean enableBubbleStashing();
@@ -44,7 +47,12 @@ public interface FeatureFlags {
     
     
     boolean enableTaskbarNavbarUnification();
-    
+
+    boolean enableDynamicInsetsForAppLaunch();
+
+    boolean enableShellTopTaskTracking();
+
+    boolean enableFlexibleSplit();
     
     boolean enableTinyTaskbar();
     

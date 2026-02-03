@@ -45,6 +45,13 @@ public class CustomFeatureFlags implements FeatureFlags {
     }
 
     @Override
+
+    public boolean enableCreateAnyBubble() {
+        return getValue(Flags.FLAG_ENABLE_CREATE_ANY_BUBBLE,
+                FeatureFlags::enableCreateAnyBubble);
+    }
+
+    @Override
     
     public boolean enableBubbleStashing() {
         return getValue(Flags.FLAG_ENABLE_BUBBLE_STASHING,
@@ -112,6 +119,24 @@ public class CustomFeatureFlags implements FeatureFlags {
     public boolean enableTaskbarNavbarUnification() {
         return getValue(Flags.FLAG_ENABLE_TASKBAR_NAVBAR_UNIFICATION,
                 FeatureFlags::enableTaskbarNavbarUnification);
+    }
+
+    @Override
+    public boolean enableDynamicInsetsForAppLaunch() {
+        return getValue(Flags.FLAG_ENABLE_DYNAMIC_INSETS_FOR_APP_LAUNCH,
+                FeatureFlags::enableDynamicInsetsForAppLaunch);
+    }
+
+    @Override
+    public boolean enableShellTopTaskTracking() {
+        return getValue(Flags.FLAG_ENABLE_SHELL_TOP_TASK_TRACKING,
+                FeatureFlags::enableShellTopTaskTracking);
+    }
+
+    @Override
+    public boolean enableFlexibleSplit() {
+        return getValue(Flags.FLAG_ENABLE_FLEXIBLE_SPLIT,
+                FeatureFlags::enableFlexibleSplit);
     }
 
     @Override

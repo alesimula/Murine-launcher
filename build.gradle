@@ -9,13 +9,14 @@ buildscript {
 }
 
 plugins {
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.rikka.refine)
     id "com.google.devtools.ksp" version "2.3.3"
 }
 
 final String ANDROID_TOP = "${rootDir}"
 final String FRAMEWORK_PREBUILTS_DIR = "${ANDROID_TOP}/prebuilts/libs/"
 
-apply plugin: 'com.android.application'
 apply plugin: 'com.google.protobuf'
 apply plugin: 'org.jetbrains.kotlin.android'
 apply plugin: 'kotlin-kapt'
@@ -169,18 +170,17 @@ allprojects {
         def addFrameworkJarInternal = { Project proj, String name ->
             def frameworkJar = new File(FRAMEWORK_PREBUILTS_DIR, name)
             if (!frameworkJar.exists()) {
-                return
+                throw new IllegalArgumentException("Framework jar path ${frameworkJar.path} doesn't exist")
             }
             proj.dependencies {
                 compileOnly proj.files(frameworkJar)
             }
             proj.gradle.projectsEvaluated {
                 proj.tasks.withType(JavaCompile).configureEach {
-                    classpath = proj.files(frameworkJar) + classpath
+                    classpath = proj.files(frameworkJar, classpath)
                 }
                 proj.tasks.withType(KotlinCompile).configureEach {
-                    // Prepend framework jar to the Kotlin compilation classpath
-                    libraries.setFrom(proj.files(frameworkJar) + libraries.getFrom())
+                    libraries.setFrom proj.files(frameworkJar, libraries)
                 }
             }
         }
@@ -226,6 +226,8 @@ dependencies {
     implementation libs.kotlinx.coroutines
 
     implementation libs.protobuf.javalite
+    implementation libs.chickenhook.restrictionbypass
+    implementation libs.rikka.refine.runtime
 
     api libs.lottie
     implementation libs.dagger
@@ -248,6 +250,7 @@ dependencies {
     implementation project(':msdl')
     implementation project(':flags')
     implementation project(':WMShared')
+    withQuickstepCompileOnly project(':HiddenApi')
 }
 
 dependencies {

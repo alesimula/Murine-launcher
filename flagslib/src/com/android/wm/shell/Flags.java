@@ -11,6 +11,8 @@ public final class Flags {
     /** @hide */
     public static final String FLAG_ENABLE_BUBBLE_BAR = "com.android.wm.shell.enable_bubble_bar";
     /** @hide */
+    public static final String FLAG_ENABLE_CREATE_ANY_BUBBLE = "com.android.wm.shell.enable_create_any_bubble";
+    /** @hide */
     public static final String FLAG_ENABLE_BUBBLE_STASHING = "com.android.wm.shell.enable_bubble_stashing";
     /** @hide */
     public static final String FLAG_ENABLE_BUBBLES_LONG_PRESS_NAV_HANDLE = "com.android.wm.shell.enable_bubbles_long_press_nav_handle";
@@ -30,6 +32,12 @@ public final class Flags {
     public static final String FLAG_ENABLE_SPLIT_CONTEXTUAL = "com.android.wm.shell.enable_split_contextual";
     /** @hide */
     public static final String FLAG_ENABLE_TASKBAR_NAVBAR_UNIFICATION = "com.android.wm.shell.enable_taskbar_navbar_unification";
+    /** @hide */
+    public static final String FLAG_ENABLE_DYNAMIC_INSETS_FOR_APP_LAUNCH = "com.android.wm.shell.enable_dynamic_insets_for_app_launch";
+    /** @hide */
+    public static final String FLAG_ENABLE_SHELL_TOP_TASK_TRACKING = "com.android.wm.shell.enable_shell_top_task_tracking";
+    /** @hide */
+    public static final String FLAG_ENABLE_FLEXIBLE_SPLIT = "com.android.wm.shell.enable_flexible_split";
     /** @hide */
     public static final String FLAG_ENABLE_TINY_TASKBAR = "com.android.wm.shell.enable_tiny_taskbar";
     /** @hide */
@@ -103,6 +111,18 @@ public final class Flags {
     public static boolean enableTaskbarNavbarUnification() {
         return FEATURE_FLAGS.enableTaskbarNavbarUnification();
     }
+
+    public static boolean enableDynamicInsetsForAppLaunch() {
+        return FEATURE_FLAGS.enableDynamicInsetsForAppLaunch();
+    }
+
+    public static boolean enableShellTopTaskTracking() {
+        return FEATURE_FLAGS.enableShellTopTaskTracking();
+    }
+
+    public static boolean enableFlexibleSplit() {
+        return FEATURE_FLAGS.enableFlexibleSplit();
+    }
     
     
     public static boolean enableTinyTaskbar() {
@@ -128,6 +148,11 @@ public final class Flags {
 
     public static boolean enableBubbleBarOnPhones() {
         return true;
+    }
+
+    public static boolean enableCreateAnyBubble() {
+
+        return FEATURE_FLAGS.enableCreateAnyBubble();
     }
 
     private static FeatureFlags FEATURE_FLAGS = new FeatureFlagsImpl();

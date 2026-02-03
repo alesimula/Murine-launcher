@@ -141,6 +141,11 @@ public final class FeatureFlagsImpl implements FeatureFlags {
     }
 
     @Override
+    public boolean threeButtonCornerSwipe() {
+        return false;
+    }
+
+    @Override
     
     
     public boolean returnAnimationFrameworkLibrary() {

@@ -1,0 +1,32 @@
+plugins {
+    id 'com.android.library'
+}
+
+android {
+    namespace 'app.lawnchair.hidden_api'
+    buildFeatures {
+        aidl true
+    }
+
+    compileSdk = 36
+
+    defaultConfig {
+        minSdk = 26
+        targetSdk = 36
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    sourceSets {
+        main {
+            java.srcDirs = ['src']
+            aidl.srcDirs = ['src']
+            res.srcDirs = ['res']
+        }
+    }
+}
+
+dependencies {
+    annotationProcessor libs.rikka.annotation.processor
+    compileOnly libs.rikka.annotation
+}

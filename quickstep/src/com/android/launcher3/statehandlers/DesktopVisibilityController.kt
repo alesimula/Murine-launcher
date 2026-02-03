@@ -16,6 +16,7 @@
 package com.android.launcher3.statehandlers
 
 import android.content.Context
+import android.hardware.display.DisplayManager
 import android.os.Debug
 import android.util.Log
 import android.util.Slog
@@ -24,6 +25,7 @@ import android.view.Display.DEFAULT_DISPLAY
 import android.window.DesktopModeFlags.ENABLE_DESKTOP_WINDOWING_WALLPAPER_ACTIVITY
 import androidx.core.util.forEach
 import com.android.launcher3.LauncherState
+import com.android.launcher3.Utilities
 import com.android.launcher3.dagger.ApplicationContext
 import com.android.launcher3.dagger.LauncherAppComponent
 import com.android.launcher3.dagger.LauncherAppSingleton
@@ -175,7 +177,7 @@ constructor(
     private var desktopTaskListener: DesktopTaskListenerImpl?
 
     init {
-        desktopTaskListener = DesktopTaskListenerImpl(this, context, context.displayId)
+        desktopTaskListener = DesktopTaskListenerImpl(this, context)
         systemUiProxy.setDesktopTaskListener(desktopTaskListener)
 
         lifecycleTracker.addCloseable {
@@ -645,9 +647,14 @@ constructor(
     private class DesktopTaskListenerImpl(
         controller: DesktopVisibilityController,
         @ApplicationContext private val context: Context,
-        private val displayId: Int,
     ) : Stub() {
         private val controller = WeakReference(controller)
+        private val displayManager: DisplayManager = context.getSystemService(DisplayManager::class.java)
+        private val displayId = if (Utilities.ATLEAST_R) {
+            context.displayId
+        } else {
+            displayManager.displays[DEFAULT_DISPLAY].displayId
+        }
 
         override fun onListenerConnected(
             displayDeskStates: Array<DisplayDeskState>,

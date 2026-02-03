@@ -38,6 +38,12 @@ public class CustomFeatureFlags implements FeatureFlags {
     }
 
     @Override
+    public boolean threeButtonCornerSwipe() {
+        return getValue(Flags.FLAG_THREE_BUTTON_CORNER_SWIPE,
+                FeatureFlags::threeButtonCornerSwipe);
+    }
+
+    @Override
     
     public boolean returnAnimationFrameworkLibrary() {
         return getValue(Flags.FLAG_RETURN_ANIMATION_FRAMEWORK_LIBRARY,

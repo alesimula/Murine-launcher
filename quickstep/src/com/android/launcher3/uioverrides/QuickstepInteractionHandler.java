@@ -20,6 +20,7 @@ import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCH
 
 import android.app.ActivityOptions;
 import android.app.ActivityTaskManager;
+import android.app.IActivityTaskManagerHidden;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.RemoteException;
@@ -34,6 +35,7 @@ import com.android.launcher3.model.data.ItemInfo;
 import com.android.launcher3.util.ActivityOptionsWrapper;
 import com.android.launcher3.widget.LauncherAppWidgetHostView;
 
+import dev.rikka.tools.refine.Refine;
 import java.util.function.Consumer;
 
 /** Provides a Quickstep specific animation when launching an activity from an app widget. */
@@ -74,15 +76,20 @@ class QuickstepInteractionHandler implements RemoteViews.InteractionHandler,
         ActivityOptionsWrapper activityOptions = mLauncher.getAppTransitionManager()
                 .getActivityLaunchOptions(hostView, (ItemInfo) hostView.getTag());
         if (!pendingIntent.isActivity()) {
-            // In the event this pending intent eventually launches an activity, i.e. a trampoline,
-            // use the Quickstep transition animation.
             try {
-                ActivityTaskManager.getService()
-                        .registerRemoteAnimationForNextActivityStart(
-                                pendingIntent.getCreatorPackage(),
-                                activityOptions.options.getRemoteAnimationAdapter(),
-                                activityOptions.options.getLaunchCookie());
-            } catch (RemoteException e) {
+                IActivityTaskManagerHidden atm = Refine.unsafeCast(ActivityTaskManager.getService());
+                try {
+                    atm.registerRemoteAnimationForNextActivityStart(
+                            pendingIntent.getCreatorPackage(),
+                            activityOptions.options.getRemoteAnimationAdapter(),
+                            activityOptions.options.getLaunchCookie());
+                } catch (NoSuchMethodError e) {
+                    atm.registerRemoteAnimationForNextActivityStart(
+                            pendingIntent.getCreatorPackage(),
+                            activityOptions.options.getRemoteAnimationAdapter());
+                }
+            } catch (NullPointerException | RemoteException e) {
+                // pE-TODO(C7evQZDJ): Remove NullPointerException after fixing
                 // Do nothing.
             }
         }
