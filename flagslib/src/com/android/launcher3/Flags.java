@@ -339,6 +339,11 @@ public final class Flags {
         return FEATURE_FLAGS.allAppsBlur();
     }
 
+    public static boolean allAppsSheetForHandheld() {
+        return FEATURE_FLAGS.allAppsSheetForHandheld();
+    }
+
+
     public static boolean letterFastScroller() {
         return FEATURE_FLAGS.letterFastScroller();
     }
