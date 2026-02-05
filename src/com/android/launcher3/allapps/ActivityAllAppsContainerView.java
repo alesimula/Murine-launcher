@@ -299,8 +299,10 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
     private static int setColorLStar(int color, double newLStar) {
         double[] lab = new double[3];
         ColorUtils.colorToLAB(color, lab);
-        lab[0] = newLStar;
-        return ColorUtils.LABToColor(lab[0], lab[1], lab[2]);
+        lab[0] = Math.max(0, Math.min(100, newLStar));
+        int alpha = Color.alpha(color);
+        int rgb = ColorUtils.LABToColor(lab[0], lab[1], lab[2]);
+        return (alpha << 24) | (rgb & 0x00FFFFFF);
     }
 
     @Override
@@ -328,18 +330,20 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
             int bg;
 
             if (Utilities.ATLEAST_S) {
-                fg = dark ? android.R.color.system_neutral1_800 : android.R.color.system_neutral1_100;
-                fallbackRes = dark ? android.R.color.system_accent2_800 : android.R.color.system_accent2_200;
+                fg = dark ? android.R.color.system_neutral1_900 : android.R.color.system_neutral1_100;
+                fallbackRes = dark ? android.R.color.system_accent2_900 : android.R.color.system_accent2_200;
                 bg = android.R.color.system_accent1_500;
             } else {
-                fg = dark ? R.color.widget_picker_selected_tab_text_color_dark : R.color.widget_picker_selected_tab_text_color_light;
+                fg = dark ? R.color.widget_picker_primary_surface_color_dark : R.color.widget_picker_primary_surface_color_light;
                 fallbackRes = dark ? R.color.widget_picker_tab_background_unselected_dark : R.color.widget_picker_tab_background_unselected_light;
                 bg = R.color.accent_ripple_color;
             }
             int layerFg = ColorUtils.setAlphaComponent(getResources().getColor(fg, null),
                     (int) (0.32f * 255));
+            // TODO LStar wth blur: 66D, 8D
+            // TODO LStar no blur: 4D, 90D
             int layerBg = ColorUtils.setAlphaComponent(
-                    setColorLStar(getResources().getColor(bg, null), dark ? 90D : 4D),
+                    setColorLStar(getResources().getColor(bg, null), dark ? 4D : 90D),
                     (int) (0.32f * 255));
             mBottomSheetBackgroundColorOverBlur = ColorUtils.compositeColors(layerFg, layerBg);
             mBottomSheetBackgroundColorBlurFallback = getResources().getColor(fallbackRes);

@@ -19,9 +19,15 @@ import static com.android.app.animation.Interpolators.DECELERATE;
 import static com.android.launcher3.logging.StatsLogManager.LAUNCHER_STATE_ALLAPPS;
 
 import android.graphics.Color;
+import android.content.res.Resources;
+
+import androidx.core.graphics.ColorUtils;
+
 import com.android.launcher3.Launcher;
+import com.android.launcher3.LauncherPrefs;
 import com.android.launcher3.LauncherState;
 import com.android.launcher3.R;
+import com.android.launcher3.icons.FastBitmapDrawable;
 import com.android.launcher3.util.Themes;
 import com.android.launcher3.views.ActivityContext;
 import com.android.launcher3.views.ScrimColors;
@@ -99,9 +105,8 @@ public class AllAppsState extends LauncherState {
 
     @Override
     public ScrimColors getWorkspaceScrimColor(Launcher launcher) {
-        return new ScrimColors(launcher.getDeviceProfile().isTablet
-                ? launcher.getResources().getColor(R.color.widgets_picker_scrim)
-                : Themes.getAttrColor(launcher, R.attr.allAppsScrimColor),
+        return new ScrimColors(
+                /* backgroundColor */ Color.TRANSPARENT,
                 /* foregroundColor */ Color.TRANSPARENT);
     }
 }
