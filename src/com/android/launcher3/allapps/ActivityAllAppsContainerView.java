@@ -180,7 +180,9 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
     private float[] mBottomSheetCornerRadii;
     private ScrimView mScrimView;
     private int mHeaderColor;
-    private int mBottomSheetBackgroundColor;
+    private int mBottomSheetBackgroundColorBlurFallback;
+    private int mBottomSheetBackgroundColorOverBlur;
+    private int mBottomSheetBackgroundColorLegacy;
     private float mBottomSheetBackgroundAlpha = 1f;
     private int mTabsProtectionAlpha;
     @Nullable private AllAppsTransitionController mAllAppsTransitionController;
@@ -294,9 +296,17 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         return List.of();
     }
 
+    private static int setColorLStar(int color, double newLStar) {
+        double[] lab = new double[3];
+        ColorUtils.colorToLAB(color, lab);
+        lab[0] = newLStar;
+        return ColorUtils.LABToColor(lab[0], lab[1], lab[2]);
+    }
+
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
+        boolean dark = Utilities.isDarkTheme(getContext());
 
         mAH.get(SEARCH).setup(mSearchRecyclerView,
                 /* Filter out A-Z apps */ itemInfo -> false);
@@ -312,17 +322,41 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
                 0,
                 0 // Bottom left
         };
-        if (true/*Flags.allAppsBlur()*/) {
-            int resId = Utilities.isDarkTheme(getContext())
-                    ? android.R.color.system_accent1_800 : android.R.color.system_accent1_100;
-            int layerAbove = ColorUtils.setAlphaComponent(getResources().getColor(resId, null),
-                    (int) (0.4f * 255));
-            int layerBelow = ColorUtils.setAlphaComponent(Color.WHITE, (int) (0.1f * 255));
-            mBottomSheetBackgroundColor = ColorUtils.compositeColors(layerAbove, layerBelow);
-        } else {
-            mBottomSheetBackgroundColor = getContext().getColor(R.color.materialColorSurfaceDim);
+        if (Flags.allAppsBlur()) {
+            int fg;
+            int fallbackRes;
+            int bg;
+
+            if (Utilities.ATLEAST_S) {
+                fg = dark ? android.R.color.system_neutral1_800 : android.R.color.system_neutral1_100;
+                fallbackRes = dark ? android.R.color.system_accent2_800 : android.R.color.system_accent2_200;
+                bg = android.R.color.system_accent1_500;
+            } else {
+                fg = dark ? R.color.widget_picker_selected_tab_text_color_dark : R.color.widget_picker_selected_tab_text_color_light;
+                fallbackRes = dark ? R.color.widget_picker_tab_background_unselected_dark : R.color.widget_picker_tab_background_unselected_light;
+                bg = R.color.accent_ripple_color;
+            }
+            int layerFg = ColorUtils.setAlphaComponent(getResources().getColor(fg, null),
+                    (int) (0.32f * 255));
+            int layerBg = ColorUtils.setAlphaComponent(
+                    setColorLStar(getResources().getColor(bg, null), dark ? 90D : 4D),
+                    (int) (0.32f * 255));
+            mBottomSheetBackgroundColorOverBlur = ColorUtils.compositeColors(layerFg, layerBg);
+            mBottomSheetBackgroundColorBlurFallback = getResources().getColor(fallbackRes);
         }
-        mBottomSheetBackgroundAlpha = Color.alpha(mBottomSheetBackgroundColor) / 255.0f;
+
+        int legacyRes;
+
+        if (Utilities.ATLEAST_S) {
+            legacyRes = dark ? android.R.color.system_neutral2_600 : android.R.color.system_neutral2_200;
+        } else {
+            legacyRes = dark ? R.color.all_apps_bg_hand_fill_dark : R.color.all_apps_bg_hand_fill;
+        }
+
+        int legacyColor = getResources().getColor(legacyRes);
+        legacyColor = dark ? setColorLStar(legacyColor, 6.0) : setColorLStar(legacyColor, 87.0);
+
+        mBottomSheetBackgroundColorLegacy = legacyColor;
         updateBackgroundVisibility(mActivityContext.getDeviceProfile());
         mSearchUiManager.initializeSearch(this);
     }
@@ -814,10 +848,53 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         mSearchUiManager.setBackgroundVisibility(bgVisible, 1 - prog);
     }
 
-    protected int getHeaderColor(float blendRatio) {
+    /*protected int getHeaderColor(float blendRatio) {
         return ColorUtils.setAlphaComponent(
                 ColorUtils.blendARGB(mScrimColor, mHeaderProtectionColor, blendRatio),
                 (int) (mSearchContainer.getAlpha() * 255));
+    }*/
+
+    protected int getHeaderColor(float blendRatio) {
+        float opacity = 0.0f;
+        /*TODO var showHeaderBackground = PreferenceExtensionsKt.firstBlocking(
+                pref2.getAppDrawerSearchBarBackground());
+        if (showHeaderBackground) {
+            opacity = pref.getDrawerOpacity().get();
+        }*/
+
+        /*TODO var colorOptions = PreferenceExtensionsKt.firstBlocking(pref2.getAppDrawerBackgroundColor());
+        var color = colorOptions.getColorPreferenceEntry().getLightColor().invoke(mActivityContext);
+        if (color != 0) {
+            mScrimColor = color;
+        }*/
+        if (!mActivityContext.getDeviceProfile().shouldShowAllAppsOnSheet()) {
+            return ColorUtils.setAlphaComponent(
+                    ColorUtils.blendARGB(mScrimColor, mHeaderProtectionColor, blendRatio),
+                    (int) (opacity * 255));
+        }
+        return isBackgroundBlurEnabled()
+                ? ColorUtils.setAlphaComponent(mHeaderProtectionColor, (int) (blendRatio * 255))
+                : ColorUtils.blendARGB(getBackgroundColor(), mHeaderProtectionColor, blendRatio);
+    }
+
+    private int getBackgroundColor() {
+        return mActivityContext.getDeviceProfile().shouldShowAllAppsOnSheet()
+                ? getBottomSheetBackgroundColor() : mScrimColor;
+    }
+
+    int getBottomSheetBackgroundColor() {
+        if (!Flags.allAppsBlur()) {
+            return mBottomSheetBackgroundColorLegacy;
+        }
+        if (/*TODO !mActivityContext.isAllAppsBackgroundBlurEnabled()*/ false) {
+            // Don't apply any alpha if the blur is disabled.
+            return mBottomSheetBackgroundColorBlurFallback;
+        }
+        return mBottomSheetBackgroundColorOverBlur;
+    }
+
+    boolean isBackgroundBlurEnabled() {
+        return Flags.allAppsBlur() /*TODO && mActivityContext.isAllAppsBackgroundBlurEnabled()*/;
     }
 
     /**
@@ -1406,16 +1483,21 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
 
         final float horizontalScaleOffset = (1 - scale) * panel.getWidth() / 2;
         final float verticalScaleOffset = (1 - scale) * (panel.getHeight() - getHeight() / 2);
+        // Left and right insets can be applied to this container, as well as the panel.
+        float left = getLeft() + panel.getLeft();
+        float right = left + panel.getWidth();
 
         final float topNoScale = panel.getTop() + translationY;
         final float topWithScale = topNoScale + verticalScaleOffset;
-        final float leftWithScale = panel.getLeft() + horizontalScaleOffset;
-        final float rightWithScale = panel.getRight() - horizontalScaleOffset;
+        final float leftWithScale = left + horizontalScaleOffset;
+        final float rightWithScale = right - horizontalScaleOffset;
         final float bottomWithOffset = panel.getBottom() + bottomOffsetPx;
-        // Draw full background panel for tablets.
+        // Draw full background panel if presenting on a sheet.
+        int bottomSheetBackgroundColor = getBottomSheetBackgroundColor();
+        float bottomSheetBackgroundAlpha = Color.alpha(bottomSheetBackgroundColor) / 255.0f;
         if (hasBottomSheet) {
-            mHeaderPaint.setColor(mBottomSheetBackgroundColor);
-            mHeaderPaint.setAlpha((int) (mBottomSheetBackgroundAlpha * 255));
+            mHeaderPaint.setColor(bottomSheetBackgroundColor);
+            mHeaderPaint.setAlpha((int) (bottomSheetBackgroundAlpha * 255));
 
             mTmpRectF.set(
                     leftWithScale,
@@ -1425,6 +1507,12 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
             mTmpPath.reset();
             mTmpPath.addRoundRect(mTmpRectF, mBottomSheetCornerRadii, Direction.CW);
             canvas.drawPath(mTmpPath, mHeaderPaint);
+
+            // When the background panel is blurred (or fallback), we don't add header protection.
+            // TODO (b/414671116): Apply header protection whenever search bar is focused.
+            if (Flags.allAppsBlur()) {
+                return;
+            }
         }
 
         if (DEBUG_HEADER_PROTECTION) {
@@ -1434,12 +1522,16 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
             mHeaderPaint.setColor(mHeaderColor);
             mHeaderPaint.setAlpha((int) (getAlpha() * Color.alpha(mHeaderColor)));
         }
-        if (mHeaderPaint.getColor() == mScrimColor || mHeaderPaint.getColor() == 0) {
+
+        // If header is not visible or only differs from the background with alpha, don't draw it.
+        int headerWithoutAlpha = ColorUtils.setAlphaComponent(mHeaderPaint.getColor(), 0);
+        int backgroundWithoutAlpha = ColorUtils.setAlphaComponent(getBackgroundColor(), 0);
+        if (headerWithoutAlpha == backgroundWithoutAlpha || mHeaderPaint.getColor() == 0) {
             return;
         }
 
         if (hasBottomSheet) {
-            mHeaderPaint.setAlpha((int) (mHeaderPaint.getAlpha() * mBottomSheetBackgroundAlpha));
+            mHeaderPaint.setAlpha((int) (mHeaderPaint.getAlpha() * bottomSheetBackgroundAlpha));
         }
 
         // Draw header on background panel
@@ -1475,15 +1567,15 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
             } else {
                 float tabAlpha = getAlpha() * mTabsProtectionAlpha;
                 if (hasBottomSheet) {
-                    tabAlpha *= mBottomSheetBackgroundAlpha;
+                    tabAlpha *= bottomSheetBackgroundAlpha;
                 }
                 mHeaderPaint.setAlpha((int) tabAlpha);
             }
-            float left = 0f;
-            float right = canvas.getWidth();
+            left = 0f;
+            right = canvas.getWidth();
             if (hasBottomSheet) {
-                left = mBottomSheetBackground.getLeft() + horizontalScaleOffset;
-                right = mBottomSheetBackground.getRight() - horizontalScaleOffset;
+                left = leftWithScale;
+                right = rightWithScale;
             }
 
             final float tabTopWithScale = hasBottomSheet
