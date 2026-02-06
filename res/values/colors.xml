@@ -305,4 +305,5 @@
     <color name="materialColorSecondary">@color/system_secondary_light</color>
     <color name="materialColorTertiary">@color/system_tertiary_light</color>
     <color name="materialColorError">@color/system_error_light</color>
+    <color name="all_apps_blur_overlay_color">#80FFFFFF</color>
 </resources>

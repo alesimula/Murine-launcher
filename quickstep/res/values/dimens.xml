@@ -98,6 +98,9 @@
     <dimen name="overview_actions_top_margin">24dp</dimen>
     <dimen name="overview_actions_height">48dp</dimen>
     <dimen name="overview_actions_button_spacing">36dp</dimen>
+    <dimen name="overview_actions_button_radius">28dp</dimen>
+    <dimen name="overview_actions_button_vertical_padding">10dp</dimen>
+    <dimen name="overview_actions_button_horizontal_padding">16dp</dimen>
 
     <!-- These speeds are in dp/s -->
     <dimen name="max_task_dismiss_drag_velocity">2.25dp</dimen>
