@@ -50,6 +50,7 @@ android {
 
     buildTypes {
         debug {
+            applicationIdSuffix ".debug"
             debuggable true
             minifyEnabled false
         }
@@ -74,7 +75,6 @@ android {
 
     productFlavors {
         aosp {
-            applicationIdSuffix ".debug"
             dimension "app"
             applicationId 'app.murinelauncher'
             testApplicationId 'com.android.launcher3.tests'
@@ -277,11 +277,8 @@ dependencies {
     withQuickstepImplementation files('prebuilts/libs/SystemUIUnfoldLib_kotlin.jar')
     implementation files('prebuilts/libs/SystemUI-statsd.jar')
     withQuickstepImplementation files('prebuilts/libs/contextualeducationlib.jar')
-//    withQuickstepImplementation files('prebuilts/libs/com_android_wm_shell_flags.jar')
     withQuickstepImplementation files('prebuilts/libs/WindowManager-Shell-shared.jar')
     withQuickstepImplementation files('prebuilts/libs/WindowManager-Shell-shared_kotlin.jar')
-//    withQuickstepImplementation files('prebuilts/libs/com_android_systemui_shared_flags.jar')
-//    withQuickstepImplementation files('prebuilts/libs/com_android_systemui_flags.jar')
     implementation files('prebuilts/libs/am_flags_lib.jar')
     implementation files('prebuilts/libs/PlatformAnimationLib.jar')
     implementation files('prebuilts/libs/PlatformAnimationLib_kotlin.jar')
@@ -294,7 +291,7 @@ dependencies {
     implementation files('prebuilts/libs/tracinglib-platform.jar')
     implementation files('prebuilts/libs/view_capture.jar')
     implementation files('prebuilts/libs/view_capture_kotlin.jar')
-    releaseImplementation files('prebuilts/libs/aconfig-annotations-lib.jar')
+    //releaseImplementation files('prebuilts/libs/aconfig-annotations-lib.jar')
     compileOnly files('prebuilts/libs/framework-16.jar')
 }
 

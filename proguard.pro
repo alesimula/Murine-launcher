@@ -7,7 +7,7 @@
 -dontusemixedcaseclassnames
 -dontskipnonpubliclibraryclasses
 -verbose
--keepattributes InnerClasses, *Annotation*, Signature, SourceFile, LineNumberTable
+-keepattributes InnerClasses, EnclosingMethod, *Annotation*, Signature, SourceFile, LineNumberTable
 
 
 # This is generated automatically by the Android Gradle plugin.
@@ -55,10 +55,10 @@
 }
 
 # Lawnchair specific rules.
--keep class app.lawnchair.LawnchairProto$* { *; }
--keep class app.lawnchair.LawnchairApp { *; }
--keep class app.lawnchair.LawnchairLauncher { *; }
--keep class app.lawnchair.compatlib.** { *; }
+#-keep class app.lawnchair.LawnchairProto$* { *; }
+#-keep class app.lawnchair.LawnchairApp { *; }
+#-keep class app.lawnchair.LawnchairLauncher { *; }
+#-keep class app.lawnchair.compatlib.** { *; }
 -keep class android.view.** { *; }
 
 -keep class com.google.protobuf.Timestamp { *; }
