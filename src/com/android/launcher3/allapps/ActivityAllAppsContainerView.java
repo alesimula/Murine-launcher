@@ -339,12 +339,13 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
                 bg = R.color.accent_ripple_color;
             }
             int layerFg = ColorUtils.setAlphaComponent(getResources().getColor(fg, null),
-                    (int) (0.32f * 255));
+                    (int) ((Flags.allAppsBlur() ? 0.15f : 0.32f) * 255));
             // TODO LStar wth blur: 66D, 8D
             // TODO LStar no blur: 4D, 90D
             int layerBg = ColorUtils.setAlphaComponent(
-                    setColorLStar(getResources().getColor(bg, null), dark ? 4D : 90D),
-                    (int) (0.32f * 255));
+                    setColorLStar(getResources().getColor(bg, null), Flags.allAppsBlur() ?
+                            (dark ? 32D : 8D) : (dark ? 4D : 90D)),
+                    (int) ((Flags.allAppsBlur() ? 0.3f : 0.32f) * 255));
             mBottomSheetBackgroundColorOverBlur = ColorUtils.compositeColors(layerFg, layerBg);
             mBottomSheetBackgroundColorBlurFallback = getResources().getColor(fallbackRes);
         }

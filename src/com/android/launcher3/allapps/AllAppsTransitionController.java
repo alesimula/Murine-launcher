@@ -39,11 +39,14 @@ import android.animation.ObjectAnimator;
 import android.util.FloatProperty;
 import android.view.HapticFeedbackConstants;
 import android.view.View;
+import android.view.ViewRootImpl;
+import android.view.WindowManager;
 import android.view.animation.Interpolator;
 
 import androidx.annotation.FloatRange;
 import androidx.annotation.Nullable;
 
+import com.android.internal.graphics.drawable.BackgroundBlurDrawable;
 import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.DeviceProfile.OnDeviceProfileChangeListener;
 import com.android.launcher3.Flags;
@@ -85,6 +88,10 @@ public class AllAppsTransitionController
     private static final float NAV_BAR_COLOR_FORCE_UPDATE_THRESHOLD = 0.1f;
     private static final float SWIPE_DRAG_COMMIT_THRESHOLD =
             1 - AllAppsSwipeController.ALL_APPS_STATE_TRANSITION_MANUAL;
+
+    private static int MAX_BLUR_RADIUS = 55;
+
+    private static BackgroundBlurDrawable mBackgroundBlurDrawable = null;
 
     public static final FloatProperty<AllAppsTransitionController> ALL_APPS_PROGRESS =
             new FloatProperty<AllAppsTransitionController>("allAppsProgress") {
@@ -235,12 +242,39 @@ public class AllAppsTransitionController
         // Allow apps panel to shift the full screen if coming from another app.
         float shiftRange = fromBackground ? mLauncher.getDeviceProfile().heightPx : mShiftRange;
         getAppsViewProgressTranslationY().setValue(mProgress * shiftRange);
+        tryBlurWindow(progress);
         mLauncher.onAllAppsTransition(1 - progress);
 
         boolean hasScrim = progress < NAV_BAR_COLOR_FORCE_UPDATE_THRESHOLD
                 && mLauncher.getAppsView().getNavBarScrimHeight() > 0;
         mLauncher.getSystemUiController().updateUiState(
                 UI_STATE_ALL_APPS, hasScrim ? mNavScrimFlag : 0);
+    }
+
+    public void invalidateBlurDrawable() {
+        mBackgroundBlurDrawable = null;
+    }
+
+    protected void tryBlurWindow(float progress) {
+        if (Flags.allAppsBlur()) try {
+            int newBlurCalc = (int) (MAX_BLUR_RADIUS * (1f - Math.max(0f, (progress - 0.33f) / 0.67f)));
+            if (mBackgroundBlurDrawable != null) mBackgroundBlurDrawable.setBlurRadius(newBlurCalc);
+            boolean blurEnabled = (mLauncher.getWindow().getAttributes().flags & WindowManager.LayoutParams.FLAG_BLUR_BEHIND) != 0;
+
+            boolean updateWindow = !blurEnabled && newBlurCalc > 0;
+            boolean disableBlur = blurEnabled && newBlurCalc == 0;
+            if (newBlurCalc > 0) {
+                if (updateWindow) mLauncher.getWindow().addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
+                if (mBackgroundBlurDrawable == null) {
+                    ViewRootImpl viewRoot = mLauncher.getWindow().getDecorView().getViewRootImpl();
+                    mBackgroundBlurDrawable = viewRoot.createBackgroundBlurDrawable();
+                    mBackgroundBlurDrawable.setBlurRadius(newBlurCalc);
+                }
+                mLauncher.getWindow().setBackgroundDrawable(mBackgroundBlurDrawable);
+            } else if (disableBlur) mLauncher.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
+        } catch (IllegalArgumentException ignored) {
+            // Still not attached to a window manager
+        }
     }
 
     public float getProgress() {

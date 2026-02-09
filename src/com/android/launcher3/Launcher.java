@@ -1303,6 +1303,8 @@ public class Launcher extends StatefulActivity<LauncherState>
         TraceHelper.INSTANCE.beginSection(ON_RESUME_EVT);
         super.onResume();
 
+        mAllAppsController.invalidateBlurDrawable();
+
         if (mDeferOverlayCallbacks) {
             scheduleDeferredCheck();
         } else {
