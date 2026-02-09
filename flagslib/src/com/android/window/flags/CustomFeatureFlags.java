@@ -1,4 +1,4 @@
-package com.android.window.flags2;
+package com.android.window.flags;
 
 // TODO(b/303773055): Remove the annotation after access issue is resolved.
 import java.util.Arrays;

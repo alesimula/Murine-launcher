@@ -42,9 +42,24 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
+
+    def proguardFilesFromAosp = allprojects
+            .collect { it.file("proguard.flags") }
+            .findAll { it.exists() }
+            .toArray()
+
     buildTypes {
         debug {
+            debuggable true
             minifyEnabled false
+        }
+
+        release {
+            debuggable false
+            minifyEnabled true
+            shrinkResources true
+            pseudoLocalesEnabled false
+            proguardFiles proguardFilesFromAosp + "proguard.pro"
         }
     }
 
@@ -59,6 +74,7 @@ android {
 
     productFlavors {
         aosp {
+            applicationIdSuffix ".debug"
             dimension "app"
             applicationId 'app.murinelauncher'
             testApplicationId 'com.android.launcher3.tests'
@@ -81,17 +97,10 @@ android {
         }
     }
 
-    // Disable release builds for now
-    android.variantFilter { variant ->
-        if (variant.buildType.name.endsWith('release')) {
-            variant.setIgnore(true)
-        }
-    }
-
     sourceSets {
         main {
             res.srcDirs = ['res']
-            java.srcDirs = ['src', 'src_plugins', 'tests/shared', 'system_ext', 'tests/multivalentTests/shared', 'systemui_core/shared', 'shared/src']
+            java.srcDirs = ['src', 'src_plugins', 'tests/shared', 'system_ext', 'tests/multivalentTests/shared', 'systemui_core/shared']
             manifest.srcFile 'AndroidManifest-common.xml'
             proto {
                 srcDirs = ['protos/', 'quickstep/protos_overrides/']
@@ -274,17 +283,12 @@ dependencies {
 //    withQuickstepImplementation files('prebuilts/libs/com_android_systemui_shared_flags.jar')
 //    withQuickstepImplementation files('prebuilts/libs/com_android_systemui_flags.jar')
     implementation files('prebuilts/libs/am_flags_lib.jar')
-    implementation files('prebuilts/libs/com_android_window_flags.jar')
-    implementation files('prebuilts/libs/com_android_systemui_flags.jar')
-    implementation files('prebuilts/libs/com_android_systemui_shared_flags.jar')
-    implementation files('prebuilts/libs/com_android_wm_shell_flags.jar')
     implementation files('prebuilts/libs/PlatformAnimationLib.jar')
     implementation files('prebuilts/libs/PlatformAnimationLib_kotlin.jar')
     implementation files('prebuilts/libs/PluginAnnotationLib.jar')
     implementation files('prebuilts/libs/PluginAnnotationLib_kotlin.jar')
     implementation files('prebuilts/libs/PluginCoreLib.jar')
     implementation files('prebuilts/libs/PluginCoreLib_kotlin.jar')
-    withQuickstepImplementation files('prebuilts/libs/com_android_window_flags.jar')
     implementation files('prebuilts/libs/view_capture_proto.jar')
 //    implementation files('prebuilts/libs/tracinglib-platform.jar')
     implementation files('prebuilts/libs/tracinglib-platform.jar')
