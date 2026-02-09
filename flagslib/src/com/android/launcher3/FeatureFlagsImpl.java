@@ -996,6 +996,7 @@ public final class FeatureFlagsImpl implements FeatureFlags {
         return false;
     }
 
+    // This makes app drawer super slow - avoid
     @Override
     public boolean letterFastScroller() {
         return false;

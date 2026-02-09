@@ -344,6 +344,7 @@ public final class Flags {
     }
 
 
+    // This makes app drawer super slow - avoid
     public static boolean letterFastScroller() {
         return FEATURE_FLAGS.letterFastScroller();
     }
