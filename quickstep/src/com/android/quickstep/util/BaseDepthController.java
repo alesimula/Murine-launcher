@@ -19,6 +19,8 @@ import static com.android.launcher3.Flags.enableOverviewBackgroundWallpaperBlur;
 import static com.android.launcher3.Flags.enableScalingRevealHomeAnimation;
 
 import android.app.WallpaperManager;
+import android.graphics.RenderEffect;
+import android.graphics.Shader;
 import android.gui.EarlyWakeupInfo;
 import android.os.Binder;
 import android.os.IBinder;
@@ -28,11 +30,14 @@ import android.view.AttachedSurfaceControl;
 import android.view.SurfaceControl;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 
 import com.android.launcher3.Flags;
 import com.android.launcher3.Launcher;
+import com.android.launcher3.LauncherState;
 import com.android.launcher3.R;
 import com.android.launcher3.Utilities;
+import com.android.launcher3.statemanager.StateManager;
 import com.android.launcher3.util.MultiPropertyFactory;
 import com.android.launcher3.util.MultiPropertyFactory.MultiProperty;
 import com.android.systemui.shared.system.BlurUtils;
@@ -227,6 +232,8 @@ public class BaseDepthController {
         if (rootSurfaceControl != null) {
             rootSurfaceControl.applyTransactionOnDraw(transaction);
         }
+
+        blurWorkspaceDepthTargets();
     }
 
     private void setDepth(float depth) {
@@ -239,6 +246,26 @@ public class BaseDepthController {
         }
         mDepth = depthF;
         applyDepthAndBlur();
+    }
+
+    @VisibleForTesting
+    public boolean blurWorkspaceDepthTargets() {
+        if (!Flags.allAppsBlur()) {
+            return false;
+        }
+        StateManager<LauncherState, Launcher> stateManager = mLauncher.getStateManager();
+        LauncherState targetState = stateManager.getTargetState() != null
+                ? stateManager.getTargetState() : stateManager.getState();
+        // Only blur workspace if the current state wants to blur based on the target state.
+        boolean shouldBlurWorkspace =
+                stateManager.getCurrentStableState().shouldBlurWorkspace(targetState);
+
+        RenderEffect blurEffect = shouldBlurWorkspace && mCurrentBlur > 0
+                ? RenderEffect.createBlurEffect(mCurrentBlur, mCurrentBlur, Shader.TileMode.DECAL)
+                // If blur is not desired, clear the blur effect from the depth targets.
+                : null;
+        mLauncher.getDepthBlurTargets().forEach(target -> target.setRenderEffect(blurEffect));
+        return shouldBlurWorkspace;
     }
 
     /**

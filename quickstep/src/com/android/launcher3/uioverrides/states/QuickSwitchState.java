@@ -19,10 +19,14 @@ import static com.android.launcher3.logging.StatsLogManager.LAUNCHER_STATE_BACKG
 
 import android.graphics.Color;
 
+import androidx.core.graphics.ColorUtils;
+
 import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.Launcher;
+import com.android.launcher3.LauncherPrefs;
 import com.android.launcher3.R;
 import com.android.launcher3.util.Themes;
+import com.android.launcher3.views.ScrimColors;
 
 /**
  * State to indicate we are about to launch a recent task. Note that this state is only used when
@@ -44,16 +48,24 @@ public class QuickSwitchState extends BackgroundAppState {
     }
 
     @Override
-    public int getWorkspaceScrimColor(Launcher launcher) {
+    public ScrimColors getWorkspaceScrimColor(Launcher launcher) {
+        DeviceProfile dp = launcher.getDeviceProfile();
         if (launcher.areDesktopTasksVisible()) {
             // No scrim while desktop tasks are visible
-            return Color.TRANSPARENT;
+            return new ScrimColors(
+                    /* backgroundColor */ Color.TRANSPARENT,
+                    /* foregroundColor */ Color.TRANSPARENT);
         }
-        DeviceProfile dp = launcher.getDeviceProfile();
         if (dp.isTaskbarPresentInApps) {
-            return launcher.getColor(R.color.taskbar_background);
+            return new ScrimColors(
+                    /* backgroundColor */ launcher.getColor(R.color.taskbar_background),
+                    /* foregroundColor */ Color.TRANSPARENT);
         }
-        return Themes.getAttrColor(launcher, R.attr.overviewScrimColor);
+        return new ScrimColors(
+                /* backgroundColor */ ColorUtils.setAlphaComponent(
+                Themes.getAttrColor(launcher, R.attr.overviewScrimColor),
+                255), // TODO <-- LauncherPrefs.RECENTS_OPACITY.get(launcher) * 255 / 100)
+                /* foregroundColor */ Color.TRANSPARENT);
     }
 
     @Override

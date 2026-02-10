@@ -257,7 +257,7 @@ public abstract class BaseContainerInterface<STATE_TYPE extends BaseState<STATE_
         STATE_TYPE startState = container.getStateManager().getRestState();
         final var context = container.asContext();
         if (DesktopVisibilityController.INSTANCE.get(context).isInDesktopModeAndNotInOverview(
-                context.getDisplayId()) && endTarget == null) {
+                context.getDisplay().getDisplayId()) && endTarget == null) {
             // When tapping on the Taskbar in Desktop mode, reset to BackgroundApp to avoid the
             // home screen icons flickering. Technically we could probably be do this for
             // non-desktop as well, but limiting to this use case to reduce risk.
@@ -272,20 +272,20 @@ public abstract class BaseContainerInterface<STATE_TYPE extends BaseState<STATE_
 
     public final void calculateTaskSize(Context context, DeviceProfile dp, Rect outRect,
             RecentsPagedOrientationHandler orientationHandler) {
-        if (dp.getDeviceProperties().isTablet()) {
+        if (dp.isTablet) {
             calculateLargeTileSize(context, dp, outRect);
         } else {
             Resources res = context.getResources();
             float maxScale = res.getFloat(R.dimen.overview_max_scale);
-            int taskMargin = dp.getOverviewProfile().getTaskMarginPx();
+            int taskMargin = dp.overviewTaskMarginPx;
             // In fake orientation, OverviewActions is hidden and we only leave a margin there.
             int overviewActionsClaimedSpace = orientationHandler.isLayoutNaturalToLauncher()
                     ? dp.getOverviewActionsClaimedSpace()
-                    : dp.getOverviewProfile().getActionsTopMarginPx();
+                    : dp.overviewActionsTopMarginPx;
             calculateTaskSizeInternal(
                     context,
                     dp,
-                    dp.getOverviewProfile().getTaskThumbnailTopMarginPx(),
+                    dp.overviewTaskThumbnailTopMarginPx,
                     overviewActionsClaimedSpace,
                     res.getDimensionPixelSize(R.dimen.overview_minimum_next_prev_size) + taskMargin,
                     maxScale,
@@ -306,7 +306,7 @@ public abstract class BaseContainerInterface<STATE_TYPE extends BaseState<STATE_
     private void calculateTaskSizeInternal(Context context, DeviceProfile dp, int claimedSpaceAbove,
             int claimedSpaceBelow, int minimumHorizontalPadding, float maxScale, int gravity,
             Rect outRect, RecentsPagedOrientationHandler orientationHandler) {
-        Rect potentialTaskRect = new Rect(0, 0, dp.getDeviceProperties().getWidthPx(), dp.getDeviceProperties().getHeightPx());
+        Rect potentialTaskRect = new Rect(0, 0, dp.widthPx, dp.heightPx);
 
         Rect insets;
         if (orientationHandler.isLayoutNaturalToLauncher()) {
@@ -331,7 +331,7 @@ public abstract class BaseContainerInterface<STATE_TYPE extends BaseState<STATE_
             );
             insets = outRect;
         }
-        potentialTaskRect.inset(insets);
+        potentialTaskRect.inset(insets.left, insets.top, insets.right, insets.bottom);
 
         outRect.set(
                 minimumHorizontalPadding,
@@ -340,7 +340,7 @@ public abstract class BaseContainerInterface<STATE_TYPE extends BaseState<STATE_
                 claimedSpaceBelow);
         // Rotate the paddings to portrait perspective,
         orientationHandler.rotateInsets(outRect, outRect);
-        potentialTaskRect.inset(outRect);
+        potentialTaskRect.inset(outRect.left, outRect.top, outRect.right, outRect.bottom);
 
         calculateTaskSizeInternal(context, dp, potentialTaskRect, maxScale, gravity, outRect);
     }
@@ -369,9 +369,9 @@ public abstract class BaseContainerInterface<STATE_TYPE extends BaseState<STATE_
      * Gets the dimension of the task in the current system state.
      */
     public static void getTaskDimension(Context context, DeviceProfile dp, PointF out) {
-        out.x = dp.getDeviceProperties().getWidthPx();
-        out.y = dp.getDeviceProperties().getHeightPx();
-        if (dp.getDeviceProperties().isTablet() && !DisplayController.isTransientTaskbar(context)) {
+        out.x = dp.widthPx;
+        out.y = dp.heightPx;
+        if (dp.isTablet && !DisplayController.isTransientTaskbar(context)) {
             out.y -= dp.taskbarHeight;
         }
     }
@@ -381,11 +381,11 @@ public abstract class BaseContainerInterface<STATE_TYPE extends BaseState<STATE_
      */
     public final void calculateGridSize(DeviceProfile dp, Context context, Rect outRect) {
         Rect insets = dp.getInsets();
-        int topMargin = dp.getOverviewProfile().getTaskThumbnailTopMarginPx();
+        int topMargin = dp.overviewTaskThumbnailTopMarginPx;
         int bottomMargin = dp.getOverviewActionsClaimedSpace();
-        int sideMargin = dp.getOverviewProfile().getGridSideMargin();
+        int sideMargin = dp.overviewGridSideMargin;
 
-        outRect.set(0, 0, dp.getDeviceProperties().getWidthPx(), dp.getDeviceProperties().getHeightPx());
+        outRect.set(0, 0, dp.widthPx, dp.heightPx);
         outRect.inset(Math.max(insets.left, sideMargin), insets.top + topMargin,
                 Math.max(insets.right, sideMargin), Math.max(insets.bottom, bottomMargin));
     }
@@ -400,11 +400,11 @@ public abstract class BaseContainerInterface<STATE_TYPE extends BaseState<STATE_
         calculateLargeTileSize(context, dp, potentialTaskRect);
 
         float rowHeight = (potentialTaskRect.height()
-                + dp.getOverviewProfile().getTaskThumbnailTopMarginPx()
-                - dp.getOverviewProfile().getRowSpacing()) / 2f;
+                + dp.overviewTaskThumbnailTopMarginPx
+                - dp.overviewRowSpacing) / 2f;
 
         PointF taskDimension = getTaskDimension(context, dp);
-        float scale = (rowHeight - dp.getOverviewProfile().getTaskThumbnailTopMarginPx())
+        float scale = (rowHeight - dp.overviewTaskThumbnailTopMarginPx)
                 / taskDimension.y;
         int outWidth = Math.round(scale * taskDimension.x);
         int outHeight = Math.round(scale * taskDimension.y);
@@ -420,21 +420,21 @@ public abstract class BaseContainerInterface<STATE_TYPE extends BaseState<STATE_
     public final void calculateModalTaskSize(Context context, DeviceProfile dp, Rect outRect,
             RecentsPagedOrientationHandler orientationHandler) {
         calculateTaskSize(context, dp, outRect, orientationHandler);
-        boolean isGridOnlyOverview = dp.getDeviceProperties().isTablet() && enableGridOnlyOverview();
+        boolean isGridOnlyOverview = dp.isTablet && enableGridOnlyOverview();
         int claimedSpaceBelow = isGridOnlyOverview
-                ? dp.getOverviewProfile().getActionsTopMarginPx()
-                + dp.getOverviewProfile().getActionsHeight() + dp.stashedTaskbarHeight
-                : (dp.getDeviceProperties().getHeightPx() - outRect.bottom - dp.getInsets().bottom);
+                ? dp.overviewActionsTopMarginPx
+                + dp.overviewActionsHeight + dp.stashedTaskbarHeight
+                : (dp.heightPx - outRect.bottom - dp.getInsets().bottom);
         int minimumHorizontalPadding = 0;
         if (!isGridOnlyOverview) {
             float maxScale = context.getResources().getFloat(R.dimen.overview_modal_max_scale);
             minimumHorizontalPadding =
-                    Math.round((dp.getDeviceProperties().getAvailableWidthPx() - outRect.width() * maxScale) / 2);
+                    Math.round((dp.availableWidthPx - outRect.width() * maxScale) / 2);
         }
         calculateTaskSizeInternal(
                 context,
                 dp,
-                dp.getOverviewProfile().getTaskMarginPx(),
+                dp.overviewTaskMarginPx,
                 claimedSpaceBelow,
                 minimumHorizontalPadding,
                 1f /*maxScale*/,

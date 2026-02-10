@@ -136,7 +136,7 @@ public class AllAppsState extends LauncherState {
     protected <DEVICE_PROFILE_CONTEXT extends Context & ActivityContext>
             float getDepthUnchecked(DEVICE_PROFILE_CONTEXT context) {
         if (context.getDeviceProfile().shouldShowAllAppsOnSheet()) {
-            return context.getDeviceProfile().getBottomSheetProfile().getBottomSheetDepth();
+            return context.getDeviceProfile().bottomSheetDepth;
         } else {
             // The scrim fades in at approximately 50% of the swipe gesture.
             if (enableScalingRevealHomeAnimation()) {
@@ -178,7 +178,7 @@ public class AllAppsState extends LauncherState {
     }
 
     private static boolean isWorkspaceVisible(DeviceProfile deviceProfile) {
-        return deviceProfile.getDeviceProperties().isTablet() || (Flags.allAppsSheetForHandheld() && Flags.allAppsBlur());
+        return deviceProfile.isTablet || (Flags.allAppsSheetForHandheld() && Flags.allAppsBlur());
     }
 
     @Override
@@ -201,7 +201,7 @@ public class AllAppsState extends LauncherState {
     @Override
     public boolean shouldFloatingSearchBarUsePillWhenUnfocused(Launcher launcher) {
         DeviceProfile dp = launcher.getDeviceProfile();
-        return dp.getDeviceProperties().isPhone() && !dp.getDeviceProperties().isLandscape();
+        return dp.isPhone && !dp.isLandscape;
     }
 
     @Override

@@ -222,6 +222,15 @@ public class TaskbarUIController implements BubbleBarController.BubbleBarLocatio
         }
     }
 
+    public boolean isDraggingItem() {
+        boolean bubblesDragging = false;
+        if (mControllers.bubbleControllers.isPresent()) {
+            bubblesDragging =
+                    mControllers.bubbleControllers.get().bubbleDragController.isDragging();
+        }
+        return mControllers.taskbarDragController.isDragging() || bubblesDragging;
+    }
+
     @CallSuper
     protected void dumpLogs(String prefix, PrintWriter pw) {
         pw.println(String.format(
