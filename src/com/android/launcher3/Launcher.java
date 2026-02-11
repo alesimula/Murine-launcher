@@ -290,6 +290,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import app.murinelauncher.graphics.WorkspaceBlurUtils;
+
 /**
  * Default launcher application.
  */
@@ -1304,7 +1306,7 @@ public class Launcher extends StatefulActivity<LauncherState>
         TraceHelper.INSTANCE.beginSection(ON_RESUME_EVT);
         super.onResume();
 
-        mAllAppsController.invalidateBlurDrawable();
+        WorkspaceBlurUtils.invalidate();
 
         if (mDeferOverlayCallbacks) {
             scheduleDeferredCheck();

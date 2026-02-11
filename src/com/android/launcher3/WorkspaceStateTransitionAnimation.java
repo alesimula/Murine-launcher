@@ -67,6 +67,8 @@ import com.android.launcher3.states.StateAnimationConfig;
 import com.android.launcher3.util.DynamicResource;
 import com.android.systemui.plugins.ResourceProvider;
 
+import app.murinelauncher.graphics.WorkspaceBlurUtils;
+
 /**
  * Manages the animations between each of the workspace states.
  */
@@ -111,6 +113,9 @@ public class WorkspaceStateTransitionAnimation {
      */
     private void setWorkspaceProperty(LauncherState state, PropertySetter propertySetter,
             StateAnimationConfig config) {
+        var drawerBlur = WorkspaceBlurUtils.Companion.getDrawerBlur();
+        boolean fadeWorkspace = !drawerBlur.getBlurWorkspace();
+
         ScaleAndTranslation scaleAndTranslation = state.getWorkspaceScaleAndTranslation(mLauncher);
         ScaleAndTranslation hotseatScaleAndTranslation = state.getHotseatScaleAndTranslation(
                 mLauncher);
@@ -150,15 +155,17 @@ public class WorkspaceStateTransitionAnimation {
                     hotseatScaleInterpolator);
         }
 
-        Interpolator workspaceFadeInterpolator = config.getInterpolator(ANIM_WORKSPACE_FADE,
-                pageAlphaProvider.interpolator);
-        float workspacePageIndicatorAlpha = (elements & WORKSPACE_PAGE_INDICATOR) != 0 ? 1 : 0;
-        propertySetter.setViewAlpha(mLauncher.getWorkspace().getPageIndicator(),
-                workspacePageIndicatorAlpha, workspaceFadeInterpolator);
-        Interpolator hotseatFadeInterpolator = config.getInterpolator(ANIM_HOTSEAT_FADE,
-                workspaceFadeInterpolator);
-        float hotseatIconsAlpha = (elements & HOTSEAT_ICONS) != 0 ? 1 : 0;
-        propertySetter.setViewAlpha(hotseat, hotseatIconsAlpha, hotseatFadeInterpolator);
+        if (fadeWorkspace) {
+            Interpolator workspaceFadeInterpolator = config.getInterpolator(ANIM_WORKSPACE_FADE,
+                    pageAlphaProvider.interpolator);
+            float workspacePageIndicatorAlpha = (elements & WORKSPACE_PAGE_INDICATOR) != 0 ? 1 : 0;
+            propertySetter.setViewAlpha(mLauncher.getWorkspace().getPageIndicator(),
+                    workspacePageIndicatorAlpha, workspaceFadeInterpolator);
+            Interpolator hotseatFadeInterpolator = config.getInterpolator(ANIM_HOTSEAT_FADE,
+                    workspaceFadeInterpolator);
+            float hotseatIconsAlpha = (elements & HOTSEAT_ICONS) != 0 ? 1 : 0;
+            propertySetter.setViewAlpha(hotseat, hotseatIconsAlpha, hotseatFadeInterpolator);
+        }
 
         // Update the accessibility flags for hotseat based on launcher state.
         hotseat.setImportantForAccessibility(
@@ -220,15 +227,20 @@ public class WorkspaceStateTransitionAnimation {
     private void applyChildState(LauncherState state, CellLayout cl, int childIndex,
             PageAlphaProvider pageAlphaProvider, PropertySetter propertySetter,
             StateAnimationConfig config) {
+        var drawerBlur = WorkspaceBlurUtils.Companion.getDrawerBlur();
+        boolean fadeWorkspace = !drawerBlur.getBlurWorkspace();
+
         float pageAlpha = pageAlphaProvider.getPageAlpha(childIndex);
         float springLoadedProgress =
                 (state instanceof  SpringLoadedState || state instanceof EditModeState) ? 1f : 0f;
         propertySetter.setFloat(cl,
                 CellLayout.SPRING_LOADED_PROGRESS, springLoadedProgress, ZOOM_OUT);
-        Interpolator fadeInterpolator = config.getInterpolator(ANIM_WORKSPACE_FADE,
+        if (fadeWorkspace) {
+            Interpolator fadeInterpolator = config.getInterpolator(ANIM_WORKSPACE_FADE,
                 pageAlphaProvider.interpolator);
-        propertySetter.setFloat(cl.getShortcutsAndWidgets(), VIEW_ALPHA,
+            propertySetter.setFloat(cl.getShortcutsAndWidgets(), VIEW_ALPHA,
                 pageAlpha, fadeInterpolator);
+        }
     }
 
     private void applyPageTranslation(CellLayout cellLayout, int childIndex,

@@ -36,17 +36,23 @@ import static com.android.launcher3.util.SystemUiController.UI_STATE_ALL_APPS;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
+import android.graphics.Color;
+import android.graphics.RenderEffect;
+import android.graphics.Shader;
+import android.os.Build;
 import android.util.FloatProperty;
 import android.view.HapticFeedbackConstants;
 import android.view.View;
-import android.view.ViewRootImpl;
 import android.view.WindowManager;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Interpolator;
+import android.view.animation.PathInterpolator;
 
 import androidx.annotation.FloatRange;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.core.graphics.ColorUtils;
 
-import com.android.internal.graphics.drawable.BackgroundBlurDrawable;
 import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.DeviceProfile.OnDeviceProfileChangeListener;
 import com.android.launcher3.Flags;
@@ -69,6 +75,8 @@ import com.android.launcher3.views.ScrimView;
 
 import com.google.android.msdl.data.model.MSDLToken;
 
+import app.murinelauncher.graphics.WorkspaceBlurUtils;
+
 /**
  * Handles AllApps view transition.
  * 1) Slides all apps view using direct manipulation
@@ -88,10 +96,6 @@ public class AllAppsTransitionController
     private static final float NAV_BAR_COLOR_FORCE_UPDATE_THRESHOLD = 0.1f;
     private static final float SWIPE_DRAG_COMMIT_THRESHOLD =
             1 - AllAppsSwipeController.ALL_APPS_STATE_TRANSITION_MANUAL;
-
-    private static int MAX_BLUR_RADIUS = 55;
-
-    private static BackgroundBlurDrawable mBackgroundBlurDrawable = null;
 
     public static final FloatProperty<AllAppsTransitionController> ALL_APPS_PROGRESS =
             new FloatProperty<AllAppsTransitionController>("allAppsProgress") {
@@ -251,30 +255,62 @@ public class AllAppsTransitionController
                 UI_STATE_ALL_APPS, hasScrim ? mNavScrimFlag : 0);
     }
 
-    public void invalidateBlurDrawable() {
-        mBackgroundBlurDrawable = null;
+    private static int setColorLStar(int color, double newLStar) {
+        double[] lab = new double[3];
+        ColorUtils.colorToLAB(color, lab);
+        lab[0] = Math.max(0, Math.min(100, newLStar));
+        int alpha = Color.alpha(color);
+        int rgb = ColorUtils.LABToColor(lab[0], lab[1], lab[2]);
+        return (alpha << 24) | (rgb & 0x00FFFFFF);
     }
 
+    public int getMicaColor(boolean dark) {
+        int fg = dark ? R.color.widget_picker_primary_surface_color_dark : R.color.widget_picker_primary_surface_color_light;
+        int bg = R.color.accent_ripple_color;
+        int layerFg = ColorUtils.setAlphaComponent(mLauncher.getResources().getColor(fg, null),
+                (int) (0.15f * 255));
+        int layerBg = ColorUtils.setAlphaComponent(
+                setColorLStar(mLauncher.getResources().getColor(bg, null), dark ? 25D : 80D), (int) (0.7f * 255));
+        return ColorUtils.compositeColors(layerFg, layerBg);
+    }
+
+    protected static final PathInterpolator BLUR_INTERPOLATOR =
+            new PathInterpolator(0.05f, 0.3f, 0.3f, 1f);
+
+    public static final Interpolator BLUR_ICON_INTERPOLATOR = new AccelerateInterpolator(0.66f);
+
+    @RequiresApi(Build.VERSION_CODES.S)
     protected void tryBlurWindow(float progress) {
         if (Flags.allAppsBlur()) try {
-            int newBlurCalc = (int) (MAX_BLUR_RADIUS * (1f - Math.max(0f, (progress - 0.33f) / 0.67f)));
-            if (mBackgroundBlurDrawable != null) mBackgroundBlurDrawable.setBlurRadius(newBlurCalc);
-            boolean blurEnabled = (mLauncher.getWindow().getAttributes().flags & WindowManager.LayoutParams.FLAG_BLUR_BEHIND) != 0;
-
-            boolean updateWindow = !blurEnabled && newBlurCalc > 0;
-            boolean disableBlur = blurEnabled && newBlurCalc == 0;
-            if (newBlurCalc > 0) {
-                if (updateWindow) mLauncher.getWindow().addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
-                if (mBackgroundBlurDrawable == null) {
-                    ViewRootImpl viewRoot = mLauncher.getWindow().getDecorView().getViewRootImpl();
-                    mBackgroundBlurDrawable = viewRoot.createBackgroundBlurDrawable();
-                    mBackgroundBlurDrawable.setBlurRadius(newBlurCalc);
-                }
-                mLauncher.getWindow().setBackgroundDrawable(mBackgroundBlurDrawable);
-            } else if (disableBlur) mLauncher.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
+            float blurProgress = BLUR_INTERPOLATOR.getInterpolation(1f - progress);
+            float blurIconProgress = BLUR_ICON_INTERPOLATOR.getInterpolation(blurProgress);
+            var drawerBlur = WorkspaceBlurUtils.getDrawerBlur();
+            int blurValue = (int) (blurProgress * drawerBlur.getRadius());
+            int iconBlurValue = (int) (blurIconProgress * drawerBlur.getRadius());
+            drawerBlur.withBlurDrawable(mLauncher, (blurDrawable, isNew) -> {
+                blurDrawable.setBlurRadius(blurValue);
+                if (isNew) mLauncher.getWindow().setBackgroundDrawable(blurDrawable);
+            });
+            // Not sure if this flag is needed when using BackgroundBlurDrawable, couldn't hurt
+            mLauncher.getWindow().setFlags(
+                    blurValue > 0 ? WindowManager.LayoutParams.FLAG_BLUR_BEHIND : 0,
+                    WindowManager.LayoutParams.FLAG_BLUR_BEHIND
+            );
+            //mBackgroundBlurDrawable.setBlurRadius(75);
+            //mBackgroundBlurDrawable.setCornerRadius(75, 75, 0, 0);
+            //mBackgroundBlurDrawable.setColor(getMicaColor(true));
+            //mLauncher.findViewById(R.id.bottom_sheet_background).setBackground(mBackgroundBlurDrawable);
+            if (drawerBlur.getBlurWorkspace()) blurWorkspace(iconBlurValue);
         } catch (IllegalArgumentException ignored) {
             // Still not attached to a window manager
         }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.S)
+    public void blurWorkspace(int blur) {
+        if (!Flags.allAppsBlur()) return;
+        RenderEffect blurEffect = blur > 0 ? RenderEffect.createBlurEffect(blur, blur, Shader.TileMode.CLAMP) : null;
+        for (View target : mLauncher.getDepthBlurTargets()) target.setRenderEffect(blurEffect);
     }
 
     public float getProgress() {
