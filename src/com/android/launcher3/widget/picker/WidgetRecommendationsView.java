@@ -199,7 +199,7 @@ public final class WidgetRecommendationsView extends PagedView<PageIndicatorDots
             if (shouldShowSinglePageView(recommendations)) { // map to single category.
                 mappedRecommendations = Map.of(DEFAULT_WIDGET_RECOMMENDATION_CATEGORY,
                         recommendations.values().stream().flatMap(
-                                Collection::stream).toList());
+                                Collection::stream).collect(Collectors.toList()));
             } else {
                 mappedRecommendations = recommendations;
             }

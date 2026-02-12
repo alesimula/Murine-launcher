@@ -27,7 +27,7 @@ android {
     namespace = 'com.android.launcher3'
 
     defaultConfig {
-        minSdkVersion 33
+        minSdkVersion 32
         targetSdkVersion 36
         versionCode 1
         versionName "1.0"
@@ -176,7 +176,7 @@ kapt {
 allprojects {
     ext {
         daggerVersion = '2.56.2'
-        def addFrameworkJarInternal = { Project proj, String name ->
+        addFrameworkJarInternal = { Project proj, String name ->
             def frameworkJar = new File(FRAMEWORK_PREBUILTS_DIR, name)
             if (!frameworkJar.exists()) {
                 throw new IllegalArgumentException("Framework jar path ${frameworkJar.path} doesn't exist")
@@ -196,12 +196,29 @@ allprojects {
 
         afterEvaluate { proj ->
             if (proj.plugins.hasPlugin('com.android.application') || proj.plugins.hasPlugin('com.android.library')) {
-                addFrameworkJarInternal(proj, 'framework-16.jar')
+
+                def m = proj.name =~ /^compatLibV?(.*)$/
+                def framework = 'framework-16.jar'
+                if (m.matches()) {
+                    def suffix = m[0][1]   // first match, first capture group
+                    framework = [
+                            "": "framework-15.jar",
+                            Baklava: "framework-16.jar",
+                            Q: "framework-10.jar",
+                            R: "framework-11.jar",
+                            S: "framework-12.jar",
+                            T: "framework-13.jar",
+                            U: "framework-14.jar",
+                            V: "framework-15.jar"
+                    ].get(suffix, "unknown")
+                }
+                addFrameworkJarInternal(proj, framework)
+
 
                 proj.dependencies {
                     // Apply all shared prebuilt jars to every module
                     // Use compileOnly to avoid desugaring/R8 errors with framework stubs
-                    compileOnly proj.fileTree(dir: FRAMEWORK_PREBUILTS_DIR, include: ['*.jar'], exclude: ['framework-16.jar'])
+                    compileOnly proj.fileTree(dir: FRAMEWORK_PREBUILTS_DIR, include: ['*.jar'], exclude: ['framework-*.jar'])
 
                     // Common androidx/libs available everywhere
                     implementation libs.androidx.core.ktx
@@ -215,6 +232,16 @@ allprojects {
             dependencies {
                 compileOnly fileTree(dir: FRAMEWORK_PREBUILTS_DIR, include: 'SystemUI-core-16.jar')
                 compileOnly fileTree(dir: FRAMEWORK_PREBUILTS_DIR, include: 'SystemUI-statsd-16.jar')
+
+                // Always declare as dependencies regardless
+                compileOnly project(':compatLib')
+                compileOnly project(':compatLib:compatLibVQ')
+                compileOnly project(':compatLib:compatLibVR')
+                compileOnly project(':compatLib:compatLibVS')
+                compileOnly project(':compatLib:compatLibVT')
+                compileOnly project(':compatLib:compatLibVU')
+                compileOnly project(':compatLib:compatLibVV')
+                compileOnly project(':compatLib:compatLibVBaklava')
             }
         }
     }
@@ -261,6 +288,16 @@ dependencies {
     implementation project(':WMShared')
     implementation project(':SettingsLib-SettingsTheme')
     withQuickstepCompileOnly project(':HiddenApi')
+
+    // Include all compat libs
+    implementation project(':compatLib')
+    implementation project(':compatLib:compatLibVQ')
+    implementation project(':compatLib:compatLibVR')
+    implementation project(':compatLib:compatLibVS')
+    implementation project(':compatLib:compatLibVT')
+    implementation project(':compatLib:compatLibVU')
+    implementation project(':compatLib:compatLibVV')
+    implementation project(':compatLib:compatLibVBaklava')
 }
 
 dependencies {

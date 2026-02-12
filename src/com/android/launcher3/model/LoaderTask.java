@@ -120,6 +120,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
+import java.util.stream.Collectors;
 
 import javax.inject.Named;
 
@@ -130,7 +131,7 @@ import javax.inject.Named;
  *   - all apps icons
  *   - deep shortcuts within apps
  */
-@SuppressWarnings("NewApi")
+@SuppressWarnings({"NewApi", "SimplifyStreamApiCallChains"})
 public class LoaderTask implements Runnable {
     private static final String TAG = "LoaderTask";
     public static final String SMARTSPACE_ON_HOME_SCREEN = "pref_smartspace_home_screen";
@@ -232,7 +233,7 @@ public class LoaderTask implements Runnable {
         List<ItemInfo> firstScreenItems =
                 mBgDataModel.itemsIdMap.stream()
                         .filter(currentScreenContentFilter(firstScreens))
-                        .toList();
+                        .collect(Collectors.toList());
         final int disableArchivingLauncherBroadcast = Settings.Secure.getInt(
                 mContext.getContentResolver(),
                 "disable_launcher_broadcast_installed_apps",
@@ -246,7 +247,7 @@ public class LoaderTask implements Runnable {
                             mPmHelper,
                             firstScreenItems,
                             mInstallingPkgsCached,
-                            mBgDataModel.itemsIdMap.stream().filter(WIDGET_FILTER).toList()
+                            mBgDataModel.itemsIdMap.stream().filter(WIDGET_FILTER).collect(Collectors.toList())
                     );
             logASplit("Sending first screen broadcast with additional archiving Extras");
             FirstScreenBroadcastHelper.sendBroadcastsForModels(mContext, broadcastModels);
@@ -478,7 +479,7 @@ public class LoaderTask implements Runnable {
             }
             installingPkgs.forEach(mIconCache::updateSessionCache);
             FileLog.d(TAG, "loadWorkspace: Packages with active install/update sessions: "
-                    + installingPkgs.keySet().stream().map(info -> info.mPackageName).toList());
+                    + installingPkgs.keySet().stream().map(info -> info.mPackageName).collect(Collectors.toList()));
 
             mFirstScreenBroadcast = new FirstScreenBroadcast(installingPkgs);
 
@@ -603,7 +604,7 @@ public class LoaderTask implements Runnable {
     private void processFolderItems() {
         // Sort the folder items, update ranks, and make sure all preview items are high res.
         List<FolderGridOrganizer> verifiers = mIDP.supportedProfiles
-                .stream().map(FolderGridOrganizer::createFolderGridOrganizer).toList();
+                .stream().map(FolderGridOrganizer::createFolderGridOrganizer).collect(Collectors.toList());
         for (ItemInfo itemInfo : mBgDataModel.itemsIdMap) {
             if (!(itemInfo instanceof FolderInfo folder)) {
                 continue;

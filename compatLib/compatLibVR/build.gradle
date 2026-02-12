@@ -1,0 +1,24 @@
+plugins {
+    id 'com.android.library'
+}
+
+android {
+    namespace "app.lawnchair.compatlib.eleven"
+    compileSdk 36
+    defaultConfig {
+        minSdkVersion 26
+    }
+
+    buildFeatures {
+        aidl true
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+    }
+}
+
+dependencies {
+    api project(':compatLib:compatLibVQ')
+}

@@ -63,5 +63,14 @@ project(':HiddenApi').projectDir = new File(rootDir, 'hidden-api')
 include ':SettingsLib-SettingsTheme'
 project(':SettingsLib-SettingsTheme').projectDir = new File(rootDir, 'SettingsLib/SettingsTheme')
 
+include ':compatLib'
+include ':compatLib:compatLibVQ'
+include ':compatLib:compatLibVR'
+include ':compatLib:compatLibVS'
+include ':compatLib:compatLibVT'
+include ':compatLib:compatLibVU'
+include ':compatLib:compatLibVV'
+include ':compatLib:compatLibVBaklava'
+
 include ':systemUIPluginCore'
 include ':androidx-lib'
