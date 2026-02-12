@@ -17,6 +17,10 @@
     <!-- Miscellaneous -->
     <bool name="config_largeHeap">false</bool>
 
+    <bool name="home_settings_icon_space_reserved">false</bool>
+
+    <bool name="home_settings_allow_divider">false</bool>
+
     <!-- A string pointer to the original app name string. This allows derived projects to
      easily override the app name without providing all translations -->
     <string name="derived_app_name" translatable="false">@string/app_name</string>

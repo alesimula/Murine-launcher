@@ -25,6 +25,7 @@ import static com.android.launcher3.BuildConfig.IS_STUDIO_BUILD;
 import static com.android.launcher3.InvariantDeviceProfile.TYPE_MULTI_DISPLAY;
 import static com.android.launcher3.InvariantDeviceProfile.TYPE_TABLET;
 import static com.android.launcher3.states.RotationHelper.ALLOW_ROTATION_PREFERENCE_KEY;
+import com.android.settingslib.widget.SettingsBasePreferenceFragment;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -93,10 +94,11 @@ public class SettingsActivity extends FragmentActivity
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
 
         Intent intent = getIntent();
-        if (intent.hasExtra(EXTRA_FRAGMENT_ROOT_KEY) || intent.hasExtra(EXTRA_FRAGMENT_ARGS)
-                || intent.hasExtra(EXTRA_FRAGMENT_HIGHLIGHT_KEY)) {
+        //if (intent.hasExtra(EXTRA_FRAGMENT_ROOT_KEY) || intent.hasExtra(EXTRA_FRAGMENT_ARGS)
+        //        || intent.hasExtra(EXTRA_FRAGMENT_HIGHLIGHT_KEY)) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
-        }
+            getActionBar().setHomeAsUpIndicator(com.android.settingslib.widget.theme.R.drawable.settingslib_expressive_icon_back);
+        //}
 
         if (savedInstanceState == null) {
             Bundle args = intent.getBundleExtra(EXTRA_FRAGMENT_ARGS);
@@ -165,7 +167,7 @@ public class SettingsActivity extends FragmentActivity
     /**
      * This fragment shows the launcher preferences.
      */
-    public static class LauncherSettingsFragment extends PreferenceFragmentCompat implements
+    public static class LauncherSettingsFragment extends SettingsBasePreferenceFragment implements
             SettingsCache.OnChangeListener {
 
         protected boolean mDeveloperOptionsEnabled = false;

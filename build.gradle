@@ -259,6 +259,7 @@ dependencies {
     implementation project(':msdl')
     implementation project(':flags')
     implementation project(':WMShared')
+    implementation project(':SettingsLib-SettingsTheme')
     withQuickstepCompileOnly project(':HiddenApi')
 }
 

@@ -15,6 +15,4 @@
     limitations under the License.
   -->
 <resources>
-    <bool name="home_settings_icon_space_reserved">false</bool>
-    <bool name="home_settings_allow_divider">false</bool>
 </resources>

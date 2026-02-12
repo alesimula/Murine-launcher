@@ -18,6 +18,10 @@
 */
 -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <color name="home_settings_header_accent">#0B57D0</color>
+    <color name="home_settings_header_collapsed">#E2E2E3</color>
+    <color name="home_settings_header_expanded">#F1F0F7</color>
+
     <!-- The color tints to apply to the text and drag view when hovering
          over the delete target or the info target -->
     <color name="delete_target_hover_tint">#FFC1C1C1</color>

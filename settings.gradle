@@ -60,5 +60,8 @@ project(':flags').projectDir = new File(rootDir, 'flagslib')
 include ':HiddenApi'
 project(':HiddenApi').projectDir = new File(rootDir, 'hidden-api')
 
+include ':SettingsLib-SettingsTheme'
+project(':SettingsLib-SettingsTheme').projectDir = new File(rootDir, 'SettingsLib/SettingsTheme')
+
 include ':systemUIPluginCore'
 include ':androidx-lib'

@@ -15,6 +15,10 @@
   -->
 
 <resources>
+    <color name="home_settings_header_accent">#D9E2FF</color>
+    <color name="home_settings_header_collapsed">#45464C</color>
+    <color name="home_settings_header_expanded">#1A1B20</color>
+
     <color name="material_color_surface_container_lowest">#0D0E11</color>
     <color name="material_color_on_surface">#E3E2E6</color>
 

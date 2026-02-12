@@ -6,6 +6,7 @@ appcompat = "1.7.1"
 baselineprofile = "1.4.1"
 core = "1.17.0"
 annotation = "1.9.1"
+activity = "1.13.0-alpha01"
 coreAnimation = "1.0.0"
 dagger = "2.57.2"
 dexmaker = "1.2"
@@ -23,7 +24,7 @@ refine = "4.4.0"
 compose = "1.9.3"
 lifecycle = "2.9.1"
 lottie = "6.7.1"
-material = "1.13.0"
+material = "1.14.0-alpha09"
 material3Version = "1.4.0"
 mockitoCore = "5.20.0"
 navigation = "2.9.1"
@@ -91,6 +92,7 @@ androidx-recyclerview = { module = "androidx.recyclerview:recyclerview", version
 androidx-rules = { module = "androidx.test:rules", version.ref = "rulesVersion" }
 androidx-slice-builders = { module = "androidx.slice:slice-builders", version.ref = "sliceBuilders" }
 androidx-window = { module = "androidx.window:window", version.ref = "window" }
+androidx-activity = { module = "androidx.activity:activity", version.ref = "activity" }
 annotation = { module = "androidx.annotation:annotation", version.ref = "annotation" }
 core = { module = "androidx.core:core", version.ref = "core" }
 dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
