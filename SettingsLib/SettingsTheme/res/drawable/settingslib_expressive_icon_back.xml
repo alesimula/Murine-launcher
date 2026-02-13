@@ -20,7 +20,7 @@
         android:start="16dp">
         <shape>
             <size android:width="40dp" android:height="40dp" />
-            <solid android:color="@color/settingslib_materialColorSurfaceContainerHighest" />
+            <solid android:color="@color/settingslib_neutral_variant_back_icon" />
             <corners
                 android:radius="100dp" />
         </shape>

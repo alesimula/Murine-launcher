@@ -76,7 +76,7 @@
     <color name="settingslib_materialColorOutlineVariant">@android:color/system_neutral2_200</color>
 
     <!-- Background - Use system_neutral1_10 for a very light base -->
-    <color name="settingslib_materialColorBackground">@android:color/system_neutral1_10</color>
+    <color name="settingslib_materialColorBackground">@android:color/system_neutral1_50</color>
     <color name="settingslib_materialColorOnBackground">@android:color/system_neutral1_900</color>
 
     <!-- Surface and Bubbles - Use system_neutral1_50 for bubbles to contrast with system_neutral1_10 background -->
@@ -88,7 +88,7 @@
     <color name="settingslib_materialColorOnSurfaceInverse">@android:color/system_neutral1_50</color>
 
     <!-- Surface Bright is the key color for the rounded preference boxes -->
-    <color name="settingslib_materialColorSurfaceBright">@android:color/system_neutral1_10</color>
+    <color name="settingslib_materialColorSurfaceBright">@color/settingslib_neutral_variant_card</color>
     <color name="settingslib_materialColorSurfaceDim">@android:color/system_neutral1_100</color>
 
     <!-- Surface containers for elevation and depth -->
