@@ -16,50 +16,33 @@
   -->
 
 <resources>
-    <!-- Material next state on color-->
+    <!-- Material next state colors - Light Mode -->
     <color name="settingslib_state_on_color">@color/settingslib_materialColorPrimaryContainer</color>
-
-    <!-- Material next state off color-->
     <color name="settingslib_state_off_color">@color/settingslib_materialColorPrimaryContainer</color>
 
-    <!-- Material next thumb disable color-->
     <color name="settingslib_thumb_disabled_color">@color/settingslib_materialColorOutline</color>
-
-    <!-- Material next thumb on color-->
     <color name="settingslib_thumb_on_color">@color/settingslib_materialColorOnPrimary</color>
-
-    <!-- Material next thumb off color-->
     <color name="settingslib_thumb_off_color">@color/settingslib_materialColorOutline</color>
 
-    <!-- Material next track on color-->
     <color name="settingslib_track_on_color">@color/settingslib_materialColorPrimary</color>
-
-    <!-- Material next track off color-->
     <color name="settingslib_track_off_color">@color/settingslib_materialColorSurfaceContainerHighest</color>
 
-    <!-- Dialog text button color. -->
+    <!-- Dialog colors -->
     <color name="settingslib_dialog_accent">@color/settingslib_materialColorPrimary</color>
-
-    <!-- Dialog background color. -->
     <color name="settingslib_dialog_background">@color/settingslib_materialColorSurfaceContainerHigh</color>
-
-    <!-- Dialog error color. -->
     <color name="settingslib_dialog_colorError">#d93025</color> <!-- Red 600 -->
 
     <color name="settingslib_colorSurfaceHeader">@color/settingslib_materialColorSurfaceVariant</color>
 
     <color name="settingslib_text_color_preference_category_title">@color/settingslib_materialColorPrimary</color>
 
-    <!-- The text color of spinner title -->
     <color name="settingslib_spinner_title_color">@color/settingslib_materialColorOnPrimaryContainer</color>
-    <!-- The text color of dropdown item title -->
     <color name="settingslib_spinner_dropdown_color">@color/settingslib_materialColorOnPrimaryContainer</color>
 
     <color name="settingslib_ripple_color">?android:attr/colorControlHighlight</color>
-
     <color name="settingslib_list_divider_color">@android:color/system_neutral1_200</color>
 
-    <!-- Material You mappings for v31 -->
+    <!-- Material You mappings for v31 Light Mode -->
     <color name="settingslib_materialColorPrimary">@android:color/system_accent1_600</color>
     <color name="settingslib_materialColorOnPrimary">@android:color/system_accent1_0</color>
     <color name="settingslib_materialColorPrimaryContainer">@android:color/system_accent1_100</color>
@@ -91,22 +74,29 @@
     <color name="settingslib_materialColorOnErrorContainer">@color/settingslib_error_900</color>
     <color name="settingslib_materialColorOutline">@android:color/system_neutral2_500</color>
     <color name="settingslib_materialColorOutlineVariant">@android:color/system_neutral2_200</color>
-    <color name="settingslib_materialColorBackground">@android:color/white</color>
+
+    <!-- Background - Use system_neutral1_10 for a very light base -->
+    <color name="settingslib_materialColorBackground">@android:color/system_neutral1_10</color>
     <color name="settingslib_materialColorOnBackground">@android:color/system_neutral1_900</color>
-    <color name="settingslib_materialColorSurface">@android:color/system_neutral1_50</color>
+
+    <!-- Surface and Bubbles - Use system_neutral1_50 for bubbles to contrast with system_neutral1_10 background -->
+    <color name="settingslib_materialColorSurface">@android:color/system_neutral1_10</color>
     <color name="settingslib_materialColorOnSurface">@android:color/system_neutral1_900</color>
     <color name="settingslib_materialColorSurfaceVariant">@android:color/system_neutral2_100</color>
     <color name="settingslib_materialColorOnSurfaceVariant">@android:color/system_neutral2_700</color>
     <color name="settingslib_materialColorSurfaceInverse">@android:color/system_neutral1_800</color>
     <color name="settingslib_materialColorOnSurfaceInverse">@android:color/system_neutral1_50</color>
+
+    <!-- Surface Bright is the key color for the rounded preference boxes -->
     <color name="settingslib_materialColorSurfaceBright">@android:color/system_neutral1_50</color>
     <color name="settingslib_materialColorSurfaceDim">@android:color/system_neutral1_100</color>
+
+    <!-- Surface containers for elevation and depth -->
     <color name="settingslib_materialColorSurfaceContainer">@android:color/system_neutral1_50</color>
-    <color name="settingslib_materialColorSurfaceContainerLow">@android:color/system_neutral1_50</color>
     <color name="settingslib_materialColorSurfaceContainerLowest">@android:color/system_neutral1_0</color>
+    <color name="settingslib_materialColorSurfaceContainerLow">@android:color/system_neutral1_50</color>
     <color name="settingslib_materialColorSurfaceContainerHigh">@android:color/system_neutral1_100</color>
     <color name="settingslib_materialColorSurfaceContainerHighest">@android:color/system_neutral2_100</color>
 
-    <!-- Material next track outline color-->
     <color name="settingslib_track_online_color">@color/settingslib_switch_track_outline_color</color>
 </resources>
