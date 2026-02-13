@@ -32,10 +32,11 @@ object SettingsThemeHelper {
         return result.contains("tablet")
     }
 
-    @ChecksSdkIntAtLeast(Build.VERSION_CODES.BAKLAVA)
+    @ChecksSdkIntAtLeast(Build.VERSION_CODES.S)
     @JvmStatic
     fun isExpressiveTheme(context: Context): Boolean {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.BAKLAVA) {
+        return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && isExpressiveDesignEnabled())
+        /*if (Build.VERSION.SDK_INT < Build.VERSION_CODES.BAKLAVA) {
             return false
         }
         // Enable if overridden by system property
@@ -47,7 +48,7 @@ object SettingsThemeHelper {
         if (activity is ExpressiveDesignEnabledProvider) {
             return activity.isExpressiveDesignEnabled()
         }
-        return isExpressiveDesignEnabled()
+        return isExpressiveDesignEnabled()*/
     }
 
     @JvmStatic
