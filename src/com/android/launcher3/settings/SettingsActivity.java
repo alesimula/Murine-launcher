@@ -267,9 +267,12 @@ public class SettingsActivity extends FragmentActivity
 
         @Override
         public void onViewCreated(View view, Bundle savedInstanceState) {
+            var bottomPadding = getContext().getResources()
+                    .getDimensionPixelSize(com.android.settingslib.widget.theme.R.dimen.settingslib_expressive_space_small1);
             super.onViewCreated(view, savedInstanceState);
-            View listView = getListView();
-            final int bottomPadding = listView.getPaddingBottom();
+            RecyclerView listView = getListView();
+            listView.setPadding(0, 0, 0, bottomPadding);
+            listView.setClipToPadding(false);
             listView.setOnApplyWindowInsetsListener((v, insets) -> {
                 v.setPadding(
                         v.getPaddingLeft(),
