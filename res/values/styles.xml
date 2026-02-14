@@ -188,10 +188,10 @@
 
     <style name="HomeSettings.Theme" parent="@style/Theme.SubSettingsBase">
         <item name="android:windowNoTitle">true</item>
-        <item name="android:textAppearanceListItem">@style/TextAppearance.SettingsLib.TitleMedium.Emphasized</item>
-        <item name="android:textAppearanceListItemSecondary">@style/TextAppearance.SettingsLib.BodyMedium</item>
-        <item name="android:textAppearanceListItemSmall">@style/TextAppearance.SettingsLib.BodySmall</item>
-        <item name="android:fontFamily">@string/settingslib_config_headlineFontFamily</item>
+        <item name="android:textAppearanceListItem">@style/HomeSettings.TitleMedium</item>
+        <item name="android:textAppearanceListItemSecondary">@style/HomeSettings.BodyMedium</item>
+        <item name="android:textAppearanceListItemSmall">@style/HomeSettings.BodySmall</item>
+        <item name="android:fontFamily">sans-serif</item>
         <item name="android:listPreferredItemPaddingStart">16dp</item>
         <item name="android:listPreferredItemPaddingEnd">16dp</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
@@ -199,6 +199,19 @@
         <item name="android:windowActionBar">false</item>
         <item name="alertDialogTheme">@style/HomeSettings.AlertDialog</item>
         <item name="preferenceTheme">@style/HomeSettings.PreferenceTheme</item>
+    </style>
+
+    <style name="HomeSettings.TitleMedium" parent="TextAppearance.SettingsLib.TitleMedium.Emphasized">
+        <item name="android:textStyle">normal</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+    <style name="HomeSettings.BodyMedium" parent="TextAppearance.SettingsLib.BodyMedium.Emphasized">
+        <item name="android:textStyle">normal</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+    <style name="HomeSettings.BodySmall" parent="TextAppearance.SettingsLib.BodySmall.Emphasized">
+        <item name="android:textStyle">normal</item>
+        <item name="android:fontFamily">sans-serif</item>
     </style>
 
     <style name="SettingsLibCollapsingToolbarLayoutStyle_Custom">
@@ -224,9 +237,13 @@
     </style>
     <style name="SettingsLibCollapsingToolbarTitle.Custom.Collapsed" parent="@style/TextAppearance.SettingsLib.TitleLarge.Emphasized">
         <item name="android:textSize">22dp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:fontFamily">sans-serif</item>
     </style>
     <style name="SettingsLibCollapsingToolbarTitle.Custom.Expanded" parent="@style/TextAppearance.SettingsLib.DisplaySmall.Emphasized">
         <item name="android:textSize">36dp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:fontFamily">sans-serif</item>
     </style>
 
     <style name="HomeSettings.AlertDialog" parent="@style/Theme.AlertDialog.SettingsLib">
@@ -265,7 +282,8 @@
     </style>
 
     <style name="HomeSettings.CategoryTitle" parent="@style/TextAppearance.CategoryTitle.SettingsLib">
-        <item name="android:fontFamily">google-sans-text-medium</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:fontFamily">sans-serif</item>
     </style>
 
     <style name="HomeSettings.CategoryStyle" parent="@style/Preference.Category.Material">
