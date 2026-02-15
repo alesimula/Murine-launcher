@@ -15,19 +15,9 @@
     limitations under the License.
   -->
 
-<com.android.settingslib.widget.DrawableStateLinearLayout
+<com.google.android.material.materialswitch.MaterialSwitch
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:theme="@style/Theme.Material3.DynamicColors.DayNight"
+    android:id="@+id/switchWidget"
     android:filterTouchesWhenObscured="false"
-    android:theme="?expressivePreferenceTheme"
-    style="?expressivePreferenceRootLayoutStyle">
-
-    <include layout="@layout/settingslib_expressive_preference_icon_frame" />
-
-    <include layout="@layout/settingslib_expressive_preference_text_frame" />
-
-    <LinearLayout
-        android:id="@android:id/widget_frame"
-        style="?expressivePreferenceWidgetFrameStyle" />
-</com.android.settingslib.widget.DrawableStateLinearLayout>
+    style="@style/SettingslibSwitchStyle.Expressive"/>

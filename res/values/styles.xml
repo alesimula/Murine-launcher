@@ -248,26 +248,22 @@
     </style>
 
     <style name="HomeSettings.PreferenceTheme" parent="@style/PreferenceThemeOverlay">
-        <item name="alertDialogTheme">@style/HomeSettings.AlertDialog</item>
-        <item name="preferenceCategoryStyle">@style/HomeSettings.CategoryStyle</item>
-        <item name="preferenceCategoryTitleTextAppearance">@style/HomeSettings.CategoryTitle</item>
+        <item name="alertDialogTheme">@style/Theme.DeviceDefault.AlertDialog.SettingsLib.Expressive</item>
+        <item name="preferenceCategoryStyle">@style/SettingsLibPreference.Category.Expressive</item>
+        <item name="dropdownPreferenceStyle">@style/SettingsLibPreference.DropDown.Expressive</item>
         <item name="preferenceFragmentCompatStyle">@style/HomeSettings.FragmentCompatStyle</item>
-        <item name="preferenceScreenStyle">@style/HomeSettings.PreferenceScreenStyle</item>
-        <item name="preferenceStyle">@style/HomeSettings.PreferenceStyle</item>
-        <item name="switchPreferenceCompatStyle">@style/HomeSettings.SwitchPreferenceCompatStyle</item>
+        <item name="checkBoxPreferenceStyle">@style/SettingsLibPreference.CheckBoxPreference.Expressive</item>
+        <item name="dialogPreferenceStyle">@style/SettingsLibPreference.DialogPreference.Expressive</item>
+        <item name="preferenceScreenStyle">@style/SettingsLibPreference.PreferenceScreen.Expressive</item>
+        <item name="editTextPreferenceStyle">@style/SettingsLibPreference.DialogPreference.EditTextPreference.Expressive</item>
+        <item name="footerPreferenceStyle">@style/Preference.Material</item>
+        <item name="preferenceStyle">@style/SettingsLibPreference.Expressive</item>
+        <item name="preferenceCategoryTitleTextAppearance">@style/HomeSettings.CategoryTitle</item>
+        <item name="preferenceCategoryTitleTextColor">@color/settingslib_materialColorPrimary</item>
         <item name="switchPreferenceStyle">@style/HomeSettings.SwitchPreferenceStyle</item>
-    </style>
-
-    <style name="HomeSettings.PreferenceStyle" parent="@style/Preference.Material">
-        <item name="iconSpaceReserved">@bool/home_settings_icon_space_reserved</item>
-    </style>
-
-    <style name="HomeSettings.PreferenceScreenStyle" parent="@style/Preference.PreferenceScreen.Material">
-        <item name="iconSpaceReserved">@bool/home_settings_icon_space_reserved</item>
-    </style>
-
-    <style name="HomeSettings.SwitchPreferenceCompatStyle" parent="@style/Preference.SwitchPreferenceCompat.Material">
-        <item name="iconSpaceReserved">@bool/home_settings_icon_space_reserved</item>
+        <item name="seekBarPreferenceStyle">@style/SettingsLibPreference.SeekBarPreference.Expressive</item>
+        <item name="switchPreferenceCompatStyle">@style/SettingsLibPreference.SwitchPreferenceCompat.Expressive</item>
+        <!--item name="expressiveSwitchStyle">@style/SettingslibSwitchStyle.Expressive</item-->
     </style>
 
     <style name="HomeSettings.SwitchPreferenceStyle" parent="@style/Preference.SwitchPreference.Material">
@@ -279,14 +275,9 @@
         <item name="android:fontFamily">sans-serif</item>
     </style>
 
-    <style name="HomeSettings.CategoryStyle" parent="@style/Preference.Category.Material">
-        <item name="allowDividerAbove">@bool/home_settings_allow_divider</item>
-        <item name="allowDividerBelow">@bool/home_settings_allow_divider</item>
-        <item name="iconSpaceReserved">@bool/home_settings_icon_space_reserved</item>
-    </style>
-
     <style name="HomeSettings.FragmentCompatStyle" parent="@style/PreferenceFragment.Material">
         <item name="android:layout">@layout/home_settings</item>
+        <item name="alertDialogTheme">@style/HomeSettings.AlertDialog</item>
     </style>
 
     <!--

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="24"
+   height="24"
+   viewBox="0 0 24 24"
+   fill="none"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="ICON_ICON_2.svg"
+   inkscape:version="1.4.3 (0d15f75, 2025-12-25)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#999999"
+     borderopacity="1"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="32"
+     inkscape:cx="9.46875"
+     inkscape:cy="9.140625"
+     inkscape:window-width="2560"
+     inkscape:window-height="1494"
+     inkscape:window-x="2869"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1" />
+  <!-- main icon shape -->
+  <rect
+     x="3.0398116"
+     y="3.319623"
+     width="17.754"
+     height="17.585907"
+     stroke="currentColor"
+     stroke-width="2.44656"
+     id="rect1"
+     rx="4.0970292"
+     style="stroke-width:1.6;stroke-dasharray:none" />
+  <!-- edit pencil -->
+  <path
+     d="M 9.8586342,10.090806 11.849992,6.942515 13.84135,10.090806 17.027525,12.058488 13.84135,14.02617 11.849992,17.174462 9.8586342,14.02617 6.6724587,12.058488 Z"
+     stroke="currentColor"
+     stroke-width="1.90288"
+     stroke-linejoin="round"
+     fill="none"
+     id="path4"
+     style="stroke-width:1.3;stroke-dasharray:none" />
+  <path
+     d="m 10.926948,11.141109 0.928344,-1.4676901 0.928343,1.4676901 1.485351,0.917306 -1.485351,0.917306 -0.928343,1.467691 -0.928344,-1.467691 -1.4853526,-0.917306 z"
+     stroke="currentColor"
+     stroke-width="1.90288"
+     stroke-linejoin="round"
+     fill="none"
+     id="path4-7"
+     style="opacity:0.75;stroke-width:0.7;stroke-dasharray:none" />
+  <path
+     d="M 9.2970969,5.4852143 H 7.5123215 c -1.3360479,0 -2.317,1.0265305 -2.317,2.165 v 1.7235902"
+     stroke="currentColor"
+     stroke-width="1.7063"
+     stroke-linecap="round"
+     id="path2"
+     style="opacity:0.65;stroke-width:1.85;stroke-dasharray:none"
+     sodipodi:nodetypes="cssc" />
+</svg>

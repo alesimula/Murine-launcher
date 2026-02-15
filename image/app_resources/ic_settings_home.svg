@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="24"
+   height="24"
+   viewBox="0 0 24 24"
+   fill="none"
+   stroke="currentColor"
+   stroke-width="2"
+   stroke-linecap="round"
+   stroke-linejoin="round"
+   version="1.1"
+   id="svg3"
+   sodipodi:docname="ICON_UWU1.svg"
+   inkscape:version="1.4.3 (0d15f75, 2025-12-25)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs3" />
+  <sodipodi:namedview
+     id="namedview3"
+     pagecolor="#ffffff"
+     bordercolor="#999999"
+     borderopacity="1"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="16"
+     inkscape:cx="-8.4375"
+     inkscape:cy="13.84375"
+     inkscape:window-width="2560"
+     inkscape:window-height="1494"
+     inkscape:window-x="2869"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg3" />
+  <!-- Phone outline -->
+  <rect
+     x="6.3277788"
+     y="2.4117227"
+     width="11.568"
+     height="19.280485"
+     rx="2.8920727"
+     id="rect1"
+     style="stroke-width:1.7;stroke-dasharray:none" />
+  <!-- Top pill (camera notch) -->
+  <rect
+     x="10.545976"
+     y="4.2932014"
+     width="2.9969697"
+     height="0.24467516"
+     rx="0.37462121"
+     id="rect2"
+     style="stroke-width:0.856325;opacity:0.65" />
+  <!-- Bottom pill (search/gesture bar) -->
+  <rect
+     x="8.5711365"
+     y="18.401709"
+     width="7.0957084"
+     height="0.98947066"
+     rx="0.66522264"
+     opacity="0.3"
+     id="rect3"
+     style="stroke-width:1.52981" />
+  <rect
+     x="8.606719"
+     y="9.1401644"
+     width="2.7022223"
+     height="2.7022223"
+     rx="0.67555559"
+     stroke="currentColor"
+     stroke-width="0.810667"
+     id="rect1-0"
+     style="opacity:0.6" />
+  <rect
+     x="8.606719"
+     y="13.193498"
+     width="2.7022223"
+     height="2.7022223"
+     rx="0.67555559"
+     stroke="currentColor"
+     stroke-width="0.810667"
+     id="rect3-4"
+     style="opacity:0.8" />
+  <rect
+     x="12.682572"
+     y="13.193498"
+     width="2.7022223"
+     height="2.7022223"
+     rx="0.67555559"
+     stroke="currentColor"
+     stroke-width="0.810667"
+     id="rect4"
+     style="opacity:0.7" />
+</svg>

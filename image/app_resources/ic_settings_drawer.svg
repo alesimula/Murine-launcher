@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="24"
+   height="24"
+   viewBox="0 0 24 24"
+   fill="none"
+   version="1.1"
+   id="svg3"
+   sodipodi:docname="ICON_DRAWER.svg"
+   inkscape:version="1.4.3 (0d15f75, 2025-12-25)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs3" />
+  <sodipodi:namedview
+     id="namedview3"
+     pagecolor="#ffffff"
+     bordercolor="#999999"
+     borderopacity="1"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="25.270833"
+     inkscape:cx="-3.4822754"
+     inkscape:cy="20.517725"
+     inkscape:window-width="2560"
+     inkscape:window-height="1494"
+     inkscape:window-x="2869"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg3" />
+  <!-- back layer -->
+  <rect
+     x="4.7298465"
+     y="3.5334699"
+     width="14.528584"
+     height="5.461791"
+     rx="1.4160041"
+     stroke="currentColor"
+     stroke-width="1.44663"
+     opacity="0.4"
+     id="rect1"
+     style="stroke-width:1.3;stroke-dasharray:none" />
+  <!-- middle layer -->
+  <rect
+     x="3.6789658"
+     y="6.6039252"
+     width="16.630344"
+     height="7.7899108"
+     rx="1.652794"
+     stroke="currentColor"
+     stroke-width="1.71127"
+     opacity="0.65"
+     id="rect2"
+     style="stroke-width:1.55;stroke-dasharray:none" />
+  <!-- front layer -->
+  <rect
+     x="2.5427201"
+     y="11.265953"
+     width="18.902605"
+     height="8.7250433"
+     rx="2.0082192"
+     stroke="currentColor"
+     stroke-width="1.80614"
+     id="rect3"
+     style="stroke-width:1.7;stroke-dasharray:none" />
+  <rect
+     x="8.941843"
+     y="13.079589"
+     width="6"
+     height="1.5"
+     rx="0.75"
+     fill="currentColor"
+     id="rect4"
+     style="stroke-width:2;stroke-dasharray:none" />
+</svg>

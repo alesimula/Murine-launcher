@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="24"
+   height="24"
+   viewBox="0 0 24 24"
+   fill="none"
+   stroke="currentColor"
+   stroke-width="1.7"
+   stroke-linecap="round"
+   stroke-linejoin="round"
+   version="1.1"
+   id="svg6"
+   sodipodi:docname="ICON_TEST.svg"
+   inkscape:version="1.4.3 (0d15f75, 2025-12-25)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs6" />
+  <sodipodi:namedview
+     id="namedview6"
+     pagecolor="#ffffff"
+     bordercolor="#999999"
+     borderopacity="1"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="32"
+     inkscape:cx="10.5625"
+     inkscape:cy="11.453125"
+     inkscape:window-width="2560"
+     inkscape:window-height="1494"
+     inkscape:window-x="2869"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <!-- Back-left box (behind front, cut on right, non-rounded cut) -->
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="box_3"
+     transform="translate(0.73600002,6.28125)"
+     style="opacity:0.6">
+    <rect
+       x="-0.52374685"
+       y="-12.342057"
+       width="2.0072298"
+       height="2.6143532"
+       rx="0.07820081"
+       opacity="0.6"
+       id="rect6-1"
+       style="opacity:1;stroke-width:1;stroke-dasharray:none"
+       inkscape:label="b3_tape"
+       transform="rotate(90)" />
+    <path
+       d="M 16.216677,0.47240935 16.217029,1.75475"
+       id="path2-9-8"
+       sodipodi:nodetypes="cc"
+       style="stroke-width:1.6;stroke-linecap:square;stroke-dasharray:none"
+       inkscape:label="b3_leg" />
+    <path
+       d="M 11.044268,1.8097763 11.04462,2.10575"
+       id="path2-9-8-2"
+       sodipodi:nodetypes="cc"
+       style="opacity:1;stroke-width:0.9;stroke-linecap:square;stroke-dasharray:none"
+       inkscape:label="b3_leg" />
+    <path
+       d="M 6.0136765,4.9724093 V -0.53124998 H 16.217029 v 1.00365933"
+       id="path1"
+       sodipodi:nodetypes="cccc"
+       inkscape:label="b3_shape"
+       style="stroke-width:1.6;stroke-dasharray:none" />
+  </g>
+  <!-- left vertical -->
+  <!-- Duct tape for back-left -->
+  <!-- Back-top box (behind front, cut on bottom, non-rounded cut) -->
+  <!-- right vertical -->
+  <!-- Duct tape for back-top -->
+  <!-- Front-left box (fully enclosed) -->
+  <!-- Duct tape for front-left -->
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="box_2"
+     style="opacity:0.8">
+    <path
+       d="M 16.174325,12.260609 16.174677,16.557"
+       id="path2-9-8-2-2"
+       sodipodi:nodetypes="cc"
+       style="opacity:1;stroke-width:0.9;stroke-linecap:square;stroke-dasharray:none"
+       inkscape:label="b3_leg" />
+    <rect
+       x="9.5948696"
+       y="-17.50876"
+       width="1.8989105"
+       height="2.6589899"
+       rx="0.070623219"
+       opacity="0.6"
+       id="rect6-7"
+       style="opacity:1;stroke-width:0.9;stroke-dasharray:none"
+       inkscape:label="b2_tape"
+       transform="rotate(90)" />
+    <path
+       d="M 11.399677,11.253659 V 9.6358623 l 9.518491,2.04e-4 -4.91e-4,7.6559337 h -7.618"
+       id="path3"
+       sodipodi:nodetypes="ccccc"
+       inkscape:label="b2_shape"
+       style="stroke-width:1.6;stroke-dasharray:none" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer1"
+     inkscape:label="box_1">
+    <path
+       d="m 8.0675595,14.18459 3.52e-4,4.29639"
+       id="path2-9-8-2-2-1"
+       sodipodi:nodetypes="cc"
+       style="opacity:1;stroke-width:0.9;stroke-linecap:square;stroke-dasharray:none"
+       inkscape:label="b3_leg" />
+    <rect
+       x="11.526276"
+       y="-9.4684172"
+       width="2.0743065"
+       height="2.8006082"
+       rx="0.07820081"
+       opacity="0.6"
+       id="rect6"
+       style="opacity:1;stroke-width:1;stroke-dasharray:none"
+       inkscape:label="b1_tape"
+       transform="rotate(90)" />
+    <rect
+       x="3.072"
+       y="11.520016"
+       width="10"
+       height="8"
+       rx="0.2"
+       id="rect5"
+       style="stroke-width:1.6;stroke-dasharray:none"
+       inkscape:label="b1_shape" />
+  </g>
+</svg>

@@ -18,10 +18,18 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/icon_frame"
-    android:filterTouchesWhenObscured="false"
-    style="?expressivePreferenceIconFrameStyle">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:minWidth="@dimen/settingslib_expressive_space_medium3"
+    android:minHeight="@dimen/settingslib_expressive_space_medium3"
+    android:gravity="center"
+    android:layout_marginEnd="@dimen/settingslib_expressive_space_extrasmall6"
+    android:filterTouchesWhenObscured="false">
 
     <androidx.preference.internal.PreferenceImageView
         android:id="@android:id/icon"
-        style="?expressivePreferenceIconStyle" />
+        android:layout_width="@dimen/settingslib_expressive_space_medium3"
+        android:layout_height="@dimen/settingslib_expressive_space_medium3"
+        android:scaleType="centerInside"/>
+
 </LinearLayout>
