@@ -1,0 +1,8 @@
+# Preserve names for IPC codec to support unmarshalling Parcelable
+-keepnames class com.android.settingslib.metadata.PreferenceCoordinate {
+  public static final ** CREATOR;
+}
+
+-keepnames class com.android.settingslib.metadata.PreferenceScreenCoordinate {
+  public static final ** CREATOR;
+}

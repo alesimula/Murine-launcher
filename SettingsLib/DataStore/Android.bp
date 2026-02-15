@@ -1,0 +1,22 @@
+package {
+    default_applicable_licenses: ["frameworks_base_license"],
+}
+
+android_library {
+    name: "SettingsLibDataStore",
+    defaults: [
+        "SettingsLibApexDefaults",
+        "SettingsLintDefaults",
+    ],
+    sdk_version: "system_current",
+    min_sdk_version: "23",
+    srcs: ["src/**/*.kt"],
+    static_libs: [
+        "androidx.annotation_annotation",
+        "androidx.collection_collection-ktx",
+        "androidx.core_core-ktx",
+        "error_prone_annotations",
+        "guava",
+    ],
+    kotlincflags: ["-Xjvm-default=all"],
+}

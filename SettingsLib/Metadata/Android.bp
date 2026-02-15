@@ -1,0 +1,23 @@
+package {
+    default_applicable_licenses: ["frameworks_base_license"],
+}
+
+android_library {
+    name: "SettingsLibMetadata",
+    defaults: [
+        "SettingsLibApexDefaults",
+        "SettingsLintDefaults",
+    ],
+    sdk_version: "system_current",
+    min_sdk_version: "23",
+    srcs: ["src/**/*.kt"],
+    static_libs: [
+        "SettingsLibDataStore",
+        "androidx.annotation_annotation",
+        "androidx.fragment_fragment",
+    ],
+    kotlincflags: ["-Xjvm-default=all"],
+    optimize: {
+        proguard_flags_files: ["proguard.pgcfg"],
+    },
+}

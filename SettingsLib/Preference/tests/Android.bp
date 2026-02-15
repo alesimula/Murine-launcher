@@ -1,0 +1,28 @@
+package {
+    default_applicable_licenses: ["frameworks_base_license"],
+}
+
+android_app {
+    name: "SettingsLibPreferenceShell",
+    sdk_version: "system_current",
+    static_libs: [
+        "androidx.fragment_fragment-testing",
+        "androidx.preference_preference",
+    ],
+}
+
+android_robolectric_test {
+    name: "SettingsLibPreferenceTest",
+    srcs: ["src/**/*.kt"],
+    static_libs: [
+        "SettingsLibPreference",
+        "SettingsLibPreference-testutils",
+        "androidx.test.ext.junit",
+        "kotlinx_coroutines_test",
+        "truth",
+    ],
+    associates: ["SettingsLibPreference"],
+    coverage_libs: ["SettingsLibPreference"],
+    instrumentation_for: "SettingsLibPreferenceShell",
+    upstream: true,
+}

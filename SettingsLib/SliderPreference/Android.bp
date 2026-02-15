@@ -1,0 +1,33 @@
+package {
+    // See: http://go/android-license-faq
+    // A large-scale-change added 'default_applicable_licenses' to import
+    // all of the 'license_kinds' from "frameworks_base_license"
+    // to get the below license kinds:
+    //   SPDX-license-identifier-Apache-2.0
+    default_applicable_licenses: ["frameworks_base_license"],
+}
+
+android_library {
+    name: "SettingsLibSliderPreference",
+    use_resource_processor: true,
+    defaults: [
+        "SettingsLibApexDefaults",
+        "SettingsLintDefaults",
+    ],
+
+    srcs: [
+        "src/**/*.java",
+        "src/**/*.kt",
+    ],
+    resource_dirs: ["res"],
+
+    static_libs: [
+        "SettingsLibPreference",
+        "SettingsLibSettingsTheme",
+        "androidx.annotation_annotation",
+        "androidx.preference_preference",
+    ],
+
+    sdk_version: "system_current",
+    min_sdk_version: "23",
+}

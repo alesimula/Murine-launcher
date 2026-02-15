@@ -287,6 +287,7 @@ dependencies {
     implementation project(':flags')
     implementation project(':WMShared')
     implementation project(':SettingsLib-SettingsTheme')
+    implementation project(':SettingsLib-SliderPreference')
     withQuickstepCompileOnly project(':HiddenApi')
 
     // Include all compat libs

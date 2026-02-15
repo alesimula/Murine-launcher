@@ -1,0 +1,37 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace = "com.android.settingslib.datastore"
+    compileSdk = 36
+
+    defaultConfig {
+        minSdk = 26
+    }
+
+    sourceSets {
+        getByName("main") {
+            java.srcDirs("src")
+            res.srcDirs("res")
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+    }
+
+    kotlinOptions {
+        jvmTarget = "21"
+    }
+}
+
+dependencies {
+    implementation(libs.annotation)
+    implementation(libs.androidx.collection.ktx)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.google.errorprone.annotations)
+    implementation(libs.google.guava)
+}

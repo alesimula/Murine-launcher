@@ -62,6 +62,14 @@ project(':HiddenApi').projectDir = new File(rootDir, 'hidden-api')
 
 include ':SettingsLib-SettingsTheme'
 project(':SettingsLib-SettingsTheme').projectDir = new File(rootDir, 'SettingsLib/SettingsTheme')
+include ':SettingsLib-DataStore'
+project(':SettingsLib-DataStore').projectDir = new File(rootDir, 'SettingsLib/DataStore')
+include ':SettingsLib-Metadata'
+project(':SettingsLib-Metadata').projectDir = new File(rootDir, 'SettingsLib/Metadata')
+include ':SettingsLib-Preference'
+project(':SettingsLib-Preference').projectDir = new File(rootDir, 'SettingsLib/Preference')
+include ':SettingsLib-SliderPreference'
+project(':SettingsLib-SliderPreference').projectDir = new File(rootDir, 'SettingsLib/SliderPreference')
 
 include ':compatLib'
 include ':compatLib:compatLibVQ'
