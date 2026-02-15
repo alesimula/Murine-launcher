@@ -15,6 +15,8 @@
  */
 package app.murinelauncher.widget;
 
+import static android.view.HapticFeedbackConstants.CLOCK_TICK;
+
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
@@ -222,6 +224,27 @@ public class CustomSeekBarPreference extends SliderPreference {
         final Slider slider = (Slider) holder.findViewById(
                 com.android.settingslib.widget.preference.slider.R.id.slider);
 
+        if (slider != null) slider.setOnTouchListener(new View.OnTouchListener() {
+            private boolean mIgnoreGesture = false;
+
+            @Override public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    float x = event.getX();
+                    // 12dp threshold to avoid accidental jumps when clicking +/- buttons
+                    float threshold = 12 * v.getResources().getDisplayMetrics().density;
+                    mIgnoreGesture = (x < threshold || x > v.getWidth() - threshold);
+                }
+
+                if (mIgnoreGesture) {
+                    if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
+                        mIgnoreGesture = false;
+                    }
+                    return true; // Consume the event and block Slider's internal logic
+                }
+                return false;
+            }
+        });
+
         int stepForClicks = Math.max(1, getSliderIncrement());
 
         if (minusFrame != null && minusIcon != null) {
@@ -229,6 +252,7 @@ public class CustomSeekBarPreference extends SliderPreference {
             minusIcon.setImageResource(R.drawable.ic_custom_seekbar_minus);
             minusFrame.setOnClickListener(v -> {
                 if (!isEnabled()) return;
+                v.performHapticFeedback(CLOCK_TICK);
                 int base = slider != null ? Math.round(slider.getValue()) : getValue();
                 int newVal = Math.max(getMin(), base - stepForClicks);
                 applyUserValue(newVal, slider);
@@ -241,6 +265,7 @@ public class CustomSeekBarPreference extends SliderPreference {
             plusIcon.setImageResource(R.drawable.ic_custom_seekbar_plus);
             plusFrame.setOnClickListener(v -> {
                 if (!isEnabled()) return;
+                v.performHapticFeedback(CLOCK_TICK);
                 int base = slider != null ? Math.round(slider.getValue()) : getValue();
                 int newVal = Math.min(getMax(), base + stepForClicks);
                 applyUserValue(newVal, slider);
@@ -356,10 +381,18 @@ public class CustomSeekBarPreference extends SliderPreference {
 
             if (!isRtl) {
                 final int left = tv.getWidth() - ViewCompat.getPaddingEnd(tv) - iconW - tapSlop;
-                if (x >= left) { performReset(); return true; }
+                if (x >= left) {
+                    v.performHapticFeedback(CLOCK_TICK);
+                    performReset();
+                    return true;
+                }
             } else {
                 final int right = ViewCompat.getPaddingStart(tv) + iconW + tapSlop;
-                if (x <= right) { performReset(); return true; }
+                if (x <= right) {
+                    v.performHapticFeedback(CLOCK_TICK);
+                    performReset();
+                    return true;
+                }
             }
             return false;
         });
