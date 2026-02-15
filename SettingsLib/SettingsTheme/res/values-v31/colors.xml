@@ -72,7 +72,7 @@
     <color name="settingslib_materialColorOnError">@android:color/white</color>
     <color name="settingslib_materialColorErrorContainer">@color/settingslib_error_100</color>
     <color name="settingslib_materialColorOnErrorContainer">@color/settingslib_error_900</color>
-    <color name="settingslib_materialColorOutline">@android:color/system_neutral2_500</color>
+    <color name="settingslib_materialColorOutline">@android:color/system_neutral1_500</color>
     <color name="settingslib_materialColorOutlineVariant">@android:color/system_neutral2_200</color>
 
     <!-- Background - Use system_neutral1_10 for a very light base -->
@@ -96,7 +96,7 @@
     <color name="settingslib_materialColorSurfaceContainerLowest">@android:color/system_neutral1_0</color>
     <color name="settingslib_materialColorSurfaceContainerLow">@android:color/system_neutral1_50</color>
     <color name="settingslib_materialColorSurfaceContainerHigh">@android:color/system_neutral1_100</color>
-    <color name="settingslib_materialColorSurfaceContainerHighest">@android:color/system_neutral2_100</color>
+    <color name="settingslib_materialColorSurfaceContainerHighest">@android:color/system_neutral1_100</color>
 
     <color name="settingslib_track_online_color">@color/settingslib_switch_track_outline_color</color>
 </resources>

@@ -72,7 +72,7 @@
     <color name="settingslib_materialColorOnError">@color/settingslib_error_800</color>
     <color name="settingslib_materialColorErrorContainer">@color/settingslib_error_700</color>
     <color name="settingslib_materialColorOnErrorContainer">@color/settingslib_error_100</color>
-    <color name="settingslib_materialColorOutline">@android:color/system_neutral2_400</color>
+    <color name="settingslib_materialColorOutline">@android:color/system_neutral1_400</color>
     <color name="settingslib_materialColorOutlineVariant">@android:color/system_neutral2_700</color>
 
     <!-- Background - Expressive Dark Mode Background -->
@@ -94,9 +94,9 @@
     <!-- Surface containers for depth -->
     <color name="settingslib_materialColorSurfaceContainer">@android:color/system_neutral1_800</color>
     <color name="settingslib_materialColorSurfaceContainerLowest">@android:color/black</color>
-    <color name="settingslib_materialColorSurfaceContainerLow">@android:color/system_neutral1_900</color>
-    <color name="settingslib_materialColorSurfaceContainerHigh">@android:color/system_neutral1_800</color>
-    <color name="settingslib_materialColorSurfaceContainerHighest">@android:color/system_neutral1_700</color>
+    <color name="settingslib_materialColorSurfaceContainerLow">@android:color/system_neutral1_1000</color>
+    <color name="settingslib_materialColorSurfaceContainerHigh">@android:color/system_neutral1_900</color>
+    <color name="settingslib_materialColorSurfaceContainerHighest">@android:color/system_neutral1_800</color>
 
     <color name="settingslib_track_online_color">@color/settingslib_switch_track_outline_color</color>
 </resources>

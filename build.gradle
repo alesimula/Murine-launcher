@@ -27,7 +27,7 @@ android {
     namespace = 'com.android.launcher3'
 
     defaultConfig {
-        minSdkVersion 32
+        minSdkVersion 31
         targetSdkVersion 36
         versionCode 1
         versionName "1.0"

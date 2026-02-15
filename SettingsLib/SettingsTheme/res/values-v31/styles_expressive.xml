@@ -136,6 +136,7 @@
         <item name="android:focusable">false</item>
         <item name="thumbIcon">@drawable/settingslib_expressive_switch_thumb_icon</item>
         <item name="thumbIconTint">@color/settingslib_expressive_color_switch_thumb_icon</item>
+        <item name="trackDecorationTint">@color/settingslib_switch_track_outline_color</item>
         <item name="thumbTint">@color/settingslib_expressive_color_switch_thumb</item>
         <item name="trackTint">@color/settingslib_expressive_color_switch_track</item>
     </style>
