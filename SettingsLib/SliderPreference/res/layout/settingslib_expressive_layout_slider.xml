@@ -23,8 +23,8 @@
 
     <FrameLayout
         android:id="@+id/icon_start_frame"
-        android:layout_width="@dimen/settingslib_expressive_space_medium4"
-        android:layout_height="@dimen/settingslib_expressive_space_medium4"
+        android:layout_width="@dimen/settingslib_expressive_space_small4"
+        android:layout_height="@dimen/settingslib_expressive_space_small4"
         android:clipChildren="false"
         android:focusable="true"
         android:visibility="gone">
@@ -51,8 +51,8 @@
 
     <FrameLayout
         android:id="@+id/icon_end_frame"
-        android:layout_width="@dimen/settingslib_expressive_space_medium4"
-        android:layout_height="@dimen/settingslib_expressive_space_medium4"
+        android:layout_width="@dimen/settingslib_expressive_space_small4"
+        android:layout_height="@dimen/settingslib_expressive_space_small4"
         android:clipChildren="false"
         android:focusable="true"
         android:visibility="gone">

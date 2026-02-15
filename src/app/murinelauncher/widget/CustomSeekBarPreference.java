@@ -188,6 +188,12 @@ public class CustomSeekBarPreference extends SliderPreference {
             summaryView.setText(composeSummary(mUserSummary, getValue()));
         }
 
+        final TextView titleView = (TextView) holder.findViewById(android.R.id.title);
+        if (titleView != null) {
+            titleView.getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
+            attachResetIcon(titleView);
+        }
+
         final View labelFrame = holder.findViewById(
                 com.android.settingslib.widget.preference.slider.R.id.label_frame);
         final TextView startText = (TextView) holder.findViewById(android.R.id.text1);
@@ -200,11 +206,7 @@ public class CustomSeekBarPreference extends SliderPreference {
                     && endText.getText().length() > 0;
             boolean parentWantsLabels = hasStart || hasEnd;
 
-            labelFrame.setVisibility((parentWantsLabels || mDefaultValueExists) ? View.VISIBLE : View.GONE);
-        }
-
-        if (endText != null) {
-            attachResetIcon(endText);
+            labelFrame.setVisibility(parentWantsLabels ? View.VISIBLE : View.GONE);
         }
 
         ViewGroup minusFrame = (ViewGroup) holder.findViewById(
