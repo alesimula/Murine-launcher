@@ -298,7 +298,9 @@ public class SettingsActivity extends FragmentActivity
          */
         protected boolean initPreference(Preference preference) {
             DisplayController.Info info = DisplayController.INSTANCE.get(getContext()).getInfo();
-            switch (preference.getKey()) {
+            String key = preference.getKey();
+            if (key == null) return true;
+            else switch (key) {
                 case NOTIFICATION_DOTS_PREFERENCE_KEY:
                     return BuildConfig.NOTIFICATION_DOTS_ENABLED;
                 case ALLOW_ROTATION_PREFERENCE_KEY:
