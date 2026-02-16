@@ -59,6 +59,7 @@ import com.android.launcher3.Flags;
 import com.android.launcher3.Launcher;
 import com.android.launcher3.LauncherState;
 import com.android.launcher3.R;
+import com.android.launcher3.Utilities;
 import com.android.launcher3.anim.AnimatedFloat;
 import com.android.launcher3.anim.PendingAnimation;
 import com.android.launcher3.anim.PropertySetter;
@@ -246,7 +247,7 @@ public class AllAppsTransitionController
         // Allow apps panel to shift the full screen if coming from another app.
         float shiftRange = fromBackground ? mLauncher.getDeviceProfile().heightPx : mShiftRange;
         getAppsViewProgressTranslationY().setValue(mProgress * shiftRange);
-        tryBlurWindow(progress);
+        if (Utilities.ATLEAST_S) tryBlurWindow(progress);
         mLauncher.onAllAppsTransition(1 - progress);
 
         boolean hasScrim = progress < NAV_BAR_COLOR_FORCE_UPDATE_THRESHOLD

@@ -355,7 +355,7 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         if (Utilities.ATLEAST_S) {
             legacyRes = dark ? android.R.color.system_neutral2_600 : android.R.color.system_neutral2_200;
         } else {
-            legacyRes = dark ? R.color.all_apps_bg_hand_fill_dark : R.color.all_apps_bg_hand_fill;
+            legacyRes = R.color.materialColorSurfaceDim;
         }
 
         int legacyColor = getResources().getColor(legacyRes);

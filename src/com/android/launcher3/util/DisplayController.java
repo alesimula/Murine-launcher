@@ -452,7 +452,9 @@ public class DisplayController implements DesktopVisibilityListener {
                     String.format("getOrCreatePerDisplayInfo - no cached value found for %d",
                             displayId));
         }
-        Context windowContext = mAppContext.createWindowContext(display, TYPE_APPLICATION, null);
+        Context windowContext = Utilities.ATLEAST_S ?
+                mAppContext.createWindowContext(display, TYPE_APPLICATION, null) :
+                mAppContext.createDisplayContext(display);
         Info info = new Info(windowContext, mWMProxy,
                 mWMProxy.estimateInternalDisplayBounds(windowContext));
         perDisplayInfo = new PerDisplayInfo(displayId, windowContext, info);
