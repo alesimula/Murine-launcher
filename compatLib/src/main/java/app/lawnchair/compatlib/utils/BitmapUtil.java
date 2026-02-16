@@ -20,7 +20,11 @@ import android.graphics.Bitmap;
 import android.graphics.ColorSpace;
 import android.graphics.ParcelableColorSpace;
 import android.hardware.HardwareBuffer;
+import android.os.Build;
 import android.os.Bundle;
+
+import androidx.annotation.RequiresApi;
+
 import java.util.Objects;
 
 /** Utils for working with Bitmaps. */
@@ -43,6 +47,7 @@ public final class BitmapUtil {
      * @return a Bundle representing the bitmap, should only be parsed by {@link
      *     #bundleToHardwareBitmap(Bundle)}
      */
+    @RequiresApi(api = Build.VERSION_CODES.S)
     public static Bundle hardwareBitmapToBundle(Bitmap bitmap) {
         if (bitmap.getConfig() != Bitmap.Config.HARDWARE) {
             throw new IllegalArgumentException(
@@ -68,6 +73,7 @@ public final class BitmapUtil {
      * @param bundle containing the bitmap
      * @return a hardware Bitmap
      */
+    @RequiresApi(api = Build.VERSION_CODES.S)
     public static Bitmap bundleToHardwareBitmap(Bundle bundle) {
         if (!bundle.containsKey(KEY_BUFFER) || !bundle.containsKey(KEY_COLOR_SPACE)) {
             throw new IllegalArgumentException("Bundle does not contain a hardware bitmap");

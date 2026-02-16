@@ -31,6 +31,7 @@ import android.util.LongSparseArray
 import com.android.launcher3.Flags
 import com.android.launcher3.InvariantDeviceProfile
 import com.android.launcher3.LauncherSettings.Favorites
+import com.android.launcher3.Utilities
 import com.android.launcher3.backuprestore.LauncherRestoreEventLogger.RestoreError
 import com.android.launcher3.icons.CacheableShortcutInfo
 import com.android.launcher3.icons.IconCache
@@ -377,8 +378,8 @@ class WorkspaceItemProcessor(
                 )
             }
             if (
-                (c.restoreFlag != 0 ||
-                    Flags.enableSupportForArchiving() &&
+                Utilities.ATLEAST_V && (c.restoreFlag != 0 ||
+                        Flags.enableSupportForArchiving() &&
                         activityInfo != null &&
                         activityInfo.applicationInfo.isArchived) && !TextUtils.isEmpty(targetPkg)
             ) {

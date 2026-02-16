@@ -201,6 +201,7 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
             mSystemGestureExclusionRects.get(i).set(dragHandle.getLeft(), dragHandle.getTop(),
                     dragHandle.getRight(), dragHandle.getBottom());
         }
+        if (!Utilities.ATLEAST_Q) return;
         setSystemGestureExclusionRects(mSystemGestureExclusionRects);
     }
 

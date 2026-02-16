@@ -22,6 +22,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import com.android.launcher3.LauncherConstants.SavedInstanceKeys.RUNTIME_STATE_RECREATE_TO_UPDATE_THEME
 import com.android.launcher3.R
+import com.android.launcher3.Utilities
 
 /** Utility class to manage activity's theme in case it is wallpaper dependent */
 class WallpaperThemeManager private constructor(private val activity: Activity) :
@@ -40,7 +41,11 @@ class WallpaperThemeManager private constructor(private val activity: Activity) 
             activity.setTheme(expectedTheme)
         }
 
-        activity.registerActivityLifecycleCallbacks(this)
+        if (Utilities.ATLEAST_Q) {
+            activity.registerActivityLifecycleCallbacks(this)
+        } else {
+            activity.application.registerActivityLifecycleCallbacks(this)
+        }
         activity.registerComponentCallbacks(this)
     }
 

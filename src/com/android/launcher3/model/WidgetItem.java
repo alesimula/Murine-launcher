@@ -31,7 +31,7 @@ public class WidgetItem extends ComponentKey {
         super(info.provider, info.getProfile());
 
         label = iconCache.getTitleNoCache(info);
-        description = info.loadDescription(context);
+        description = Utilities.ATLEAST_S && info.loadDescription(context) != null ? info.loadDescription(context) : "";
         widgetInfo = info;
         activityInfo = null;
 

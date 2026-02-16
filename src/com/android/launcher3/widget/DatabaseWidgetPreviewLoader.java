@@ -114,7 +114,7 @@ public class DatabaseWidgetPreviewLoader {
             }
         }
 
-        if (result.providerInfo == null && widgetInfo != null
+        if (Utilities.ATLEAST_S && result.providerInfo == null && widgetInfo != null
                 && widgetInfo.previewLayout != Resources.ID_NULL) {
             result.providerInfo = fromProviderInfo(mContext, widgetInfo.clone());
             // A hack to force the initial layout to be the preview layout since there is no API for

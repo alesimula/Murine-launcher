@@ -41,6 +41,7 @@ import androidx.annotation.Nullable;
 import com.android.launcher3.CheckLongPressHelper;
 import com.android.launcher3.Flags;
 import com.android.launcher3.R;
+import com.android.launcher3.Utilities;
 import com.android.launcher3.model.data.ItemInfo;
 import com.android.launcher3.util.Themes;
 import com.android.launcher3.views.ActivityContext;
@@ -126,17 +127,19 @@ public class LauncherAppWidgetHostView extends BaseLauncherAppWidgetHostView
         super.setAppWidget(appWidgetId, info);
         if (!mTrackingWidgetUpdate && appWidgetId != -1) {
             mTrackingWidgetUpdate = true;
-            Trace.beginAsyncSection(TRACE_METHOD_NAME + info.provider, appWidgetId);
             Log.i(TAG, "App widget created with id: " + appWidgetId);
+            if (Utilities.ATLEAST_Q)
+                Trace.beginAsyncSection(TRACE_METHOD_NAME + info.provider, appWidgetId);
         }
     }
+
 
     @Override
     public void updateAppWidget(RemoteViews remoteViews) {
         if (mTrackingWidgetUpdate && remoteViews != null) {
             Log.i(TAG, "App widget with id: " + getAppWidgetId() + " loaded");
-            Trace.endAsyncSection(
-                    TRACE_METHOD_NAME + getAppWidgetInfo().provider, getAppWidgetId());
+            if (Utilities.ATLEAST_Q) Trace.endAsyncSection(
+                        TRACE_METHOD_NAME + getAppWidgetInfo().provider, getAppWidgetId());
             mTrackingWidgetUpdate = false;
         }
         mLastRemoteViews = remoteViews;

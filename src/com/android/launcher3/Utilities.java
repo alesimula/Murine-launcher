@@ -677,7 +677,11 @@ public final class Utilities {
             if (activityInfo == null) {
                 return null;
             }
-            mainIcon = appState.getIconCache().getFullResIcon(activityInfo.getActivityInfo());
+            if (Utilities.ATLEAST_S) {
+                mainIcon = appState.getIconCache().getFullResIcon(activityInfo.getActivityInfo());
+            } else {
+                mainIcon = appState.getIconCache().getFullResIcon(activityInfo.getComponentName().getPackageName());
+            }
         } else if (info.itemType == LauncherSettings.Favorites.ITEM_TYPE_DEEP_SHORTCUT) {
             List<ShortcutInfo> siList = ShortcutKey.fromItemInfo(info)
                     .buildRequest(context)
