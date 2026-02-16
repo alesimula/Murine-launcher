@@ -155,7 +155,11 @@ final class FloatingWidgetBackgroundView extends View {
     /** Returns the maximum corner radius of {@param drawable}. */
     private static float getMaxRadius(@Nullable Drawable drawable) {
         if (!(drawable instanceof GradientDrawable)) return 0;
-        float[] cornerRadii = ((GradientDrawable) drawable).getCornerRadii();
+        float[] radii = null;
+        try {
+            radii = ((GradientDrawable) drawable).getCornerRadii();
+        } catch (Exception ignored) {}
+        float[] cornerRadii = radii;
         float cornerRadius = ((GradientDrawable) drawable).getCornerRadius();
         double radiiMax = cornerRadii == null ? 0 : IntStream.range(0, cornerRadii.length)
                 .mapToDouble(i -> cornerRadii[i]).max().orElse(0);
@@ -193,7 +197,11 @@ final class FloatingWidgetBackgroundView extends View {
             mDrawable = drawable;
             if (!(drawable instanceof GradientDrawable)) return;
             mOriginalRadius = ((GradientDrawable) drawable).getCornerRadius();
-            mOriginalRadii = ((GradientDrawable) drawable).getCornerRadii();
+            float[] radii = null;
+            try {
+                radii = ((GradientDrawable) drawable).getCornerRadii();
+            } catch (Exception ignored) {}
+            mOriginalRadii = radii;
         }
 
         /**

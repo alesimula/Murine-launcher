@@ -880,7 +880,7 @@ public abstract class RecentsView<
         setEnableFreeScroll(true);
 
         mContainer = RecentsViewContainer.containerFromContext(context);
-        mSizeStrategy = getContainerInterface(mContainer.getDisplayId());
+        mSizeStrategy = getContainerInterface(mContainer.getDisplay().getDisplayId());
 
         mOrientationState = new RecentsOrientedState(
                 context, mSizeStrategy, this::animateRecentsRotationInPlace);

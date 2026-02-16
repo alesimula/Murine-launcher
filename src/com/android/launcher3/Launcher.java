@@ -143,6 +143,7 @@ import android.util.FloatProperty;
 import android.util.Log;
 import android.util.Pair;
 import android.util.SparseArray;
+import android.view.InflateException;
 import android.view.KeyEvent;
 import android.view.KeyboardShortcutGroup;
 import android.view.Menu;
@@ -277,6 +278,7 @@ import com.android.window.flags.Flags;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -435,6 +437,7 @@ public class Launcher extends StatefulActivity<LauncherState>
     @Override
     @TargetApi(Build.VERSION_CODES.S)
     protected void onCreate(Bundle savedInstanceState) {
+        // TODO why did Lawnchair comment async sections? https://github.com/LawnchairLauncher/lawnchair/commit/c8cdde1531a603890fdac8fb948102b1f1cd25fe
         mStartupLatencyLogger = createStartupLatencyLogger(
                 sIsNewProcess
                         ? LockedUserState.get(this).isUserUnlockedAtLauncherStartup()
@@ -540,7 +543,16 @@ public class Launcher extends StatefulActivity<LauncherState>
         mAppWidgetHolder.setAppWidgetRemovedCallback(
                 appWidgetId -> getWorkspace().removeWidget(appWidgetId));
 
-        setupViews();
+        // In QuickstepLauncher.java (or Launcher.java)
+        try {
+            setupViews();
+        } catch (InflateException e) {
+            if (e.getCause() instanceof InvocationTargetException) {
+                Throwable target = ((InvocationTargetException) e.getCause()).getTargetException();
+                Log.e("LawnchairCrash", "RecentsView constructor failed", target);
+            }
+            throw e;
+        }
         updateDisallowBack();
 
         mAppWidgetHolder.startListening();

@@ -72,6 +72,7 @@ import java.util.stream.Collectors;
 /**
  * Manages the recent task list from the system, caching it as necessary.
  */
+// TODO see Android 10 fix on: https://github.com/LawnchairLauncher/lawnchair/commit/c8cdde1531a603890fdac8fb948102b1f1cd25fe
 // TODO: b/401602554 - Consider letting [DesktopTasksController] notify [RecentTasksController] of
 //  desk changes to trigger [IRecentTasksListener.onRecentTasksChanged()], instead of implementing
 //  [DesktopVisibilityListener].

@@ -102,7 +102,11 @@ public class DeepShortcutView extends FrameLayout implements BubbleTextHolder {
         GradientDrawable backgroundMask = new GradientDrawable();
         backgroundMask.setColor(color);
         backgroundMask.setShape(GradientDrawable.RECTANGLE);
-        if (background.getCornerRadii() != null) {
+        float[] radii = null;
+        try {
+            radii = background.getCornerRadii();
+        } catch (Exception ignored) {}
+        if (radii != null) {
             backgroundMask.setCornerRadii(background.getCornerRadii());
         } else {
             backgroundMask.setCornerRadius(background.getCornerRadius());

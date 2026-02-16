@@ -20,6 +20,7 @@ import android.app.ActivityThread
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
+import android.os.Build
 import android.provider.DeviceConfig
 import android.provider.DeviceConfig.OnPropertiesChangedListener
 import android.provider.DeviceConfig.Properties
@@ -35,7 +36,12 @@ class DeviceConfigHelper<ConfigType>(private val factory: (PropReader) -> Config
         private set
 
     private val allKeys: Set<String>
-    private val propertiesListener = OnPropertiesChangedListener { onDevicePropsChanges(it) }
+    private val propertiesListener = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        OnPropertiesChangedListener { onDevicePropsChanges(it) }
+    } else {
+        // LC-Note: NoOp
+        null
+    }
     private val sharedPrefChangeListener = OnSharedPreferenceChangeListener { _, _ ->
         recreateConfig()
     }
@@ -106,7 +112,7 @@ class DeviceConfigHelper<ConfigType>(private val factory: (PropReader) -> Config
     fun removeChangeListener(r: Runnable) = changeListeners.remove(r)
 
     fun close() {
-        DeviceConfig.removeOnPropertiesChangedListener(propertiesListener)
+        propertiesListener?.let { DeviceConfig.removeOnPropertiesChangedListener(it) }
         if (BuildConfig.IS_DEBUG_DEVICE) {
             prefs.unregisterOnSharedPreferenceChangeListener(sharedPrefChangeListener)
         }

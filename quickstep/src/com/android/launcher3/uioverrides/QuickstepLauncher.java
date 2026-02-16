@@ -208,6 +208,7 @@ import com.android.wm.shell.shared.bubbles.BubbleAnythingFlagHelper;
 import com.android.wm.shell.shared.bubbles.BubbleBarLocation;
 import com.android.wm.shell.shared.desktopmode.DesktopModeStatus;
 
+import java.lang.reflect.InvocationTargetException;
 import kotlin.Unit;
 
 import java.io.FileDescriptor;
@@ -295,7 +296,17 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
     @Override
     protected void setupViews() {
         getAppWidgetHolder().setOnViewCreationCallback(new QuickstepInteractionHandler(this));
-        super.setupViews();
+
+        // In QuickstepLauncher.java (or Launcher.java)
+        try {
+            super.setupViews();
+        } catch (InflateException e) {
+            if (e.getCause() instanceof InvocationTargetException) {
+                Throwable target = ((InvocationTargetException) e.getCause()).getTargetException();
+                Log.e("LawnchairCrash", "RecentsView constructor failed", target);
+            }
+            throw e;
+        }
 
         mActionsView = findViewById(R.id.overview_actions_view);
         RecentsView<?,?> overviewPanel = getOverviewPanel();
