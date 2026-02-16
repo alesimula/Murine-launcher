@@ -23,6 +23,7 @@ android_library {
     static_libs: [
         "androidx.core_core",
         "com_android_launcher3_flags_lib",
+        "com_android_systemui_shared_flags_lib",
     ],
     resource_dirs: [
         "res",
@@ -40,6 +41,7 @@ android_library {
     static_libs: [
         "androidx.core_core",
         "com_android_launcher3_flags_lib",
+        "com_android_systemui_shared_flags_lib",
     ],
     resource_dirs: [
         "res",

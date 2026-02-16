@@ -1269,6 +1269,12 @@ public final class FeatureFlagsImpl implements FeatureFlags {
     }
 
     @Override
+
+    public boolean enableMultipleDesktopsFrontend() {
+        return false;
+    }
+
+    @Override
    
     public boolean introduceSmootherDimmer() {
         return true;

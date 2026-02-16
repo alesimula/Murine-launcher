@@ -3,6 +3,7 @@ agp = "8.13.1"
 protobuf = "0.9.5"
 kotlin = "2.2.21"
 appcompat = "1.7.1"
+palette = "1.0.0"
 baselineprofile = "1.4.1"
 core = "1.17.0"
 annotation = "1.9.1"
@@ -85,6 +86,7 @@ rikka-annotation-processor = { module = "dev.rikka.tools.refine:annotation-proce
 rikka-refine-runtime = { group = "dev.rikka.tools.refine", name = "runtime", version.ref = "refine" }
 
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+androidx-palette-ktx =  { module = "androidx.palette:palette-ktx", version.ref = "palette" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "core" }
 androidx-collection-ktx = { module = "androidx.collection:collection-ktx", version.ref = "collection-ktx" }
 androidx-core-animation = { module = "androidx.core:core-animation", version.ref = "coreAnimation" }

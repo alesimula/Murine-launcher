@@ -305,7 +305,7 @@ public class PendingAppWidgetHostView extends LauncherAppWidgetHostView
         //   3) App icon in the center with a setup icon on the top left corner.
         if (mDisabledForSafeMode) {
             FastBitmapDrawable disabledIcon = info.newIcon(getContext());
-            disabledIcon.setIsDisabled(true);
+            disabledIcon.setDisabled(true);
             mCenterDrawable = disabledIcon;
             mSettingIconDrawable = null;
         } else if (isReadyForClickSetup()) {

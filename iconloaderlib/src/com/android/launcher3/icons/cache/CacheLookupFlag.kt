@@ -16,6 +16,7 @@
 package com.android.launcher3.icons.cache
 
 import androidx.annotation.IntDef
+import com.android.launcher3.icons.cache.StaticFlags.extendibleThemeManager
 import kotlin.annotation.AnnotationRetention.SOURCE
 
 /** Flags to control cache lookup behavior */
@@ -45,18 +46,30 @@ data class CacheLookupFlag private constructor(@LookupFlag private val flag: Int
     fun withSkipAddToMemCache(skipAddToMemCache: Boolean = true) =
         updateMask(SKIP_ADD_TO_MEM_CACHE, skipAddToMemCache)
 
+    /** Entry will include theme icon. Note that theme icon is only loaded for high-res icons */
+    fun hasThemeIcon() = hasFlag(LOAD_THEME_ICON)
+
+    @JvmOverloads
+    fun withThemeIcon(addThemeIcon: Boolean = true) = updateMask(LOAD_THEME_ICON, addThemeIcon)
+
     private fun hasFlag(@LookupFlag mask: Int) = flag.and(mask) != 0
 
     private fun updateMask(@LookupFlag mask: Int, addMask: Boolean) =
         if (addMask) flagCache[flag.or(mask)] else flagCache[flag.and(mask.inv())]
 
     /** Returns `true` if this flag has less UI information then [other] */
-    fun isVisuallyLessThan(other: CacheLookupFlag): Boolean {
-        return useLowRes() && !other.useLowRes()
-    }
+    fun isVisuallyLessThan(other: CacheLookupFlag) =
+        when {
+            useLowRes() && !other.useLowRes() -> true
+            extendibleThemeManager() && !hasThemeIcon() && other.hasThemeIcon() -> true
+            else -> false
+        }
 
     @Retention(SOURCE)
-    @IntDef(value = [USE_LOW_RES, USE_PACKAGE_ICON, SKIP_ADD_TO_MEM_CACHE], flag = true)
+    @IntDef(
+        value = [USE_LOW_RES, USE_PACKAGE_ICON, SKIP_ADD_TO_MEM_CACHE, LOAD_THEME_ICON],
+        flag = true,
+    )
     /** Various options to control cache lookup */
     private annotation class LookupFlag
 
@@ -64,8 +77,9 @@ data class CacheLookupFlag private constructor(@LookupFlag private val flag: Int
         private const val USE_LOW_RES: Int = 1 shl 0
         private const val USE_PACKAGE_ICON: Int = 1 shl 1
         private const val SKIP_ADD_TO_MEM_CACHE: Int = 1 shl 2
+        private const val LOAD_THEME_ICON: Int = 1 shl 3
 
-        private val flagCache = Array(8) { CacheLookupFlag(it) }
+        private val flagCache = Array(1 shl 4) { CacheLookupFlag(it) }
 
         @JvmField val DEFAULT_LOOKUP_FLAG = CacheLookupFlag(0)
     }

@@ -158,12 +158,14 @@ public class IconCache extends BaseIconCache {
      * Updates the entries related to the given package in memory and persistent DB.
      */
     public synchronized void updateIconsForPkg(@NonNull final String packageName,
-            @NonNull final UserHandle user) {
+                                               @NonNull final UserHandle user) {
         List<LauncherActivityInfo> apps = mLauncherApps.getActivityList(packageName, user);
-        if (Flags.restoreArchivedAppIconsFromDb()
-                && apps.stream().anyMatch(app -> app.getApplicationInfo().isArchived)) {
-            // When archiving app icon, don't delete old icon so it can be re-used.
-            return;
+        if (Utilities.ATLEAST_V) {
+            if (Flags.restoreArchivedAppIconsFromDb()
+                    && apps.stream().anyMatch(app -> app.getApplicationInfo().isArchived)) {
+                // When archiving app icon, don't delete old icon so it can be re-used.
+                return;
+            }
         }
         removeIconsForPkg(packageName, user);
         long userSerial = mUserManager.getSerialNumberForUser(user);
@@ -519,7 +521,7 @@ public class IconCache extends BaseIconCache {
                             lai,
                             entry,
                             LauncherActivityCachingLogic.INSTANCE,
-                            /* usePackageIcon= */ false,
+                            DEFAULT_LOOKUP_FLAG.withUsePackageIcon(false),
                             /* usePackageTitle= */ loadFallbackTitle,
                             cn,
                             sectionKey.first);

@@ -462,7 +462,7 @@ public final class FeatureFlagsImpl implements FeatureFlags {
 
     @Override
     public boolean enableLauncherIconShapes() {
-        return false;
+        return true;
     }
 
     @Override
@@ -1014,7 +1014,7 @@ public final class FeatureFlagsImpl implements FeatureFlags {
 
     @Override
     public boolean navigateToChildPreference() {
-        return false;
+        return true;
     }
 
     @Override

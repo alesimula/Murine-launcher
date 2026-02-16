@@ -39,6 +39,7 @@ import androidx.annotation.Nullable;
 
 import com.android.launcher3.PendingAddItemInfo;
 import com.android.launcher3.R;
+import com.android.launcher3.Utilities;
 import com.android.launcher3.dagger.ApplicationContext;
 import com.android.launcher3.dagger.LauncherAppSingleton;
 import com.android.launcher3.dagger.LauncherBaseAppComponent;
@@ -182,7 +183,11 @@ public class PackageManagerHelper {
 
     /** Returns the incremental download progress for the given shortcut's app. */
     public static int getLoadingProgress(LauncherActivityInfo info) {
-        return (int) (100 * info.getLoadingProgress());
+        if (Utilities.ATLEAST_S) {
+            return (int) (100 * info.getLoadingProgress());
+        } else {
+            return 100;
+        }
     }
 
     /**

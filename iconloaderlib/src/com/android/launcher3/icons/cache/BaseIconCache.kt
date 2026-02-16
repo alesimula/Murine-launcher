@@ -42,18 +42,23 @@ import android.util.SparseArray
 import androidx.annotation.VisibleForTesting
 import androidx.annotation.WorkerThread
 import com.android.launcher3.Flags
+import com.android.launcher3.icons.cache.StaticFlags.extendibleThemeManager
 import com.android.launcher3.icons.BaseIconFactory
 import com.android.launcher3.icons.BaseIconFactory.IconOptions
 import com.android.launcher3.icons.BitmapInfo
+import com.android.launcher3.icons.BitmapInfo.Companion.LOW_RES_ICON
 import com.android.launcher3.icons.GraphicsUtils
 import com.android.launcher3.icons.IconProvider
 import com.android.launcher3.icons.SourceHint
+import com.android.launcher3.icons.ThemedBitmap
 import com.android.launcher3.icons.cache.CacheLookupFlag.Companion.DEFAULT_LOOKUP_FLAG
 import com.android.launcher3.util.ComponentKey
 import com.android.launcher3.util.FlagOp
 import com.android.launcher3.util.SQLiteCacheHelper
 import java.util.function.Supplier
 import kotlin.collections.MutableMap.MutableEntry
+
+import app.lawnchair.icons.CustomAdaptiveIconDrawable
 
 abstract class BaseIconCache
 @JvmOverloads
@@ -146,6 +151,16 @@ constructor(
 
     fun getFullResIcon(info: ActivityInfo): Drawable? = iconProvider.getIcon(info, iconDpi)
 
+    fun getFullResIcon(packageName: String): Drawable? {
+        // LC-Note: Compat with Android 8.0/8.1/9/10/11
+        try {
+            val info = packageManager.getApplicationInfo(packageName, 0)
+            return iconProvider.getIcon(info, iconDpi)
+        } catch (e: NameNotFoundException) {
+            return null
+        }
+    }
+
     /** Remove any records for the supplied ComponentName. */
     @Synchronized
     fun remove(componentName: ComponentName, user: UserHandle) =
@@ -221,9 +236,11 @@ constructor(
             }
 
         // Only add an entry in memory, if there was already something previously
-        if (cache[key] != null) {
+        val existingEntry = cache[key]
+        if (existingEntry != null) {
             val entry = CacheEntry()
-            entry.bitmap = bitmapInfo
+            entry.bitmap =
+                bitmapInfo.downSampleToLookupFlag(existingEntry.bitmap.matchingLookupFlag)
             entry.title = entryTitle
             entry.contentDescription = getUserBadgedLabel(entryTitle, user)
             cache[key] = entry
@@ -290,7 +307,7 @@ constructor(
                     obj,
                     entry,
                     cachingLogic,
-                    lookupFlags.usePackageIcon(),
+                    lookupFlags,
                     /* usePackageTitle= */ true,
                     componentName,
                     user,
@@ -309,7 +326,7 @@ constructor(
         obj: T?,
         entry: CacheEntry,
         cachingLogic: CachingLogic<T>,
-        usePackageIcon: Boolean,
+        lookupFlag: CacheLookupFlag,
         usePackageTitle: Boolean,
         componentName: ComponentName,
         user: UserHandle,
@@ -317,8 +334,9 @@ constructor(
         if (obj != null) {
             entry.bitmap = cachingLogic.loadIcon(context, this, obj)
         } else {
-            if (usePackageIcon) {
-                val packageEntry = getEntryForPackageLocked(componentName.packageName, user)
+            if (lookupFlag.usePackageIcon()) {
+                val packageEntry =
+                    getEntryForPackageLocked(componentName.packageName, user, lookupFlag)
                 if (DEBUG) {
                     Log.d(TAG, "using package default icon for " + componentName.toShortString())
                 }
@@ -329,6 +347,7 @@ constructor(
                     entry.title = packageEntry.title
                 }
             }
+            entry.bitmap = entry.bitmap.downSampleToLookupFlag(lookupFlag)
         }
     }
 
@@ -440,8 +459,7 @@ constructor(
                     // only keep the low resolution icon instead of the larger full-sized icon
                     val iconInfo = appInfoCachingLogic.loadIcon(context, this, appInfo)
                     entry.bitmap =
-                        if (lookupFlags.useLowRes())
-                            BitmapInfo.of(BitmapInfo.LOW_RES_ICON, iconInfo.color)
+                        if (lookupFlags.useLowRes()) BitmapInfo.of(LOW_RES_ICON, iconInfo.color)
                         else iconInfo
 
                     loadFallbackTitle(appInfo, entry, appInfoCachingLogic, user)
@@ -514,7 +532,7 @@ constructor(
         // Set the alpha to be 255, so that we never have a wrong color
         entry.bitmap =
             BitmapInfo.of(
-                BitmapInfo.LOW_RES_ICON,
+                LOW_RES_ICON,
                 GraphicsUtils.setColorAlphaBound(c.getInt(INDEX_COLOR), 255),
             )
         c.getString(INDEX_TITLE).let {
@@ -544,23 +562,29 @@ constructor(
                 return false
             }
 
-            iconFactory.use { factory ->
-                val themeController = factory.themeController
-                val monoIconData = c.getBlob(INDEX_MONO_ICON)
-                if (themeController != null && monoIconData != null) {
-                    entry.bitmap.themedBitmap =
-                        themeController.decode(
-                            data = monoIconData,
-                            info = entry.bitmap,
-                            factory = factory,
-                            sourceHint =
-                                SourceHint(cacheKey, logic, c.getString(INDEX_FRESHNESS_ID)),
-                        )
+            if (!extendibleThemeManager() || lookupFlags.hasThemeIcon()) {
+                // Always set a non-null theme bitmap if theming was requested
+                entry.bitmap.themedBitmap = ThemedBitmap.NOT_SUPPORTED
+
+                iconFactory.use { factory ->
+                    val themeController = factory.themeController
+                    val monoIconData = c.getBlob(INDEX_MONO_ICON)
+                    if (themeController != null && monoIconData != null) {
+                        entry.bitmap.themedBitmap =
+                            themeController.decode(
+                                data = monoIconData,
+                                info = entry.bitmap,
+                                factory = factory,
+                                sourceHint =
+                                    SourceHint(cacheKey, logic, c.getString(INDEX_FRESHNESS_ID)),
+                            )
+                    }
                 }
             }
         }
         entry.bitmap.flags = c.getInt(INDEX_FLAGS)
         entry.bitmap = entry.bitmap.withFlags(getUserFlagOpLocked(cacheKey.user))
+        iconProvider.notifyIconLoaded(entry.bitmap, cacheKey, logic)
         return true
     }
 
@@ -643,7 +667,7 @@ constructor(
             ComponentKey(ComponentName(packageName, packageName + EMPTY_CLASS_NAME), user)
 
         // Ensures themed bitmaps in the icon cache are invalidated
-        @JvmField val RELEASE_VERSION = if (Flags.forceMonochromeAppIcons()) 10 else 9
+        @JvmField val RELEASE_VERSION = if (Flags.enableLauncherIconShapes()) 11 else 10
 
         @JvmField val TABLE_NAME = "icons"
         @JvmField val COLUMN_ROWID = "rowid"
@@ -661,11 +685,16 @@ constructor(
             arrayOf(COLUMN_COMPONENT, COLUMN_LABEL, COLUMN_ICON_COLOR, COLUMN_FLAGS)
 
         @JvmField
+        val COLUMNS_HIGH_RES_NO_THEME =
+            COLUMNS_LOW_RES.copyOf(COLUMNS_LOW_RES.size + 2).apply {
+                this[size - 1] = COLUMN_ICON
+                this[size - 2] = COLUMN_FRESHNESS_ID
+            }
+
+        @JvmField
         val COLUMNS_HIGH_RES =
-            COLUMNS_LOW_RES.copyOf(COLUMNS_LOW_RES.size + 3).apply {
-                this[size - 3] = COLUMN_ICON
-                this[size - 2] = COLUMN_MONO_ICON
-                this[size - 1] = COLUMN_FRESHNESS_ID
+            COLUMNS_HIGH_RES_NO_THEME.copyOf(COLUMNS_HIGH_RES_NO_THEME.size + 1).apply {
+                this[size - 1] = COLUMN_MONO_ICON
             }
 
         @JvmField val INDEX_TITLE = COLUMNS_HIGH_RES.indexOf(COLUMN_LABEL)
@@ -677,6 +706,20 @@ constructor(
 
         @JvmStatic
         fun CacheLookupFlag.toLookupColumns() =
-            if (useLowRes()) COLUMNS_LOW_RES else COLUMNS_HIGH_RES
+            when {
+                useLowRes() -> COLUMNS_LOW_RES
+                extendibleThemeManager() && !hasThemeIcon() -> COLUMNS_HIGH_RES_NO_THEME
+                else -> COLUMNS_HIGH_RES
+            }
+
+        @JvmStatic
+        protected fun BitmapInfo.downSampleToLookupFlag(flag: CacheLookupFlag) =
+            when {
+                !extendibleThemeManager() -> this
+                flag.useLowRes() -> BitmapInfo.of(LOW_RES_ICON, color)
+                !flag.hasThemeIcon() && themedBitmap != null ->
+                    clone().apply { themedBitmap = null }
+                else -> this
+            }
     }
 }

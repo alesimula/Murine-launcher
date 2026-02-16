@@ -95,7 +95,12 @@ public class GraphicsUtils {
      */
     public static int getAttrColor(Context context, int attr) {
         TypedArray ta = context.obtainStyledAttributes(new int[]{attr});
-        int colorAccent = ta.getColor(0, 0);
+        // pE-TODO(CompatTier2): wtf?
+        int colorAccent = 0;
+        try {
+            colorAccent = ta.getColor(0, 0);
+        } catch (UnsupportedOperationException ignored) {
+        }
         ta.recycle();
         return colorAccent;
     }

@@ -100,12 +100,12 @@ public class MonochromeIconFactory extends Drawable {
      * Creates a monochrome version of the provided drawable
      */
     @WorkerThread
-    public Drawable wrap(AdaptiveIconDrawable icon, Path shapePath, Float iconScale) {
+    public Drawable wrap(AdaptiveIconDrawable icon, Path shapePath) {
         mFlatCanvas.drawColor(Color.BLACK);
         drawDrawable(icon.getBackground());
         drawDrawable(icon.getForeground());
         generateMono();
-        return new ClippedMonoDrawable(this, shapePath, iconScale);
+        return new ClippedMonoDrawable(this, shapePath);
     }
 
     @WorkerThread

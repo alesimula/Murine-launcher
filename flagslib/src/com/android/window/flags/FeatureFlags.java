@@ -181,6 +181,8 @@ public interface FeatureFlags {
     boolean setScPropertiesInClient();
     
     boolean skipSleepingWhenSwitchingDisplay();
+
+    boolean enableMultipleDesktopsFrontend();
     
     boolean supportsMultiInstanceSystemUi();
     

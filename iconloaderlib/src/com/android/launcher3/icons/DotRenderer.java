@@ -27,8 +27,12 @@ import android.graphics.Path;
 import android.graphics.PathMeasure;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Typeface;
 import android.util.Log;
 import android.view.ViewDebug;
+import androidx.annotation.ColorInt;
+import androidx.core.graphics.ColorUtils;
+import androidx.palette.graphics.Palette;
 
 /**
  * Used to draw a notification dot on top of an icon.
@@ -39,9 +43,16 @@ public class DotRenderer {
 
     // The dot size is defined as a percentage of the app icon size.
     private static final float SIZE_PERCENTAGE = 0.228f;
+    
+    // Lawnchair
+    private static final float SIZE_PERCENTAGE_WITH_COUNT = 0.348f;
+    private static final int MAX_COUNT = 99; // The max number to draw on dots
 
     private final float mCircleRadius;
     private final Paint mCirclePaint = new Paint(ANTI_ALIAS_FLAG | FILTER_BITMAP_FLAG);
+
+    // Lawnchair
+    private final Paint mTextPaint = new Paint(ANTI_ALIAS_FLAG | FILTER_BITMAP_FLAG);
 
     private final Bitmap mBackgroundWithShadow;
     private final float mBitmapOffset;
@@ -50,7 +61,56 @@ public class DotRenderer {
     private final float[] mRightDotPosition;
     private final float[] mLeftDotPosition;
 
+    private boolean mDisplayCount;
+    
+    // Lawnchair
+    @ColorInt
+    private int mColor;
+    @ColorInt
+    private int mCounterColor;
+    private final Rect mTextRect = new Rect();
+
     private static final int MIN_DOT_SIZE = 1;
+    
+    /**
+     * AOSP's dot renderer with Lawnchair related change to show notification count on a dot.
+     *
+     * @param iconSizePx
+     * @param iconShapePath
+     * @param pathSize
+     */
+    public DotRenderer(int iconSizePx, Path iconShapePath, int pathSize, Boolean displayCount, Typeface typeface, @ColorInt int color, @ColorInt int counterColor) {
+        mDisplayCount = displayCount;
+        mColor = color;
+        mCounterColor = counterColor;
+        int size = Math.round((displayCount ? SIZE_PERCENTAGE_WITH_COUNT : SIZE_PERCENTAGE) * iconSizePx);
+        if (size <= 0) {
+            size = MIN_DOT_SIZE;
+        }
+        ShadowGenerator.Builder builder = new ShadowGenerator.Builder(Color.TRANSPARENT);
+        builder.ambientShadowAlpha = 88;
+        mBackgroundWithShadow = builder.setupBlurForSize(size).createPill(size, size);
+        mCircleRadius = builder.radius;
+
+        mBitmapOffset = -mBackgroundWithShadow.getHeight() * 0.5f; // Same as width.
+
+        // Find the points on the path that are closest to the top left and right corners.
+        mLeftDotPosition = getPathPoint(iconShapePath, pathSize, -1);
+        mRightDotPosition = getPathPoint(iconShapePath, pathSize, 1);
+        
+        mTextPaint.setTextSize(size * 0.65f);
+        mTextPaint.setTextAlign(Paint.Align.LEFT);
+        mTextPaint.setTypeface(typeface);
+    }
+
+
+    /**
+     * AOSP's dot renderer. To use notification count on the dot see {@link #DotRenderer(int, Path, int, Boolean, Typeface, int, int)}
+     * 
+     * @param iconSizePx 
+     * @param iconShapePath
+     * @param pathSize
+     */
     public DotRenderer(int iconSizePx, Path iconShapePath, int pathSize) {
         int size = Math.round(SIZE_PERCENTAGE * iconSizePx);
         if (size <= 0) {
@@ -98,7 +158,61 @@ public class DotRenderer {
     }
 
     /**
+     * LC: Draw a circle on top of the canvas according to the given params.
+     * 
+     * Include: notification number counter
+     */
+    public void draw(Canvas canvas, DrawParams params, int numNotifications) {
+        if (params == null) {
+            Log.e(TAG, "Invalid null argument(s) passed in call to draw.");
+            return;
+        }
+        canvas.save();
+
+        Rect iconBounds = params.iconBounds;
+        float[] dotPosition = params.leftAlign ? mLeftDotPosition : mRightDotPosition;
+        float dotCenterX = iconBounds.left + iconBounds.width() * dotPosition[0];
+        float dotCenterY = iconBounds.top + iconBounds.height() * dotPosition[1];
+
+        // Ensure dot fits entirely in canvas clip bounds.
+        Rect canvasBounds = canvas.getClipBounds();
+        float offsetX = params.leftAlign
+            ? Math.max(0, canvasBounds.left - (dotCenterX + mBitmapOffset))
+            : Math.min(0, canvasBounds.right - (dotCenterX - mBitmapOffset));
+        float offsetY = Math.max(0, canvasBounds.top - (dotCenterY + mBitmapOffset));
+
+        // We draw the dot relative to its center.
+        canvas.translate(dotCenterX + offsetX, dotCenterY + offsetY);
+        canvas.scale(params.scale, params.scale);
+
+        mCirclePaint.setColor(Color.BLACK);
+        canvas.drawBitmap(mBackgroundWithShadow, mBitmapOffset, mBitmapOffset, mCirclePaint);
+        mCirclePaint.setColor(params.dotColor);
+        canvas.drawCircle(0, 0, mCircleRadius, mCirclePaint);
+
+        if (mDisplayCount && numNotifications > 0) {
+            // Draw the numNotifications text
+            final int counterColor;
+            if (mCounterColor != 0) {
+                counterColor = mCounterColor;
+            } else {
+                counterColor = getCounterTextColor(params.dotColor);
+            }
+            mTextPaint.setColor(counterColor);
+            String text = String.valueOf(Math.min(numNotifications, MAX_COUNT));
+            mTextPaint.getTextBounds(text, 0, text.length(), mTextRect);
+            float x = (-mTextRect.width() / 2f - mTextRect.left) * getAdjustment(numNotifications);
+            float y = mTextRect.height() / 2f - mTextRect.bottom;
+            canvas.drawText(text, x, y, mTextPaint);
+        }
+
+        canvas.restore();
+    }
+
+    /**
      * Draw a circle on top of the canvas according to the given params.
+     * 
+     * This is the original AOSP method without notification count feature. To use it with count see {@link #draw(Canvas, DrawParams, int)}
      */
     public void draw(Canvas canvas, DrawParams params) {
         if (params == null) {
@@ -128,6 +242,31 @@ public class DotRenderer {
         mCirclePaint.setColor(params.dotColor);
         canvas.drawCircle(0, 0, mCircleRadius, mCirclePaint);
         canvas.restore();
+    }
+
+    /**
+     * LC: An attempt to adjust digits to their perceived center, they were tuned with Roboto but should
+     * (hopefully) work with other OEM fonts as well.
+     */
+    private float getAdjustment(int number) {
+        return switch (number) {
+            case 1 -> 1.01f;
+            case 2 -> 0.99f;
+            case 3, 4, 6 -> 0.98f;
+            case 7 -> 1.02f;
+            case 9 -> 0.9f;
+            default -> 1f;
+        };
+    }
+
+    /**
+     * LC: Returns the color to use for the counter text based on the dot's background color.
+     *
+     * @param dotBackgroundColor The color of the dot background.
+     * @return The color to use on the counter text.
+     */
+    private int getCounterTextColor(int dotBackgroundColor) {
+        return new Palette.Swatch(ColorUtils.setAlphaComponent(dotBackgroundColor, 0xFF), 1).getBodyTextColor();
     }
 
     public static class DrawParams {

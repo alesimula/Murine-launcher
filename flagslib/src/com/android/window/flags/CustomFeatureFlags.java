@@ -689,6 +689,13 @@ public class CustomFeatureFlags implements FeatureFlags {
     }
 
     @Override
+
+    public boolean enableMultipleDesktopsFrontend() {
+        return getValue(Flags.FLAG_ENABLE_MULTIPLE_DESKTOPS_FRONTEND,
+                FeatureFlags::enableMultipleDesktopsFrontend);
+    }
+
+    @Override
     
     public boolean untrustedEmbeddingAnyAppPermission() {
         return getValue(Flags.FLAG_UNTRUSTED_EMBEDDING_ANY_APP_PERMISSION,

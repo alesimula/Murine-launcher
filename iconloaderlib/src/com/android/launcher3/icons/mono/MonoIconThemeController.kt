@@ -33,6 +33,7 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.InsetDrawable
 import android.os.Build
+import app.lawnchair.icons.shouldForceMonochrome
 import com.android.launcher3.Flags
 import com.android.launcher3.icons.BaseIconFactory
 import com.android.launcher3.icons.BaseIconFactory.MODE_ALPHA
@@ -46,7 +47,8 @@ import java.nio.ByteBuffer
 
 @TargetApi(Build.VERSION_CODES.TIRAMISU)
 class MonoIconThemeController(
-    private val colorProvider: (Context) -> IntArray = ThemedIconDrawable.Companion::getColors
+    private val shouldForceThemeIcon: Boolean = false,
+    private val colorProvider: (Context) -> IntArray = ThemedIconDrawable.Companion::getColors,
 ) : IconThemeController {
 
     override val themeID = "with-theme"
@@ -62,9 +64,8 @@ class MonoIconThemeController(
                 icon,
                 info,
                 factory.getShapePath(icon, Rect(0, 0, info.icon.width, info.icon.height)),
-                factory.iconScale,
                 sourceHint?.isFileDrawable ?: false,
-                factory.shouldForceThemeIcon(),
+                shouldForceThemeIcon,
             )
         if (mono != null) {
             return MonoThemedBitmap(
@@ -85,16 +86,15 @@ class MonoIconThemeController(
         base: AdaptiveIconDrawable,
         info: BitmapInfo,
         shapePath: Path,
-        iconScale: Float,
         isFileDrawable: Boolean,
         shouldForceThemeIcon: Boolean,
     ): Drawable? {
         val mono = base.monochrome
         if (mono != null) {
-            return ClippedMonoDrawable(mono, shapePath, iconScale)
+            return ClippedMonoDrawable(mono, shapePath)
         }
-        if (Flags.forceMonochromeAppIcons() && shouldForceThemeIcon && !isFileDrawable) {
-            return MonochromeIconFactory(info.icon.width).wrap(base, shapePath, iconScale)
+        if (shouldForceMonochrome() && shouldForceThemeIcon && !isFileDrawable) {
+            return MonochromeIconFactory(info.icon.width).wrap(base, shapePath)
         }
         return null
     }
@@ -104,9 +104,9 @@ class MonoIconThemeController(
         info: BitmapInfo,
         factory: BaseIconFactory,
         sourceHint: SourceHint,
-    ): ThemedBitmap? {
+    ): ThemedBitmap {
         val icon = info.icon
-        if (data.size != icon.height * icon.width) return null
+        if (data.size != icon.height * icon.width) return ThemedBitmap.NOT_SUPPORTED
 
         var monoBitmap = Bitmap.createBitmap(icon.width, icon.height, ALPHA_8)
         monoBitmap.copyPixelsFromBuffer(ByteBuffer.wrap(data))
@@ -123,7 +123,7 @@ class MonoIconThemeController(
         context: Context,
         originalIcon: AdaptiveIconDrawable,
         info: BitmapInfo?,
-    ): AdaptiveIconDrawable? {
+    ): AdaptiveIconDrawable {
         val colors = colorProvider(context)
         originalIcon.mutate()
         var monoDrawable = originalIcon.monochrome?.apply { setTint(colors[1]) }
@@ -147,13 +147,11 @@ class MonoIconThemeController(
         }
 
         return monoDrawable?.let { AdaptiveIconDrawable(ColorDrawable(colors[0]), it) }
+            ?: originalIcon
     }
 
-    class ClippedMonoDrawable(
-        base: Drawable?,
-        private val shapePath: Path,
-        private val iconScale: Float,
-    ) : InsetDrawable(base, -AdaptiveIconDrawable.getExtraInsetFraction()) {
+    class ClippedMonoDrawable(base: Drawable?, private val shapePath: Path) :
+        InsetDrawable(base, -AdaptiveIconDrawable.getExtraInsetFraction()) {
         // TODO(b/399666950): remove this after launcher icon shapes is fully enabled
         private val mCrop = AdaptiveIconDrawable(ColorDrawable(Color.BLACK), null)
 
@@ -162,7 +160,6 @@ class MonoIconThemeController(
             val saveCount = canvas.save()
             if (Flags.enableLauncherIconShapes()) {
                 canvas.clipPath(shapePath)
-                canvas.scale(iconScale, iconScale, bounds.width() / 2f, bounds.height() / 2f)
             } else {
                 canvas.clipPath(mCrop.iconMask)
             }

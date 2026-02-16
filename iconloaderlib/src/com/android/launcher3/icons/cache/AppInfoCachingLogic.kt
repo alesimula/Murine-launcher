@@ -20,6 +20,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.UserHandle
 import com.android.launcher3.icons.BaseIconFactory.IconOptions
 import com.android.launcher3.icons.BitmapInfo
@@ -50,7 +51,7 @@ class AppInfoCachingLogic(
         // Load the full res icon for the application, but if useLowResIcon is set, then
         // only keep the low resolution icon instead of the larger full-sized icon
         val appIcon = cache.iconProvider.getIcon(info)
-        if (context.packageManager.isDefaultApplicationIcon(appIcon)) {
+        if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) && context.packageManager.isDefaultApplicationIcon(appIcon)) {
             errorLogger.invoke(
                 String.format("Default icon returned for %s", info.packageName),
                 null,

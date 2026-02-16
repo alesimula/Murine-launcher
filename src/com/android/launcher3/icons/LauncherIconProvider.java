@@ -49,35 +49,25 @@ import javax.inject.Inject;
 @LauncherAppSingleton
 public class LauncherIconProvider extends IconProvider {
 
-    private static final String TAG_ICON = "icon";
-    private static final String ATTR_PACKAGE = "package";
-    private static final String ATTR_DRAWABLE = "drawable";
+    public static final String TAG_ICON = "icon";
+    public static final String ATTR_PACKAGE = "package";
+    public static final String ATTR_DRAWABLE = "drawable";
+    public static final String ATTR_COMPONENT = "component";
 
-    private static final String TAG = "LIconProvider";
-    private static final Map<String, ThemeData> DISABLED_MAP = Collections.emptyMap();
+    protected static final String TAG = "LIconProvider";
+    protected static final Map<String, ThemeData> DISABLED_MAP = Collections.emptyMap();
 
-    private Map<String, ThemeData> mThemedIconMap;
+    protected Map<String, ThemeData> mThemedIconMap;
 
-    private final ApiWrapper mApiWrapper;
-    private final ThemeManager mThemeManager;
+    protected final ThemeManager mThemeManager;
 
     @Inject
     public LauncherIconProvider(
             @ApplicationContext Context context,
-            ThemeManager themeManager,
-            ApiWrapper apiWrapper) {
+            ThemeManager themeManager) {
         super(context);
         mThemeManager = themeManager;
-        mApiWrapper = apiWrapper;
-        setIconThemeSupported(mThemeManager.isMonoThemeEnabled());
-    }
-
-    /**
-     * Enables or disables icon theme support
-     */
-    public void setIconThemeSupported(boolean isSupported) {
-        mThemedIconMap = isSupported && FeatureFlags.USE_LOCAL_ICON_OVERRIDES.get()
-                ? null : DISABLED_MAP;
+        mThemedIconMap = FeatureFlags.USE_LOCAL_ICON_OVERRIDES.get() ? null : DISABLED_MAP;
     }
 
     @Override
@@ -91,30 +81,7 @@ public class LauncherIconProvider extends IconProvider {
         mSystemState += "," + mThemeManager.getIconState().toUniqueId();
     }
 
-    @Override
-    protected String getApplicationInfoHash(@NonNull ApplicationInfo appInfo) {
-        return mApiWrapper.getApplicationInfoHash(appInfo);
-    }
-
-    @Nullable
-    @Override
-    protected Drawable loadAppInfoIcon(ApplicationInfo info, Resources resources, int density) {
-        // Tries to load the round icon res, if the app defines it as an adaptive icon
-        if (mThemeManager.getIconShape() instanceof ShapeDelegate.Circle) {
-            int roundIconRes = mApiWrapper.getRoundIconRes(info);
-            if (roundIconRes != 0 && roundIconRes != info.icon) {
-                try {
-                    Drawable d = resources.getDrawableForDensity(roundIconRes, density);
-                    if (d instanceof AdaptiveIconDrawable) {
-                        return d;
-                    }
-                } catch (Resources.NotFoundException exc) { }
-            }
-        }
-        return super.loadAppInfoIcon(info, resources, density);
-    }
-
-    private Map<String, ThemeData> getThemedIconMap() {
+    protected Map<String, ThemeData> getThemedIconMap() {
         if (mThemedIconMap != null) {
             return mThemedIconMap;
         }

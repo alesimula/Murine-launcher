@@ -42,7 +42,7 @@ public class PlaceHolderIconDrawable extends FastBitmapDrawable {
     public PlaceHolderIconDrawable(BitmapInfo info, Context context) {
         super(info);
         mProgressPath = getDefaultPath();
-        mPaint.setColor(ColorUtils.compositeColors(
+        paint.setColor(ColorUtils.compositeColors(
                 GraphicsUtils.getAttrColor(context, R.attr.loadingIconColor), info.color));
     }
 
@@ -62,13 +62,13 @@ public class PlaceHolderIconDrawable extends FastBitmapDrawable {
         int saveCount = canvas.save();
         canvas.translate(bounds.left, bounds.top);
         canvas.scale(bounds.width() / 100f, bounds.height() / 100f);
-        canvas.drawPath(mProgressPath, mPaint);
+        canvas.drawPath(mProgressPath, paint);
         canvas.restoreToCount(saveCount);
     }
 
     /** Updates this placeholder to {@code newIcon} with animation. */
     public void animateIconUpdate(Drawable newIcon) {
-        int placeholderColor = mPaint.getColor();
+        int placeholderColor = paint.getColor();
         int originalAlpha = Color.alpha(placeholderColor);
 
         ValueAnimator iconUpdateAnimation = ValueAnimator.ofInt(originalAlpha, 0);

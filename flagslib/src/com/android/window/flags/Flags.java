@@ -195,6 +195,8 @@ public final class Flags {
     /** @hide */
     public static final String FLAG_TRUSTED_PRESENTATION_LISTENER_FOR_WINDOW = "com.android.window.flags.trusted_presentation_listener_for_window";
     /** @hide */
+    public static final String FLAG_ENABLE_MULTIPLE_DESKTOPS_FRONTEND = "com.android.window.flags.enable_multiple_desktops_frontend";
+    /** @hide */
     public static final String FLAG_UNTRUSTED_EMBEDDING_ANY_APP_PERMISSION = "com.android.window.flags.untrusted_embedding_any_app_permission";
     /** @hide */
     public static final String FLAG_UNTRUSTED_EMBEDDING_STATE_SHARING = "com.android.window.flags.untrusted_embedding_state_sharing";
@@ -602,7 +604,11 @@ public final class Flags {
     public static boolean untrustedEmbeddingStateSharing() {
         return FEATURE_FLAGS.untrustedEmbeddingStateSharing();
     }
-   
+
+    public static boolean enableMultipleDesktopsFrontend() {
+        return FEATURE_FLAGS.enableMultipleDesktopsFrontend();
+    }
+
     public static boolean useWindowOriginalTouchableRegionWhenMagnificationRecomputeBounds() {
         return FEATURE_FLAGS.useWindowOriginalTouchableRegionWhenMagnificationRecomputeBounds();
     }
