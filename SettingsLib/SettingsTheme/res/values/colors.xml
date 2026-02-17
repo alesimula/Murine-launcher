@@ -30,23 +30,25 @@
     <color name="settingslib_error_900">#410002</color>
     <color name="settingslib_error_1000">#000000</color>
 
-    <color name="settingslib_materialColorPrimary">#006B5F</color>
+    <!-- Pixel-like Blue Palette - Light Mode -->
+    <color name="settingslib_materialColorPrimary">#1871E6</color>
     <color name="settingslib_materialColorOnPrimary">#FFFFFF</color>
-    <color name="settingslib_materialColorPrimaryContainer">#C5EAE2</color>
-    <color name="settingslib_materialColorOnPrimaryContainer">#00201C</color>
-    <color name="settingslib_materialColorPrimaryInverse">#83D6C7</color>
-    <color name="settingslib_materialColorPrimaryFixed">#C5EAE2</color>
-    <color name="settingslib_materialColorPrimaryFixedDim">#82D5C6</color>
-    <color name="settingslib_materialColorOnPrimaryFixed">#00201C</color>
-    <color name="settingslib_materialColorOnPrimaryFixedVariant">#005047</color>
-    <color name="settingslib_materialColorSecondary">#4A635E</color>
+    <color name="settingslib_materialColorPrimaryContainer">#D8E2FF</color>
+    <color name="settingslib_materialColorOnPrimaryContainer">#001A41</color>
+    <color name="settingslib_materialColorPrimaryInverse">#ADC6FF</color>
+    <color name="settingslib_materialColorPrimaryFixed">#D8E2FF</color>
+    <color name="settingslib_materialColorPrimaryFixedDim">#ADC6FF</color>
+    <color name="settingslib_materialColorOnPrimaryFixed">#001A41</color>
+    <color name="settingslib_materialColorOnPrimaryFixedVariant">#00397A</color>
+    <color name="settingslib_materialColorSecondary">#525E7D</color>
     <color name="settingslib_materialColorOnSecondary">#FFFFFF</color>
-    <color name="settingslib_materialColorSecondaryContainer">#CCE8E2</color>
-    <color name="settingslib_materialColorOnSecondaryContainer">#051F1B</color>
-    <color name="settingslib_materialColorSecondaryFixed">#CCE8E2</color>
-    <color name="settingslib_materialColorSecondaryFixedDim">#B1CCC6</color>
-    <color name="settingslib_materialColorOnSecondaryFixed">#051F1B</color>
-    <color name="settingslib_materialColorOnSecondaryFixedVariant">#334C47</color>
+    <color name="settingslib_materialColorSecondaryContainer">#D7E2FF</color>
+    <color name="settingslib_materialColorOnSecondaryContainer">#0E1A37</color>
+    <color name="settingslib_materialColorSecondaryFixed">#D7E2FF</color>
+    <color name="settingslib_materialColorSecondaryFixedDim">#B9C6EA</color>
+    <color name="settingslib_materialColorOnSecondaryFixed">#0E1A37</color>
+    <color name="settingslib_materialColorOnSecondaryFixedVariant">#3B4664</color>
+
     <color name="settingslib_materialColorTertiary">#456179</color>
     <color name="settingslib_materialColorOnTertiary">#FFFFFF</color>
     <color name="settingslib_materialColorTertiaryContainer">#CBE6FF</color>
