@@ -16,17 +16,17 @@
   -->
 
 <resources>
+    <dimen name="app_icon_min_width">52dp</dimen>
     <dimen name="secondary_app_icon_size">32dp</dimen>
-    <dimen name="app_preference_padding_start">16dp</dimen>
-    <dimen name="app_icon_min_width">56dp</dimen>
+    <dimen name="app_preference_padding_start">20dp</dimen>
     <dimen name="two_target_min_width">72dp</dimen>
-    <dimen name="settingslib_dialogCornerRadius">8dp</dimen>
+    <dimen name="settingslib_dialogCornerRadius">28dp</dimen>
     <dimen name="settingslib_preference_corner_radius">20dp</dimen>
 
     <!-- Left padding of the preference -->
-    <dimen name="settingslib_listPreferredItemPaddingStart">16dp</dimen>
+    <dimen name="settingslib_listPreferredItemPaddingStart">24dp</dimen>
     <!-- Right padding of the preference -->
-    <dimen name="settingslib_listPreferredItemPaddingEnd">16dp</dimen>
+    <dimen name="settingslib_listPreferredItemPaddingEnd">24dp</dimen>
     <!-- Icon size of the preference -->
     <dimen name="settingslib_preferenceIconSize">24dp</dimen>
 
