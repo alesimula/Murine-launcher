@@ -96,4 +96,11 @@
         <item name="android:paddingStart">16dp</item>
     </style>
 
+    <style name="Seekbar.SettingsLib" parent="@android:style/Widget.Material.SeekBar">
+        <!--item name="android:thumbTint">@android:color/system_accent1_800</item>
+        <item name="android:progressTint">@android:color/system_accent1_800</item>
+        <item name="android:progressBackgroundTint">@color/settingslib_neutral_variant55</item-->
+        <item name="android:progressBackgroundTintMode">src_over</item>
+    </style>
+
 </resources>

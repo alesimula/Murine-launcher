@@ -16,9 +16,9 @@
   -->
 <resources>
     <style name="Seekbar.SettingsLib" parent="@android:style/Widget.Material.SeekBar">
-        <item name="android:thumbTint">@android:color/system_accent1_100</item>
+        <!--item name="android:thumbTint">@android:color/system_accent1_100</item>
         <item name="android:progressTint">@android:color/system_accent1_100</item>
-        <item name="android:progressBackgroundTint">@android:color/system_neutral2_500</item>
+        <item name="android:progressBackgroundTint">@android:color/system_neutral2_500</item-->
         <item name="android:progressBackgroundTintMode">src_over</item>
     </style>
 </resources>
