@@ -28,7 +28,7 @@
             <item>
                 <shape>
                     <corners android:radius="10dp"/>
-                    <solid android:color="@color/settingslib_materialColorSecondaryFixed"/>
+                    <solid android:color="@color/settingslib_materialColorSecondaryContainer"/>
                 </shape>
             </item>
         </layer-list>

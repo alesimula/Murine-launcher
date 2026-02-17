@@ -17,7 +17,7 @@
 
 <resources>
     <!-- Only using in Settings application -->
-    <style name="Theme.SettingsBase_v31" parent="@android:style/Theme.DeviceDefault.Settings" >
+    <style name="Theme.SettingsBase_Compat" parent="@android:style/Theme.DeviceDefault.Settings" >
         <item name="android:textAppearanceListItem">@style/TextAppearance.PreferenceTitle.SettingsLib</item>
         <item name="android:listPreferredItemPaddingStart">@dimen/settingslib_listPreferredItemPaddingStart</item>
         <item name="android:listPreferredItemPaddingLeft">@dimen/settingslib_listPreferredItemPaddingStart</item>
@@ -28,13 +28,25 @@
         <item name="switchStyle">@style/SwitchCompat.SettingsLib</item>
         <item name="android:progressBarStyleHorizontal">@style/HorizontalProgressBar.SettingsLib</item>
         <item name="android:listDivider">@drawable/settingslib_list_divider</item>
-    </style>
-
-    <style name="Theme.SettingsBase" parent="Theme.SettingsBase_v31">
+        <!-- accent -->
         <item name="android:colorAccent">@color/settingslib_materialColorPrimary</item>
+        <!-- Set up edge-to-edge configuration for top app bar -->
+        <!--item name="android:clipChildren">false</item-->
+        <item name="android:clipToPadding">false</item>
+        <!-- text -->
+        <item name="android:textColorPrimary">@color/settingslib_materialColorOnSurface</item>
+        <item name="android:textColorSecondary">@color/settingslib_text_color_secondary</item>
+        <item name="android:textColorTertiary">@color/settingslib_materialColorOutline</item>
+        <item name="android:seekBarStyle">@style/Seekbar.SettingsLib</item>
+        <!-- spinner -->
+        <item name="android:spinnerStyle">@style/Spinner.SettingsLib</item>
+        <item name="android:spinnerItemStyle">@style/SpinnerItem.SettingsLib</item>
+        <item name="android:spinnerDropDownItemStyle">@style/SpinnerDropDownItem.SettingsLib</item>
     </style>
 
-    <style name="Theme.SettingsBase" parent="Theme.SettingsBase_v31" />
+    <style name="Theme.SettingsBase" parent="Theme.SettingsBase_Compat">
+        <item name="android:colorBackground">@color/settingslib_materialColorSurfaceContainer</item>
+    </style>
 
     <!-- Using in SubSettings page including injected settings page -->
     <style name="Theme.SubSettingsBase" parent="Theme.SettingsBase">

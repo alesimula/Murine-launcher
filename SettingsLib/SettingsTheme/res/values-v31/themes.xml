@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.SettingsBase_v31" parent="Theme.SettingsBase_Compat" >
+    </style>
+
+    <!-- avoid carrying the background color change from legacy to SDK 31 and forward -->
+    <style name="Theme.SettingsBase" parent="Theme.SettingsBase_v31">
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+    </style>
+
+</resources>

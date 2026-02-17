@@ -17,15 +17,7 @@
 
 <resources>
     <style name="Theme.SettingsBase_v36" parent="Theme.SettingsBase_v33" >
-        <item name="android:colorAccent">@color/settingslib_materialColorPrimary</item>
-        <item name="android:colorBackground">@color/settingslib_materialColorSurfaceContainer</item>
-        <item name="android:textColorPrimary">@color/settingslib_materialColorOnSurface</item>
-        <item name="android:textColorSecondary">@color/settingslib_text_color_secondary</item>
-        <item name="android:textColorTertiary">@color/settingslib_materialColorOutline</item>
-        <item name="android:seekBarStyle">@style/Seekbar.SettingsLib</item>
-        <!-- Set up edge-to-edge configuration for top app bar -->
-        <item name="android:clipToPadding">false</item>
-        <item name="android:clipChildren">false</item>
+        <!--item name="android:colorBackground">@color/settingslib_materialColorSurfaceContainer</item-->
     </style>
 
     <style name="Theme.SettingsBase" parent="Theme.SettingsBase_v36" />
