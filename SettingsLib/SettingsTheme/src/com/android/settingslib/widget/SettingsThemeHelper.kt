@@ -35,7 +35,7 @@ object SettingsThemeHelper {
     @ChecksSdkIntAtLeast(Build.VERSION_CODES.S)
     @JvmStatic
     fun isExpressiveTheme(context: Context): Boolean {
-        return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && isExpressiveDesignEnabled())
+        return isExpressiveDesignEnabled()
         /*if (Build.VERSION.SDK_INT < Build.VERSION_CODES.BAKLAVA) {
             return false
         }

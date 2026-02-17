@@ -69,7 +69,7 @@
     <color name="settingslib_materialColorOnSurfaceVariant">#474747</color>
     <color name="settingslib_materialColorSurfaceInverse">#303030</color>
     <color name="settingslib_materialColorOnSurfaceInverse">#F1F1F1</color>
-    <color name="settingslib_materialColorSurfaceBright">#F9FAF8</color>
+    <color name="settingslib_materialColorSurfaceBright">@color/settingslib_neutral_variant_card</color>
     <color name="settingslib_materialColorSurfaceDim">#DADADA</color>
     <color name="settingslib_materialColorSurfaceContainer">#EEEEEE</color>
     <color name="settingslib_materialColorSurfaceContainerLow">#F4F4F4</color>
@@ -77,10 +77,50 @@
     <color name="settingslib_materialColorSurfaceContainerHigh">#E8E8E8</color>
     <color name="settingslib_materialColorSurfaceContainerHighest">#E3E3E3</color>
 
-    <color name="settingslib_colorBackgroundLevel_high">@color/m3_ref_palette_red50</color>
+    <!--color name="settingslib_colorBackgroundLevel_high">@color/m3_ref_palette_red50</color>
     <color name="settingslib_colorContentLevel_high">@color/m3_ref_palette_red100</color>
     <color name="settingslib_colorBackgroundLevel_medium">@color/m3_ref_palette_yellow80</color>
     <color name="settingslib_colorContentLevel_medium">@color/m3_ref_palette_yellow10</color>
     <color name="settingslib_colorBackgroundLevel_low">@color/m3_ref_palette_green50</color>
-    <color name="settingslib_colorContentLevel_low">@color/m3_ref_palette_green100</color>
+    <color name="settingslib_colorContentLevel_low">@color/m3_ref_palette_green100</color-->
+
+    <color name="settingslib_colorBackgroundLevel_high">@color/settingslib_error_50</color>
+    <color name="settingslib_colorContentLevel_high">@color/settingslib_error_100</color>
+    <color name="settingslib_colorBackgroundLevel_medium">#FFF9C4</color> <!-- Yellow 100 -->
+    <color name="settingslib_colorContentLevel_medium">#FBC02D</color> <!-- Yellow 700 -->
+    <color name="settingslib_colorBackgroundLevel_low">#C8E6C9</color> <!-- Green 100 -->
+    <color name="settingslib_colorContentLevel_low">#388E3C</color> <!-- Green 700 -->
+
+    <!-- Material next state colors -->
+    <color name="settingslib_state_on_color">@color/settingslib_materialColorPrimaryContainer</color>
+    <color name="settingslib_state_off_color">@color/settingslib_materialColorPrimaryContainer</color>
+
+    <color name="settingslib_thumb_disabled_color">@color/settingslib_materialColorOutline</color>
+    <color name="settingslib_thumb_on_color">@color/settingslib_materialColorOnPrimary</color>
+    <color name="settingslib_thumb_off_color">@color/settingslib_materialColorOutline</color>
+
+    <color name="settingslib_track_on_color">@color/settingslib_materialColorPrimary</color>
+    <color name="settingslib_track_off_color">@color/settingslib_materialColorSurfaceContainerHighest</color>
+
+    <!-- Dialog colors -->
+    <color name="settingslib_dialog_accent">@color/settingslib_materialColorPrimary</color>
+    <color name="settingslib_dialog_background">@color/settingslib_materialColorSurfaceContainerHigh</color>
+    <color name="settingslib_dialog_colorError">@color/settingslib_error_600</color>
+
+    <color name="settingslib_colorSurfaceHeader">@color/settingslib_materialColorSurfaceVariant</color>
+
+    <color name="settingslib_text_color_preference_category_title">@color/settingslib_materialColorPrimary</color>
+
+    <!-- The text color of spinner title -->
+    <color name="settingslib_spinner_title_color">@color/settingslib_materialColorOnPrimaryContainer</color>
+    <!-- The text color of dropdown item title -->
+    <color name="settingslib_spinner_dropdown_color">@color/settingslib_materialColorOnPrimaryContainer</color>
+
+    <color name="settingslib_ripple_color">?android:attr/colorControlHighlight</color>
+    <color name="settingslib_list_divider_color">@color/settingslib_materialColorSurfaceContainerHighest</color>
+
+    <color name="settingslib_text_color_primary_device_default">@color/settingslib_materialColorOnSurface</color>
+    <color name="settingslib_text_color_secondary_device_default">@color/settingslib_materialColorOnSurfaceVariant</color>
+
+    <color name="settingslib_track_online_color">@color/settingslib_track_on_color</color>
 </resources>

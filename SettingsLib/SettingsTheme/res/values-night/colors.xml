@@ -43,7 +43,7 @@
     <color name="settingslib_materialColorOnSurfaceVariant">#C7C7C7</color>
     <color name="settingslib_materialColorSurfaceInverse">#E5E2E1</color>
     <color name="settingslib_materialColorOnSurfaceInverse">#303030</color>
-    <color name="settingslib_materialColorSurfaceBright">#393939</color>
+    <color name="settingslib_materialColorSurfaceBright">@color/settingslib_neutral_variant_card</color>
     <color name="settingslib_materialColorSurfaceDim">#131313</color>
     <color name="settingslib_materialColorSurfaceContainer">#1F1F1F</color>
     <color name="settingslib_materialColorSurfaceContainerLowest">#1B1B1B</color>
@@ -51,8 +51,41 @@
     <color name="settingslib_materialColorSurfaceContainerHigh">#2A2A2A</color>
     <color name="settingslib_materialColorSurfaceContainerHighest">#343434</color>
 
-    <color name="settingslib_colorBackgroundLevel_high">@color/m3_ref_palette_red60</color>
+    <!--color name="settingslib_colorBackgroundLevel_high">@color/m3_ref_palette_red60</color>
     <color name="settingslib_colorContentLevel_high">@color/m3_ref_palette_red10</color>
     <color name="settingslib_colorBackgroundLevel_low">@color/m3_ref_palette_green70</color>
-    <color name="settingslib_colorContentLevel_low">@color/m3_ref_palette_green10</color>
+    <color name="settingslib_colorContentLevel_low">@color/m3_ref_palette_green10</color-->
+
+    <color name="settingslib_colorBackgroundLevel_high">@color/settingslib_error_900</color>
+    <color name="settingslib_colorContentLevel_high">@color/settingslib_error_200</color>
+    <color name="settingslib_colorBackgroundLevel_low">#1B5E20</color> <!-- Green 900 -->
+    <color name="settingslib_colorContentLevel_low">#A5D6A7</color> <!-- Green 200 -->
+
+    <!-- Material next state colors -->
+    <color name="settingslib_state_on_color">@color/settingslib_materialColorPrimaryContainer</color>
+    <color name="settingslib_state_off_color">@color/settingslib_materialColorPrimaryContainer</color>
+
+    <color name="settingslib_thumb_disabled_color">@color/settingslib_materialColorOutline</color>
+    <color name="settingslib_thumb_on_color">@color/settingslib_materialColorOnPrimary</color>
+    <color name="settingslib_thumb_off_color">@color/settingslib_materialColorOutline</color>
+
+    <color name="settingslib_track_on_color">@color/settingslib_materialColorPrimary</color>
+    <color name="settingslib_track_off_color">@color/settingslib_materialColorSurfaceContainerHighest</color>
+
+    <!-- Dialog colors -->
+    <color name="settingslib_dialog_accent">@color/settingslib_materialColorPrimary</color>
+    <color name="settingslib_dialog_background">@color/settingslib_materialColorSurfaceContainerHigh</color>
+    <color name="settingslib_dialog_colorError">@color/settingslib_error_300</color>
+
+    <color name="settingslib_colorSurfaceHeader">@color/settingslib_materialColorSurfaceVariant</color>
+
+    <color name="settingslib_text_color_preference_category_title">@color/settingslib_materialColorPrimary</color>
+
+    <color name="settingslib_ripple_color">?android:attr/colorControlHighlight</color>
+    <color name="settingslib_list_divider_color">@color/settingslib_materialColorSurfaceContainerHighest</color>
+
+    <color name="settingslib_text_color_primary_device_default">@color/settingslib_materialColorOnSurface</color>
+    <color name="settingslib_text_color_secondary_device_default">@color/settingslib_materialColorOnSurfaceVariant</color>
+
+    <color name="settingslib_track_online_color">@color/settingslib_track_on_color</color>
 </resources>
