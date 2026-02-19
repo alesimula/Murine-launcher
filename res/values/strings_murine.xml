@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="grid_size_title">Grid size</string>
+    <string name="grid_size_desc">Change the number of rows and columns</string>
+</resources>

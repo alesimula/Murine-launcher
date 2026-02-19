@@ -61,6 +61,9 @@ import com.android.launcher3.R;
 import com.android.launcher3.states.RotationHelper;
 import com.android.launcher3.util.DisplayController;
 import com.android.launcher3.util.SettingsCache;
+import com.android.settingslib.widget.SelectorWithWidgetPreference;
+
+import java.util.List;
 
 /**
  * Settings activity for Launcher. Currently implements the following setting: Allow rotation
@@ -348,6 +351,32 @@ public class SettingsActivity extends FragmentActivity
                             }
                     );
                     return !info.isTablet(info.realBounds);
+                case "pref_grid_size_category":
+                    PreferenceGroup category = (PreferenceGroup) preference;
+                    InvariantDeviceProfile idp = InvariantDeviceProfile.INSTANCE.get(getContext());
+                    List<InvariantDeviceProfile.GridOption> options = idp.parseAllGridOptions(getContext());
+                    String currentGrid = idp.numColumns + "x" + idp.numRows;
+
+                    for (InvariantDeviceProfile.GridOption option : options) {
+                        SelectorWithWidgetPreference pref = new SelectorWithWidgetPreference(getContext());
+                        pref.setKey(option.name);
+                        pref.setTitle(option.gridTitle);
+                        pref.setPersistent(false);
+                        pref.setChecked(option.name.equals(currentGrid) || option.name.equals(idp.getGridNameFromSize(getContext(), new android.graphics.Point(idp.numColumns, idp.numRows))));
+                        
+                        pref.setOnClickListener(clickedPref -> {
+                            idp.setCurrentGrid(getContext(), clickedPref.getKey());
+                            // Update UI state for all items in the category
+                            for (int i = 0; i < category.getPreferenceCount(); i++) {
+                                Preference p = category.getPreference(i);
+                                if (p instanceof SelectorWithWidgetPreference) {
+                                    ((SelectorWithWidgetPreference) p).setChecked(p.getKey().equals(clickedPref.getKey()));
+                                }
+                            }
+                        });
+                        category.addPreference(pref);
+                    }
+                    return true;
             }
             return true;
         }

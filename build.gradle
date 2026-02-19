@@ -288,6 +288,8 @@ dependencies {
     implementation project(':WMShared')
     implementation project(':SettingsLib-SettingsTheme')
     implementation project(':SettingsLib-SliderPreference')
+    implementation project(':SettingsLib-SelectorWithWidgetPreference')
+    implementation project(':SettingsLib-ExpandablePreference')
     withQuickstepCompileOnly project(':HiddenApi')
 
     // Include all compat libs

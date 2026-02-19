@@ -70,6 +70,10 @@ include ':SettingsLib-Preference'
 project(':SettingsLib-Preference').projectDir = new File(rootDir, 'SettingsLib/Preference')
 include ':SettingsLib-SliderPreference'
 project(':SettingsLib-SliderPreference').projectDir = new File(rootDir, 'SettingsLib/SliderPreference')
+include ':SettingsLib-SelectorWithWidgetPreference'
+project(':SettingsLib-SelectorWithWidgetPreference').projectDir = new File(rootDir, 'SettingsLib/SelectorWithWidgetPreference')
+include ':SettingsLib-ExpandablePreference'
+project(':SettingsLib-ExpandablePreference').projectDir = new File(rootDir, 'SettingsLib/ExpandablePreference')
 
 include ':compatLib'
 include ':compatLib:compatLibVQ'
