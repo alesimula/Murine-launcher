@@ -18,9 +18,11 @@ package com.android.settingslib.widget;
 
 import static android.view.HapticFeedbackConstants.CLOCK_TICK;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
@@ -361,7 +363,7 @@ public class SliderPreference extends Preference {
         } else {
             holder.itemView.setContentDescription(null);
         }
-        if (!TextUtils.isEmpty(mSliderStateDescription)) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) if (!TextUtils.isEmpty(mSliderStateDescription)) {
             mSlider.setStateDescription(mSliderStateDescription);
         } else {
             mSlider.setStateDescription(null);
@@ -617,10 +619,11 @@ public class SliderPreference extends Preference {
      *
      * @param stateDescription The state description of the {@link Slider}
      */
+    @TargetApi(Build.VERSION_CODES.R)
     public void setSliderStateDescription(@Nullable CharSequence stateDescription) {
         mSliderStateDescription = stateDescription;
         if (mSlider != null) {
-            mSlider.setStateDescription(stateDescription);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) mSlider.setStateDescription(stateDescription);
         }
     }
 

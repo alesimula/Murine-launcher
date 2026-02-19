@@ -1150,23 +1150,25 @@ public class Launcher extends StatefulActivity<LauncherState>
         mAppWidgetHolder.setActivityResumed(true);
 
         // Listen for IME changes to keep state up to date.
-        getRootView().setWindowInsetsAnimationCallback(
-                new WindowInsetsAnimation.Callback(DISPATCH_MODE_CONTINUE_ON_SUBTREE) {
-                    @Override
-                    public WindowInsets onProgress(WindowInsets windowInsets,
-                            List<WindowInsetsAnimation> windowInsetsAnimations) {
-                        return windowInsets;
-                    }
+        if (Utilities.ATLEAST_R) {
+            getRootView().setWindowInsetsAnimationCallback(
+                    new WindowInsetsAnimation.Callback(DISPATCH_MODE_CONTINUE_ON_SUBTREE) {
+                        @Override
+                        public WindowInsets onProgress(WindowInsets windowInsets,
+                                                       List<WindowInsetsAnimation> windowInsetsAnimations) {
+                            return windowInsets;
+                        }
 
-                    @Override
-                    public void onEnd(WindowInsetsAnimation animation) {
-                        WindowInsets insets = getRootView().getRootWindowInsets();
-                        boolean isImeVisible =
-                                insets != null && insets.isVisible(WindowInsets.Type.ime());
-                        getStatsLogManager().keyboardStateManager().setKeyboardState(
-                                isImeVisible ? SHOW : HIDE);
-                    }
-                });
+                        @Override
+                        public void onEnd(WindowInsetsAnimation animation) {
+                            WindowInsets insets = getRootView().getRootWindowInsets();
+                            boolean isImeVisible =
+                                    insets != null && insets.isVisible(WindowInsets.Type.ime());
+                            getStatsLogManager().keyboardStateManager().setKeyboardState(
+                                    isImeVisible ? SHOW : HIDE);
+                        }
+                    });
+        }
     }
 
     private void logStopAndResume(boolean isResume) {

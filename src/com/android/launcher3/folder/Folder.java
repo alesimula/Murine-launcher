@@ -68,6 +68,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.android.launcher3.AbstractFloatingView;
 import com.android.launcher3.Alarm;
@@ -320,8 +321,10 @@ public class Folder extends AbstractFloatingView implements ClipPathView, DragSo
                 | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
         mFolderName.forceDisableSuggestions(true);
 
-        mKeyboardInsetAnimationCallback = new KeyboardInsetAnimationCallback(this);
-        setWindowInsetsAnimationCallback(mKeyboardInsetAnimationCallback);
+        if (Utilities.ATLEAST_R) {
+            mKeyboardInsetAnimationCallback = new KeyboardInsetAnimationCallback(this);
+            setWindowInsetsAnimationCallback(mKeyboardInsetAnimationCallback);
+        }
     }
 
     public boolean onLongClick(View v) {
@@ -449,11 +452,12 @@ public class Folder extends AbstractFloatingView implements ClipPathView, DragSo
     }
 
     @Override
-    public WindowInsets onApplyWindowInsets(WindowInsets windowInsets) {
+    public WindowInsets onApplyWindowInsets(WindowInsets insets) {
         this.setTranslationY(0);
+        WindowInsetsCompat windowInsets = WindowInsetsCompat.toWindowInsetsCompat(insets, this);
 
         if (windowInsets.isVisible(WindowInsets.Type.ime())) {
-            Insets keyboardInsets = windowInsets.getInsets(WindowInsets.Type.ime());
+            var keyboardInsets = windowInsets.getInsets(WindowInsets.Type.ime());
             int folderHeightFromBottom = getHeightFromBottom();
 
             if (keyboardInsets.bottom > folderHeightFromBottom) {
@@ -463,7 +467,7 @@ public class Folder extends AbstractFloatingView implements ClipPathView, DragSo
             }
         }
 
-        return windowInsets;
+        return insets;
     }
 
     public FolderIcon getFolderIcon() {
@@ -880,13 +884,15 @@ public class Folder extends AbstractFloatingView implements ClipPathView, DragSo
         a.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
-                setWindowInsetsAnimationCallback(null);
+                if (Utilities.ATLEAST_R) {
+                    setWindowInsetsAnimationCallback(null);
+                }
                 mIsAnimatingClosed = true;
             }
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                if (mKeyboardInsetAnimationCallback != null) {
+                if (Utilities.ATLEAST_R && mKeyboardInsetAnimationCallback != null) {
                     setWindowInsetsAnimationCallback(mKeyboardInsetAnimationCallback);
                 }
                 closeComplete(true);

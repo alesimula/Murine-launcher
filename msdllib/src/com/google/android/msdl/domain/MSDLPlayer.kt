@@ -16,6 +16,7 @@
 
 package com.google.android.msdl.domain
 
+import android.os.Build
 import android.os.Vibrator
 import android.util.Log
 import com.google.android.msdl.data.model.FeedbackLevel
@@ -103,8 +104,14 @@ interface MSDLPlayer {
             vibrator: Vibrator,
             repository: MSDLRepository,
         ): Map<MSDLToken, Boolean> {
-            val supportedPrimitives =
-                REQUIRED_PRIMITIVES.associateWith { vibrator.arePrimitivesSupported(it).first() }
+            val supportedPrimitives : Map<Int, Boolean>
+            if (Build.VERSION.SDK_INT >= 30) {
+                supportedPrimitives =
+                    REQUIRED_PRIMITIVES.associateWith { vibrator.arePrimitivesSupported(it).first() }
+            } else {
+                supportedPrimitives =
+                    REQUIRED_PRIMITIVES.associateWith { false }
+            }
             return MSDLToken.entries.associateWith { token ->
                 // For each token, determine if the haptic data from the repository
                 // should use the fallback effect.

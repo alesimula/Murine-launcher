@@ -134,9 +134,11 @@ public class WorkUtilityView extends LinearLayout implements Insettable,
         mSchedulerButton = findViewById(R.id.work_scheduler);
         mWorkUtilityView = findViewById(R.id.work_utility_view);
         setSelected(true);
-        KeyboardInsetAnimationCallback keyboardInsetAnimationCallback =
-                new KeyboardInsetAnimationCallback(this);
-        setWindowInsetsAnimationCallback(keyboardInsetAnimationCallback);
+        if (Utilities.ATLEAST_R) {
+            KeyboardInsetAnimationCallback keyboardInsetAnimationCallback =
+                    new KeyboardInsetAnimationCallback(this);
+            setWindowInsetsAnimationCallback(keyboardInsetAnimationCallback);
+        }
         // Expand is the default state upon initialization.
         addFlag(FLAG_IS_EXPAND);
         setInsets(mActivityContext.getDeviceProfile().getInsets());

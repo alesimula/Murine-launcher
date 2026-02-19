@@ -31,6 +31,7 @@ import static com.android.launcher3.util.RotationUtils.deltaRotation;
 import static com.android.launcher3.util.RotationUtils.rotateRect;
 import static com.android.launcher3.util.RotationUtils.rotateSize;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -38,19 +39,28 @@ import android.graphics.Insets;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.hardware.display.DisplayManager;
+import android.os.Build;
 import android.util.ArrayMap;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.DisplayCutout;
 import android.view.Surface;
 import android.view.WindowInsets;
 import android.view.WindowManager;
+import android.view.WindowManagerImpl;
 import android.view.WindowMetrics;
+import android.window.WindowMetricsController;
+import android.window.WindowMetricsHelper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.window.layout.WindowMetricsCalculator;
 
 import com.android.launcher3.R;
+import com.android.launcher3.Utilities;
 import com.android.launcher3.dagger.LauncherAppSingleton;
 import com.android.launcher3.dagger.LauncherBaseAppComponent;
 import com.android.launcher3.testing.shared.ResourceUtils;
@@ -138,12 +148,23 @@ public class WindowManagerProxy {
     /**
      * Returns the real bounds for the provided display after applying any insets normalization
      */
+    @TargetApi(Build.VERSION_CODES.R)
     public WindowBounds getRealBounds(Context displayInfoContext, CachedDisplayInfo info) {
-        WindowMetrics windowMetrics = displayInfoContext.getSystemService(WindowManager.class)
-                .getMaximumWindowMetrics();
+        if (!Utilities.ATLEAST_R) {
+            var current = WindowMetricsCalculator.getOrCreate()
+                    .computeCurrentWindowMetrics(displayInfoContext.getApplicationContext());
+            Display display = getDisplay(displayInfoContext);
+            List<WindowBounds> windowBounds = estimateInternalDisplayBounds(displayInfoContext).get(
+                    getDisplayInfo(displayInfoContext).normalize(this));
+            var estimated = windowBounds.get(display.getRotation());
+            return new WindowBounds(current.getBounds(), estimated.insets, info.rotation);
+        }
+
+        WindowMetrics wm = displayInfoContext.getSystemService(WindowManager.class)
+                    .getCurrentWindowMetrics();
         Rect insets = new Rect();
-        normalizeWindowInsets(displayInfoContext, windowMetrics.getWindowInsets(), insets);
-        return new WindowBounds(windowMetrics.getBounds(), insets, info.rotation);
+        normalizeWindowInsets(displayInfoContext, wm.getWindowInsets(), insets);
+        return new WindowBounds(wm.getBounds(), insets, info.rotation);
     }
 
     /**
@@ -407,9 +428,16 @@ public class WindowManagerProxy {
      */
     public CachedDisplayInfo getDisplayInfo(Context displayInfoContext) {
         int rotation = getRotation(displayInfoContext);
-        WindowMetrics windowMetrics = displayInfoContext.getSystemService(WindowManager.class)
-                .getMaximumWindowMetrics();
-        return getDisplayInfo(windowMetrics, rotation);
+        if (Utilities.ATLEAST_S) {
+            WindowMetrics windowMetrics = displayInfoContext.getSystemService(WindowManager.class)
+                    .getMaximumWindowMetrics();
+            return getDisplayInfo(windowMetrics, rotation);
+        } else {
+            Point size = new Point();
+            Display display = getDisplay(displayInfoContext);
+            display.getRealSize(size);
+            return new CachedDisplayInfo(size, rotation);
+        }
     }
 
     /**
