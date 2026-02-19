@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (C) 2025 The Android Open Source Project
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+  -->
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="ThemeOverlay.ExpressiveSelectorWithWidgetPreference" parent="">
+        <item name="expressiveSelectorWithWidgetPreferenceTheme">@style/ExpressiveSelectorWithWidgetPreferenceTheme</item>
+    </style>
+
+    <style name="ExpressiveSelectorWithWidgetPreferenceTheme">
+        <item name="expressiveSelectorWithWidgetPreferenceRootLayoutStyle">@style/ExpressiveSelectorWithWidgetPreferenceRootLayoutStyle</item>
+        <item name="expressiveSelectorWithWidgetPreferenceWidgetFrameStyle">@style/ExpressiveSelectorWithWidgetPreferenceWidgetFrameStyle</item>
+        <item name="expressiveSelectorWithWidgetPreferenceIconStyle">@style/ExpressiveSelectorWithWidgetPreferenceIconStyle</item>
+        <item name="expressiveSelectorWithWidgetPreferenceTextContainerStyle">@style/ExpressiveSelectorWithWidgetPreferenceTextContainerStyle</item>
+        <item name="expressiveSelectorWithWidgetPreferenceTitleStyle">@style/ExpressiveSelectorWithWidgetPreferenceTitleStyle</item>
+        <item name="expressiveSelectorWithWidgetPreferenceSummaryContainerStyle">@style/ExpressiveSelectorWithWidgetPreferenceSummaryContainerStyle</item>
+        <item name="expressiveSelectorWithWidgetPreferenceSummaryStyle">@style/ExpressiveSelectorWithWidgetPreferenceSummaryStyle</item>
+        <item name="expressiveSelectorWithWidgetPreferenceAppendixStyle">@style/ExpressiveSelectorWithWidgetPreferenceAppendixStyle</item>
+        <item name="expressiveSelectorWithWidgetPreferenceExtraWidgetContainerStyle">@style/ExpressiveSelectorWithWidgetPreferenceExtraWidgetContainerStyle</item>
+        <item name="expressiveSelectorWithWidgetPreferenceExtraWidgetDividerStyle">@style/ExpressiveSelectorWithWidgetPreferenceExtraWidgetDividerStyle</item>
+        <item name="expressiveSelectorWithWidgetPreferenceExtraWidgetImageStyle">@style/ExpressiveSelectorWithWidgetPreferenceExtraWidgetImageStyle</item>
+        <!-- We need these because layout-v36/settingslib_preference_selector_with_widget.xml may be used in non-expressive theme. -->
+        <item name="expressivePreferenceIconFrameStyle">@style/ExpressivePreferenceIconFrameStyle</item>
+        <item name="expressivePreferenceIconStyle">@style/ExpressivePreferenceIconStyle</item>
+        <item name="expressiveTwoTargetDividerStyle">@style/ExpressiveTwoTargetDividerStyle</item>
+        <item name="expressiveTwoTargetDividerImageViewStyle">@style/ExpressiveTwoTargetDividerImageViewStyle</item>
+        <item name="expressiveTwoTargetDividerViewStyle">@style/ExpressiveTwoTargetDividerViewStyle</item>
+    </style>
+
+    <style name="ExpressiveSelectorWithWidgetPreferenceRootLayoutStyle">
+        <item name="android:background">@drawable/settingslib_round_background_stateful</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:minHeight">?android:attr/listPreferredItemHeightSmall</item>
+        <item name="android:paddingStart">?android:attr/listPreferredItemPaddingStart</item>
+        <item name="android:paddingEnd">?android:attr/listPreferredItemPaddingEnd</item>
+    </style>
+
+    <style name="ExpressiveSelectorWithWidgetPreferenceWidgetFrameStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:minWidth">@dimen/settingslib_expressive_space_medium3</item>
+        <item name="android:minHeight">@dimen/settingslib_expressive_space_medium3</item>
+        <item name="android:layout_marginEnd">@dimen/settingslib_expressive_space_extrasmall6</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="ExpressiveSelectorWithWidgetPreferenceIconStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="maxWidth">@dimen/secondary_app_icon_size</item>
+        <item name="maxHeight">@dimen/secondary_app_icon_size</item>
+    </style>
+
+    <style name="ExpressiveSelectorWithWidgetPreferenceTextContainerStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:paddingTop">@dimen/settingslib_expressive_space_small1</item>
+        <item name="android:paddingBottom">@dimen/settingslib_expressive_space_small1</item>
+        <item name="android:paddingEnd">?android:attr/listPreferredItemPaddingEnd</item>
+    </style>
+
+    <style name="ExpressiveSelectorWithWidgetPreferenceTitleStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:hyphenationFrequency">normalFast</item>
+        <item name="android:lineBreakWordStyle" tools:targetApi="33">phrase</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceListItem</item>
+    </style>
+
+    <style name="ExpressiveSelectorWithWidgetPreferenceSummaryContainerStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:visibility">gone</item>
+    </style>
+
+    <style name="ExpressiveSelectorWithWidgetPreferenceSummaryStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+        <item name="android:textAlignment">viewStart</item>
+        <item name="android:hyphenationFrequency">normalFast</item>
+        <item name="android:lineBreakWordStyle" tools:targetApi="33">phrase</item>
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
+    </style>
+
+    <style name="ExpressiveSelectorWithWidgetPreferenceAppendixStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+        <item name="android:textAlignment">viewEnd</item>
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:visibility">gone</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="ExpressiveSelectorWithWidgetPreferenceExtraWidgetContainerStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="ExpressiveSelectorWithWidgetPreferenceExtraWidgetDividerStyle">
+        <item name="android:layout_width">.75dp</item>
+        <item name="android:layout_height">32dp</item>
+        <item name="android:layout_marginTop">@dimen/settingslib_expressive_space_small1</item>
+        <item name="android:layout_marginBottom">@dimen/settingslib_expressive_space_small1</item>
+        <item name="android:background">?android:attr/dividerVertical</item>
+    </style>
+
+    <style name="ExpressiveSelectorWithWidgetPreferenceExtraWidgetImageStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:minWidth">@dimen/settingslib_expressive_space_medium4</item>
+        <item name="android:src">@drawable/ic_settings_accent</item>
+        <item name="android:scaleType">centerInside</item>
+        <item name="android:contentDescription">@string/settings_label</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+    </style>
+</resources>
