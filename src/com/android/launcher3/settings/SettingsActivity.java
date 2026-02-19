@@ -93,6 +93,13 @@ public class SettingsActivity extends FragmentActivity
         setActionBar(findViewById(R.id.action_bar));
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
 
+        // Manually dispatch insets to children to ensure they reach the fragment on SDK 29
+        findViewById(R.id.content_parent).setOnApplyWindowInsetsListener((v, insets) -> {
+            findViewById(R.id.app_bar).dispatchApplyWindowInsets(insets);
+            findViewById(R.id.content_frame).dispatchApplyWindowInsets(insets);
+            return insets.consumeSystemWindowInsets();
+        });
+
         Intent intent = getIntent();
         //if (intent.hasExtra(EXTRA_FRAGMENT_ROOT_KEY) || intent.hasExtra(EXTRA_FRAGMENT_ARGS)
         //        || intent.hasExtra(EXTRA_FRAGMENT_HIGHLIGHT_KEY)) {
@@ -267,7 +274,7 @@ public class SettingsActivity extends FragmentActivity
 
         @Override
         public void onViewCreated(View view, Bundle savedInstanceState) {
-            var bottomPadding = getContext().getResources()
+            int bottomPadding = getContext().getResources()
                     .getDimensionPixelSize(com.android.settingslib.widget.theme.R.dimen.settingslib_expressive_space_small1);
             super.onViewCreated(view, savedInstanceState);
             RecyclerView listView = getListView();
