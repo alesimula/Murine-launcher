@@ -1247,6 +1247,8 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         setLayoutParams(mlp);
 
         if (!grid.isVerticalBarLayout() || FeatureFlags.enableResponsiveWorkspace()) {
+            if (grid.shouldShowAllAppsOnSheet() && grid.isTablet)
+                grid.allAppsPadding.top = Math.max(grid.bottomSheetTopPadding, grid.allAppsPadding.top);
             int topPadding = grid.allAppsPadding.top;
             if (isSearchBarFloating() && !grid.shouldShowAllAppsOnSheet()) {
                 topPadding += getResources().getDimensionPixelSize(
