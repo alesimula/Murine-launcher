@@ -321,9 +321,9 @@ public class InvariantDeviceProfile {
 
     private String initGrid(Context context, String gridName) {
         Info displayInfo = mDisplayController.getInfo();
+        boolean isTablet = displayInfo.getDeviceType() == TYPE_TABLET;
         // Ignore provided grid, use default grid for phone or tablet
-        String targetGridName = displayInfo.getDeviceType() == TYPE_TABLET
-                ? DYNAMIC_GRID_SIZE_NAME_TABLET : DYNAMIC_GRID_SIZE_NAME;
+        String targetGridName = isTablet ? DYNAMIC_GRID_SIZE_NAME_TABLET : DYNAMIC_GRID_SIZE_NAME;
 
         List<DisplayOption> allOptions = getPredefinedDeviceProfiles(
                 context,
@@ -336,6 +336,7 @@ public class InvariantDeviceProfile {
         DisplayOption displayOption =
                 invDistWeightedInterpolate(displayInfo, new ArrayList<>(allOptions),
                         displayInfo.getDeviceType());
+        applyDynamicScaling(context, displayOption, isTablet);
 
         if (!displayOption.grid.name.equals(gridName)) {
             mPrefs.put(GRID_NAME, displayOption.grid.name);
@@ -343,6 +344,18 @@ public class InvariantDeviceProfile {
 
         initGrid(context, displayInfo, displayOption);
         return targetGridName;
+    }
+
+    public void applyDynamicScaling(Context context, DisplayOption displayOption, boolean isTablet) {
+        float screenWidthDp = context.getResources().getConfiguration().smallestScreenWidthDp;
+        float referenceWidthDp = isTablet ? 680f : 360f;
+        float widthScale = screenWidthDp / referenceWidthDp;
+
+        displayOption.multiply(widthScale, false);
+        for (int i = 0; i < displayOption.hotseatBarBottomSpace.length; i++)
+            displayOption.allAppsBorderSpaces[i].y *= 0.83;
+        for (int i = 0; i < displayOption.hotseatBarBottomSpace.length; i++)
+            displayOption.allAppsCellSize[i].y *= 0.83;
     }
 
     private List<DisplayOption> filterByColumnCount(
@@ -1543,10 +1556,11 @@ public class InvariantDeviceProfile {
             }
         }
 
-        private DisplayOption multiply(float w) {
+        private DisplayOption multiply(float w, boolean applyToText) {
             for (int i = 0; i < COUNT_SIZES; i++) {
                 iconSizes[i] *= w;
-                textSizes[i] *= w;
+                if (applyToText) textSizes[i] *= w;
+                if (applyToText) allAppsIconTextSizes[i] *= w;
                 borderSpaces[i].x *= w;
                 borderSpaces[i].y *= w;
                 minCellSize[i].x *= w;
@@ -1557,13 +1571,16 @@ public class InvariantDeviceProfile {
                 allAppsCellSize[i].x *= w;
                 allAppsCellSize[i].y *= w;
                 allAppsIconSizes[i] *= w;
-                allAppsIconTextSizes[i] *= w;
                 allAppsBorderSpaces[i].x *= w;
                 allAppsBorderSpaces[i].y *= w;
                 transientTaskbarIconSize[i] *= w;
             }
 
             return this;
+        }
+
+        private DisplayOption multiply(float w) {
+            return multiply(w, true);
         }
 
         private DisplayOption add(DisplayOption p) {

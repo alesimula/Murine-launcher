@@ -1531,6 +1531,15 @@ public class DeviceProfile {
                     Math.max(0, desiredWorkspaceHorizontalMarginPx + cellLayoutHorizontalPadding
                             - (allAppsBorderSpacePx.x / 2));
         }
+        var allAppLeftRightMarginMultiplier = 0.7f;
+        var marginMultiplier = allAppLeftRightMarginMultiplier * (!isTablet ? 100 : 2);
+        // todo fix how drawer padding values are calculated in responsive grid type
+        int leftPadding = (int) (allAppsPadding.left != 0 ? allAppsPadding.left * marginMultiplier : marginMultiplier);
+        int rightPadding = (int) (allAppsPadding.right != 0 ? allAppsPadding.right * marginMultiplier
+                : marginMultiplier);
+
+        allAppsPadding.left = leftPadding;
+        allAppsPadding.right = rightPadding;
     }
 
     /** Whether All Apps should be presented on a bottom sheet. */
