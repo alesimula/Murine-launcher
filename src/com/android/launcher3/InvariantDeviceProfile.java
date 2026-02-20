@@ -22,7 +22,9 @@ import static com.android.launcher3.GridType.GRID_TYPE_ONE_GRID;
 import static com.android.launcher3.LauncherPrefs.DB_FILE;
 import static com.android.launcher3.LauncherPrefs.ENABLE_TWOLINE_ALLAPPS_TOGGLE;
 import static com.android.launcher3.LauncherPrefs.FIXED_LANDSCAPE_MODE;
+import static com.android.launcher3.LauncherPrefs.GRID_HEIGHT;
 import static com.android.launcher3.LauncherPrefs.GRID_NAME;
+import static com.android.launcher3.LauncherPrefs.GRID_WIDTH;
 import static com.android.launcher3.LauncherPrefs.NON_FIXED_LANDSCAPE_GRID_NAME;
 import static com.android.launcher3.Utilities.dpiFromPx;
 import static com.android.launcher3.testing.shared.ResourceUtils.INVALID_RESOURCE_HANDLE;
@@ -136,6 +138,8 @@ public class InvariantDeviceProfile {
     private static final String RES_GRID_NUM_ROWS = "grid_num_rows";
     private static final String RES_GRID_NUM_COLUMNS = "grid_num_columns";
     private static final String RES_GRID_ICON_SIZE_DP = "grid_icon_size_dp";
+    public static final String DYNAMIC_GRID_SIZE_NAME = "murine_grid";
+    public static final String DYNAMIC_GRID_SIZE_NAME_TABLET = "murine_grid_tablet";
 
     private final DisplayController mDisplayController;
     private final WindowManagerProxy mWMProxy;
@@ -299,11 +303,15 @@ public class InvariantDeviceProfile {
             } else if (ENABLE_TWOLINE_ALLAPPS_TOGGLE.getSharedPrefKey().equals(key)
                     && enableTwoLinesInAllApps != prefs.get(ENABLE_TWOLINE_ALLAPPS_TOGGLE)) {
                 onConfigChanged(context);
+            } else if (GRID_WIDTH.getSharedPrefKey().equals(key)
+                    || GRID_HEIGHT.getSharedPrefKey().equals(key)) {
+                onConfigChanged(context);
             }
         };
-        prefs.addListener(prefListener, FIXED_LANDSCAPE_MODE, ENABLE_TWOLINE_ALLAPPS_TOGGLE);
+        prefs.addListener(prefListener, FIXED_LANDSCAPE_MODE, ENABLE_TWOLINE_ALLAPPS_TOGGLE,
+                GRID_WIDTH, GRID_HEIGHT);
         lifeCycle.addCloseable(() -> prefs.removeListener(prefListener,
-                FIXED_LANDSCAPE_MODE, ENABLE_TWOLINE_ALLAPPS_TOGGLE));
+                FIXED_LANDSCAPE_MODE, ENABLE_TWOLINE_ALLAPPS_TOGGLE, GRID_WIDTH, GRID_HEIGHT));
 
         SimpleBroadcastReceiver localeReceiver = new SimpleBroadcastReceiver(context,
                 MAIN_EXECUTOR, i -> onConfigChanged(context));
@@ -313,23 +321,20 @@ public class InvariantDeviceProfile {
 
     private String initGrid(Context context, String gridName) {
         Info displayInfo = mDisplayController.getInfo();
+        // Ignore provided grid, use default grid for phone or tablet
+        String targetGridName = displayInfo.getDeviceType() == TYPE_TABLET
+                ? DYNAMIC_GRID_SIZE_NAME_TABLET : DYNAMIC_GRID_SIZE_NAME;
+
         List<DisplayOption> allOptions = getPredefinedDeviceProfiles(
                 context,
-                gridName,
+                targetGridName,
                 displayInfo,
                 (RestoreDbTask.isPending(mPrefs) && !Flags.oneGridSpecs()),
                 mPrefs.get(FIXED_LANDSCAPE_MODE)
         );
 
-        // Filter out options that don't have the same number of columns as the grid
-        DeviceGridState deviceGridState = new DeviceGridState(mPrefs);
-        List<DisplayOption> allOptionsFilteredByColCount =
-                filterByColumnCount(allOptions, deviceGridState.getColumns());
-
         DisplayOption displayOption =
-                invDistWeightedInterpolate(displayInfo, allOptionsFilteredByColCount.isEmpty()
-                                ? new ArrayList<>(allOptions)
-                                : new ArrayList<>(allOptionsFilteredByColCount),
+                invDistWeightedInterpolate(displayInfo, new ArrayList<>(allOptions),
                         displayInfo.getDeviceType());
 
         if (!displayOption.grid.name.equals(gridName)) {
@@ -337,12 +342,7 @@ public class InvariantDeviceProfile {
         }
 
         initGrid(context, displayInfo, displayOption);
-        FileLog.d(TAG, "After initGrid:"
-                + "gridName:" + gridName
-                + ", dbFile:" + dbFile
-                + ", LauncherPrefs GRID_NAME:" + mPrefs.get(GRID_NAME)
-                + ", LauncherPrefs DB_FILE:" + mPrefs.get(DB_FILE));
-        return displayOption.grid.name;
+        return targetGridName;
     }
 
     private List<DisplayOption> filterByColumnCount(
@@ -359,6 +359,18 @@ public class InvariantDeviceProfile {
     @Deprecated
     public void reset(Context context) {
         initGrid(context, mPrefs.get(GRID_NAME));
+    }
+
+    private int getDefaultWorkspaceForWidth(int width) {
+        switch (width) {
+            case 3: return R.xml.default_workspace_3x3;
+            case 4: return R.xml.default_workspace_4x4;
+            case 5: return R.xml.default_workspace_5x5;
+            case 6: return R.xml.default_workspace_6x5;
+            case 7: return R.xml.default_workspace_7x3;
+            case 8: return R.xml.default_workspace_8x3;
+            default: return R.xml.default_workspace_5x5;
+        }
     }
 
     private void initGrid(Context context, Info displayInfo, DisplayOption displayOption) {
@@ -402,6 +414,27 @@ public class InvariantDeviceProfile {
         this.deviceType = displayInfo.getDeviceType();
         this.displayInfo = displayInfo;
 
+        // Apply custom grid size from preferences
+        if (!mPrefs.has(GRID_WIDTH, GRID_HEIGHT)) {
+            if (deviceType == TYPE_TABLET) {
+                mPrefs.put(GRID_WIDTH, 5);
+                mPrefs.put(GRID_HEIGHT, 6);
+            } else {
+                mPrefs.put(GRID_WIDTH, 4);
+                mPrefs.put(GRID_HEIGHT, 5);
+            }
+        }
+        numColumns = mPrefs.get(GRID_WIDTH);
+        numRows = mPrefs.get(GRID_HEIGHT);
+
+        // Dynamic hotseat and all apps columns based on width
+        numShownHotseatIcons = numColumns;
+        numDatabaseHotseatIcons = numColumns;
+        numAllAppsColumns = numColumns;
+        numDatabaseAllAppsColumns = numColumns;
+        numSearchContainerColumns = numColumns;
+        defaultLayoutId = getDefaultWorkspaceForWidth(numColumns);
+
         inlineNavButtonsEndSpacing = closestProfile.inlineNavButtonsEndSpacing;
 
         iconSize = displayOption.iconSizes;
@@ -420,18 +453,10 @@ public class InvariantDeviceProfile {
 
         horizontalMargin = displayOption.horizontalMargin;
 
-        numShownHotseatIcons = closestProfile.numHotseatIcons;
-        numDatabaseHotseatIcons = deviceType == TYPE_MULTI_DISPLAY
-                ? closestProfile.numDatabaseHotseatIcons : closestProfile.numHotseatIcons;
         hotseatBarBottomSpace = displayOption.hotseatBarBottomSpace;
         hotseatQsbSpace = displayOption.hotseatQsbSpace;
 
         allAppsStyle = closestProfile.allAppsStyle;
-
-        numAllAppsColumns = closestProfile.numAllAppsColumns;
-
-        numDatabaseAllAppsColumns = deviceType == TYPE_MULTI_DISPLAY
-                ? closestProfile.numDatabaseAllAppsColumns : closestProfile.numAllAppsColumns;
 
         allAppsCellSize = displayOption.allAppsCellSize;
         allAppsBorderSpaces = displayOption.allAppsBorderSpaces;

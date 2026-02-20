@@ -53,12 +53,27 @@
         launcher:logIdOff="616" />
 
     <com.android.settingslib.widget.SpacePreference/>
+
     <com.android.settingslib.widget.ExpandablePreference
-        android:key="pref_grid_size_category"
         android:title="@string/grid_size_title"
         android:summary="@string/grid_size_desc">
+        <app.murinelauncher.widget.CustomSeekBarPreference
+            android:title="Grid Width"
+            android:key="pref_grid_size_width"
+            android:defaultValue="4"
+            android:min="3"
+            android:max="10">
+        </app.murinelauncher.widget.CustomSeekBarPreference>
 
+        <app.murinelauncher.widget.CustomSeekBarPreference
+            android:title="Grid Height"
+            android:key="pref_grid_size_height"
+            android:defaultValue="5"
+            android:min="3"
+            android:max="10">
+        </app.murinelauncher.widget.CustomSeekBarPreference>
     </com.android.settingslib.widget.ExpandablePreference>
+
     <com.android.settingslib.widget.SpacePreference/>
 
 

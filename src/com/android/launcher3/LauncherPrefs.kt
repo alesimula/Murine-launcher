@@ -241,6 +241,11 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
         const val SHOULD_SHOW_SMARTSPACE_KEY = "SHOULD_SHOW_SMARTSPACE_KEY"
 
         @JvmField
+        val GRID_WIDTH = backedUpItem("pref_grid_size_width", 4)
+        @JvmField
+        val GRID_HEIGHT = backedUpItem("pref_grid_size_height", 5)
+
+        @JvmField
         val ENABLE_TWOLINE_ALLAPPS_TOGGLE = backedUpItem("pref_enable_two_line_toggle", false)
         @JvmField val PROMISE_ICON_IDS = backedUpItem(InstallSessionHelper.PROMISE_ICON_IDS, "")
         @JvmField val WORK_EDU_STEP = backedUpItem("showed_work_profile_edu", 0)

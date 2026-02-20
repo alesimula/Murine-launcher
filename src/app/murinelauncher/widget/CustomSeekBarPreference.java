@@ -112,6 +112,13 @@ public class CustomSeekBarPreference extends SliderPreference {
                 }
             }
 
+            // Explicitly read android:min if not handled by parent correctly
+            int minAttr = attrs.getAttributeIntValue(ANDROIDNS, "min", -1);
+            if (minAttr == -1) {
+                minAttr = attrs.getAttributeIntValue(SETTINGS_NS, "min", -1);
+            }
+            if (minAttr != -1) setMin(minAttr);
+
             int interval = attrs.getAttributeIntValue(SETTINGS_NS, "interval", 0);
             if (interval == 0) {
                 interval = attrs.getAttributeIntValue(ANDROIDNS, "interval", 0);
