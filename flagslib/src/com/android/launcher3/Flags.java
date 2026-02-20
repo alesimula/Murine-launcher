@@ -1,5 +1,8 @@
 package com.android.launcher3;
 // TODO(b/303773055): Remove the annotation after access issue is resolved.
+
+import android.os.Build;
+
 /** @hide */
 public final class Flags {
     /** @hide */
@@ -426,7 +429,8 @@ public final class Flags {
     }
 
     public static boolean enableSupportForArchiving() {
-        return FEATURE_FLAGS.enableSupportForArchiving();
+        return Build.VERSION.SDK_INT > Build.VERSION_CODES.VANILLA_ICE_CREAM &&
+                FEATURE_FLAGS.enableSupportForArchiving();
     }
 
     public static boolean enableTabletTwoPanePickerV2() {
