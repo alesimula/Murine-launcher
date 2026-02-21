@@ -2,4 +2,15 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="grid_size_title">Grid size</string>
     <string name="grid_size_desc">Change the number of rows and columns</string>
+
+    <string name="pref_category_icons_title">Icons</string>
+    <string name="pref_category_icons_desc">Set icon size and appearance</string>
+    <string name="pref_category_home_title">Home screen</string>
+    <string name="pref_category_home_desc">Customize your home screen</string>
+    <string name="pref_category_drawer_title">App drawer</string>
+    <string name="pref_category_drawer_desc">Customize your app drawer</string>
+    <string name="pref_category_misc_title">Miscellaneous</string>
+    <string name="pref_category_misc_desc">Other options</string>
+
+    <string name="pref_subcategory_layout">Layout</string>
 </resources>

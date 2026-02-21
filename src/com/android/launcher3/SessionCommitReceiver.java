@@ -105,6 +105,6 @@ public class SessionCommitReceiver extends BroadcastReceiver {
                 && UserCache.getInstance(context).getUserInfo(user).isPrivate()) {
             return false;
         }
-        return LauncherPrefs.getPrefs(context).getBoolean(ADD_ICON_PREFERENCE_KEY, true);
+        return LauncherPrefs.getPrefs(context).getBoolean(ADD_ICON_PREFERENCE_KEY, false);
     }
 }
