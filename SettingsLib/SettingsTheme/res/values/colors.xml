@@ -93,30 +93,8 @@
     <color name="settingslib_colorBackgroundLevel_low">#C8E6C9</color> <!-- Green 100 -->
     <color name="settingslib_colorContentLevel_low">#388E3C</color> <!-- Green 700 -->
 
-    <!-- Material next state colors -->
-    <color name="settingslib_state_on_color">@color/settingslib_materialColorPrimaryContainer</color>
-    <color name="settingslib_state_off_color">@color/settingslib_materialColorPrimaryContainer</color>
-
-    <color name="settingslib_thumb_disabled_color">@color/settingslib_materialColorOutline</color>
-    <color name="settingslib_thumb_on_color">@color/settingslib_materialColorOnPrimary</color>
-    <color name="settingslib_thumb_off_color">@color/settingslib_materialColorOutline</color>
-
-    <color name="settingslib_track_on_color">@color/settingslib_materialColorPrimary</color>
-    <color name="settingslib_track_off_color">@color/settingslib_materialColorSurfaceContainerHighest</color>
-
-    <!-- Dialog colors -->
-    <color name="settingslib_dialog_accent">@color/settingslib_materialColorPrimary</color>
-    <color name="settingslib_dialog_background">@color/settingslib_materialColorSurfaceContainerHigh</color>
+    <!-- Error dialog color -->
     <color name="settingslib_dialog_colorError">@color/settingslib_error_600</color>
-
-    <color name="settingslib_colorSurfaceHeader">@color/settingslib_materialColorSurfaceVariant</color>
-
-    <color name="settingslib_text_color_preference_category_title">@color/settingslib_materialColorPrimary</color>
-
-    <!-- The text color of spinner title -->
-    <color name="settingslib_spinner_title_color">@color/settingslib_materialColorOnPrimaryContainer</color>
-    <!-- The text color of dropdown item title -->
-    <color name="settingslib_spinner_dropdown_color">@color/settingslib_materialColorOnPrimaryContainer</color>
 
     <color name="settingslib_ripple_color">?android:attr/colorControlHighlight</color>
     <color name="settingslib_list_divider_color">@color/settingslib_materialColorSurfaceContainerHighest</color>
@@ -125,4 +103,45 @@
     <color name="settingslib_text_color_secondary_device_default">@color/settingslib_materialColorOnSurfaceVariant</color>
 
     <color name="settingslib_track_online_color">@color/settingslib_switch_track_outline_color</color>
+
+
+    <!-- COMMON COLORS -->
+
+
+    <!-- Material next state on color-->
+    <color name="settingslib_state_on_color">@color/settingslib_materialColorPrimaryContainer</color>
+
+    <!-- Material next state off color-->
+    <color name="settingslib_state_off_color">@color/settingslib_materialColorPrimaryContainer</color>
+
+    <!-- Material next thumb disable color-->
+    <color name="settingslib_thumb_disabled_color">@color/settingslib_materialColorOutline</color>
+
+    <!-- Material next thumb off color-->
+    <color name="settingslib_thumb_on_color">@color/settingslib_materialColorOnPrimary</color>
+
+    <!-- Material next thumb off color-->
+    <color name="settingslib_thumb_off_color">@color/settingslib_materialColorOutline</color>
+
+    <!-- Material next track on color-->
+    <color name="settingslib_track_on_color">@color/settingslib_materialColorPrimary</color>
+
+    <!-- Material next track off color-->
+    <color name="settingslib_track_off_color">@color/settingslib_materialColorSurfaceContainerHighest</color>
+
+    <!-- Dialog text button color. -->
+    <color name="settingslib_dialog_accent">@color/settingslib_materialColorPrimary</color>
+
+    <!-- Dialog background color. -->
+    <color name="settingslib_dialog_background">@color/settingslib_materialColorSurfaceContainerHigh</color>
+
+    <color name="settingslib_colorSurfaceHeader">@color/settingslib_materialColorSurfaceVariant</color>
+
+    <color name="settingslib_text_color_preference_category_title">@color/settingslib_materialColorPrimary</color>
+
+    <!-- The text color of spinner title -->
+    <color name="settingslib_spinner_title_color">@color/settingslib_materialColorOnPrimaryContainer</color>
+
+    <!-- The text color of dropdown item title -->
+    <color name="settingslib_spinner_dropdown_color">@color/settingslib_materialColorOnPrimaryContainer</color>
 </resources>

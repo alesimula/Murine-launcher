@@ -16,27 +16,6 @@
 -->
 
 <resources>
-    <!-- Material next state on color-->
-    <color name="settingslib_state_on_color">@android:color/system_accent1_100</color>
-
-    <!-- Material next state off color-->
-    <color name="settingslib_state_off_color">@android:color/system_accent1_100</color>
-
-    <!-- Material next thumb disable color-->
-    <color name="settingslib_thumb_disabled_color">@color/settingslib_thumb_off_color</color>
-
-    <!-- Material next thumb off color-->
-    <color name="settingslib_thumb_on_color">@android:color/system_accent1_0</color>
-
-    <!-- Material next thumb off color-->
-    <color name="settingslib_thumb_off_color">@android:color/system_neutral2_500</color>
-
-    <!-- Material next track on color-->
-    <color name="settingslib_track_on_color">@android:color/system_accent1_600</color>
-
-    <!-- Material next track off color-->
-    <color name="settingslib_track_off_color">@android:color/system_surface_container_highest_light</color>
-
     <!--Deprecated. After sdk 35 don't use it. using materialColorOnSurface-->
     <color name="settingslib_text_color_primary_device_default">@android:color/system_on_surface_light</color>
     <!--Deprecated. After sdk 35 don't use it. using materialColorOnSurfaceVariant-->
