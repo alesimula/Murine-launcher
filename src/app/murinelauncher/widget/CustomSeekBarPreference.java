@@ -18,7 +18,10 @@ package app.murinelauncher.widget;
 import static android.view.HapticFeedbackConstants.CLOCK_TICK;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
@@ -56,6 +59,8 @@ public class CustomSeekBarPreference extends SliderPreference {
 
     private boolean mShowIncrementButtons = true;
     private boolean mShowTicks = false;
+    /// show ticks every N intervals (e.g. interval = 10, tickInterval = 2; show ticks every 20 steps)
+    private int mTickInterval = 1;
 
     private CharSequence mUserSummary;
 
@@ -126,6 +131,9 @@ public class CustomSeekBarPreference extends SliderPreference {
                     R.styleable.CustomSeekBarPreference_showIncrementButtons, true);
             mShowTicks = a.getBoolean(
                     R.styleable.CustomSeekBarPreference_showTicks, false);
+            mTickInterval = a.getInt(
+                    R.styleable.CustomSeekBarPreference_tickInterval, 1);
+            if (mTickInterval < 1) mTickInterval = 1;
 
             int interval = a.getInt(R.styleable.CustomSeekBarPreference_interval, 0);
             if (interval <= 0) {
@@ -310,7 +318,7 @@ public class CustomSeekBarPreference extends SliderPreference {
         updatePlusMinusEnabledStates(holder);
 
         if (slider != null) {
-            slider.setTickVisible(mShowTicks);
+            if (mShowTicks) applyTickOverlay(slider);
             slider.setContinuousModeTickCount(4);
             if (summaryView != null) {
                 slider.addOnChangeListener((s, value, fromUser) -> {
@@ -434,6 +442,71 @@ public class CustomSeekBarPreference extends SliderPreference {
             }
             return false;
         });
+    }
+
+    private void applyTickOverlay(final Slider slider) {
+        if (!mShowTicks) { // No tick - set tick invisible
+            slider.setTickVisible(false);
+            return;
+        } else if (mTickInterval <= 1) { // Standard tick interval
+            slider.setTickVisible(true);
+            return;
+        }
+
+        // Custom tick interval
+        slider.setTickVisible(false);
+        final Drawable dotDrawable = new Drawable() {
+            private final Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
+            @Override
+            public void draw(@NonNull Canvas canvas) {
+                float from = slider.getValueFrom();
+                float to = slider.getValueTo();
+                float range = to - from;
+                if (range <= 0 || mTickInterval <= 0) return;
+
+                int trackLeft = slider.getTrackSidePadding();
+                int trackWidth = slider.getTrackWidth();
+                float thumbVal = slider.getValue();
+                float radius = slider.getResources().getDimensionPixelSize(
+                        com.android.settingslib.widget.preference.slider.R.dimen
+                                .settingslib_expressive_slider_tick_radius);
+                float cy = slider.getHeight() / 2f;
+
+                int activeColor = getTrackColor(slider, true);
+                int inactiveColor = getTrackColor(slider, false);
+
+                int step = getSliderIncrement();
+                if (step <= 0) step = 1;
+                int dotStep = mTickInterval * step;
+
+                for (float val = from; val <= to; val += dotStep) {
+                    if (Math.abs(val - thumbVal) < 0.5f) continue;
+
+                    float fraction = (val - from) / range;
+                    float cx = trackLeft + fraction * trackWidth;
+                    boolean inActive = val < thumbVal;
+                    mPaint.setColor(inActive ? inactiveColor : activeColor);
+                    canvas.drawCircle(cx, cy, radius, mPaint);
+                }
+            }
+
+            @Override public void setAlpha(int alpha) {}
+            @Override public void setColorFilter(android.graphics.ColorFilter cf) {}
+            @Override public int getOpacity() { return android.graphics.PixelFormat.TRANSLUCENT; }
+        };
+
+        slider.getOverlay().add(dotDrawable);
+        slider.addOnLayoutChangeListener((v, l, t, r, b, ol, ot, or2, ob) -> {
+            dotDrawable.setBounds(0, 0, slider.getWidth(), slider.getHeight());
+            dotDrawable.invalidateSelf();
+        });
+        slider.addOnChangeListener((s, value, fromUser) -> dotDrawable.invalidateSelf());
+    }
+
+    private static int getTrackColor(Slider slider, boolean active) {
+        ColorStateList csl = active ? slider.getTrackActiveTintList() : slider.getTrackInactiveTintList();
+        return csl != null ? csl.getDefaultColor() : 0xFF888888;
     }
 
     private void performReset() {
