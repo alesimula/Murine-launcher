@@ -665,7 +665,7 @@ public class SliderPreference extends Preference {
         }
     }
 
-    private void setValueInternal(int sliderValue, boolean notifyChanged) {
+    protected void setValueInternal(int sliderValue, boolean notifyChanged) {
         if (sliderValue < mMin) {
             sliderValue = mMin;
         }

@@ -54,6 +54,9 @@ public class CustomSeekBarPreference extends SliderPreference {
     private boolean mDefaultValueExists;
     private int mDefaultValue;
 
+    private boolean mShowIncrementButtons = true;
+    private boolean mShowTicks = false;
+
     private CharSequence mUserSummary;
 
     private boolean mInUserDrag = false;
@@ -119,8 +122,16 @@ public class CustomSeekBarPreference extends SliderPreference {
             }
             if (minAttr != -1) setMin(minAttr);
 
-            int interval = attrs.getAttributeIntValue(SETTINGS_NS, "interval", 0);
-            if (interval == 0) {
+            mShowIncrementButtons = a.getBoolean(
+                    R.styleable.CustomSeekBarPreference_showIncrementButtons, true);
+            mShowTicks = a.getBoolean(
+                    R.styleable.CustomSeekBarPreference_showTicks, false);
+
+            int interval = a.getInt(R.styleable.CustomSeekBarPreference_interval, 0);
+            if (interval <= 0) {
+                interval = attrs.getAttributeIntValue(SETTINGS_NS, "interval", 0);
+            }
+            if (interval <= 0) {
                 interval = attrs.getAttributeIntValue(ANDROIDNS, "interval", 0);
             }
             if (interval > 0) setSliderIncrement(interval);
@@ -190,6 +201,20 @@ public class CustomSeekBarPreference extends SliderPreference {
 
     @Override
     public void onBindViewHolder(@NonNull PreferenceViewHolder holder) {
+        // Sanitize persisted value so it is a valid step for the Slider.
+        // This prevents crashes when the interval/stepSize changes between
+        // app versions and the old persisted value is no longer on a valid step.
+        int sliderStep = Math.max(1, getSliderIncrement());
+        int min = getMin();
+        int max = getMax();
+        int current = getValue();
+        int offset = current - min;
+        if (offset < 0 || (sliderStep > 1 && offset % sliderStep != 0)) {
+            int snapped = min + Math.round((float) offset / sliderStep) * sliderStep;
+            snapped = Math.max(min, Math.min(snapped, max));
+            setValueInternal(snapped, false);
+        }
+
         super.onBindViewHolder(holder);
 
         final TextView summaryView = (TextView) holder.findViewById(android.R.id.summary);
@@ -231,7 +256,7 @@ public class CustomSeekBarPreference extends SliderPreference {
         final Slider slider = (Slider) holder.findViewById(
                 com.android.settingslib.widget.preference.slider.R.id.slider);
 
-        if (slider != null) slider.setOnTouchListener(new View.OnTouchListener() {
+        if (slider != null && mShowIncrementButtons) slider.setOnTouchListener(new View.OnTouchListener() {
             private boolean mIgnoreGesture = false;
 
             @Override public boolean onTouch(View v, MotionEvent event) {
@@ -254,7 +279,7 @@ public class CustomSeekBarPreference extends SliderPreference {
 
         int stepForClicks = Math.max(1, getSliderIncrement());
 
-        if (minusFrame != null && minusIcon != null) {
+        if (minusFrame != null && minusIcon != null && mShowIncrementButtons) {
             minusFrame.setVisibility(View.VISIBLE);
             minusIcon.setImageResource(R.drawable.ic_custom_seekbar_minus);
             minusFrame.setOnClickListener(v -> {
@@ -266,8 +291,9 @@ public class CustomSeekBarPreference extends SliderPreference {
                 updatePlusMinusEnabledStates(holder);
             });
         }
+        else if (minusFrame != null) minusFrame.setVisibility(View.GONE);
 
-        if (plusFrame != null && plusIcon != null) {
+        if (plusFrame != null && plusIcon != null && mShowIncrementButtons) {
             plusFrame.setVisibility(View.VISIBLE);
             plusIcon.setImageResource(R.drawable.ic_custom_seekbar_plus);
             plusFrame.setOnClickListener(v -> {
@@ -279,16 +305,21 @@ public class CustomSeekBarPreference extends SliderPreference {
                 updatePlusMinusEnabledStates(holder);
             });
         }
+        else if (plusFrame != null) plusFrame.setVisibility(View.GONE);
 
         updatePlusMinusEnabledStates(holder);
 
-        if (slider != null && summaryView != null) {
-            slider.addOnChangeListener((s, value, fromUser) -> {
-                if (fromUser) {
-                    summaryView.setText(composeSummary(mUserSummary, (int) value));
-                    updatePlusMinusEnabledStates(holder);
-                }
-            });
+        if (slider != null) {
+            slider.setTickVisible(mShowTicks);
+            slider.setContinuousModeTickCount(4);
+            if (summaryView != null) {
+                slider.addOnChangeListener((s, value, fromUser) -> {
+                    if (fromUser) {
+                        summaryView.setText(composeSummary(mUserSummary, (int) value));
+                        updatePlusMinusEnabledStates(holder);
+                    }
+                });
+            }
             slider.addOnSliderTouchListener(new Slider.OnSliderTouchListener() {
                 @Override
                 public void onStartTrackingTouch(@NonNull Slider s) {

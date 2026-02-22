@@ -49,7 +49,9 @@
                 android:key="pref_grid_size_width"
                 android:defaultValue="4"
                 android:min="3"
-                android:max="10">
+                android:max="10"
+                app:showIncrementButtons="false"
+                app:showTicks="true">
             </app.murinelauncher.widget.CustomSeekBarPreference>
 
             <app.murinelauncher.widget.CustomSeekBarPreference
@@ -57,7 +59,9 @@
                 android:key="pref_grid_size_height"
                 android:defaultValue="5"
                 android:min="3"
-                android:max="10">
+                android:max="10"
+                app:showIncrementButtons="false"
+                app:showTicks="true">
             </app.murinelauncher.widget.CustomSeekBarPreference>
         </com.android.settingslib.widget.ExpandablePreference>
     </PreferenceCategory>

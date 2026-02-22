@@ -664,5 +664,7 @@
         <attr name="showSign" format="boolean" />
         <attr name="units" format="string|reference" />
         <attr name="continuousUpdates" format="boolean" />
+        <attr name="showIncrementButtons" format="boolean" />
+        <attr name="showTicks" format="boolean" />
     </declare-styleable>
 </resources>
