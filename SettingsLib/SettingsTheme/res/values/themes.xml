@@ -38,6 +38,8 @@
         <item name="android:textColorSecondary">@color/settingslib_text_color_secondary</item>
         <item name="android:textColorTertiary">@color/settingslib_materialColorOutline</item>
         <item name="android:seekBarStyle">@style/Seekbar.SettingsLib</item>
+        <!-- Fix for some OEM devices, make windowBackground the same as colorBackground -->
+        <item name="android:windowBackground">?android:attr/colorBackground</item>
         <!-- spinner -->
         <item name="android:spinnerStyle">@style/Spinner.SettingsLib</item>
         <item name="android:spinnerItemStyle">@style/SpinnerItem.SettingsLib</item>
