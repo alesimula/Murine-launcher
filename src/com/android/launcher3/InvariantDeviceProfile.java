@@ -25,6 +25,8 @@ import static com.android.launcher3.LauncherPrefs.FIXED_LANDSCAPE_MODE;
 import static com.android.launcher3.LauncherPrefs.GRID_HEIGHT;
 import static com.android.launcher3.LauncherPrefs.GRID_NAME;
 import static com.android.launcher3.LauncherPrefs.GRID_WIDTH;
+import static com.android.launcher3.LauncherPrefs.ICON_LABEL_SIZE;
+import static com.android.launcher3.LauncherPrefs.ICON_SIZE;
 import static com.android.launcher3.LauncherPrefs.NON_FIXED_LANDSCAPE_GRID_NAME;
 import static com.android.launcher3.Utilities.dpiFromPx;
 import static com.android.launcher3.testing.shared.ResourceUtils.INVALID_RESOURCE_HANDLE;
@@ -303,15 +305,18 @@ public class InvariantDeviceProfile {
             } else if (ENABLE_TWOLINE_ALLAPPS_TOGGLE.getSharedPrefKey().equals(key)
                     && enableTwoLinesInAllApps != prefs.get(ENABLE_TWOLINE_ALLAPPS_TOGGLE)) {
                 onConfigChanged(context);
-            } else if (GRID_WIDTH.getSharedPrefKey().equals(key)
-                    || GRID_HEIGHT.getSharedPrefKey().equals(key)) {
+            } else if (GRID_WIDTH.getSharedPrefKey().equals(key) ||
+                    GRID_HEIGHT.getSharedPrefKey().equals(key) ||
+                    ICON_SIZE.getSharedPrefKey().equals(key) ||
+                    ICON_LABEL_SIZE.getSharedPrefKey().equals(key)) {
                 onConfigChanged(context);
             }
         };
         prefs.addListener(prefListener, FIXED_LANDSCAPE_MODE, ENABLE_TWOLINE_ALLAPPS_TOGGLE,
-                GRID_WIDTH, GRID_HEIGHT);
+                GRID_WIDTH, GRID_HEIGHT, ICON_SIZE, ICON_LABEL_SIZE);
         lifeCycle.addCloseable(() -> prefs.removeListener(prefListener,
-                FIXED_LANDSCAPE_MODE, ENABLE_TWOLINE_ALLAPPS_TOGGLE, GRID_WIDTH, GRID_HEIGHT));
+                FIXED_LANDSCAPE_MODE, ENABLE_TWOLINE_ALLAPPS_TOGGLE, GRID_WIDTH, GRID_HEIGHT,
+                ICON_SIZE, ICON_LABEL_SIZE));
 
         SimpleBroadcastReceiver localeReceiver = new SimpleBroadcastReceiver(context,
                 MAIN_EXECUTOR, i -> onConfigChanged(context));
@@ -351,11 +356,17 @@ public class InvariantDeviceProfile {
         float referenceWidthDp = isTablet ? 680f : 360f;
         float widthScale = screenWidthDp / referenceWidthDp;
 
-        displayOption.multiply(widthScale, false);
+        displayOption.multiply(widthScale, ICON_SIZE.get(context), false);
         for (int i = 0; i < displayOption.hotseatBarBottomSpace.length; i++)
             displayOption.allAppsBorderSpaces[i].y *= 0.83;
         for (int i = 0; i < displayOption.hotseatBarBottomSpace.length; i++)
             displayOption.allAppsCellSize[i].y *= 0.83;
+
+        float labelScale = ICON_LABEL_SIZE.get(context) / 100f;
+        for (int i = 0; i < displayOption.textSizes.length; i++)
+            displayOption.textSizes[i] *= labelScale;
+        for (int i = 0; i < displayOption.allAppsIconTextSizes.length; i++)
+            displayOption.allAppsIconTextSizes[i] *= labelScale;
     }
 
     private List<DisplayOption> filterByColumnCount(
@@ -1556,9 +1567,9 @@ public class InvariantDeviceProfile {
             }
         }
 
-        private DisplayOption multiply(float w, boolean applyToText) {
+        private DisplayOption multiply(float w, int iconPt, boolean applyToText) {
             for (int i = 0; i < COUNT_SIZES; i++) {
-                iconSizes[i] *= w;
+                iconSizes[i] *= w * iconPt / 100f;
                 if (applyToText) textSizes[i] *= w;
                 if (applyToText) allAppsIconTextSizes[i] *= w;
                 borderSpaces[i].x *= w;
@@ -1570,13 +1581,17 @@ public class InvariantDeviceProfile {
                 hotseatQsbSpace[i] *= w;
                 allAppsCellSize[i].x *= w;
                 allAppsCellSize[i].y *= w;
-                allAppsIconSizes[i] *= w;
+                allAppsIconSizes[i] *= w * iconPt / 100f;
                 allAppsBorderSpaces[i].x *= w;
                 allAppsBorderSpaces[i].y *= w;
-                transientTaskbarIconSize[i] *= w;
+                transientTaskbarIconSize[i] *= w * iconPt / 100f;
             }
 
             return this;
+        }
+
+        private DisplayOption multiply(float w, boolean applyToText) {
+            return multiply(w, 100, applyToText);
         }
 
         private DisplayOption multiply(float w) {

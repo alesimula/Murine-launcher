@@ -55,7 +55,7 @@
             launcher:name="Shorter Stubby"
             launcher:minWidthDps="255"
             launcher:minHeightDps="400"
-            launcher:iconImageSize="48"
+            launcher:iconImageSize="56"
             launcher:iconTextSize="13.0"
             launcher:allAppsBorderSpace="16"
             launcher:allAppsCellHeight="104"

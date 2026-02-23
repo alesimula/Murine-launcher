@@ -25,11 +25,32 @@
         android:persistent="false"
         android:widgetLayout="@layout/notification_pref_warning" />
 
-    <app.murinelauncher.widget.CustomSeekBarPreference android:max="100"
-        android:title="Test seekbar"
-        android:key="pref_app_drawer_opacity"
-        android:defaultValue="100"
-        android:min="0">
-
-    </app.murinelauncher.widget.CustomSeekBarPreference>
+    <PreferenceCategory android:title="@string/pref_subcategory_appearance">
+        <com.android.settingslib.widget.ExpandablePreference
+            android:title="@string/pref_group_icon_scale_title"
+            android:summary="@string/pref_group_icon_scale_desc">
+            <app.murinelauncher.widget.CustomSeekBarPreference
+                android:title="@string/pref_label_icon_size"
+                android:key="pref_icon_bitmap_size"
+                android:defaultValue="100"
+                android:min="33"
+                android:max="200"
+                app:units="%"
+                app:tickInterval="50"
+                app:absoluteTickInterval="true"
+                app:showTicks="true">
+            </app.murinelauncher.widget.CustomSeekBarPreference>
+            <app.murinelauncher.widget.CustomSeekBarPreference
+                android:title="@string/pref_label_icon_label_size"
+                android:key="pref_icon_label_size"
+                android:defaultValue="100"
+                android:min="33"
+                android:max="200"
+                app:units="%"
+                app:tickInterval="50"
+                app:absoluteTickInterval="true"
+                app:showTicks="true">
+            </app.murinelauncher.widget.CustomSeekBarPreference>
+        </com.android.settingslib.widget.ExpandablePreference>
+    </PreferenceCategory>
 </androidx.preference.PreferenceScreen>

@@ -31,7 +31,7 @@
       LAUNCHER_HOME_SCREEN_ROTATION_DISABLED(616)
     -->
     <SwitchPreferenceCompat
-        android:icon="@drawable/ic_settings_home"
+        android:icon="@drawable/ic_settings_screen_rotation"
         android:key="pref_allowRotation"
         android:title="@string/allow_rotation_title"
         android:summary="@string/allow_rotation_desc"
@@ -42,10 +42,10 @@
 
     <PreferenceCategory android:title="@string/pref_subcategory_layout">
         <com.android.settingslib.widget.ExpandablePreference
-            android:title="@string/grid_size_title"
-            android:summary="@string/grid_size_desc">
+            android:title="@string/pref_group_grid_size_title"
+            android:summary="@string/pref_group_grid_size_desc">
             <app.murinelauncher.widget.CustomSeekBarPreference
-                android:title="Grid Width"
+                android:title="@string/pref_label_grid_width"
                 android:key="pref_grid_size_width"
                 android:defaultValue="4"
                 android:min="3"
@@ -55,7 +55,7 @@
             </app.murinelauncher.widget.CustomSeekBarPreference>
 
             <app.murinelauncher.widget.CustomSeekBarPreference
-                android:title="Grid Height"
+                android:title="@string/pref_label_grid_height"
                 android:key="pref_grid_size_height"
                 android:defaultValue="5"
                 android:min="3"

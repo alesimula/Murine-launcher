@@ -20,6 +20,7 @@ import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import androidx.annotation.VisibleForTesting
 import app.murinelauncher.settings.SettingsHomeFragment
+import app.murinelauncher.settings.SettingsIconsFragment
 import app.murinelauncher.settings.SettingsRootFragment
 import com.android.launcher3.BuildConfig.WIDGET_ON_FIRST_SCREEN
 import com.android.launcher3.GridType.Companion.GRID_TYPE_ANY
@@ -245,6 +246,10 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
         val GRID_WIDTH = backedUpItem("pref_grid_size_width", 4)
         @JvmField
         val GRID_HEIGHT = backedUpItem("pref_grid_size_height", 5)
+        @JvmField
+        val ICON_SIZE = backedUpItem(SettingsIconsFragment.ICON_SIZE_KEY, 100)
+        @JvmField
+        val ICON_LABEL_SIZE = backedUpItem(SettingsIconsFragment.ICON_LABEL_SIZE_KEY, 100)
 
         @JvmField
         val ENABLE_TWOLINE_ALLAPPS_TOGGLE = backedUpItem("pref_enable_two_line_toggle", false)

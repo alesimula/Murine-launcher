@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="grid_size_title">Grid size</string>
-    <string name="grid_size_desc">Change the number of rows and columns</string>
+    <string name="pref_group_grid_size_title">Grid size</string>
+    <string name="pref_group_grid_size_desc">Change the number of rows and columns</string>
+    <string name="pref_group_icon_scale_title">Icon scale</string>
+    <string name="pref_group_icon_scale_desc">Change the scale of icons and labels</string>
 
     <string name="pref_category_icons_title">Icons</string>
     <string name="pref_category_icons_desc">Set icon size and appearance</string>
@@ -13,4 +15,10 @@
     <string name="pref_category_misc_desc">Other options</string>
 
     <string name="pref_subcategory_layout">Layout</string>
+    <string name="pref_subcategory_appearance">Appearance</string>
+
+    <string name="pref_label_grid_width">Grid width</string>
+    <string name="pref_label_grid_height">Grid height</string>
+    <string name="pref_label_icon_size">Icon size (%)</string>
+    <string name="pref_label_icon_label_size">Label size (%)</string>
 </resources>
