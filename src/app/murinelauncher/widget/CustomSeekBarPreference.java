@@ -149,8 +149,9 @@ public class CustomSeekBarPreference extends SliderPreference {
 
             mShowIncrementButtons = a.getBoolean(
                     R.styleable.CustomSeekBarPreference_showIncrementButtons, true);
-            mShowTicks = a.getBoolean(
-                    R.styleable.CustomSeekBarPreference_showTicks, false);
+            mShowTicks = a.getBoolean(R.styleable.CustomSeekBarPreference_showTicks,
+                    a.hasValue(R.styleable.CustomSeekBarPreference_tickInterval) ||
+                            a.hasValue(R.styleable.CustomSeekBarPreference_customTickPositions));
             mTickInterval = a.getInt(
                     R.styleable.CustomSeekBarPreference_tickInterval, actualInterval);
             if (mTickInterval < 1) mTickInterval = actualInterval;
