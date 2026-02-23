@@ -175,6 +175,11 @@ public abstract class AbstractSettingsFragment extends SettingsBasePreferenceFra
      * will remove that preference from the list.
      */
     private final boolean onInitPreference(@NonNull Preference preference, @NonNull DisplayController.Info info) {
+        if (preference instanceof PreferenceGroup group) {
+            for (int i = group.getPreferenceCount() - 1; i >= 0; i--) {
+                if (!onInitPreference(group.getPreference(i), info)) group.removePreference(group.getPreference(i));
+            }
+        }
         String key = preference.getKey();
         if (key == null) return true;
         return initPreference(preference, info);
