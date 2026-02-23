@@ -24,6 +24,8 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+
+import java.util.Arrays;
 import android.view.View;
 import android.view.MotionEvent;
 import android.view.ViewGroup;
@@ -59,8 +61,11 @@ public class CustomSeekBarPreference extends SliderPreference {
 
     private boolean mShowIncrementButtons = true;
     private boolean mShowTicks = false;
-    /// show ticks every N intervals (e.g. interval = 10, tickInterval = 2; show ticks every 20 steps)
     private int mTickInterval = 1;
+    private boolean mAbsoluteTickInterval = false;
+    private int[] mCustomTickPositions = null;
+    private String mCustomTickPositions_parseError = null;
+    private boolean mShouldDrawTicksManually = false;
 
     private CharSequence mUserSummary;
 
@@ -127,13 +132,10 @@ public class CustomSeekBarPreference extends SliderPreference {
             }
             if (minAttr != -1) setMin(minAttr);
 
-            mShowIncrementButtons = a.getBoolean(
-                    R.styleable.CustomSeekBarPreference_showIncrementButtons, true);
-            mShowTicks = a.getBoolean(
-                    R.styleable.CustomSeekBarPreference_showTicks, false);
-            mTickInterval = a.getInt(
-                    R.styleable.CustomSeekBarPreference_tickInterval, 1);
-            if (mTickInterval < 1) mTickInterval = 1;
+            // Guard against improper slider increment
+            int min = getMin();
+            int max = getMax();
+            int span = Math.max(0, max - min);
 
             int interval = a.getInt(R.styleable.CustomSeekBarPreference_interval, 0);
             if (interval <= 0) {
@@ -143,11 +145,29 @@ public class CustomSeekBarPreference extends SliderPreference {
                 interval = attrs.getAttributeIntValue(ANDROIDNS, "interval", 0);
             }
             if (interval > 0) setSliderIncrement(interval);
+            int actualInterval = Math.max(1, interval);
 
-            // Guard against improper slider increment
-            int min = getMin();
-            int max = getMax();
-            int span = Math.max(0, max - min);
+            mShowIncrementButtons = a.getBoolean(
+                    R.styleable.CustomSeekBarPreference_showIncrementButtons, true);
+            mShowTicks = a.getBoolean(
+                    R.styleable.CustomSeekBarPreference_showTicks, false);
+            mTickInterval = a.getInt(
+                    R.styleable.CustomSeekBarPreference_tickInterval, actualInterval);
+            if (mTickInterval < 1) mTickInterval = actualInterval;
+            mAbsoluteTickInterval = a.getBoolean(
+                    R.styleable.CustomSeekBarPreference_absoluteTickInterval, false);
+
+            String customTicks = a.getString(
+                    R.styleable.CustomSeekBarPreference_customTickPositions);
+            if (customTicks != null && !customTicks.trim().isEmpty()) try {
+                mCustomTickPositions = Arrays.stream(customTicks.split("\\s*,\\s*", -1))
+                        .mapToInt(Integer::parseInt).toArray();
+            } catch (Exception e) {
+                mCustomTickPositions_parseError = customTicks;
+            }
+
+            mShouldDrawTicksManually = (mTickInterval != actualInterval || (mAbsoluteTickInterval && min % mTickInterval != 0))
+                    || (mCustomTickPositions != null && mCustomTickPositions.length > 0);
 
             int step = getSliderIncrement();
             if (step <= 0 || span == 0) {
@@ -209,6 +229,11 @@ public class CustomSeekBarPreference extends SliderPreference {
 
     @Override
     public void onBindViewHolder(@NonNull PreferenceViewHolder holder) {
+        if (mCustomTickPositions != null && mCustomTickPositions.length > 0 && mTickInterval > 1)
+            throw new IllegalArgumentException("tickInterval and customTickPositions incompatible");
+        if (mCustomTickPositions_parseError != null)
+            throw new IllegalArgumentException("could not parse custom customTickPositions: " + mCustomTickPositions_parseError);
+
         // Sanitize persisted value so it is a valid step for the Slider.
         // This prevents crashes when the interval/stepSize changes between
         // app versions and the old persisted value is no longer on a valid step.
@@ -445,15 +470,15 @@ public class CustomSeekBarPreference extends SliderPreference {
     }
 
     private void applyTickOverlay(final Slider slider) {
-        if (!mShowTicks) { // No tick - set tick invisible
+        if (!mShowTicks) {
             slider.setTickVisible(false);
             return;
-        } else if (mTickInterval <= 1) { // Standard tick interval
+        } else if (!mShouldDrawTicksManually) {
             slider.setTickVisible(true);
             return;
         }
 
-        // Custom tick interval
+        // Custom tick drawing required
         slider.setTickVisible(false);
         final Drawable dotDrawable = new Drawable() {
             private final Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -463,7 +488,7 @@ public class CustomSeekBarPreference extends SliderPreference {
                 float from = slider.getValueFrom();
                 float to = slider.getValueTo();
                 float range = to - from;
-                if (range <= 0 || mTickInterval <= 0) return;
+                if (range <= 0) return;
 
                 int trackLeft = slider.getTrackSidePadding();
                 int trackWidth = slider.getTrackWidth();
@@ -473,21 +498,40 @@ public class CustomSeekBarPreference extends SliderPreference {
                                 .settingslib_expressive_slider_tick_radius);
                 float cy = slider.getHeight() / 2f;
 
+                // Exclusion zone around thumb, same as BaseSlider
+                float thumbX = trackLeft + ((thumbVal - from) / range) * trackWidth;
+                float exclusion = slider.getThumbWidth() / 2f + slider.getThumbTrackGapSize();
+
                 int activeColor = getTrackColor(slider, true);
                 int inactiveColor = getTrackColor(slider, false);
 
-                int step = getSliderIncrement();
-                if (step <= 0) step = 1;
-                int dotStep = mTickInterval * step;
-
-                for (float val = from; val <= to; val += dotStep) {
-                    if (Math.abs(val - thumbVal) < 0.5f) continue;
-
-                    float fraction = (val - from) / range;
-                    float cx = trackLeft + fraction * trackWidth;
-                    boolean inActive = val < thumbVal;
-                    mPaint.setColor(inActive ? inactiveColor : activeColor);
-                    canvas.drawCircle(cx, cy, radius, mPaint);
+                if (mCustomTickPositions != null && mCustomTickPositions.length > 0) {
+                    for (int pos : mCustomTickPositions) {
+                        if (pos < from || pos > to) continue;
+                        float fraction = (pos - from) / range;
+                        float cx = trackLeft + fraction * trackWidth;
+                        if (Math.abs(cx - thumbX) < exclusion) continue;
+                        boolean inActive = pos < thumbVal;
+                        mPaint.setColor(inActive ? inactiveColor : activeColor);
+                        canvas.drawCircle(cx, cy, radius, mPaint);
+                    }
+                } else {
+                    int tickStep = Math.max(1, mTickInterval);
+                    float start;
+                    if (mAbsoluteTickInterval) {
+                        // First tick at the smallest multiple of tickStep >= from
+                        start = (float) (Math.ceil(from / tickStep) * tickStep);
+                    } else {
+                        start = from;
+                    }
+                    for (float val = start; val <= to; val += tickStep) {
+                        float fraction = (val - from) / range;
+                        float cx = trackLeft + fraction * trackWidth;
+                        if (Math.abs(cx - thumbX) < exclusion) continue;
+                        boolean inActive = val < thumbVal;
+                        mPaint.setColor(inActive ? inactiveColor : activeColor);
+                        canvas.drawCircle(cx, cy, radius, mPaint);
+                    }
                 }
             }
 

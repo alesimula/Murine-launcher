@@ -666,7 +666,8 @@
         <attr name="continuousUpdates" format="boolean" />
         <attr name="showIncrementButtons" format="boolean" />
         <attr name="showTicks" format="boolean" />
-        <!-- show ticks every N intervals (e.g. interval = 10, tickInterval = 2; show ticks every 20 steps) -->
         <attr name="tickInterval" format="integer" />
+        <attr name="absoluteTickInterval" format="boolean" />
+        <attr name="customTickPositions" format="string" />
     </declare-styleable>
 </resources>
