@@ -5,6 +5,8 @@
     <string name="pref_group_icon_scale_title">Icon scale</string>
     <string name="pref_group_icon_scale_desc">Change the scale of icons and labels</string>
 
+    <string name="pref_category_general_title">General</string>
+    <string name="pref_category_general_desc">Global preferences</string>
     <string name="pref_category_icons_title">Icons</string>
     <string name="pref_category_icons_desc">Set icon size and appearance</string>
     <string name="pref_category_home_title">Home screen</string>

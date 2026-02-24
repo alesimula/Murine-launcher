@@ -20,6 +20,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <Preference
+        android:icon="@drawable/ic_settings_general"
+        android:title="@string/pref_category_general_title"
+        android:summary="@string/pref_category_general_desc"
+        android:fragment="app.murinelauncher.settings.SettingsGeneralFragment"/>
+    <Preference
         android:icon="@drawable/ic_settings_icons"
         android:title="@string/pref_category_icons_title"
         android:summary="@string/pref_category_icons_desc"
