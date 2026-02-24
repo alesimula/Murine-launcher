@@ -152,7 +152,7 @@ public class WindowManagerProxy {
     public WindowBounds getRealBounds(Context displayInfoContext, CachedDisplayInfo info) {
         if (!Utilities.ATLEAST_R) {
             var current = WindowMetricsCalculator.getOrCreate()
-                    .computeCurrentWindowMetrics(displayInfoContext.getApplicationContext());
+                    .computeMaximumWindowMetrics(displayInfoContext.getApplicationContext());
             Display display = getDisplay(displayInfoContext);
             List<WindowBounds> windowBounds = estimateInternalDisplayBounds(displayInfoContext).get(
                     getDisplayInfo(displayInfoContext).normalize(this));
@@ -161,7 +161,7 @@ public class WindowManagerProxy {
         }
 
         WindowMetrics wm = displayInfoContext.getSystemService(WindowManager.class)
-                    .getCurrentWindowMetrics();
+                    .getMaximumWindowMetrics();
         Rect insets = new Rect();
         normalizeWindowInsets(displayInfoContext, wm.getWindowInsets(), insets);
         return new WindowBounds(wm.getBounds(), insets, info.rotation);
