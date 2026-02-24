@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.android.settingslib.widget.theme"
+    namespace = "com.android.settingslib.widget.preference.segmentedbutton"
     compileSdk = 36
 
     defaultConfig {
@@ -29,7 +29,7 @@ android {
 }
 
 dependencies {
-    api(project(":flags"))
-    api(libs.material)
+    api project(':SettingsLib-SettingsTheme')
+    implementation(libs.annotation)
     implementation(libs.androidx.preference)
 }

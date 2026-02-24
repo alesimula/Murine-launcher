@@ -32,6 +32,5 @@ dependencies {
     api project(':SettingsLib-Preference')
     api project(':SettingsLib-SettingsTheme')
     implementation(libs.annotation)
-    implementation(libs.material)
     implementation(libs.androidx.preference)
 }

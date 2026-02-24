@@ -290,6 +290,7 @@ dependencies {
     implementation project(':SettingsLib-SliderPreference')
     implementation project(':SettingsLib-SelectorWithWidgetPreference')
     implementation project(':SettingsLib-ExpandablePreference')
+    implementation project(':SettingsLib-SegmentedButtonPreference')
     withQuickstepCompileOnly project(':HiddenApi')
 
     // Include all compat libs
