@@ -16,9 +16,13 @@
     <string name="pref_category_misc_title">Miscellaneous</string>
     <string name="pref_category_misc_desc">Other options</string>
 
+    <string name="pref_subcategory_day_night">UI theme</string>
     <string name="pref_subcategory_layout">Layout</string>
     <string name="pref_subcategory_appearance">Appearance</string>
 
+    <string name="pref_label_ui_mode_system">System</string>
+    <string name="pref_label_ui_mode_day">Light</string>
+    <string name="pref_label_ui_mode_night">Dark</string>
     <string name="pref_label_grid_width">Grid width</string>
     <string name="pref_label_grid_height">Grid height</string>
     <string name="pref_label_icon_size">Icon size (%)</string>

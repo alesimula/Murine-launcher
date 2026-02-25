@@ -50,6 +50,19 @@ public class SettingsActivity extends FragmentActivity
     public static final String EXTRA_FRAGMENT_ROOT_KEY = ARG_PREFERENCE_ROOT;
 
     @Override
+    protected void attachBaseContext(android.content.Context base) {
+        super.attachBaseContext(app.murinelauncher.theme.ThemeOverride.applyTheme(base));
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (app.murinelauncher.theme.ThemeOverride.isThemeStale(this)) {
+            getWindow().getDecorView().post(this::recreate);
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings_activity);

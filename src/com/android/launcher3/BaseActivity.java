@@ -191,6 +191,11 @@ public abstract class BaseActivity extends Activity implements ActivityContext,
 
     private ActionMode mCurrentActionMode;
 
+    @Override
+    protected void attachBaseContext(android.content.Context base) {
+        super.attachBaseContext(app.murinelauncher.theme.ThemeOverride.applyTheme(base));
+    }
+
     public BaseActivity() {
         mSavedStateRegistryController.performAttach();
         mLifecycleHelper = new LifecycleHelper(this, mSavedStateRegistryController, mLifecycleRegistry);
@@ -259,6 +264,9 @@ public abstract class BaseActivity extends Activity implements ActivityContext,
             mLifecycleHelper.onActivityStarted(this);
         }
         mEventCallbacks[EVENT_STARTED].executeAllAndClear();
+        if (app.murinelauncher.theme.ThemeOverride.isThemeStale(this)) {
+            getWindow().getDecorView().post(this::recreate);
+        }
     }
 
     @Override

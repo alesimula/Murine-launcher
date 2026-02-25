@@ -19,7 +19,9 @@
     xmlns:launcher="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.android.settingslib.widget.SegmentedButtonPreference
-        android:key="pref_launcher_theme_day_night"
-        android:title="Screen Mode" />
+    <PreferenceCategory android:title="@string/pref_subcategory_day_night">
+        <com.android.settingslib.widget.SegmentedButtonPreference
+            android:key="pref_launcher_theme_day_night"
+            android:title="Screen Mode" />
+    </PreferenceCategory>
 </androidx.preference.PreferenceScreen>

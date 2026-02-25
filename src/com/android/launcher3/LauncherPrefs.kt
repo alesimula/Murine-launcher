@@ -19,9 +19,11 @@ import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import androidx.annotation.VisibleForTesting
+import app.murinelauncher.settings.SettingsGeneralFragment
 import app.murinelauncher.settings.SettingsHomeFragment
 import app.murinelauncher.settings.SettingsIconsFragment
 import app.murinelauncher.settings.SettingsRootFragment
+import app.murinelauncher.theme.ThemeOverride
 import com.android.launcher3.BuildConfig.WIDGET_ON_FIRST_SCREEN
 import com.android.launcher3.GridType.Companion.GRID_TYPE_ANY
 import com.android.launcher3.InvariantDeviceProfile.GRID_NAME_PREFS_KEY
@@ -320,6 +322,8 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
 
         @JvmField
         val FIXED_LANDSCAPE_MODE = backedUpItem(SettingsHomeFragment.FIXED_LANDSCAPE_MODE, false)
+        @JvmField
+        val THEME_DAY_NIGHT = backedUpItem(SettingsGeneralFragment.LAUNCHER_THEME_DAY_NIGHT, if (ThemeOverride.supportsSystemTheme) ThemeOverride.THEME_SYSTEM else ThemeOverride.THEME_DARK)
 
         @JvmField
         val NON_FIXED_LANDSCAPE_GRID_NAME =
