@@ -34,6 +34,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.graphics.BlendMode;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Outline;
@@ -68,6 +69,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.graphics.ColorUtils;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.internal.graphics.drawable.BackgroundBlurDrawable;
 import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.DeviceProfile.OnDeviceProfileChangeListener;
 import com.android.launcher3.DragSource;
@@ -104,6 +106,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
+
+import app.murinelauncher.graphics.WorkspaceBlurUtils;
 
 /**
  * All apps container view with search support for use in a dragging activity.
@@ -324,7 +328,10 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
                 0,
                 0 // Bottom left
         };
-        if (Flags.allAppsBlur()) {
+        int drawerSheetColor = getResources().getColor(WorkspaceBlurUtils.getBlurType().getColor());
+        mBottomSheetBackgroundColorOverBlur = drawerSheetColor;
+        mBottomSheetBackgroundColorBlurFallback = drawerSheetColor;
+        /*if (Flags.allAppsBlur()) {
             int fg;
             int fallbackRes;
             int bg;
@@ -348,7 +355,7 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
                     (int) ((Flags.allAppsBlur() ? 0.3f : 0.32f) * 255));
             mBottomSheetBackgroundColorOverBlur = ColorUtils.compositeColors(layerFg, layerBg);
             mBottomSheetBackgroundColorBlurFallback = getResources().getColor(fallbackRes);
-        }
+        }*/
 
         int legacyRes;
 
@@ -1506,13 +1513,22 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
             mHeaderPaint.setColor(bottomSheetBackgroundColor);
             mHeaderPaint.setAlpha((int) (bottomSheetBackgroundAlpha * 255));
 
-            mTmpRectF.set(
-                    leftWithScale,
-                    topWithScale,
-                    rightWithScale,
-                    bottomWithOffset);
             mTmpPath.reset();
-            mTmpPath.addRoundRect(mTmpRectF, mBottomSheetCornerRadii, Direction.CW);
+            boolean isBlurredSheet = WorkspaceBlurUtils.getDrawerBlur().getSheetOnly();
+            if (isBlurredSheet && Flags.allAppsBlur() && WorkspaceBlurUtils.getDrawerBlur().withBlurDrawable(mScrimView, (blurDrawable, isNew) -> {
+                blurDrawable.setColor(mBottomSheetBackgroundColorOverBlur);
+                if (isNew || mBottomSheetBackground.getBackground() != blurDrawable) {
+                    mBottomSheetBackground.setBackground(blurDrawable);
+                    blurDrawable.setCornerRadius(mBottomSheetCornerRadii[0], mBottomSheetCornerRadii[2],
+                            mBottomSheetCornerRadii[4], mBottomSheetCornerRadii[6]);
+                    blurDrawable.setBounds(0, 0, panel.getWidth(), panel.getHeight() + bottomOffsetPx);
+                }
+            }));
+            else {
+                if (mBottomSheetBackground.getBackground() != null) mBottomSheetBackground.setBackground(null);
+                mTmpRectF.set(leftWithScale, topWithScale, rightWithScale, bottomWithOffset);
+                mTmpPath.addRoundRect(mTmpRectF, mBottomSheetCornerRadii, Direction.CW);
+            }
             canvas.drawPath(mTmpPath, mHeaderPaint);
 
             // When the background panel is blurred (or fallback), we don't add header protection.

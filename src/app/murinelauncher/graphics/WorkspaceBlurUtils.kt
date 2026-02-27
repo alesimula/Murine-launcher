@@ -32,7 +32,7 @@ class WorkspaceBlurUtils {
             for (blurType in BLUR_TYPES) blurType.invalidate()
         }
 
-        @JvmStatic var blurType: WorkspaceBlurUtils.DrawerBlurType = DrawerBlurType.GLASS
+        @JvmStatic var blurType: DrawerBlurType = DrawerBlurType.GLASS @
 
         /**
          * Returns configured blur type for app drawer.
@@ -58,7 +58,7 @@ class WorkspaceBlurUtils {
         fun invalidate() = blurDrawableImpl.clear()
 
 
-        open fun withBlurDrawable(view: View, block: BiConsumer<BackgroundBlurDrawable, Boolean>) {
+        open fun withBlurDrawable(view: View, block: BiConsumer<BackgroundBlurDrawable, Boolean>): Boolean {
             val viewRoot: ViewRootImpl? = viewRootProvider(view)
             var isNew = false
             if (viewRoot != null) block.accept(blurDrawableImpl.computeIfAbsent(viewRoot) {
@@ -67,6 +67,7 @@ class WorkspaceBlurUtils {
                 backgroundDrawable.setBlurRadius(radius)
                 backgroundDrawable
             }, isNew)
+            return viewRoot != null
         }
 
         @Suppress("RedundantNullableReturnType")
@@ -83,10 +84,10 @@ class WorkspaceBlurUtils {
 
     private class DetachedBlurType(radius: Int, blurWorkspace: Boolean): BlurType(radius, blurWorkspace)
 
-    sealed class DrawerBlurType(radius: Int, blurWorkspace: Boolean) : BlurType(radius, blurWorkspace) {
-        object NONE : DrawerBlurType(0, false)
-        object GLASS : DrawerBlurType(55, true)
+    sealed class DrawerBlurType(radius: Int, blurWorkspace: Boolean, val sheetOnly: Boolean, val color: Int) : BlurType(radius, blurWorkspace) {
+        object NONE : DrawerBlurType(0, false, false, R.color.drawer_sheet_color_none)
+        object GLASS : DrawerBlurType(55, true, false, R.color.drawer_sheet_color_glass)
 
-        object MICA : DrawerBlurType(75, false)
+        object MICA : DrawerBlurType(88, false, true, R.color.drawer_sheet_color_mica)
     }
 }
