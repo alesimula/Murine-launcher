@@ -19,10 +19,11 @@ import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import androidx.annotation.VisibleForTesting
+import app.murinelauncher.graphics.WorkspaceBlurUtils
+import app.murinelauncher.settings.SettingsDrawerFragment
 import app.murinelauncher.settings.SettingsGeneralFragment
 import app.murinelauncher.settings.SettingsHomeFragment
 import app.murinelauncher.settings.SettingsIconsFragment
-import app.murinelauncher.settings.SettingsRootFragment
 import app.murinelauncher.theme.ThemeOverride
 import com.android.launcher3.BuildConfig.WIDGET_ON_FIRST_SCREEN
 import com.android.launcher3.GridType.Companion.GRID_TYPE_ANY
@@ -52,6 +53,28 @@ import javax.inject.Inject
 open class LauncherPrefs
 @Inject
 constructor(@ApplicationContext private val encryptedContext: Context) {
+
+    /**
+     * Prevents weak references of listeners from being removed.
+     */
+    private val managedListeners = mutableListOf<LauncherPrefChangeListener>()
+
+    init {
+        @Suppress("LeakingThis")
+        registerObservedItems()
+    }
+
+    protected open fun registerObservedItems() {
+        ConstantItem.observedItems.forEach { item ->
+            val listener = LauncherPrefChangeListener { key ->
+                if (key == item.sharedPrefKey) {
+                    item.dispatchChange(get(item))
+                }
+            }
+            addListenerAndNotifyCurrent(listener, item)
+            managedListeners.add(listener)
+        }
+    }
 
     private val deviceProtectedSharedPrefs: SharedPreferences by lazy {
         encryptedContext
@@ -92,6 +115,12 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
                 sp.getLong(item.sharedPrefKey, default as Long)
             Set::class.java.isAssignableFrom(item.type) ->
                 sp.getStringSet(item.sharedPrefKey, default as? Set<String>)
+            Enum::class.java.isAssignableFrom(item.type) -> try {
+                val strValue = sp.getString(item.sharedPrefKey, (default as? Enum<*>)?.name)
+                java.lang.Enum.valueOf(item.type as Class<out Enum<*>>, strValue!!)
+            } catch (_: Throwable) {
+                default
+            }
             else ->
                 throw IllegalArgumentException(
                     "item type: ${item.type}" + " is not compatible with sharedPref methods"
@@ -164,6 +193,8 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
                 putLong(item.sharedPrefKey, value as Long)
             Set::class.java.isAssignableFrom(item.type) ->
                 putStringSet(item.sharedPrefKey, value as? Set<String>)
+            Enum::class.java.isAssignableFrom(item.type) ->
+                putString(item.sharedPrefKey, (value as? Enum<*>)?.name)
             else ->
                 throw IllegalArgumentException(
                     "item type: ${item.type} is not compatible with sharedPref methods"
@@ -180,6 +211,22 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
             .map { getSharedPrefs(it) }
             .distinct()
             .forEach { it.registerOnSharedPreferenceChangeListener(listener) }
+    }
+
+    /**
+     * Same as [addListener] but also immediately triggers the listener with the current
+     * preference values. This allows to listen for a specific LauncherPref when it's loaded,
+     * changed, or even set for the first time.
+     */
+    fun addListenerAndNotifyCurrent(listener: LauncherPrefChangeListener, vararg items: Item) {
+        items
+            .groupBy { getSharedPrefs(it) }
+            .forEach { (prefs, itemsList) ->
+                prefs.registerOnSharedPreferenceChangeListener(listener)
+                itemsList.forEach { item ->
+                    listener.onSharedPreferenceChanged(prefs, item.sharedPrefKey)
+                }
+            }
     }
 
     /**
@@ -324,6 +371,10 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
         val FIXED_LANDSCAPE_MODE = backedUpItem(SettingsHomeFragment.FIXED_LANDSCAPE_MODE, false)
         @JvmField
         val THEME_DAY_NIGHT = backedUpItem(SettingsGeneralFragment.LAUNCHER_THEME_DAY_NIGHT, if (ThemeOverride.supportsSystemTheme) ThemeOverride.THEME_SYSTEM else ThemeOverride.THEME_DARK)
+        @JvmField
+        val DRAWER_TYPE = backedUpItem(SettingsDrawerFragment.DRAWER_TYPE, if (WorkspaceBlurUtils.isBlurSupported) WorkspaceBlurUtils.Companion.DRAWER_TYPES.GLASS else WorkspaceBlurUtils.Companion.DRAWER_TYPES.NONE).listen { value ->
+            WorkspaceBlurUtils.blurType = value.type
+        }
 
         @JvmField
         val NON_FIXED_LANDSCAPE_GRID_NAME =
@@ -413,7 +464,24 @@ data class ConstantItem<T>(
     override val type: Class<out T> = defaultValue!!::class.java,
 ) : Item() {
 
+    private var onChangeListener: ((T) -> Unit)? = null
+
+    fun listen(listener: (T) -> Unit): ConstantItem<T> {
+        onChangeListener = listener
+        observedItems.add(this)
+        return this
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    internal fun dispatchChange(value: Any?) {
+        onChangeListener?.invoke(value as T)
+    }
+
     fun get(c: Context): T = LauncherPrefs.get(c).get(this)
+
+    companion object {
+        internal val observedItems = mutableListOf<ConstantItem<*>>()
+    }
 }
 
 data class ContextualItem<T>(
@@ -444,6 +512,8 @@ enum class EncryptionType {
  * LauncherPrefs which delegates all lookup to [prefs] but uses the real prefs for initial values
  */
 class ProxyPrefs(context: Context, private val prefs: SharedPreferences) : LauncherPrefs(context) {
+
+    override fun registerObservedItems() { /* no-op for proxy */ }
 
     private val copiedPrefs = ConcurrentHashMap<SharedPreferences, Boolean>()
 

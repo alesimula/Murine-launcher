@@ -5,6 +5,9 @@ import android.view.ViewRootImpl
 import android.view.Window
 import com.android.internal.graphics.drawable.BackgroundBlurDrawable
 import com.android.launcher3.Launcher
+import com.android.launcher3.R
+import com.android.launcher3.Utilities
+import com.android.launcher3.Utilities.getSystemProperty
 import java.util.concurrent.ConcurrentHashMap
 import java.util.function.BiConsumer
 
@@ -15,6 +18,12 @@ class WorkspaceBlurUtils {
         @JvmStatic val PREVIEW : BlurType = DetachedBlurType(20, false)
         @JvmStatic val NONE : BlurType = DetachedBlurType(0, false)
 
+        enum class DRAWER_TYPES(val type: DrawerBlurType, val label: Int, val icon: Int) {
+            GLASS(DrawerBlurType.GLASS, R.string.pref_category_general_title, R.drawable.ic_setting),
+            MICA(DrawerBlurType.MICA, R.string.pref_category_general_title, R.drawable.ic_setting),
+            NONE(DrawerBlurType.NONE, R.string.pref_category_general_title, R.drawable.ic_setting);
+        }
+
         /**
          * This must be called when the app is resumed in order for the drawables to be recreated.
          * TODO is this really needed?
@@ -23,12 +32,23 @@ class WorkspaceBlurUtils {
             for (blurType in BLUR_TYPES) blurType.invalidate()
         }
 
+        @JvmStatic var blurType: WorkspaceBlurUtils.DrawerBlurType = DrawerBlurType.GLASS
+
         /**
          * Returns configured blur type for app drawer.
          */
         @JvmStatic fun getDrawerBlur(): DrawerBlurType {
-            return DrawerBlurType.GLASS;
+            return blurType;
         }
+
+        @JvmStatic val isBlurSupportedOEM: Boolean by lazy {
+            getSystemProperty("ro.surface_flinger.supports_background_blur", "0") == "1" &&
+                    getSystemProperty("persist.sys.sf.disable_blurs", "0") == "1"
+        }
+
+        @JvmStatic val isBlurSupportedSDK get() = Utilities.ATLEAST_S
+
+        @JvmStatic val isBlurSupported get() = isBlurSupportedSDK && isBlurSupportedOEM
     }
 
     abstract class BlurType(val radius: Int, val blurWorkspace: Boolean) {
