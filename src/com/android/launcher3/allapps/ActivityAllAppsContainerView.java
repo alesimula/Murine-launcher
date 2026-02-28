@@ -1542,12 +1542,22 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
 
             mTmpPath.reset();
             boolean isBlurredSheet = WorkspaceBlurUtils.getDrawerBlur().getSheetOnly();
+            final float leftVal = left;
             if (isBlurredSheet && Flags.allAppsBlur() && WorkspaceBlurUtils.getDrawerBlur().withBlurDrawable(mScrimView, (blurDrawable, isNew) -> {
                 baseSheetDrawable.setBottomLayer(blurDrawable, drawable -> {
                     drawable.setCornerRadius(mBottomSheetCornerRadii[0], mBottomSheetCornerRadii[2],
                             mBottomSheetCornerRadii[4], mBottomSheetCornerRadii[6]);
                     drawable.setBounds(0, 0, panel.getWidth(), panel.getHeight() + bottomOffsetPx);
                 });
+                // Draw blur drawable on the ScrimView canvas (window coordinates) to update
+                // the blur region position for SurfaceFlinger. BackgroundBlurDrawable uses
+                // canvas.mapPoints() in draw() to determine its position, which doesn't
+                // include RenderNode transforms like translationY. Drawing here with the
+                // correct translation ensures the blur region tracks the panel during flings.
+                canvas.save();
+                canvas.translate(leftVal, topNoScale);
+                blurDrawable.draw(canvas);
+                canvas.restore();
             }));
             else {
                 baseSheetDrawable.setBottomLayer(null, null);
