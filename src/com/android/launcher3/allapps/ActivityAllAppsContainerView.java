@@ -44,6 +44,7 @@ import android.graphics.Path.Direction;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.os.Process;
@@ -98,6 +99,7 @@ import com.android.launcher3.views.RecyclerViewFastScroller;
 import com.android.launcher3.views.ScrimView;
 import com.android.launcher3.views.SpringRelativeLayout;
 import com.android.launcher3.workprofile.PersonalWorkSlidingTabStrip;
+import com.android.systemui.accessibility.floatingmenu.InstantInsetLayerDrawable;
 import com.android.systemui.plugins.AllAppsRow;
 
 import java.util.ArrayList;
@@ -190,6 +192,7 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
     private float mBottomSheetBackgroundAlpha = 1f;
     private int mTabsProtectionAlpha;
     @Nullable private AllAppsTransitionController mAllAppsTransitionController;
+    private WorkspaceBlurUtils.DrawerBlurType mCurrentDrawerBlurType;
 
     public ActivityAllAppsContainerView(Context context) {
         this(context, null);
@@ -328,9 +331,8 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
                 0,
                 0 // Bottom left
         };
-        int drawerSheetColor = getResources().getColor(WorkspaceBlurUtils.getBlurType().getColor());
-        mBottomSheetBackgroundColorOverBlur = drawerSheetColor;
-        mBottomSheetBackgroundColorBlurFallback = drawerSheetColor;
+        mCurrentDrawerBlurType = WorkspaceBlurUtils.getDrawerBlur();
+        updateDrawerSheetColors();
         /*if (Flags.allAppsBlur()) {
             int fg;
             int fallbackRes;
@@ -892,6 +894,20 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
     private int getBackgroundColor() {
         return mActivityContext.getDeviceProfile().shouldShowAllAppsOnSheet()
                 ? getBottomSheetBackgroundColor() : mScrimColor;
+    }
+
+    private void updateDrawerSheetColors() {
+        int drawerSheetColor = getResources().getColor(mCurrentDrawerBlurType.getColor());
+        mBottomSheetBackgroundColorOverBlur = drawerSheetColor;
+        mBottomSheetBackgroundColorBlurFallback = drawerSheetColor;
+    }
+
+    private void refreshDrawerBlurTypeIfNeeded() {
+        var currentType = WorkspaceBlurUtils.getDrawerBlur();
+        if (currentType != mCurrentDrawerBlurType) {
+            mCurrentDrawerBlurType = currentType;
+            updateDrawerSheetColors();
+        }
     }
 
     int getBottomSheetBackgroundColor() {
@@ -1491,6 +1507,7 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
     @Override
     public void drawOnScrimWithScaleAndBottomOffset(
             Canvas canvas, float scale, @Px int bottomOffsetPx) {
+        refreshDrawerBlurTypeIfNeeded();
         final View panel = mBottomSheetBackground;
         final boolean hasBottomSheet = panel.getVisibility() == VISIBLE;
         final float translationY = ((View) panel.getParent()).getTranslationY();
@@ -1513,21 +1530,27 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
             mHeaderPaint.setColor(bottomSheetBackgroundColor);
             mHeaderPaint.setAlpha((int) (bottomSheetBackgroundAlpha * 255));
 
+            var baseSheetDrawable = WorkspaceBlurUtils.getDrawerBlur().fallbackDrawable(mActivityContext.getWindow());
+            if (mBottomSheetBackground.getBackground() != baseSheetDrawable ||
+                    baseSheetDrawable.getTopLayer().getPaint().getColor() != mBottomSheetBackgroundColorOverBlur) {
+                var tint = baseSheetDrawable.getTopLayer();
+                tint.getPaint().setColor(mBottomSheetBackgroundColorOverBlur);
+                tint.setCornerRadii(mBottomSheetCornerRadii);
+                tint.setBounds(0, 0, panel.getWidth(), panel.getHeight() + bottomOffsetPx);
+                mBottomSheetBackground.setBackground(baseSheetDrawable);
+            }
+
             mTmpPath.reset();
             boolean isBlurredSheet = WorkspaceBlurUtils.getDrawerBlur().getSheetOnly();
             if (isBlurredSheet && Flags.allAppsBlur() && WorkspaceBlurUtils.getDrawerBlur().withBlurDrawable(mScrimView, (blurDrawable, isNew) -> {
-                blurDrawable.setColor(mBottomSheetBackgroundColorOverBlur);
-                if (isNew || mBottomSheetBackground.getBackground() != blurDrawable) {
-                    mBottomSheetBackground.setBackground(blurDrawable);
-                    blurDrawable.setCornerRadius(mBottomSheetCornerRadii[0], mBottomSheetCornerRadii[2],
+                baseSheetDrawable.setBottomLayer(blurDrawable, drawable -> {
+                    drawable.setCornerRadius(mBottomSheetCornerRadii[0], mBottomSheetCornerRadii[2],
                             mBottomSheetCornerRadii[4], mBottomSheetCornerRadii[6]);
-                    blurDrawable.setBounds(0, 0, panel.getWidth(), panel.getHeight() + bottomOffsetPx);
-                }
+                    drawable.setBounds(0, 0, panel.getWidth(), panel.getHeight() + bottomOffsetPx);
+                });
             }));
             else {
-                if (mBottomSheetBackground.getBackground() != null) mBottomSheetBackground.setBackground(null);
-                mTmpRectF.set(leftWithScale, topWithScale, rightWithScale, bottomWithOffset);
-                mTmpPath.addRoundRect(mTmpRectF, mBottomSheetCornerRadii, Direction.CW);
+                baseSheetDrawable.setBottomLayer(null, null);
             }
             canvas.drawPath(mTmpPath, mHeaderPaint);
 
