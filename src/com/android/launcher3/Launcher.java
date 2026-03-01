@@ -426,6 +426,7 @@ public class Launcher extends StatefulActivity<LauncherState>
     private boolean mIsColdStartupAfterReboot;
 
     private boolean mIsNaturalScrollingEnabled;
+    private boolean mIsReCreated;
 
     private final SettingsCache.OnChangeListener mNaturalScrollingChangedListener =
             enabled -> mIsNaturalScrollingEnabled = enabled;
@@ -437,6 +438,7 @@ public class Launcher extends StatefulActivity<LauncherState>
     @Override
     @TargetApi(Build.VERSION_CODES.S)
     protected void onCreate(Bundle savedInstanceState) {
+        mIsReCreated = true;
         // TODO why did Lawnchair comment async sections? https://github.com/LawnchairLauncher/lawnchair/commit/c8cdde1531a603890fdac8fb948102b1f1cd25fe
         mStartupLatencyLogger = createStartupLatencyLogger(
                 sIsNewProcess
@@ -1320,7 +1322,10 @@ public class Launcher extends StatefulActivity<LauncherState>
         TraceHelper.INSTANCE.beginSection(ON_RESUME_EVT);
         super.onResume();
 
-        WorkspaceBlurUtils.invalidate();
+        if (mIsReCreated) {
+            mIsReCreated = false;
+            WorkspaceBlurUtils.invalidate();
+        }
 
         if (mDeferOverlayCallbacks) {
             scheduleDeferredCheck();
