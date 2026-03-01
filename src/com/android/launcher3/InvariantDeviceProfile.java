@@ -919,17 +919,22 @@ public class InvariantDeviceProfile {
      * Returns the device profile matching the provided screen configuration
      */
     public DeviceProfile getBestMatch(float screenWidth, float screenHeight, int rotation) {
-        DeviceProfile bestMatch = supportedProfiles.get(0);
+        DeviceProfile bestMatch = null;
         float minDiff = Float.MAX_VALUE;
+        boolean bestMatchesRotation = false;
 
         for (DeviceProfile profile : supportedProfiles) {
             float diff = Math.abs(profile.widthPx - screenWidth)
                     + Math.abs(profile.heightPx - screenHeight);
-            if (diff < minDiff) {
+            boolean matchesRotation = (profile.rotationHint == rotation);
+
+            if (bestMatch == null || (matchesRotation && !bestMatchesRotation)) {
+                bestMatch = profile;
                 minDiff = diff;
+                bestMatchesRotation = matchesRotation;
+            } else if (matchesRotation == bestMatchesRotation && diff < minDiff) {
                 bestMatch = profile;
-            } else if (diff == minDiff && profile.rotationHint == rotation) {
-                bestMatch = profile;
+                minDiff = diff;
             }
         }
         return bestMatch;
