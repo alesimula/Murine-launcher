@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Resources
 import app.murinelauncher.settings.SettingsGeneralFragment
+import androidx.appcompat.app.AppCompatDelegate
 import com.android.launcher3.LauncherFiles
 import com.android.launcher3.Utilities
 
@@ -24,9 +25,20 @@ object ThemeOverride {
     @JvmStatic
     val defaultTheme: Int get() = if (supportsSystemTheme) THEME_SYSTEM else DEFAULT_THEME_LEGACY
 
-    private fun getThemePref(context: Context): Int {
+    @JvmStatic
+    fun getThemePref(context: Context): Int {
         val prefs = context.getSharedPreferences(LauncherFiles.SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
         return prefs.getInt(SettingsGeneralFragment.LAUNCHER_THEME_DAY_NIGHT, defaultTheme)
+    }
+
+    @JvmStatic
+    fun syncNightMode(context: Context) {
+        val mode = when (getThemePref(context)) {
+            THEME_DARK -> AppCompatDelegate.MODE_NIGHT_YES
+            THEME_LIGHT -> AppCompatDelegate.MODE_NIGHT_NO
+            else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+        }
+        AppCompatDelegate.setDefaultNightMode(mode)
     }
 
     @JvmStatic

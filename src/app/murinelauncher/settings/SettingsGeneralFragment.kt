@@ -48,6 +48,7 @@ public final class SettingsGeneralFragment: AbstractSettingsFragment() {
                     setOnButtonClickListener { _, _, _ ->
                         val selectedIndex = getCheckedIndex()
                         prefs.edit().putInt(LAUNCHER_THEME_DAY_NIGHT, selectedIndex).apply()
+                        ThemeOverride.syncNightMode(preference.context)
                         tryRecreateActivity()
                         Log.d("Settings.Theme", "Selected UI theme: $selectedIndex")
                     }

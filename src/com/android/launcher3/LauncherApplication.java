@@ -31,6 +31,7 @@ public class LauncherApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        app.murinelauncher.theme.ThemeOverride.syncNightMode(this);
         MainProcessInitializer.initialize(this);
     }
 
