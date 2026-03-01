@@ -389,16 +389,18 @@ public class StretchEdgeEffect extends EdgeEffectCompat {
         }
     }
 
-    public void applyStretch(Canvas canvas, @EdgeEffectPosition int position) {
-        applyStretch(canvas, position, 0, 0);
+    public boolean applyStretch(Canvas canvas, @EdgeEffectPosition int position) {
+        return applyStretch(canvas, position, 0, 0);
     }
 
-    public void applyStretch(Canvas canvas, @EdgeEffectPosition int position, int translationX, int translationY) {
+    public boolean applyStretch(Canvas canvas, @EdgeEffectPosition int position, int translationX, int translationY) {
         mTmpOut[0] = 0f;
         getScale(mTmpOut, position);
         if (mTmpOut[0] == 1f) {
             canvas.scale(mTmpOut[1], mTmpOut[2], mTmpOut[3] - translationX, mTmpOut[4] - translationY);
+            return true;
         }
+        else return false;
     }
 
     public void getScale(float[] out, @EdgeEffectPosition int position) {

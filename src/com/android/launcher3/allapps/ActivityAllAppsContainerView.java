@@ -34,7 +34,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.graphics.BlendMode;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Outline;
@@ -44,7 +43,6 @@ import android.graphics.Path.Direction;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.os.Process;
@@ -70,7 +68,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.graphics.ColorUtils;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.internal.graphics.drawable.BackgroundBlurDrawable;
 import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.DeviceProfile.OnDeviceProfileChangeListener;
 import com.android.launcher3.DragSource;
@@ -99,7 +96,6 @@ import com.android.launcher3.views.RecyclerViewFastScroller;
 import com.android.launcher3.views.ScrimView;
 import com.android.launcher3.views.SpringRelativeLayout;
 import com.android.launcher3.workprofile.PersonalWorkSlidingTabStrip;
-import com.android.systemui.accessibility.floatingmenu.InstantInsetLayerDrawable;
 import com.android.systemui.plugins.AllAppsRow;
 
 import java.util.ArrayList;
@@ -1549,15 +1545,6 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
                             mBottomSheetCornerRadii[4], mBottomSheetCornerRadii[6]);
                     drawable.setBounds(0, 0, panel.getWidth(), panel.getHeight() + bottomOffsetPx);
                 });
-                // Draw blur drawable on the ScrimView canvas (window coordinates) to update
-                // the blur region position for SurfaceFlinger. BackgroundBlurDrawable uses
-                // canvas.mapPoints() in draw() to determine its position, which doesn't
-                // include RenderNode transforms like translationY. Drawing here with the
-                // correct translation ensures the blur region tracks the panel during flings.
-                canvas.save();
-                canvas.translate(leftVal, topNoScale);
-                blurDrawable.draw(canvas);
-                canvas.restore();
             }));
             else {
                 baseSheetDrawable.setBottomLayer(null, null);
