@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<app.murinelauncher.widget.SpringRecyclerView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    style="?attr/preferenceFragmentListStyle"
+    android:id="@+id/list"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="0dp"
+    android:paddingBottom="0dp"
+    android:clipToPadding="false"
+    android:scrollbars="vertical" />
