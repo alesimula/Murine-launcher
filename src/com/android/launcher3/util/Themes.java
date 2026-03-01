@@ -68,8 +68,7 @@ public class Themes {
     }
 
     public static float getDialogCornerRadius(Context context) {
-        return getDimension(context, android.R.attr.dialogCornerRadius,
-                context.getResources().getDimension(R.dimen.default_dialog_corner_radius));
+        return context.getResources().getDimension(R.dimen.dialogCornerRadius);
     }
 
     public static float getDimension(Context context, int attr, float defaultValue) {

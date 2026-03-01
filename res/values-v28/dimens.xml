@@ -15,5 +15,5 @@
 -->
 
 <resources>
-    <dimen name="dialogCornerRadius">?android:attr/dialogCornerRadius</dimen>
+    <dimen name="dialogCornerRadius">@dimen/default_dialog_corner_radius</dimen>
 </resources>
