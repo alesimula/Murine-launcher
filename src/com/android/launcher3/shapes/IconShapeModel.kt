@@ -18,7 +18,7 @@ package com.android.launcher3.shapes
 
 data class IconShapeModel(
     val key: String,
-    val title: String,
+    val title: Int,
     val pathString: String,
     val folderPathString: String = pathString,
     val iconScale: Float = 1f,

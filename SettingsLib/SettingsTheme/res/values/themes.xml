@@ -86,10 +86,15 @@
         <item name="android:textColorPrimary">@color/settingslib_materialColorOnSurface</item>
         <item name="android:textColorSecondary">@color/settingslib_text_color_secondary</item>
         <item name="bottomSheetStyle">@style/Widget.SettingsLib.BottomSheet</item>
+        <item name="bottomSheetDragHandleStyle">@style/Widget.SettingsLib.DragHandle</item>
     </style>
 
     <style name="Widget.SettingsLib.BottomSheet" parent="Widget.Material3.BottomSheet">
         <item name="shapeAppearanceOverlay">@style/ShapeAppearance.SettingsLib.BottomSheet</item>
         <item name="backgroundTint">?android:attr/colorBackground</item>
+    </style>
+
+    <style name="Widget.SettingsLib.DragHandle" parent="Widget.Material3.BottomSheet.DragHandle">
+        <item name="tint">?android:attr/textColorSecondary</item>
     </style>
 </resources>

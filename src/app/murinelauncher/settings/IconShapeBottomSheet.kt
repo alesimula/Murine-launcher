@@ -1,6 +1,8 @@
 package app.murinelauncher.settings
 
 import android.content.Context
+import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.ColorFilter
@@ -15,6 +17,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.PathParser
 import androidx.preference.PreferenceViewHolder
 import com.android.launcher3.LauncherPrefs
@@ -23,7 +26,9 @@ import com.android.launcher3.graphics.ThemeManager
 import com.android.launcher3.shapes.ShapesProvider
 import com.android.settingslib.widget.SelectorWithWidgetPreference
 import com.android.settingslib.widget.SettingsBasePreferenceFragment
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.shape.MaterialShapeDrawable
 
 class IconShapeBottomSheet : BottomSheetDialogFragment() {
 
@@ -45,6 +50,13 @@ class IconShapeBottomSheet : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        dialog?.setOnShowListener {
+            val bottomSheet = dialog?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) ?: return@setOnShowListener
+            val background = bottomSheet.background as? MaterialShapeDrawable ?: return@setOnShowListener
+            val isDarkTheme = (bottomSheet.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+            val tintColor = adjustDialogColor(background.resolvedTintColor, isDarkTheme)
+            background.tintList = ColorStateList(arrayOf(intArrayOf()), intArrayOf(tintColor))
+        }
         if (savedInstanceState == null) {
             childFragmentManager.beginTransaction()
                 .replace(R.id.prefs_container, ShapePreferenceFragment())
@@ -52,17 +64,30 @@ class IconShapeBottomSheet : BottomSheetDialogFragment() {
         }
     }
 
+    /**
+     * Makes very dark (e.g. AMOLED) dialog background colors ligher to increase visibility.
+     * Makes very light (e.g. pure white) dialog background colors darker to increase visibility.
+     */
+    private fun adjustDialogColor(color: Int, isDarkTheme: Boolean): Int {
+        val hsl = FloatArray(3)
+        ColorUtils.colorToHSL(color, hsl)
+        val currentLightness = hsl[2]
+        // Max lightness increase/decrease
+        val maxShift = 0.05f
+        // Higher power = "steeper" curve (more imperceptible in the middle)
+        val power = 20.0
+        if (isDarkTheme) {
+            val factor = Math.pow((1.0f - currentLightness).toDouble(), power).toFloat()
+            hsl[2] = Math.min(1.0f, currentLightness + (maxShift * factor))
+        } else {
+            val factor = Math.pow(currentLightness.toDouble(), power).toFloat()
+            hsl[2] = Math.max(0.0f, currentLightness - (maxShift * factor))
+        }
+        return ColorUtils.HSLToColor(hsl)
+    }
+
     class ShapePreferenceFragment : SettingsBasePreferenceFragment(),
         SelectorWithWidgetPreference.OnClickListener {
-
-        private val titleMap = mapOf(
-            "" to R.string.icon_shape_system,
-            ShapesProvider.CIRCLE_KEY to R.string.icon_shape_circle,
-            ShapesProvider.IOS_KEY to R.string.icon_shape_ios,
-            ShapesProvider.SQUIRCLE_KEY to R.string.icon_shape_squircle,
-            ShapesProvider.ROUNDED_RECT_KEY to R.string.icon_shape_rounded_rectangle,
-            ShapesProvider.RICEBALLS_KEY to R.string.icon_shape_riceballs,
-        )
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             val ctx = requireContext()
@@ -77,7 +102,7 @@ class IconShapeBottomSheet : BottomSheetDialogFragment() {
 
             // Shape options
             for (shape in ShapesProvider.settingsIconShapes) {
-                if (titleMap.containsKey(shape.key)) {
+                if (TITLE_MAP.containsKey(shape.key)) {
                     screen.addPreference(createShapePref(ctx, shape.key, currentKey, color))
                 }
             }
@@ -90,7 +115,7 @@ class IconShapeBottomSheet : BottomSheetDialogFragment() {
         ): IconShapeSelectorPreference {
             val pref = IconShapeSelectorPreference(ctx)
             pref.key = "shape_$shapeKey"
-            pref.title = ctx.getString(titleMap[shapeKey] ?: R.string.icon_shape_system)
+            pref.title = ctx.getString(TITLE_MAP[shapeKey] ?: R.string.icon_shape_system)
             pref.isChecked = shapeKey == currentKey
             pref.shapePreview = getShapePreviewDrawable(ctx, shapeKey, color)
             pref.setOnClickListener(this)
@@ -220,16 +245,14 @@ class IconShapeBottomSheet : BottomSheetDialogFragment() {
     companion object {
         const val TAG = "IconShapeBottomSheet"
 
+        @JvmStatic
+        val TITLE_MAP by lazy { buildMap {
+            put("", R.string.icon_shape_system)
+            ShapesProvider.settingsIconShapes.forEach { shape -> put(shape.key, shape.title) }
+        }}
+
         fun getShapeTitle(context: Context, shapeKey: String): String {
-            val titleMap = mapOf(
-                "" to R.string.icon_shape_system,
-                ShapesProvider.CIRCLE_KEY to R.string.icon_shape_circle,
-                ShapesProvider.IOS_KEY to R.string.icon_shape_ios,
-                ShapesProvider.SQUIRCLE_KEY to R.string.icon_shape_squircle,
-                ShapesProvider.ROUNDED_RECT_KEY to R.string.icon_shape_rounded_rectangle,
-                ShapesProvider.RICEBALLS_KEY to R.string.icon_shape_riceballs,
-            )
-            val resId = titleMap[shapeKey] ?: R.string.icon_shape_system
+            val resId = TITLE_MAP[shapeKey] ?: R.string.icon_shape_system
             return context.getString(resId)
         }
 

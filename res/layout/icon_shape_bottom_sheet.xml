@@ -4,6 +4,13 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingBottom="16dp">
+    <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+        android:id="@+id/drag_handle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="-8dp"/>
 
     <TextView
         android:layout_width="match_parent"
@@ -12,7 +19,7 @@
         android:textAppearance="@style/HomeSettings.TitleMedium"
         android:paddingStart="24dp"
         android:paddingEnd="24dp"
-        android:paddingTop="24dp"
+        android:paddingTop="0dp"
         android:paddingBottom="16dp" />
 
     <FrameLayout

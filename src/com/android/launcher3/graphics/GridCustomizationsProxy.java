@@ -173,20 +173,21 @@ public class GridCustomizationsProxy implements ProxyProvider {
                             KEY_SHAPE_KEY, KEY_SHAPE_TITLE, KEY_PATH, KEY_IS_DEFAULT});
                     String currentShapePath = mThemeManager.getIconState().getIconMask();
                     Optional<IconShapeModel> selectedShape = Arrays.stream(
-                            ShapesProvider.INSTANCE.getIconShapes()).filter(
+                            ShapesProvider.INSTANCE.getSettingsIconShapes()).filter(
                                     shape -> shape.getPathString().equals(currentShapePath)
                     ).findFirst();
                     // Handle default for when current shape doesn't match new shapes.
                     if (selectedShape.isEmpty()) {
                         selectedShape = Optional.of(Arrays.stream(
-                                ShapesProvider.INSTANCE.getIconShapes()
+                                ShapesProvider.INSTANCE.getSettingsIconShapes()
                         ).findFirst().get());
                     }
 
-                    for (IconShapeModel shape : ShapesProvider.INSTANCE.getIconShapes()) {
+                    var resources = mContext.getResources();
+                    for (IconShapeModel shape : ShapesProvider.INSTANCE.getSettingsIconShapes()) {
                         cursor.newRow()
                                 .add(KEY_SHAPE_KEY, shape.getKey())
-                                .add(KEY_SHAPE_TITLE, shape.getTitle())
+                                .add(KEY_SHAPE_TITLE, resources.getString(shape.getTitle()))
                                 .add(KEY_PATH, shape.getPathString())
                                 .add(KEY_IS_DEFAULT, shape.equals(selectedShape.get()));
                     }

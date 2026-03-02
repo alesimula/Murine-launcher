@@ -104,7 +104,6 @@ constructor(
         val shapeModel =
             prefs.get(PREF_ICON_SHAPE).let { shapeOverride ->
                 ShapesProvider.settingsIconShapes.firstOrNull { it.key == shapeOverride }
-                    ?: ShapesProvider.iconShapes.firstOrNull { it.key == shapeOverride }
             }
         val iconMask =
             when {
@@ -169,7 +168,7 @@ constructor(
 
         const val KEY_THEMED_ICONS = "themed_icons"
         @JvmField val THEMED_ICONS = backedUpItem(KEY_THEMED_ICONS, false, EncryptionType.ENCRYPTED)
-        @JvmField val PREF_ICON_SHAPE = backedUpItem(KEY_ICON_SHAPE, "", EncryptionType.ENCRYPTED)
+        @JvmField val PREF_ICON_SHAPE = backedUpItem(KEY_ICON_SHAPE, ShapesProvider.IOS_KEY, EncryptionType.ENCRYPTED)
 
         private const val ACTION_OVERLAY_CHANGED = "android.intent.action.OVERLAY_CHANGED"
         private val CONFIG_ICON_MASK_RES_ID: Int =
