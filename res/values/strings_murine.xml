@@ -27,4 +27,12 @@
     <string name="pref_label_grid_height">Grid height</string>
     <string name="pref_label_icon_size">Icon size (%)</string>
     <string name="pref_label_icon_label_size">Label size (%)</string>
+
+    <string name="pref_icon_shape_title">Icon shape</string>
+    <string name="icon_shape_system">System</string>
+    <string name="icon_shape_circle">Circle</string>
+    <string name="icon_shape_ios">iOS</string>
+    <string name="icon_shape_squircle">Squircle</string>
+    <string name="icon_shape_rounded_rectangle">Rounded Rectangle</string>
+    <string name="icon_shape_riceballs">RiceBalls</string>
 </resources>

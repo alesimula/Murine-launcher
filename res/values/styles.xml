@@ -198,6 +198,8 @@
         <item name="android:windowActionBar">false</item>
         <item name="alertDialogTheme">@style/HomeSettings.AlertDialog</item>
         <item name="preferenceTheme">@style/HomeSettings.PreferenceTheme</item>
+        <item name="bottomSheetDialogTheme">@style/Theme.SettingsLib.BottomSheetDialog</item>
+        <item name="bottomSheetStyle">@style/Widget.SettingsLib.BottomSheet</item>
     </style>
 
     <style name="HomeSettings.TitleMedium" parent="TextAppearance.SettingsLib.TitleMedium.Emphasized">
@@ -262,6 +264,8 @@
         <item name="preferenceCategoryTitleTextColor">@color/settingslib_materialColorPrimary</item>
         <item name="switchPreferenceStyle">@style/HomeSettings.SwitchPreferenceStyle</item>
         <item name="seekBarPreferenceStyle">@style/SettingsLibPreference.SeekBarPreference.Expressive</item>
+        <item name="bottomSheetDialogTheme">@style/Theme.SettingsLib.BottomSheetDialog</item>
+        <item name="bottomSheetStyle">@style/Widget.SettingsLib.BottomSheet</item>
         <item name="switchPreferenceCompatStyle">@style/SettingsLibPreference.SwitchPreferenceCompat.Expressive</item>
         <!--item name="expressiveSwitchStyle">@style/SettingslibSwitchStyle.Expressive</item-->
     </style>

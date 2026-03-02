@@ -78,4 +78,18 @@
 
         <item name="dialogCornerRadius">@dimen/settingslib_dialogCornerRadius</item>
     </style>
+
+    <style name="Theme.SettingsLib.BottomSheetDialog" parent="@style/Theme.Material3.DayNight.BottomSheetDialog">
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:colorBackground">@color/settingslib_materialColorSurfaceContainer</item>
+        <item name="android:textColorPrimary">@color/settingslib_materialColorOnSurface</item>
+        <item name="android:textColorSecondary">@color/settingslib_text_color_secondary</item>
+        <item name="bottomSheetStyle">@style/Widget.SettingsLib.BottomSheet</item>
+    </style>
+
+    <style name="Widget.SettingsLib.BottomSheet" parent="Widget.Material3.BottomSheet">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.SettingsLib.BottomSheet</item>
+        <item name="backgroundTint">?android:attr/colorBackground</item>
+    </style>
 </resources>

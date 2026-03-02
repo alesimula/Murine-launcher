@@ -103,4 +103,12 @@
         <item name="android:progressBackgroundTintMode">src_over</item>
     </style>
 
+    <style name="ShapeAppearance.SettingsLib.BottomSheet" parent="ShapeAppearance.MaterialComponents.LargeComponent">
+        <item name="cornerSizeTopLeft">@dimen/settingslib_dialogCornerRadius</item>
+        <item name="cornerFamilyTopLeft">rounded</item>
+        <item name="cornerSizeTopRight">@dimen/settingslib_dialogCornerRadius</item>
+        <item name="cornerFamilyTopRight">rounded</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+    </style>
 </resources>
