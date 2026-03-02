@@ -80,7 +80,11 @@ constructor(
         lifeCycle.addCloseable { idp.removeOnChangeListener(idpChangeListener) }
 
         // Theme changes
-        val themeChangeListener = ThemeChangeListener { refreshAndReloadLauncher() }
+        val themeChangeListener = ThemeChangeListener {
+            idp.onConfigChanged(context)
+            // Rebuild DeviceProfiles so DotRenderers are recreated with the new icon shape path.
+            refreshAndReloadLauncher()
+        }
         themeManager.addChangeListener(themeChangeListener)
         lifeCycle.addCloseable { themeManager.removeChangeListener(themeChangeListener) }
 
