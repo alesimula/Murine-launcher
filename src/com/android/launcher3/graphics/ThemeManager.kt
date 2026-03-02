@@ -101,35 +101,27 @@ constructor(
     fun removeChangeListener(listener: ThemeChangeListener) = listeners.remove(listener)
 
     private fun parseIconState(oldState: IconState?): IconState {
-        val shapeModel =
-            prefs.get(PREF_ICON_SHAPE).let { shapeOverride ->
-                ShapesProvider.settingsIconShapes.firstOrNull { it.key == shapeOverride }
-            }
-        val iconMask =
-            when {
-                shapeModel != null -> shapeModel.pathString
-                CONFIG_ICON_MASK_RES_ID == Resources.ID_NULL -> ""
-                else -> context.resources.getString(CONFIG_ICON_MASK_RES_ID)
-            }
-
-        val iconShape =
-            if (oldState != null && oldState.iconMask == iconMask) oldState.iconShape
+        val shapeModel = prefs.get(PREF_ICON_SHAPE)
+        val iconMask = when {
+            shapeModel.pathString.isNotBlank() -> shapeModel.pathString
+            CONFIG_ICON_MASK_RES_ID == Resources.ID_NULL -> ""
+            else -> context.resources.getString(CONFIG_ICON_MASK_RES_ID)
+        }
+        val iconShape = if (oldState != null && oldState.iconMask == iconMask) oldState.iconShape
             else pickBestShape(iconMask)
 
-        val folderShapeMask = shapeModel?.folderPathString ?: iconMask
-        val folderShape =
-            when {
-                oldState != null && oldState.folderShapeMask == folderShapeMask ->
-                    oldState.folderShape
-                folderShapeMask == iconMask || folderShapeMask.isEmpty() -> iconShape
-                else -> pickBestShape(folderShapeMask)
-            }
+        val folderShapeMask = shapeModel.folderPathString
+        val folderShape = when {
+            oldState != null && oldState.folderShapeMask == folderShapeMask -> oldState.folderShape
+            folderShapeMask == iconMask || folderShapeMask.isBlank() -> iconShape
+            else -> pickBestShape(folderShapeMask)
+        }
 
         return IconState(
             iconMask = iconMask,
             folderShapeMask = folderShapeMask,
             themeController = iconControllerFactory.createThemeController(),
-            iconScale = shapeModel?.iconScale ?: 1f,
+            iconScale = shapeModel.iconScale,
             iconShape = iconShape,
             folderShape = folderShape,
         )
@@ -168,7 +160,7 @@ constructor(
 
         const val KEY_THEMED_ICONS = "themed_icons"
         @JvmField val THEMED_ICONS = backedUpItem(KEY_THEMED_ICONS, false, EncryptionType.ENCRYPTED)
-        @JvmField val PREF_ICON_SHAPE = backedUpItem(KEY_ICON_SHAPE, ShapesProvider.IOS_KEY, EncryptionType.ENCRYPTED)
+        @JvmField val PREF_ICON_SHAPE = backedUpItem(KEY_ICON_SHAPE, ShapesProvider.IconShape.IOS, EncryptionType.ENCRYPTED)
 
         private const val ACTION_OVERLAY_CHANGED = "android.intent.action.OVERLAY_CHANGED"
         private val CONFIG_ICON_MASK_RES_ID: Int =

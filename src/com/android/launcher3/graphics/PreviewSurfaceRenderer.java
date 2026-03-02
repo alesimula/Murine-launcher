@@ -131,7 +131,7 @@ public class PreviewSurfaceRenderer {
         if (mGridName == null) {
             mGridName = LauncherPrefs.get(context).get(GRID_NAME);
         }
-        mShapeKey = LauncherPrefs.get(context).get(PREF_ICON_SHAPE);
+        mShapeKey = LauncherPrefs.get(context).get(PREF_ICON_SHAPE).name();
         mWallpaperColors = bundle.getParcelable(KEY_COLORS);
         if (Flags.newCustomizationPickerUi()) {
             updateColorOverrides(bundle);

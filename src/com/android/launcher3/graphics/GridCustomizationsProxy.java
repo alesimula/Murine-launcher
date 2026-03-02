@@ -56,7 +56,6 @@ import com.android.launcher3.util.RunnableList;
 import com.android.systemui.shared.Flags;
 
 import java.lang.ref.WeakReference;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -172,25 +171,19 @@ public class GridCustomizationsProxy implements ProxyProvider {
                     MatrixCursor cursor = new MatrixCursor(new String[]{
                             KEY_SHAPE_KEY, KEY_SHAPE_TITLE, KEY_PATH, KEY_IS_DEFAULT});
                     String currentShapePath = mThemeManager.getIconState().getIconMask();
-                    Optional<IconShapeModel> selectedShape = Arrays.stream(
-                            ShapesProvider.INSTANCE.getSettingsIconShapes()).filter(
+                    Optional<? extends IconShapeModel> selectedShape = ShapesProvider.IconShape.getEntries().stream().filter(
                                     shape -> shape.getPathString().equals(currentShapePath)
                     ).findFirst();
                     // Handle default for when current shape doesn't match new shapes.
-                    if (selectedShape.isEmpty()) {
-                        selectedShape = Optional.of(Arrays.stream(
-                                ShapesProvider.INSTANCE.getSettingsIconShapes()
-                        ).findFirst().get());
-                    }
+                    if (selectedShape.isEmpty())
+                        selectedShape = Optional.of(ShapesProvider.IconShape.getEntries().stream().findFirst().get());
 
                     var resources = mContext.getResources();
-                    for (IconShapeModel shape : ShapesProvider.INSTANCE.getSettingsIconShapes()) {
-                        cursor.newRow()
-                                .add(KEY_SHAPE_KEY, shape.getKey())
-                                .add(KEY_SHAPE_TITLE, resources.getString(shape.getTitle()))
-                                .add(KEY_PATH, shape.getPathString())
-                                .add(KEY_IS_DEFAULT, shape.equals(selectedShape.get()));
-                    }
+                    for (var shape : ShapesProvider.IconShape.getEntries()) cursor.newRow()
+                            .add(KEY_SHAPE_KEY, shape.name())
+                            .add(KEY_SHAPE_TITLE, resources.getString(shape.getTitle()))
+                            .add(KEY_PATH, shape.getPathString())
+                            .add(KEY_IS_DEFAULT, shape.equals(selectedShape.get()));
                     return cursor;
                 } else  {
                     return null;

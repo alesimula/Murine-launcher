@@ -26,7 +26,6 @@ import com.android.launcher3.graphics.ThemeManager
 import com.android.launcher3.shapes.ShapesProvider
 import com.android.settingslib.widget.SelectorWithWidgetPreference
 import com.android.settingslib.widget.SettingsBasePreferenceFragment
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.shape.MaterialShapeDrawable
 
@@ -86,64 +85,44 @@ class IconShapeBottomSheet : BottomSheetDialogFragment() {
         return ColorUtils.HSLToColor(hsl)
     }
 
-    class ShapePreferenceFragment : SettingsBasePreferenceFragment(),
-        SelectorWithWidgetPreference.OnClickListener {
+    class ShapePreferenceFragment : SettingsBasePreferenceFragment(), SelectorWithWidgetPreference.OnClickListener {
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             val ctx = requireContext()
             val screen = preferenceManager.createPreferenceScreen(ctx)
-
-            val prefs = LauncherPrefs.INSTANCE.get(ctx)
-            val currentKey = prefs.get(ThemeManager.PREF_ICON_SHAPE)
-            val color = ContextCompat.getColor(ctx, com.android.settingslib.widget.theme.R.color.settingslib_materialColorOnSurfaceVariant)
-
-            // System option
-            screen.addPreference(createShapePref(ctx, "", currentKey, color))
-
+            val currentShape = ThemeManager.PREF_ICON_SHAPE.get(ctx)
             // Shape options
-            for (shape in ShapesProvider.settingsIconShapes) {
-                if (TITLE_MAP.containsKey(shape.key)) {
-                    screen.addPreference(createShapePref(ctx, shape.key, currentKey, color))
-                }
-            }
-
+            for (shape in ShapesProvider.IconShape.entries)
+                screen.addPreference(createShapePref(ctx, shape, currentShape))
             preferenceScreen = screen
         }
 
         private fun createShapePref(
-            ctx: Context, shapeKey: String, currentKey: String, color: Int
+            ctx: Context, shape: ShapesProvider.IconShape, currentShape: ShapesProvider.IconShape
         ): IconShapeSelectorPreference {
             val pref = IconShapeSelectorPreference(ctx)
-            pref.key = "shape_$shapeKey"
-            pref.title = ctx.getString(TITLE_MAP[shapeKey] ?: R.string.icon_shape_system)
-            pref.isChecked = shapeKey == currentKey
-            pref.shapePreview = getShapePreviewDrawable(ctx, shapeKey, color)
+            pref.key = "$PREF_PREFIX${shape.name}"
+            pref.title = ctx.getString(shape.title)
+            pref.isChecked = currentShape == shape
+            pref.shapePreview = getShapePreviewDrawable(ctx, shape)
             pref.setOnClickListener(this)
             return pref
         }
 
         override fun onRadioButtonClicked(emitter: SelectorWithWidgetPreference) {
             // Uncheck all, check selected
-            for (i in 0 until preferenceScreen.preferenceCount) {
+            for (i in 0 until preferenceScreen.preferenceCount)
                 (preferenceScreen.getPreference(i) as? SelectorWithWidgetPreference)?.isChecked = false
-            }
             emitter.isChecked = true
 
-            val shapeKey = emitter.key.removePrefix("shape_")
+            val shapeKey = emitter.key.removePrefix(PREF_PREFIX)
             val prefs = LauncherPrefs.INSTANCE.get(requireContext())
-            prefs.put(ThemeManager.PREF_ICON_SHAPE.to(shapeKey))
+            prefs.put(ThemeManager.PREF_ICON_SHAPE.to(ShapesProvider.IconShape.valueOf(shapeKey)))
 
             (parentFragment as? IconShapeBottomSheet)?.let {
                 it.listener?.onShapeSelected(shapeKey)
                 it.dismiss()
             }
-        }
-
-        private fun getShapePreviewDrawable(ctx: Context, shapeKey: String, color: Int): Drawable {
-            if (shapeKey.isEmpty()) return SystemShapePreviewDrawable(color)
-            val shape = ShapesProvider.settingsIconShapes.firstOrNull { it.key == shapeKey }
-            return if (shape != null) ShapePreviewDrawable(shape.pathString, color)
-            else SystemShapePreviewDrawable(color)
         }
     }
 
@@ -244,24 +223,14 @@ class IconShapeBottomSheet : BottomSheetDialogFragment() {
 
     companion object {
         const val TAG = "IconShapeBottomSheet"
+        const val PREF_PREFIX = "pref_ic_shape_"
 
-        @JvmStatic
-        val TITLE_MAP by lazy { buildMap {
-            put("", R.string.icon_shape_system)
-            ShapesProvider.settingsIconShapes.forEach { shape -> put(shape.key, shape.title) }
-        }}
-
-        fun getShapeTitle(context: Context, shapeKey: String): String {
-            val resId = TITLE_MAP[shapeKey] ?: R.string.icon_shape_system
-            return context.getString(resId)
-        }
-
-        fun getShapePreviewDrawable(context: Context, shapeKey: String): Drawable {
+        fun getShapePreviewDrawable(context: Context, shape: ShapesProvider.IconShape): Drawable {
             val color = ContextCompat.getColor(context, com.android.settingslib.widget.theme.R.color.settingslib_materialColorOnSurfaceVariant)
-            if (shapeKey.isEmpty()) return SystemShapePreviewDrawable(color)
-            val shape = ShapesProvider.settingsIconShapes.firstOrNull { it.key == shapeKey }
-            return if (shape != null) ShapePreviewDrawable(shape.pathString, color)
-            else SystemShapePreviewDrawable(color)
+            if (shape.pathString.isNotBlank()) try {
+                return ShapePreviewDrawable(shape.pathString, color)
+            } catch (_: Exception) {}
+            return SystemShapePreviewDrawable(color)
         }
     }
 }

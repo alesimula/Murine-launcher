@@ -16,30 +16,24 @@
 
 package com.android.launcher3.shapes
 
-import androidx.annotation.VisibleForTesting
 import com.android.launcher3.R
-import com.android.launcher3.Flags as LauncherFlags
 
 object ShapesProvider {
     /** All shapes available in settings */
-    val settingsIconShapes: Array<IconShapeModel> = arrayOf(
-        IconShapeModel(key = CIRCLE_KEY, title = R.string.icon_shape_circle, pathString = CIRCLE_PATH),
-        IconShapeModel(key = RICEBALLS_KEY, title = R.string.icon_shape_riceballs, pathString = RICEBALLS_PATH),
-        IconShapeModel(key = SQUIRCLE_KEY, title = R.string.icon_shape_squircle, pathString = SQUIRCLE_PATH),
-        IconShapeModel(key = TOFU_KEY, title = R.string.icon_shape_tofu, pathString = TOFU_PATH),
-        IconShapeModel(key = IOS_KEY, title = R.string.icon_shape_ios, pathString = IOS_PATH),
-        IconShapeModel(key = XPERIA_KEY, title = R.string.icon_shape_xperia, pathString = XPERIA_PATH)
-    )
-
-    const val CIRCLE_KEY = "circle"
-    const val TOFU_KEY = "tofu"
-    const val FOUR_SIDED_COOKIE_KEY = "four_sided_cookie"
-    const val SEVEN_SIDED_COOKIE_KEY = "seven_sided_cookie"
-    const val ARCH_KEY = "arch"
-    const val IOS_KEY = "ios"
-    const val SQUIRCLE_KEY = "squircle"
-    const val XPERIA_KEY = "xperia"
-    const val RICEBALLS_KEY = "riceballs"
+    enum class IconShape (
+        override val title: Int,
+        override val pathString: String,
+        override val folderPathString: String = pathString,
+        override val iconScale: Float = 1.0f
+    ): IconShapeModel {
+        SYSTEM(title = R.string.icon_shape_system, pathString = ""),
+        CIRCLE(title = R.string.icon_shape_circle, pathString = CIRCLE_PATH),
+        RICEBALLS(title = R.string.icon_shape_riceballs, pathString = RICEBALLS_PATH),
+        SQUIRCLE(title = R.string.icon_shape_squircle, pathString = SQUIRCLE_PATH),
+        TOFU(title = R.string.icon_shape_tofu, pathString = TOFU_PATH),
+        IOS(title = R.string.icon_shape_ios, pathString = IOS_PATH),
+        XPERIA(title = R.string.icon_shape_xperia, pathString = XPERIA_PATH)
+    }
 
 
     private const val FOLDER_CLOVER_PATH =

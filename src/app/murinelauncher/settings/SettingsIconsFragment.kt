@@ -45,9 +45,8 @@ public final class SettingsIconsFragment: AbstractSettingsFragment() {
 
     private fun updateIconShapePreference() {
         val pref = findPreference<Preference>(ICON_SHAPE_KEY) ?: return
-        val currentKey = LauncherPrefs.INSTANCE.get(requireContext())
-            .get(ThemeManager.PREF_ICON_SHAPE)
-        pref.summary = IconShapeBottomSheet.getShapeTitle(requireContext(), currentKey)
-        pref.icon = IconShapeBottomSheet.getShapePreviewDrawable(requireContext(), currentKey)
+        val shape = LauncherPrefs.INSTANCE.get(requireContext()).get(ThemeManager.PREF_ICON_SHAPE)
+        pref.summary = requireContext().getString(shape.title)
+        pref.icon = IconShapeBottomSheet.getShapePreviewDrawable(requireContext(), shape)
     }
 }
