@@ -69,4 +69,6 @@
     <color name="materialColorError">@color/system_error_dark</color>
 
     <color name="all_apps_label_text_color">#E9E2E2</color>
+    <color name="all_apps_search_bg_color">#14FFFFFF</color>
+    <color name="all_apps_search_border_color">#22FFFFFF</color>
 </resources>
