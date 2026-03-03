@@ -288,9 +288,9 @@ public class AllAppsTransitionController
             var drawerBlur = WorkspaceBlurUtils.getDrawerBlur();
             int blurValue = (int) (blurProgress * drawerBlur.getRadius());
             int iconBlurValue = (int) (blurIconProgress * drawerBlur.getRadius());
-            drawerBlur.withBlurDrawable(mLauncher, (blurDrawable, isNew) -> {
+            drawerBlur.withBlurDrawable(mLauncher, (blurDrawable, isNew, isChanged) -> {
                 blurDrawable.setBlurRadius(blurValue);
-                if (isNew) mLauncher.getWindow().setBackgroundDrawable(blurDrawable);
+                if (isChanged) mLauncher.getWindow().setBackgroundDrawable(blurDrawable);
             });
             // Not sure if this flag is needed when using BackgroundBlurDrawable, couldn't hurt
             mLauncher.getWindow().setFlags(

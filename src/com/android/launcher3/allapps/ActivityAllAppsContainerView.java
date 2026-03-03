@@ -1539,7 +1539,7 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
             mTmpPath.reset();
             boolean isBlurredSheet = WorkspaceBlurUtils.getDrawerBlur().getSheetOnly();
             final float leftVal = left;
-            if (isBlurredSheet && Flags.allAppsBlur() && WorkspaceBlurUtils.getDrawerBlur().withBlurDrawable(mScrimView, (blurDrawable, isNew) -> {
+            if (isBlurredSheet && Flags.allAppsBlur() && WorkspaceBlurUtils.getDrawerBlur().withBlurDrawable(mScrimView, (blurDrawable, isNew, isChanged) -> {
                 baseSheetDrawable.setBottomLayer(blurDrawable, drawable -> {
                     drawable.setCornerRadius(mBottomSheetCornerRadii[0], mBottomSheetCornerRadii[2],
                             mBottomSheetCornerRadii[4], mBottomSheetCornerRadii[6]);

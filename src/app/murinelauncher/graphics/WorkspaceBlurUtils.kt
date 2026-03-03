@@ -12,6 +12,7 @@ import android.view.ViewRootImpl
 import android.view.Window
 import androidx.core.util.Consumer
 import com.android.internal.graphics.drawable.BackgroundBlurDrawable
+import com.android.internal.util.function.TriConsumer
 import com.android.launcher3.Launcher
 import com.android.launcher3.R
 import com.android.launcher3.Utilities
@@ -21,6 +22,7 @@ import java.util.function.BiConsumer
 
 class WorkspaceBlurUtils {
     companion object {
+        private var lastBlurDrawable: BackgroundBlurDrawable? = null;
         // Must be the first declaration
         @JvmStatic private val BLUR_TYPES: MutableList<BlurType> = mutableListOf<BlurType>()
         @JvmStatic val PREVIEW : BlurType = DetachedBlurType(20, false)
@@ -37,6 +39,7 @@ class WorkspaceBlurUtils {
          * TODO is this really needed?
          */
         @JvmStatic fun invalidate() {
+            lastBlurDrawable = null
             for (blurType in BLUR_TYPES) blurType.invalidate()
         }
 
@@ -64,29 +67,39 @@ class WorkspaceBlurUtils {
         private var blurDrawableImpl : MutableMap<Int, BackgroundBlurDrawable> = ConcurrentHashMap()
         private var fallbackDrawableImpl : MutableMap<Int, MurineLayerDrawable> = ConcurrentHashMap()
         private val viewRootProvider: View.() -> ViewRootImpl? = if (radius > 0) View::getViewRootImpl else {_: View -> null}
-        fun invalidate() = blurDrawableImpl.clear()
+        fun invalidate() {
+            blurDrawableImpl.clear()
+            fallbackDrawableImpl.clear()
+        }
 
 
-        open fun withBlurDrawable(view: View, block: BiConsumer<BackgroundBlurDrawable, Boolean>): Boolean {
+        /**
+         * @param block: param 1: blur drawable; param 2: is new; param 3: is different from last queried (global)
+         */
+        open fun withBlurDrawable(view: View, block: TriConsumer<BackgroundBlurDrawable, Boolean, Boolean>): Boolean {
             val viewRoot: ViewRootImpl? = viewRootProvider(view)
             var isNew = false
-            if (viewRoot != null) block.accept(blurDrawableImpl.computeIfAbsent(System.identityHashCode(viewRoot)) {
-                isNew = true
-                val backgroundDrawable = viewRoot.createBackgroundBlurDrawable()
-                backgroundDrawable.setBlurRadius(radius)
-                backgroundDrawable
-            }, isNew)
+            if (viewRoot != null) {
+                val blurDrawable = blurDrawableImpl.computeIfAbsent(System.identityHashCode(viewRoot)) {
+                    isNew = true
+                    val backgroundDrawable = viewRoot.createBackgroundBlurDrawable()
+                    backgroundDrawable.setBlurRadius(radius)
+                    backgroundDrawable
+                }
+                block.accept(blurDrawable, isNew, blurDrawable !== lastBlurDrawable)
+                lastBlurDrawable = blurDrawable
+            }
             //else if (fallback != null) fallbackDrawableImpl.computeIfAbsent(viewRoot, {PaintDrawable()});
             return viewRoot != null
         }
 
         @Suppress("RedundantNullableReturnType")
-        fun withBlurDrawable(window: Window, block: BiConsumer<BackgroundBlurDrawable, Boolean>): Boolean {
+        fun withBlurDrawable(window: Window, block: TriConsumer<BackgroundBlurDrawable, Boolean, Boolean>): Boolean {
             val decorView: View? = window.decorView
             return if (decorView != null) withBlurDrawable(decorView, block) else false
         }
 
-        fun withBlurDrawable(launcher: Launcher, block: BiConsumer<BackgroundBlurDrawable, Boolean>): Boolean {
+        fun withBlurDrawable(launcher: Launcher, block: TriConsumer<BackgroundBlurDrawable, Boolean, Boolean>): Boolean {
             val window: Window? = launcher.window
             return if (window != null) withBlurDrawable(window, block) else false
         }

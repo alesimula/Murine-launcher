@@ -49,8 +49,13 @@ import static com.android.launcher3.states.StateAnimationConfig.SKIP_SCRIM;
 import android.animation.ValueAnimator;
 import android.util.FloatProperty;
 import android.view.View;
+import android.os.Build;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.Interpolator;
+import android.view.animation.PathInterpolator;
+
+import androidx.annotation.RequiresApi;
 
 import com.android.launcher3.LauncherState.PageAlphaProvider;
 import com.android.launcher3.LauncherState.PageTranslationProvider;
@@ -82,10 +87,23 @@ public class WorkspaceStateTransitionAnimation {
     private static final FloatProperty<Hotseat> HOTSEAT_SCALE_PROPERTY =
             HOTSEAT_SCALE_PROPERTY_FACTORY.get(SCALE_INDEX_WORKSPACE_STATE);
 
+    private static final FloatProperty<WorkspaceStateTransitionAnimation> PREVIEW_BLUR_PROGRESS = new FloatProperty<WorkspaceStateTransitionAnimation>("previewBlurProgress") {
+        @Override
+        public void setValue(WorkspaceStateTransitionAnimation anim, float v) {
+            anim.setPreviewBlurProgress(v);
+        }
+
+        @Override
+        public Float get(WorkspaceStateTransitionAnimation anim) {
+            return anim.mPreviewBlurProgress;
+        }
+    };
+
     private final Launcher mLauncher;
     private final Workspace<?> mWorkspace;
 
     private float mNewScale;
+    private float mPreviewBlurProgress;
 
     public WorkspaceStateTransitionAnimation(Launcher launcher, Workspace<?> workspace) {
         mLauncher = launcher;
@@ -201,6 +219,34 @@ public class WorkspaceStateTransitionAnimation {
 
         if (!config.hasAnimationFlag(SKIP_SCRIM)) {
             setScrim(propertySetter, state, config);
+        }
+
+        if (Utilities.ATLEAST_S) {
+            float targetBlur = (state instanceof SpringLoadedState || state instanceof EditModeState) ? 1f : 0f;
+            propertySetter.setFloat(this, PREVIEW_BLUR_PROGRESS, targetBlur, ZOOM_OUT);
+        }
+    }
+
+    protected static final PathInterpolator BLUR_INTERPOLATOR =
+            new PathInterpolator(0.05f, 0.3f, 0.3f, 1f);
+
+    @RequiresApi(Build.VERSION_CODES.S)
+    private void setPreviewBlurProgress(float progress) {
+        mPreviewBlurProgress = progress;
+        float blurProgress = BLUR_INTERPOLATOR.getInterpolation(progress);
+        var previewBlur = WorkspaceBlurUtils.getPREVIEW();
+        int blurValue = (int) (blurProgress * previewBlur.getRadius());
+        try {
+            previewBlur.withBlurDrawable(mLauncher, (blurDrawable, isNew, isChanged) -> {
+                blurDrawable.setBlurRadius(blurValue);
+                if (isChanged) mLauncher.getWindow().setBackgroundDrawable(blurDrawable);
+            });
+            mLauncher.getWindow().setFlags(
+                    blurValue > 0 ? WindowManager.LayoutParams.FLAG_BLUR_BEHIND : 0,
+                    WindowManager.LayoutParams.FLAG_BLUR_BEHIND
+            );
+        } catch (IllegalArgumentException ignored) {
+            // Not attached to a window manager yet
         }
     }
 
