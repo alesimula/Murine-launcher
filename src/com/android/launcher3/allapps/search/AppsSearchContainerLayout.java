@@ -124,7 +124,8 @@ public class AppsSearchContainerLayout extends ExtendedEditText
         int shift = expectedLeft - left;
         setTranslationX(shift);
 
-        offsetTopAndBottom(mContentOverlap);
+        if (!mLauncher.getDeviceProfile().shouldShowAllAppsOnSheet())
+            offsetTopAndBottom(mContentOverlap);
     }
 
     @Override
@@ -183,7 +184,9 @@ public class AppsSearchContainerLayout extends ExtendedEditText
     @Override
     public void setInsets(Rect insets) {
         MarginLayoutParams mlp = (MarginLayoutParams) getLayoutParams();
-        mlp.topMargin = insets.top;
+        mlp.topMargin = mLauncher.getDeviceProfile().shouldShowAllAppsOnSheet() ?
+                getResources().getDimensionPixelSize(R.dimen.bottom_sheet_handle_area_height) :
+                insets.top;
         requestLayout();
     }
 
