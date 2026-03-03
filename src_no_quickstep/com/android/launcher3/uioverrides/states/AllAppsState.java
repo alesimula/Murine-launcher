@@ -32,6 +32,8 @@ import com.android.launcher3.util.Themes;
 import com.android.launcher3.views.ActivityContext;
 import com.android.launcher3.views.ScrimColors;
 
+import app.murinelauncher.graphics.WorkspaceBlurUtils;
+
 /**
  * Definition for AllApps state
  */
@@ -106,7 +108,7 @@ public class AllAppsState extends LauncherState {
     @Override
     public ScrimColors getWorkspaceScrimColor(Launcher launcher) {
         return new ScrimColors(
-                /* backgroundColor */ Color.TRANSPARENT,
+                /* backgroundColor */ launcher.getResources().getColor(WorkspaceBlurUtils.getDrawerBlur().getScrimColor()),
                 /* foregroundColor */ Color.TRANSPARENT);
     }
 }

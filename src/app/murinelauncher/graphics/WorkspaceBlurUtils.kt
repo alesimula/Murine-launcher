@@ -99,11 +99,14 @@ class WorkspaceBlurUtils {
 
     private class DetachedBlurType(radius: Int, blurWorkspace: Boolean): BlurType(radius, blurWorkspace)
 
-    sealed class DrawerBlurType(radius: Int, blurWorkspace: Boolean, val sheetOnly: Boolean, val color: Int) : BlurType(radius, blurWorkspace) {
-        object NONE : DrawerBlurType(0, false, false, R.color.drawer_sheet_color_none)
-        object GLASS : DrawerBlurType(55, true, false, R.color.drawer_sheet_color_glass)
+    sealed class DrawerBlurType(radius: Int, blurWorkspace: Boolean, val sheetOnly: Boolean, val color: Int, val scrimColor: Int) : BlurType(radius, blurWorkspace) {
+        object NONE : DrawerBlurType(0, false, false,
+            R.color.drawer_sheet_color_none, R.color.drawer_scrim_color_none)
+        object GLASS : DrawerBlurType(55, true, false,
+            R.color.drawer_sheet_color_glass, R.color.drawer_scrim_color_glass)
 
-        object MICA : DrawerBlurType(88, false, true, R.color.drawer_sheet_color_mica)
+        object MICA : DrawerBlurType(88, false, true,
+            R.color.drawer_sheet_color_mica, android.R.color.transparent)
     }
 
     class MurineLayerDrawable(private val topLayer: PaintDrawable = PaintDrawable()) : LayerDrawable(arrayOf(NO_OP_DRAWABLE, topLayer)) {

@@ -349,8 +349,8 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
             // TODO LStar no blur: 4D, 90D
             int layerBg = ColorUtils.setAlphaComponent(
                     setColorLStar(getResources().getColor(bg, null), Flags.allAppsBlur() ?
-                            (dark ? 32D : 8D) : (dark ? 4D : 90D)),
-                    (int) ((Flags.allAppsBlur() ? 0.3f : 0.32f) * 255));
+                            (dark ? 36D : 90D) : (dark ? 4D : 90D)),
+                    (int) ((Flags.allAppsBlur() ? 0.18f : 0.32f) * 255));
             mBottomSheetBackgroundColorOverBlur = ColorUtils.compositeColors(layerFg, layerBg);
             mBottomSheetBackgroundColorBlurFallback = getResources().getColor(fallbackRes);
         }*/

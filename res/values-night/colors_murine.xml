@@ -18,7 +18,10 @@
 */
 -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
-    <color name="drawer_sheet_color_glass">#FFFFFFFF</color> <!-- TODO TBD -->
+    <color name="drawer_sheet_color_glass">#4F403634</color>
     <color name="drawer_sheet_color_mica">#CC1F1F1F</color>
-    <color name="drawer_sheet_color_none">#CC1F1F1F</color>
+    <color name="drawer_sheet_color_none">#AC2A2A2A</color>
+
+    <color name="drawer_scrim_color_glass">#4B4E4E4E</color>
+    <color name="drawer_scrim_color_none">#4B4E4E4E</color>
 </resources>
