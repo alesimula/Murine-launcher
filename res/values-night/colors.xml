@@ -67,4 +67,6 @@
     <color name="materialColorSecondary">@color/system_secondary_dark</color>
     <color name="materialColorTertiary">@color/system_tertiary_dark</color>
     <color name="materialColorError">@color/system_error_dark</color>
+
+    <color name="all_apps_label_text_color">#E9E2E2</color>
 </resources>

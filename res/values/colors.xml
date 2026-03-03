@@ -313,4 +313,6 @@
     <color name="materialColorTertiary">@color/system_tertiary_light</color>
     <color name="materialColorError">@color/system_error_light</color>
     <color name="all_apps_blur_overlay_color">#80FFFFFF</color>
+
+    <color name="all_apps_label_text_color">#2F2E2A</color>
 </resources>
