@@ -3,7 +3,6 @@ package app.murinelauncher.graphics
 import android.graphics.Canvas
 import android.graphics.ColorFilter
 import android.graphics.PixelFormat
-import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.LayerDrawable
 import android.graphics.drawable.PaintDrawable
@@ -18,7 +17,6 @@ import com.android.launcher3.R
 import com.android.launcher3.Utilities
 import com.android.launcher3.Utilities.getSystemProperty
 import java.util.concurrent.ConcurrentHashMap
-import java.util.function.BiConsumer
 
 class WorkspaceBlurUtils {
     companion object {
@@ -29,9 +27,9 @@ class WorkspaceBlurUtils {
         @JvmStatic val NONE : BlurType = DetachedBlurType(0, false)
 
         enum class DRAWER_TYPES(val type: DrawerBlurType, val label: Int, val icon: Int) {
-            GLASS(DrawerBlurType.GLASS, R.string.pref_category_general_title, R.drawable.ic_setting),
-            MICA(DrawerBlurType.MICA, R.string.pref_category_general_title, R.drawable.ic_setting),
-            NONE(DrawerBlurType.NONE, R.string.pref_category_general_title, R.drawable.ic_setting);
+            GLASS(DrawerBlurType.GLASS, R.string.drawer_type_frosted, R.drawable.ic_pref_drawer_frosted),
+            MICA(DrawerBlurType.MICA, R.string.drawer_type_mica, R.drawable.ic_pref_drawer_mica),
+            NONE(DrawerBlurType.NONE, R.string.drawer_type_translucent, R.drawable.ic_pref_drawer_translucent);
         }
 
         /**
