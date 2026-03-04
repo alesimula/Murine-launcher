@@ -239,7 +239,7 @@ public class WorkspaceStateTransitionAnimation {
         try {
             previewBlur.withBlurDrawable(mLauncher, (blurDrawable, isNew, isChanged) -> {
                 blurDrawable.setBlurRadius(blurValue);
-                if (isChanged) mLauncher.getWindow().setBackgroundDrawable(blurDrawable);
+                if (progress > 0) mLauncher.getWindow().setBackgroundDrawable(blurDrawable);
             });
             mLauncher.getWindow().setFlags(
                     blurValue > 0 ? WindowManager.LayoutParams.FLAG_BLUR_BEHIND : 0,
