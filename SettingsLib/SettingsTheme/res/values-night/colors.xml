@@ -61,15 +61,12 @@
     <color name="settingslib_materialColorSurfaceContainerHigh">#2A2A2A</color>
     <color name="settingslib_materialColorSurfaceContainerHighest">#343434</color>
 
-    <!--color name="settingslib_colorBackgroundLevel_high">@color/m3_ref_palette_red60</color>
+    <color name="settingslib_colorBackgroundLevel_high">@color/m3_ref_palette_red60</color>
     <color name="settingslib_colorContentLevel_high">@color/m3_ref_palette_red10</color>
+    <color name="settingslib_colorBackgroundLevel_medium">@color/m3_ref_palette_yellow60</color>
+    <color name="settingslib_colorContentLevel_medium">@color/m3_ref_palette_yellow10</color>
     <color name="settingslib_colorBackgroundLevel_low">@color/m3_ref_palette_green70</color>
-    <color name="settingslib_colorContentLevel_low">@color/m3_ref_palette_green10</color-->
-
-    <color name="settingslib_colorBackgroundLevel_high">@color/settingslib_error_900</color>
-    <color name="settingslib_colorContentLevel_high">@color/settingslib_error_200</color>
-    <color name="settingslib_colorBackgroundLevel_low">#1B5E20</color> <!-- Green 900 -->
-    <color name="settingslib_colorContentLevel_low">#A5D6A7</color> <!-- Green 200 -->
+    <color name="settingslib_colorContentLevel_low">@color/m3_ref_palette_green10</color>
 
     <!-- Dialog colors -->
     <color name="settingslib_dialog_colorError">@color/settingslib_error_300</color>

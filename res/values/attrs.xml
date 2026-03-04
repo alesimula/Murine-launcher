@@ -670,4 +670,12 @@
         <attr name="absoluteTickInterval" format="boolean" />
         <attr name="customTickPositions" format="string" />
     </declare-styleable>
+
+    <declare-styleable name="WarningCardPreference">
+        <attr name="formatHtml" format="boolean" />
+        <attr name="cardIcon" format="reference" />
+        <attr name="cardText" format="string|reference" />
+        <attr name="cardBackgroundColor" format="color|reference" />
+        <attr name="cardContentColor" format="color|reference" />
+    </declare-styleable>
 </resources>

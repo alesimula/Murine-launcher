@@ -36,4 +36,6 @@
     <string name="icon_shape_squircle">Squircle</string>
     <string name="icon_shape_xperia">Xperia</string>
     <string name="icon_shape_riceballs">RiceBalls</string>
+
+    <string name="pref_blur_unsupported_warning"><![CDATA[The wallpaper blur may not be fully supported or enabled by this OEM/ROM; Try to check for an "&quot;"Allow window-level blurs&quot; option in Display Options or Developer Options.<br/>Alternatively, try enabling <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">this Magisk module</a> on rooted devices]]></string>
 </resources>

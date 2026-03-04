@@ -16,11 +16,17 @@ public final class SettingsDrawerFragment: AbstractSettingsFragment() {
 
     companion object {
         const val DRAWER_TYPE: String = "pref_drawer_type"
+        const val BLUR_WARNING: String = "pref_blur_warning"
     }
 
     override fun getPreferenceScreenResId() = R.xml.murine_prefs_drawer
 
     override fun getPreferenceTitle(): Int? = R.string.pref_category_drawer_title
+
+    private fun updateBlurWarningVisibility(selectedType: WorkspaceBlurUtils.DrawerBlurType) {
+        findPreference<Preference>(BLUR_WARNING)?.isVisible =
+            selectedType.radius > 0 && !WorkspaceBlurUtils.isBlurSupported
+    }
 
     override fun initPreference(preference: Preference, info: DisplayController.Info): Boolean {
         when (preference.key) {
@@ -38,11 +44,16 @@ public final class SettingsDrawerFragment: AbstractSettingsFragment() {
 
                     // Set initial state from saved settings
                     val launcherPrefs = LauncherPrefs.get(preference.context)
-                    setCheckedIndex(entries.indexOf(launcherPrefs.get(LauncherPrefs.DRAWER_TYPE)))
+                    val currentEntry = launcherPrefs.get(LauncherPrefs.DRAWER_TYPE)
+                    setCheckedIndex(entries.indexOf(currentEntry))
+                    updateBlurWarningVisibility(currentEntry.type)
 
                     // Use the custom listener provided by the class
                     setOnButtonClickListener { _, _, _ ->
-                        val selected = entries[getCheckedIndex()]
+                        val idx = getCheckedIndex()
+                        val selected = entries[idx]
+                        setCheckedIndex(idx)
+                        updateBlurWarningVisibility(selected.type)
                         launcherPrefs.put(LauncherPrefs.DRAWER_TYPE, selected)
                         // Handle your logic based on the 0, 1 index
                         Log.d("Settings.Theme", "Selected drawer type: $selected")
@@ -50,6 +61,7 @@ public final class SettingsDrawerFragment: AbstractSettingsFragment() {
                 }
                 return true
             }
+            BLUR_WARNING -> return true
             else -> return true
         }
     }

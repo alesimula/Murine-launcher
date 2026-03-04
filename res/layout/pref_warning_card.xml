@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/warning_card_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="@dimen/settingslib_expressive_space_small1"
+        android:layout_marginHorizontal="?android:attr/listPreferredItemPaddingStart"
+        android:layout_marginTop="@dimen/settingslib_expressive_space_extrasmall4"
+        android:layout_marginBottom="@dimen/settingslib_expressive_space_extrasmall4">
+
+        <ImageView
+            android:id="@+id/warning_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:importantForAccessibility="no" />
+
+        <TextView
+            android:id="@+id/warning_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/settingslib_expressive_space_small1"
+            android:textAppearance="@style/HomeSettings.BodySmall" />
+
+    </LinearLayout>
+
+</FrameLayout>
