@@ -19,21 +19,12 @@
     xmlns:launcher="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory android:title="@string/pref_drawer_type_title">
-        <com.android.settingslib.widget.SegmentedButtonPreference
-            android:key="pref_drawer_type"
-            android:title="Screen Mode" />
-        <com.android.settingslib.widget.SpacePreference
-            android:layout_height="6dp" />
-
-        <app.murinelauncher.widget.WarningCardPreference
-            android:key="pref_blur_warning"
-            android:visible="false"
-            app:formatHtml="true"
-            app:cardIcon="@android:drawable/ic_dialog_alert"
-            app:cardText="@string/pref_blur_unsupported_warning"
-            app:cardBackgroundColor="@color/settingslib_colorBackgroundLevel_medium"
-            app:cardContentColor="@color/settingslib_materialColorOnSurface" />
-    </PreferenceCategory>
+    <app.murinelauncher.widget.WarningCardPreference
+        android:key="pref_blur_warning"
+        app:formatHtml="false"
+        app:cardIcon="@android:drawable/ic_dialog_alert"
+        app:cardText="¯\\_(ツ)_/¯"
+        app:cardBackgroundColor="@color/settingslib_colorBackgroundLevel_medium"
+        app:cardContentColor="@color/settingslib_materialColorOnSurface" />
 
 </androidx.preference.PreferenceScreen>

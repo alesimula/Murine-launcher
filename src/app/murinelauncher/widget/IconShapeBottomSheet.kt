@@ -1,4 +1,4 @@
-package app.murinelauncher.settings
+package app.murinelauncher.widget
 
 import android.content.Context
 import android.content.res.ColorStateList
@@ -6,9 +6,11 @@ import android.content.res.Configuration
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.ColorFilter
+import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.PixelFormat
+import android.graphics.RectF
 import android.graphics.drawable.AdaptiveIconDrawable
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
@@ -90,7 +92,7 @@ class IconShapeBottomSheet : BottomSheetDialogFragment() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             val ctx = requireContext()
             val screen = preferenceManager.createPreferenceScreen(ctx)
-            val currentShape = ThemeManager.PREF_ICON_SHAPE.get(ctx)
+            val currentShape = ThemeManager.Companion.PREF_ICON_SHAPE.get(ctx)
             // Shape options
             for (shape in ShapesProvider.IconShape.entries)
                 screen.addPreference(createShapePref(ctx, shape, currentShape))
@@ -116,8 +118,8 @@ class IconShapeBottomSheet : BottomSheetDialogFragment() {
             emitter.isChecked = true
 
             val shapeKey = emitter.key.removePrefix(PREF_PREFIX)
-            val prefs = LauncherPrefs.INSTANCE.get(requireContext())
-            prefs.put(ThemeManager.PREF_ICON_SHAPE.to(ShapesProvider.IconShape.valueOf(shapeKey)))
+            val prefs = LauncherPrefs.Companion.INSTANCE.get(requireContext())
+            prefs.put(ThemeManager.Companion.PREF_ICON_SHAPE.to(ShapesProvider.IconShape.valueOf(shapeKey)))
 
             (parentFragment as? IconShapeBottomSheet)?.let {
                 it.listener?.onShapeSelected(shapeKey)
@@ -166,7 +168,7 @@ class IconShapeBottomSheet : BottomSheetDialogFragment() {
         override fun draw(canvas: Canvas) {
             val b = bounds
             drawPath.reset()
-            val matrix = android.graphics.Matrix()
+            val matrix = Matrix()
             matrix.setScale(b.width() / 100f, b.height() / 100f)
             matrix.postTranslate(b.left.toFloat(), b.top.toFloat())
             srcPath.transform(matrix, drawPath)
@@ -197,8 +199,8 @@ class IconShapeBottomSheet : BottomSheetDialogFragment() {
             icon.setBounds(0, 0, b.width(), b.height())
             val mask = icon.iconMask
             val drawPath = Path()
-            val matrix = android.graphics.Matrix()
-            val pathBounds = android.graphics.RectF()
+            val matrix = Matrix()
+            val pathBounds = RectF()
             mask.computeBounds(pathBounds, true)
             matrix.setScale(
                 b.width() / pathBounds.width(),

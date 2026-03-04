@@ -1,4 +1,4 @@
-package app.murinelauncher.settings
+package app.murinelauncher.widget
 
 import android.content.Context
 import android.content.res.ColorStateList
@@ -39,7 +39,8 @@ class WarningCardPreference @JvmOverloads constructor(
         cardText = a.getText(R.styleable.WarningCardPreference_cardText)
         formathtml = a.getBoolean(R.styleable.WarningCardPreference_formatHtml, false)
         cardBackgroundColor = a.getColor(R.styleable.WarningCardPreference_cardBackgroundColor, 0)
-        cardContentColor = a.getColor(R.styleable.WarningCardPreference_cardContentColor,
+        cardContentColor = a.getColor(
+            R.styleable.WarningCardPreference_cardContentColor,
             context.getColor(com.android.settingslib.widget.theme.R.color.settingslib_materialColorOnSurface))
         a.recycle()
     }
