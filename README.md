@@ -8,6 +8,14 @@ A lightweight FOSS Android launcher forked from AOSP's Launcher3, using [yuchuan
 
 It offers minimalistic but modern and clean custom looks and feel, and essential customization options without bloat.
 
+## Compatibility
+
+Murine Launcher currently supports Androd 10 and above
+
+Blur effects are supported on Android 12 and above.<br/>
+Some OEM/ROMs may hide or disable window-level blurs; if that's your case try to check for an &quot;Allow window-level blurs&quot; option in Display Options or Developer Options.<br/>
+Alternatively, try enabling <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">this Magisk module</a> on rooted devices
+
 ## Screenshots
 <img width="320" src="/image/github/home.png"/>    <img width="320" src="/image/github/preview.png"/>
 <img width="320" src="/image/github/drawer_frost.png"/>    <img width="320" src="/image/github/drawer_mica.png"/>
