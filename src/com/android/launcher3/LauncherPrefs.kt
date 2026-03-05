@@ -41,6 +41,7 @@ import com.android.launcher3.provider.RestoreDbTask.FIRST_LOAD_AFTER_RESTORE_KEY
 import com.android.launcher3.states.RotationHelper
 import com.android.launcher3.util.DaggerSingletonObject
 import com.android.launcher3.util.DisplayController
+import com.android.launcher3.util.window.WindowManagerProxy
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 
@@ -291,10 +292,19 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
         const val TASKBAR_PINNING_DESKTOP_MODE_KEY = "TASKBAR_PINNING_DESKTOP_MODE_KEY"
         const val SHOULD_SHOW_SMARTSPACE_KEY = "SHOULD_SHOW_SMARTSPACE_KEY"
 
+        fun defaultGridWidth(isTablet: Boolean) = if (isTablet) 5 else 4
+        fun defaultGridHeight(isTablet: Boolean) = if (isTablet) 6 else 5
+
         @JvmField
-        val GRID_WIDTH = backedUpItem("pref_grid_size_width", 4)
+        val GRID_WIDTH = backedUpItem("pref_grid_size_width", Int::class.java) { c ->
+            val isTablet = c.resources.configuration.smallestScreenWidthDp >= WindowManagerProxy.MIN_TABLET_WIDTH
+            defaultGridWidth(isTablet)
+        }
         @JvmField
-        val GRID_HEIGHT = backedUpItem("pref_grid_size_height", 5)
+        val GRID_HEIGHT = backedUpItem("pref_grid_size_height", Int::class.java) { c ->
+            val isTablet = c.resources.configuration.smallestScreenWidthDp >= WindowManagerProxy.MIN_TABLET_WIDTH
+            defaultGridHeight(isTablet)
+        }
         @JvmField
         val ICON_SIZE = backedUpItem(SettingsIconsFragment.ICON_SIZE_KEY, 100)
         @JvmField

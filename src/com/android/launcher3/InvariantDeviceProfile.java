@@ -352,15 +352,30 @@ public class InvariantDeviceProfile {
     }
 
     public void applyDynamicScaling(Context context, DisplayOption displayOption, boolean isTablet) {
+        // Higher = smaller icons/spacing as grid gets bigger
+        float densityAggression = 0.1f;
+        // Higher = more aggressive capping when iconSize increases
+        float growthAggression = 1.0f;
+
         float screenWidthDp = context.getResources().getConfiguration().smallestScreenWidthDp;
         float referenceWidthDp = isTablet ? 680f : 360f;
         float widthScale = screenWidthDp / referenceWidthDp;
+        int iconSizeRaw = ICON_SIZE.get(context);
+        displayOption.multiply(widthScale, (int)iconSizeRaw, false);
 
-        displayOption.multiply(widthScale, ICON_SIZE.get(context), false);
-        for (int i = 0; i < displayOption.hotseatBarBottomSpace.length; i++)
-            displayOption.allAppsBorderSpaces[i].y *= 0.83;
-        for (int i = 0; i < displayOption.hotseatBarBottomSpace.length; i++)
-            displayOption.allAppsCellSize[i].y *= 0.83;
+        float gridWidth = GRID_WIDTH.get(context);
+        float gridDensityFactor = 1.0f - densityAggression * (gridWidth - 4.0f);
+        float iconSizeFactorNormalized = iconSizeRaw / 100f;
+        float iconSizeScaleFactor = 1.0f + (iconSizeFactorNormalized - 1.0f) * growthAggression;
+        float finalScaleFactor = Math.max(gridDensityFactor, iconSizeScaleFactor);
+        finalScaleFactor = Math.max(0.1f, Math.min(2.0f, finalScaleFactor));
+        float finalCellSizeFactor = (finalScaleFactor + Math.max(0.1f, Math.min(2.0f, gridDensityFactor))) / 2f;
+
+        float deviceFactor = isTablet ? 0.73f : 0.83f;
+        for (int i = 0; i < displayOption.hotseatBarBottomSpace.length; i++) {
+            displayOption.allAppsBorderSpaces[i].y *= deviceFactor * finalScaleFactor;
+            displayOption.allAppsCellSize[i].y *= deviceFactor * finalCellSizeFactor;
+        }
 
         float labelScale = ICON_LABEL_SIZE.get(context) / 100f;
         for (int i = 0; i < displayOption.textSizes.length; i++)

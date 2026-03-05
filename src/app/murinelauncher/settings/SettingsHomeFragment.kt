@@ -6,6 +6,7 @@ import androidx.preference.Preference
 import com.android.launcher3.BuildConfig
 import com.android.launcher3.Flags
 import com.android.launcher3.InvariantDeviceProfile
+import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.R
 import com.android.launcher3.states.RotationHelper
 import com.android.launcher3.util.DisplayController
@@ -14,6 +15,8 @@ public final class SettingsHomeFragment: AbstractSettingsFragment() {
 
     companion object {
         const val FIXED_LANDSCAPE_MODE: String = "pref_fixed_landscape_mode"
+        const val GRID_SIZE_WIDTH: String = "pref_grid_size_width"
+        const val GRID_SIZE_HEIGHT: String = "pref_grid_size_height"
     }
 
     override fun getPreferenceScreenResId() = R.xml.murine_prefs_home
@@ -21,6 +24,7 @@ public final class SettingsHomeFragment: AbstractSettingsFragment() {
     override fun getPreferenceTitle(): Int? = R.string.pref_category_home_title
 
     override fun initPreference(preference: Preference, info: DisplayController.Info): Boolean {
+        var isTablet = InvariantDeviceProfile.INSTANCE.get(requireContext()).deviceType == InvariantDeviceProfile.TYPE_TABLET;
         when (preference.key) {
             RotationHelper.ALLOW_ROTATION_PREFERENCE_KEY -> {
                 if (Flags.oneGridSpecs()) {
@@ -58,6 +62,14 @@ public final class SettingsHomeFragment: AbstractSettingsFragment() {
                     }
                 )
                 return !info.isTablet(info.realBounds)
+            }
+            GRID_SIZE_WIDTH -> {
+                preference.setDefaultValue(LauncherPrefs.defaultGridWidth(isTablet))
+                return true
+            }
+            GRID_SIZE_HEIGHT -> {
+                preference.setDefaultValue(LauncherPrefs.defaultGridHeight(isTablet))
+                return true
             }
             else -> return true
         }
