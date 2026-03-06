@@ -18,6 +18,7 @@ package com.android.launcher3.secondarydisplay;
 import static com.android.launcher3.util.OnboardingPrefs.ALL_APPS_VISITED_COUNT;
 
 import android.content.Context;
+import android.window.DesktopExperienceFlags;
 
 import com.android.launcher3.appprediction.AppsDividerView;
 import com.android.launcher3.appprediction.PredictionRowView;
@@ -51,5 +52,10 @@ public final class SecondaryDisplayPredictionsImpl extends SecondaryDisplayPredi
         mActivityContext.getAppsView().getFloatingHeaderView()
                 .findFixedRowByType(PredictionRowView.class)
                 .setPredictedApps(item.items);
+    }
+
+    @Override
+    boolean enableTaskbarConnectedDisplays() {
+        return DesktopExperienceFlags.ENABLE_TASKBAR_CONNECTED_DISPLAYS.isTrue();
     }
 }

@@ -45,4 +45,8 @@ public class SecondaryDisplayPredictions implements ResourceBasedOverride {
      */
     public void setPredictedApps(BgDataModel.FixedContainerItems item) {
     }
+
+    boolean enableTaskbarConnectedDisplays() {
+        return false;
+    }
 }
