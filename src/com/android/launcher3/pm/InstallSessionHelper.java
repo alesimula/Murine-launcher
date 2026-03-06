@@ -195,7 +195,8 @@ public class InstallSessionHelper {
 
     @WorkerThread
     public boolean promiseIconAddedForId(final int sessionId) {
-        return getPromiseIconIds().contains(sessionId);
+        // Make sure the session id is valid.
+        return sessionId != -1 && getPromiseIconIds().contains(sessionId);
     }
 
     @WorkerThread

@@ -38,6 +38,7 @@ import androidx.recyclerview.widget.DiffUtil;
 
 import com.android.launcher3.Flags;
 import com.android.launcher3.R;
+import com.android.launcher3.Utilities;
 import com.android.launcher3.allapps.BaseAllAppsAdapter.AdapterItem;
 import com.android.launcher3.model.data.AppInfo;
 import com.android.launcher3.model.data.ItemInfo;
@@ -386,10 +387,32 @@ public class AlphabeticalAppsList<T extends Context & ActivityContext> implement
     }
 
     private int addPrivateSpaceApps(int position) {
+        /* LC-Note: Fix for missing flags and account for NCDFE */
+        boolean enableMovingContentIntoPrivateSpace = false;
+        if (Utilities.ATLEAST_BAKLAVA) {
+            try {
+                /* LC-Note: Some devices (Android 16 QPR) doesn't have or expose this flag to user.
+                 * Let's assume no, because (the flags) enableMovingContentIntoPrivateSpace seems
+                 * to be False for R8 by default.
+                 * */
+                enableMovingContentIntoPrivateSpace = enableMovingContentIntoPrivateSpace();
+            } catch (NoClassDefFoundError e) {
+                /* LC-Ignored: we already set it false by default. */
+            }
+        }
+
         // Add Install Apps Button first.
-        if (Flags.privateSpaceAppInstallerButton() && !enableMovingContentIntoPrivateSpace()) {
-            mPrivateProviderManager.addPrivateSpaceInstallAppButton(mAdapterItems);
-            position++;
+        if (!Utilities.ATLEAST_BAKLAVA) {
+            // LC: Baklava added a new behavior for the PS app button. (enableMovingContentIntoPrivateSpace)
+            if (!enableMovingContentIntoPrivateSpace) {
+                mPrivateProviderManager.addPrivateSpaceInstallAppButton(mAdapterItems);
+                position++;
+            }
+        } else {
+            if (Flags.enablePrivateSpace()) {
+                mPrivateProviderManager.addPrivateSpaceInstallAppButton(mAdapterItems);
+                position++;
+            }
         }
 
         // Split of private space apps into user-installed and system apps.
@@ -424,7 +447,7 @@ public class AlphabeticalAppsList<T extends Context & ActivityContext> implement
         // Add system apps.
         position = addAppsWithSections(split.get(false), position);
 
-        if (enableMovingContentIntoPrivateSpace()) {
+        if (enableMovingContentIntoPrivateSpace) {
             // Look for the private space app via package and move it after header.
             int headerIndex = -1;
             int privateSpaceAppIndex = -1;

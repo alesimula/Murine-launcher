@@ -46,6 +46,8 @@ import com.android.launcher3.InvariantDeviceProfile;
 import com.android.launcher3.Launcher;
 import com.android.launcher3.LauncherSettings;
 import com.android.launcher3.R;
+import com.android.launcher3.Utilities;
+import com.android.launcher3.allapps.AlphabeticalAppsList;
 import com.android.launcher3.apppairs.AppPairIcon;
 import com.android.launcher3.folder.Folder;
 import com.android.launcher3.folder.FolderIcon;
@@ -72,6 +74,7 @@ import com.android.launcher3.widget.WidgetAddFlowHandler;
 import com.android.launcher3.widget.WidgetManagerHelper;
 
 import java.util.Collections;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -390,6 +393,28 @@ public class ItemClickHandler {
                         launcher.getAppsView().getPrivateProfileManager().getProfileUser());
                 launcher.getStatsLogManager().logger().log(
                         LAUNCHER_PRIVATE_SPACE_INSTALL_APP_BUTTON_TAP);
+            }
+        }
+
+        boolean enableMovingContentIntoPrivateSpace = false;
+        if (Utilities.ATLEAST_BAKLAVA) {
+            try {
+                /* LC-Note: Some devices (Android 16 QPR) doesn't have or expose this flag to user.
+                 * Let's assume no, because (the flags) enableMovingContentIntoPrivateSpace seems
+                 * to be False for R8 by default.
+                 * */
+                enableMovingContentIntoPrivateSpace = android.multiuser.Flags.enableMovingContentIntoPrivateSpace();
+            } catch (NoClassDefFoundError | NoSuchMethodError e) {
+                enableMovingContentIntoPrivateSpace = false;
+            }
+        }
+        if (enableMovingContentIntoPrivateSpace &&
+                Objects.equals(item.getTargetPackage(), AlphabeticalAppsList.PRIVATE_SPACE_PACKAGE)
+                && item.itemType != LauncherSettings.Favorites.ITEM_TYPE_DEEP_SHORTCUT) {
+            // Only show the popup menu when clicking on the icon itself.
+            if (v instanceof BubbleTextView btv) {
+                btv.startLongPressAction();
+                return;
             }
         }
         if (intent == null) {

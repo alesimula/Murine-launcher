@@ -43,6 +43,7 @@ import com.android.launcher3.DeviceProfile.OnDeviceProfileChangeListener;
 import com.android.launcher3.Insettable;
 import com.android.launcher3.Launcher;
 import com.android.launcher3.PendingAddItemInfo;
+import com.android.launcher3.Utilities;
 import com.android.launcher3.R;
 import com.android.launcher3.model.WidgetItem;
 import com.android.launcher3.testing.TestLogging;
@@ -130,11 +131,15 @@ public abstract class BaseWidgetSheet extends AbstractSlideInView<BaseActivity>
     @Override
     public void setScaleY(float scaleY) {
         super.setScaleY(scaleY);
-        if (predictiveBackThreeButtonNav() && mNavBarScrimHeight > 0) {
-            // Call invalidate to prevent navbar scrim from scaling. The navbar scrim is drawn
-            // directly onto the canvas. To prevent it from being scaled with the canvas, there's a
-            // counter scale applied in dispatchDraw.
-            invalidate();
+        try {
+            if (predictiveBackThreeButtonNav() && mNavBarScrimHeight > 0) {
+                // Call invalidate to prevent navbar scrim from scaling. The navbar scrim is drawn
+                // directly onto the canvas. To prevent it from being scaled with the canvas, there's a
+                // counter scale applied in dispatchDraw.
+                invalidate();
+            }
+        } catch (Throwable t) {
+            // LC-Ignored
         }
     }
 

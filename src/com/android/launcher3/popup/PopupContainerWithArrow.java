@@ -53,6 +53,7 @@ import com.android.launcher3.DropTarget.DragObject;
 import com.android.launcher3.Flags;
 import com.android.launcher3.Launcher;
 import com.android.launcher3.R;
+import com.android.launcher3.Utilities;
 import com.android.launcher3.accessibility.LauncherAccessibilityDelegate;
 import com.android.launcher3.accessibility.ShortcutMenuAccessibilityDelegate;
 import com.android.launcher3.dragndrop.DragController;
@@ -214,8 +215,27 @@ public class PopupContainerWithArrow<T extends Context & ActivityContext>
         container = (PopupContainerWithArrow) launcher.getLayoutInflater().inflate(
                 R.layout.popup_container, launcher.getDragLayer(), false);
         container.configureForLauncher(launcher, item);
-        boolean shouldHideSystemShortcuts = enableMovingContentIntoPrivateSpace()
-                && Objects.equals(item.getTargetPackage(), PRIVATE_SPACE_PACKAGE);
+
+        /* LC-Note: Fix for missing flags and account for NCDFE */
+        boolean shouldHideSystemShortcuts;
+        if (Utilities.ATLEAST_BAKLAVA) {
+            boolean enableMovingContentIntoPrivateSpace = false;
+            try {
+                /* LC-Note: Some devices (Android 16 QPR) doesn't have or expose this flag to user.
+                 * Let's assume no, because (the flags) enableMovingContentIntoPrivateSpace seems
+                 * to be False for R8 by default.
+                 * */
+                enableMovingContentIntoPrivateSpace = enableMovingContentIntoPrivateSpace();
+            } catch (NoClassDefFoundError e) {
+                /* LC-Ignored: we already set it false by default. */
+            }
+
+            shouldHideSystemShortcuts = enableMovingContentIntoPrivateSpace
+                    && Objects.equals(item.getTargetPackage(), PRIVATE_SPACE_PACKAGE);
+        } else {
+            shouldHideSystemShortcuts = false;
+        }
+
         container.populateAndShowRows(icon, deepShortcutCount,
                 shouldHideSystemShortcuts ? Collections.emptyList() : systemShortcuts);
         launcher.refreshAndBindWidgetsForPackageUser(PackageUserKey.fromItemInfo(item));

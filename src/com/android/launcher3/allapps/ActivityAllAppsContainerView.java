@@ -1476,11 +1476,15 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
     @Override
     public void setScaleY(float scaleY) {
         super.setScaleY(scaleY);
-        if (predictiveBackThreeButtonNav() && mNavBarScrimHeight > 0) {
-            // Call invalidate to prevent navbar scrim from scaling. The navbar scrim is drawn
-            // directly onto the canvas. To prevent it from being scaled with the canvas, there's a
-            // counter scale applied in dispatchDraw.
-            invalidate(20, getHeight() - mNavBarScrimHeight, getWidth(), getHeight());
+        try {
+            if (predictiveBackThreeButtonNav() && mNavBarScrimHeight > 0) {
+                // Call invalidate to prevent navbar scrim from scaling. The navbar scrim is drawn
+                // directly onto the canvas. To prevent it from being scaled with the canvas, there's a
+                // counter scale applied in dispatchDraw.
+                invalidate(20, getHeight() - mNavBarScrimHeight, getWidth(), getHeight());
+            }
+        } catch (Throwable t) {
+            // LC-Ignored
         }
     }
 
