@@ -221,7 +221,7 @@ public class WorkspaceStateTransitionAnimation {
             setScrim(propertySetter, state, config);
         }
 
-        if (Utilities.ATLEAST_S) {
+        if (Utilities.ATLEAST_S && LauncherPrefs.BLUR_PREVIEW.get(mLauncher.asContext())) {
             float targetBlur = (state instanceof SpringLoadedState || state instanceof EditModeState) ? 1f : 0f;
             propertySetter.setFloat(this, PREVIEW_BLUR_PROGRESS, targetBlur, ZOOM_OUT);
         }

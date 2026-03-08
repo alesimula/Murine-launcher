@@ -23,5 +23,23 @@
         <com.android.settingslib.widget.SegmentedButtonPreference
             android:key="pref_launcher_theme_day_night"
             android:title="Screen Mode" />
+        <com.android.settingslib.widget.SpacePreference
+            android:layout_height="12dp" />
+        <SwitchPreferenceCompat
+            android:key="pref_blur_preview"
+            android:title="@string/pref_blur_preview_title"
+            android:summary="@string/pref_blur_preview_desc"
+            android:defaultValue="true"
+            android:persistent="true"
+            launcher:logIdOn="615"
+            launcher:logIdOff="616" />
+        <app.murinelauncher.widget.WarningCardPreference
+            android:key="pref_blur_warning"
+            android:visible="false"
+            app:formatHtml="true"
+            app:cardIcon="@android:drawable/ic_dialog_alert"
+            app:cardText="@string/pref_blur_unsupported_warning"
+            app:cardBackgroundColor="@color/settingslib_colorBackgroundLevel_medium"
+            app:cardContentColor="@color/settingslib_materialColorOnSurface" />
     </PreferenceCategory>
 </androidx.preference.PreferenceScreen>

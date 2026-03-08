@@ -388,6 +388,8 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
         @JvmField
         val THEME_DAY_NIGHT = backedUpItem(SettingsGeneralFragment.LAUNCHER_THEME_DAY_NIGHT, if (ThemeOverride.supportsSystemTheme) ThemeOverride.THEME_SYSTEM else ThemeOverride.THEME_DARK)
         @JvmField
+        val BLUR_PREVIEW = backedUpItem(SettingsGeneralFragment.BLUR_PREVIEW, WorkspaceBlurUtils.isBlurSupported)
+        @JvmField
         val DRAWER_TYPE = backedUpItem(SettingsDrawerFragment.DRAWER_TYPE, if (WorkspaceBlurUtils.isBlurSupported) WorkspaceBlurUtils.Companion.DRAWER_TYPES.GLASS else WorkspaceBlurUtils.Companion.DRAWER_TYPES.NONE).listen { value ->
             WorkspaceBlurUtils.blurType = value.type
         }

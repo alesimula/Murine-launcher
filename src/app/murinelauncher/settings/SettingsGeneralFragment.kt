@@ -1,16 +1,12 @@
 package app.murinelauncher.settings
 
-import android.content.pm.ActivityInfo
 import android.util.Log
-import androidx.annotation.VisibleForTesting
 import androidx.preference.Preference
-import com.android.launcher3.BuildConfig
-import com.android.launcher3.Flags
-import com.android.launcher3.InvariantDeviceProfile
-import com.android.launcher3.LauncherPrefs
+import androidx.preference.SwitchPreferenceCompat
+import app.murinelauncher.graphics.WorkspaceBlurUtils
 import app.murinelauncher.theme.ThemeOverride
+import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.R
-import com.android.launcher3.states.RotationHelper
 import com.android.launcher3.util.DisplayController
 import com.android.settingslib.widget.SegmentedButtonPreference
 
@@ -18,11 +14,18 @@ public final class SettingsGeneralFragment: AbstractSettingsFragment() {
 
     companion object {
         const val LAUNCHER_THEME_DAY_NIGHT: String = "pref_launcher_theme_day_night"
+        const val BLUR_PREVIEW: String = "pref_blur_preview"
+        const val BLUR_WARNING: String = "pref_blur_warning"
     }
 
     override fun getPreferenceScreenResId() = R.xml.murine_prefs_general
 
     override fun getPreferenceTitle(): Int? = R.string.pref_category_general_title
+
+    private fun updateBlurWarningVisibility(value: Boolean) {
+        findPreference<Preference>(BLUR_WARNING)?.isVisible =
+            value && !WorkspaceBlurUtils.isBlurSupported
+    }
 
     override fun initPreference(preference: Preference, info: DisplayController.Info): Boolean {
         when (preference.key) {
@@ -52,6 +55,16 @@ public final class SettingsGeneralFragment: AbstractSettingsFragment() {
                         tryRecreateActivity()
                         Log.d("Settings.Theme", "Selected UI theme: $selectedIndex")
                     }
+                }
+                return true
+            }
+            BLUR_PREVIEW -> {
+                preference as SwitchPreferenceCompat
+                val currentEntry = LauncherPrefs.BLUR_PREVIEW.get(requireContext())
+                updateBlurWarningVisibility(currentEntry)
+                preference.setOnPreferenceChangeListener { _, newValue ->
+                    updateBlurWarningVisibility(newValue as Boolean)
+                    true
                 }
                 return true
             }
