@@ -28,6 +28,10 @@ import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCH
 import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_SPLIT_SELECTION_EXIT_INTERRUPTED;
 import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_WORKSPACE_LONGPRESS;
 
+import android.accessibilityservice.AccessibilityService;
+import android.app.admin.DevicePolicyManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.view.GestureDetector;
@@ -42,12 +46,18 @@ import com.android.launcher3.AbstractFloatingView;
 import com.android.launcher3.CellLayout;
 import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.Launcher;
+import com.android.launcher3.LauncherPrefs;
+import com.android.launcher3.Utilities;
 import com.android.launcher3.Workspace;
 import com.android.launcher3.dragndrop.DragLayer;
 import com.android.launcher3.logger.LauncherAtom;
 import com.android.launcher3.testing.TestLogging;
 import com.android.launcher3.testing.shared.TestProtocol;
 import com.android.launcher3.util.TouchUtil;
+
+import app.murinelauncher.receiver.ScreenOffAdminReceiver;
+import app.murinelauncher.service.MurineAccessibilityService;
+import app.murinelauncher.settings.SettingsHomeFragment;
 
 /**
  * Helper class to handle touch on empty space in workspace and show options popup on long press
@@ -199,6 +209,61 @@ public class WorkspaceTouchListener extends GestureDetector.SimpleOnGestureListe
             return;
         }
         maybeShowMenu();
+    }
+
+    @Override
+    public boolean onDoubleTap(MotionEvent event) {
+        if (!mLauncher.isInState(NORMAL)) return false;
+        boolean enabled = LauncherPrefs.GESTURE_DOUBLE_TAP_SLEEP.get(mLauncher);
+        if (enabled) {
+            lockScreen();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        if (e1 == null || e2 == null || !mLauncher.isInState(NORMAL)) return false;
+        boolean enabled = LauncherPrefs.GESTURE_SWIPE_DOWN_NOTIFICATIONS.get(mLauncher);
+        if (enabled && velocityY > 0 && (e2.getY() - e1.getY()) > mTouchSlop) {
+            expandNotifications();
+            return true;
+        }
+        return false;
+    }
+
+    private void lockScreenLegacy() {
+        DevicePolicyManager dpm = (DevicePolicyManager)
+                mLauncher.getSystemService(Context.DEVICE_POLICY_SERVICE);
+        ComponentName admin = new ComponentName(mLauncher, ScreenOffAdminReceiver.class);
+        if (dpm != null && dpm.isAdminActive(admin)) {
+            dpm.lockNow();
+        }
+    }
+
+    private void lockScreen() {
+        if (Utilities.ATLEAST_P) {
+            var accessibility = MurineAccessibilityService.INSTANCE;
+            if (accessibility != null) {
+                accessibility.performGlobalAction(AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN);
+            } else {
+                SettingsHomeFragment.requestAccessibilityPermission(mLauncher);
+            }
+        } else {
+            lockScreenLegacy();
+        }
+    }
+
+    @SuppressWarnings("WrongConstant")
+    private void expandNotifications() {
+        try {
+            Object sbService = mLauncher.getSystemService("statusbar");
+            if (sbService != null) {
+                sbService.getClass().getMethod("expandNotificationsPanel").invoke(sbService);
+            }
+        } catch (Exception ignored) {
+        }
     }
 
     private void maybeShowMenu() {

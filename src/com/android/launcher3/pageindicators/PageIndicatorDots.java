@@ -47,6 +47,7 @@ import android.view.animation.OvershootInterpolator;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+import androidx.appcompat.content.res.AppCompatResources;
 
 import com.android.launcher3.Insettable;
 import com.android.launcher3.R;
@@ -186,8 +187,8 @@ public class PageIndicatorDots extends View implements Insettable, PageIndicator
                 : DOT_GAP_FACTOR * mDotRadius;
         setOutlineProvider(new MyOutlineProver());
         mIsRtl = Utilities.isRtl(getResources());
-        mArrowRight = (VectorDrawable) getResources().getDrawable(R.drawable.ic_chevron_end);
-        mArrowLeft = (VectorDrawable) getResources().getDrawable(R.drawable.ic_chevron_start);
+        mArrowRight = (VectorDrawable) AppCompatResources.getDrawable(getContext(), R.drawable.ic_chevron_end);
+        mArrowLeft = (VectorDrawable) AppCompatResources.getDrawable(getContext(), R.drawable.ic_chevron_start);
     }
 
     @Override

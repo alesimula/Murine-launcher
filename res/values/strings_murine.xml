@@ -19,6 +19,7 @@
     <string name="pref_subcategory_day_night">UI theme</string>
     <string name="pref_subcategory_layout">Layout</string>
     <string name="pref_subcategory_appearance">Appearance</string>
+    <string name="pref_subcategory_gestures">Gestures</string>
 
     <string name="pref_label_ui_mode_system">System</string>
     <string name="pref_label_ui_mode_day">Light</string>
@@ -42,5 +43,11 @@
     <string name="drawer_type_mica">MICA</string>
     <string name="drawer_type_translucent">Translucent</string>
 
-    <string name="pref_blur_unsupported_warning"><![CDATA[The wallpaper blur may not be fully supported or enabled by this OEM/ROM; Try to check for an "&quot;"Allow window-level blurs&quot; option in Display Options or Developer Options.<br/>Alternatively, try enabling <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">this Magisk module</a> on rooted devices]]></string>
+    <string name="pref_accessibility_request_toast">Please allow Murine Launcher to use accessibility services</string>
+    <string name="pref_double_tap_to_sleep_title">Double tap to sleep</string>
+    <string name="pref_double_tap_to_sleep_summary">Double tap on empty space to lock the screen</string>
+    <string name="pref_swipe_down_notifications_title">Swipe down for notifications</string>
+    <string name="pref_swipe_down_notifications_summary">Swipe down on home screen to expand the notification shade</string>
+
+    <string name="pref_blur_unsupported_warning"><![CDATA[The wallpaper blur may or may not be fully supported or enabled by this OEM/ROM; If you encounter issues, try to check for an &quot;Allow window-level blurs&quot; option in Display Options or Developer Options.<br/>Alternatively, try enabling <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">this Magisk module</a> on rooted devices]]></string>
 </resources>

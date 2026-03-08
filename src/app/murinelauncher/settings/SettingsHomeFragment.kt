@@ -1,13 +1,27 @@
 package app.murinelauncher.settings
 
+import android.accessibilityservice.AccessibilityService
+import android.app.admin.DevicePolicyManager
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.os.Build
+import android.provider.Settings
+import android.text.TextUtils
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.annotation.VisibleForTesting
 import androidx.preference.Preference
+import androidx.preference.SwitchPreferenceCompat
+import app.murinelauncher.receiver.ScreenOffAdminReceiver
+import app.murinelauncher.service.MurineAccessibilityService
 import com.android.launcher3.BuildConfig
 import com.android.launcher3.Flags
 import com.android.launcher3.InvariantDeviceProfile
 import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.R
+import com.android.launcher3.Utilities
 import com.android.launcher3.states.RotationHelper
 import com.android.launcher3.util.DisplayController
 
@@ -17,6 +31,25 @@ public final class SettingsHomeFragment: AbstractSettingsFragment() {
         const val FIXED_LANDSCAPE_MODE: String = "pref_fixed_landscape_mode"
         const val GRID_SIZE_WIDTH: String = "pref_grid_size_width"
         const val GRID_SIZE_HEIGHT: String = "pref_grid_size_height"
+        const val DOUBLE_TAP_TO_SLEEP: String = "pref_double_tap_to_sleep"
+        const val SWIPE_DOWN_NOTIFICATIONS: String = "pref_swipe_down_notifications"
+        private const val REQUEST_DEVICE_ADMIN = 1001
+
+        @JvmStatic @RequiresApi(Build.VERSION_CODES.P)
+        fun requestAccessibilityPermission(context: Context): Boolean {
+            if (!Private.isAccessibilityServiceEnabled(context, MurineAccessibilityService::class.java)) {
+                val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
+                    val componentName = ComponentName(context, MurineAccessibilityService::class.java).flattenToString()
+                    putExtra(":settings:fragment_args_key", componentName)
+                    putExtra(":settings:show_fragment_args_key", componentName)
+                    putExtra("android.intent.extra.COMPONENT_NAME", componentName)
+                }
+                context.startActivity(intent)
+                Toast.makeText(context, context.resources.getString(R.string.pref_accessibility_request_toast), Toast.LENGTH_LONG).show()
+                return false
+            }
+            return true;
+        }
     }
 
     override fun getPreferenceScreenResId() = R.xml.murine_prefs_home
@@ -71,7 +104,62 @@ public final class SettingsHomeFragment: AbstractSettingsFragment() {
                 preference.setDefaultValue(LauncherPrefs.defaultGridHeight(isTablet))
                 return true
             }
+            DOUBLE_TAP_TO_SLEEP -> {
+                preference.setOnPreferenceChangeListener { _, newValue ->
+                    if (newValue as Boolean && Utilities.ATLEAST_P) {
+                        // Check if our specific Accessibility Service is active
+                        return@setOnPreferenceChangeListener requestAccessibilityPermission(requireContext())
+                    }
+                    else if (newValue) {
+                        val dpm = requireContext().getSystemService(DevicePolicyManager::class.java)
+                        val admin = ComponentName(requireContext(), ScreenOffAdminReceiver::class.java)
+                        if (dpm != null && !dpm.isAdminActive(admin)) {
+                            val intent = Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN).apply {
+                                putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, admin)
+                            }
+                            startActivityForResult(intent, REQUEST_DEVICE_ADMIN)
+                            return@setOnPreferenceChangeListener false
+                        }
+                    }
+                    true
+                }
+                return true
+            }
+            SWIPE_DOWN_NOTIFICATIONS -> return true
             else -> return true
+        }
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_DEVICE_ADMIN) {
+            val dpm = requireContext().getSystemService(DevicePolicyManager::class.java)
+            val admin = ComponentName(requireContext(), ScreenOffAdminReceiver::class.java)
+            val granted = dpm?.isAdminActive(admin) == true
+            findPreference<SwitchPreferenceCompat>(DOUBLE_TAP_TO_SLEEP)?.isChecked = granted
+        }
+    }
+
+    private object Private {
+        fun isAccessibilityServiceEnabled(context: Context, serviceClass: Class<out AccessibilityService>): Boolean {
+            val expectedComponentName = ComponentName(context, serviceClass)
+            val enabledServices = Settings.Secure.getString(
+                context.contentResolver,
+                Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+            ) ?: return false
+
+            val colonSplitter = TextUtils.SimpleStringSplitter(':')
+            colonSplitter.setString(enabledServices)
+
+            while (colonSplitter.hasNext()) {
+                val componentNameString = colonSplitter.next()
+                val enabledService = ComponentName.unflattenFromString(componentNameString)
+                if (enabledService != null && enabledService == expectedComponentName) {
+                    return true
+                }
+            }
+            return false
         }
     }
 }

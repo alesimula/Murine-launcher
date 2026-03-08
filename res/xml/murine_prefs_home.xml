@@ -65,4 +65,19 @@
             </app.murinelauncher.widget.CustomSeekBarPreference>
         </com.android.settingslib.widget.ExpandablePreference>
     </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_subcategory_gestures">
+        <SwitchPreferenceCompat
+            android:key="pref_double_tap_to_sleep"
+            android:title="@string/pref_double_tap_to_sleep_title"
+            android:summary="@string/pref_double_tap_to_sleep_summary"
+            android:defaultValue="false"
+            android:persistent="true" />
+        <SwitchPreferenceCompat
+            android:key="pref_swipe_down_notifications"
+            android:title="@string/pref_swipe_down_notifications_title"
+            android:summary="@string/pref_swipe_down_notifications_summary"
+            android:defaultValue="true"
+            android:persistent="true" />
+    </PreferenceCategory>
 </androidx.preference.PreferenceScreen>

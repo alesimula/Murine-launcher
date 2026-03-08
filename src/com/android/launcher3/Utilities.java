@@ -557,6 +557,18 @@ public final class Utilities {
         return defaultValue;
     }
 
+    public static boolean getSystemPropertyFlag(String property, boolean defaultValue) {
+        try {
+            Class clazz = Class.forName("android.os.SystemProperties");
+            Method getter = clazz.getDeclaredMethod("getBoolean", String.class, boolean.class);
+            boolean value = (boolean) getter.invoke(null, property, defaultValue);
+            return value;
+        } catch (Exception e) {
+            Log.d(TAG, "Unable to read system properties");
+        }
+        return defaultValue;
+    }
+
     /**
      * Ensures that a value is within given bounds. Specifically:
      * If value is less than lowerBound, return lowerBound; else if value is greater than upperBound,

@@ -326,6 +326,12 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
         @JvmField
         val TASKBAR_PINNING_IN_DESKTOP_MODE =
             backedUpItem(TASKBAR_PINNING_DESKTOP_MODE_KEY, true, EncryptionType.DEVICE_PROTECTED)
+        @JvmField
+        val GESTURE_DOUBLE_TAP_SLEEP =
+            backedUpItem(SettingsHomeFragment.DOUBLE_TAP_TO_SLEEP, false)
+        @JvmField
+        val GESTURE_SWIPE_DOWN_NOTIFICATIONS =
+            backedUpItem(SettingsHomeFragment.SWIPE_DOWN_NOTIFICATIONS, true)
 
         @JvmField
         val DEVICE_TYPE =

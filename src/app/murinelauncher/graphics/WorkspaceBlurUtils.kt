@@ -1,5 +1,6 @@
 package app.murinelauncher.graphics
 
+import android.app.AppGlobals
 import android.graphics.Canvas
 import android.graphics.ColorFilter
 import android.graphics.PixelFormat
@@ -16,6 +17,7 @@ import com.android.launcher3.Launcher
 import com.android.launcher3.R
 import com.android.launcher3.Utilities
 import com.android.launcher3.Utilities.getSystemProperty
+import com.android.launcher3.Utilities.getSystemPropertyFlag
 import java.util.concurrent.ConcurrentHashMap
 
 class WorkspaceBlurUtils {
@@ -51,13 +53,25 @@ class WorkspaceBlurUtils {
         }
 
         @JvmStatic val isBlurSupportedOEM: Boolean by lazy {
-            getSystemProperty("ro.surface_flinger.supports_background_blur", "0") == "1" &&
-                    getSystemProperty("persist.sys.sf.disable_blurs", "0") == "1"
+            getSystemPropertyFlag("ro.surface_flinger.supports_background_blur", false) && !isBlurDisabled
         }
 
         @JvmStatic val isBlurSupportedSDK get() = Utilities.ATLEAST_S
 
         @JvmStatic val isBlurSupported get() = isBlurSupportedSDK && isBlurSupportedOEM
+
+        private val isBlurDisabled: Boolean by lazy {
+            var disabledProp = getSystemPropertyFlag("persist.sys.sf.disable_blurs", false)
+            try {
+                return@lazy android.provider.Settings.Global.getInt(
+                    AppGlobals.getInitialApplication().contentResolver,
+                    android.provider.Settings.Global.DISABLE_WINDOW_BLURS,
+                    if (disabledProp) 1 else 0
+                ) == 1;
+            } catch (e: Exception) {
+                return@lazy disabledProp;
+            }
+        }
     }
 
     abstract class BlurType(val radius: Int, val blurWorkspace: Boolean) {
