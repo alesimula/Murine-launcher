@@ -34,6 +34,9 @@
         android:outlineAmbientShadowColor="@android:color/transparent"
         android:outlineSpotShadowColor="@android:color/transparent"
         android:theme="@style/SettingsLibTheme.CollapsingToolbar.Custom.Expressive"
+        android:elevation="0dp"
+        app:elevation="0dp"
+        android:stateListAnimator="@null"
         app:expanded="true">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout

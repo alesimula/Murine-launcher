@@ -46,7 +46,9 @@
         <item name="android:spinnerDropDownItemStyle">@style/SpinnerDropDownItem.SettingsLib</item>
     </style>
 
+    <!-- Applied only to pre SDK 31 (overridden in values-v31) -->
     <style name="Theme.SettingsBase" parent="Theme.SettingsBase_Compat">
+        <item name="android:colorControlHighlight">@color/settingslib_ripple_color</item>
         <item name="android:colorBackground">@color/settingslib_materialColorSurfaceContainer</item>
     </style>
 

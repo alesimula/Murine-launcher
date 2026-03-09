@@ -61,6 +61,7 @@ public final class SettingsGeneralFragment: AbstractSettingsFragment() {
             BLUR_PREVIEW -> {
                 preference as SwitchPreferenceCompat
                 val currentEntry = LauncherPrefs.BLUR_PREVIEW.get(requireContext())
+                preference.isChecked = currentEntry
                 updateBlurWarningVisibility(currentEntry)
                 preference.setOnPreferenceChangeListener { _, newValue ->
                     updateBlurWarningVisibility(newValue as Boolean)

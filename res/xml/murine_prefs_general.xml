@@ -29,7 +29,6 @@
             android:key="pref_blur_preview"
             android:title="@string/pref_blur_preview_title"
             android:summary="@string/pref_blur_preview_desc"
-            android:defaultValue="true"
             android:persistent="true"
             launcher:logIdOn="615"
             launcher:logIdOff="616" />

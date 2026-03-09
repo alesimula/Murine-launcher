@@ -196,7 +196,7 @@ internal class MSDLRepositoryImpl : MSDLRepository {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                                 VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
                             } else VibrationEffect.createOneShot(
-                                1000L,
+                                50L,
                                 VibrationEffect.DEFAULT_AMPLITUDE,
                             ),
                         )
@@ -214,7 +214,7 @@ internal class MSDLRepositoryImpl : MSDLRepository {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                                 VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
                             } else VibrationEffect.createOneShot(
-                                1000L,
+                                50L,
                                 VibrationEffect.DEFAULT_AMPLITUDE,
                             ),
                         )
@@ -232,7 +232,7 @@ internal class MSDLRepositoryImpl : MSDLRepository {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                                 VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
                             } else VibrationEffect.createOneShot(
-                                1000L,
+                                40L,
                                 VibrationEffect.DEFAULT_AMPLITUDE,
                             ),
                         )
@@ -250,7 +250,7 @@ internal class MSDLRepositoryImpl : MSDLRepository {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                                 VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
                             } else VibrationEffect.createOneShot(
-                                1000L,
+                                50L,
                                 VibrationEffect.DEFAULT_AMPLITUDE,
                             ),
                         )
@@ -268,7 +268,7 @@ internal class MSDLRepositoryImpl : MSDLRepository {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                                 VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
                             } else VibrationEffect.createOneShot(
-                                1000L,
+                                50L,
                                 VibrationEffect.DEFAULT_AMPLITUDE,
                             ),
                         )
@@ -284,9 +284,9 @@ internal class MSDLRepositoryImpl : MSDLRepository {
                                 )
                             ),
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                                VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
+                                VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK)
                             } else VibrationEffect.createOneShot(
-                                1000L,
+                                40L,
                                 VibrationEffect.DEFAULT_AMPLITUDE,
                             ),
                         )
@@ -319,9 +319,9 @@ internal class MSDLRepositoryImpl : MSDLRepository {
                                 )
                             ),
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                                VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
+                                VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK)
                             } else VibrationEffect.createOneShot(
-                                1000L,
+                                40L,
                                 VibrationEffect.DEFAULT_AMPLITUDE,
                             ),
                         )
@@ -339,7 +339,7 @@ internal class MSDLRepositoryImpl : MSDLRepository {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                                 VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
                             } else VibrationEffect.createOneShot(
-                                1000L,
+                                50L,
                                 VibrationEffect.DEFAULT_AMPLITUDE,
                             ),
                         )
@@ -357,7 +357,7 @@ internal class MSDLRepositoryImpl : MSDLRepository {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                                 VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
                             } else VibrationEffect.createOneShot(
-                                1000L,
+                                50L,
                                 VibrationEffect.DEFAULT_AMPLITUDE,
                             ),
                         )
@@ -375,7 +375,7 @@ internal class MSDLRepositoryImpl : MSDLRepository {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                                 VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
                             } else VibrationEffect.createOneShot(
-                                1000L,
+                                50L,
                                 VibrationEffect.DEFAULT_AMPLITUDE,
                             ),
                         )
@@ -393,7 +393,7 @@ internal class MSDLRepositoryImpl : MSDLRepository {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                                 VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
                             } else VibrationEffect.createOneShot(
-                                1000L,
+                                50L,
                                 VibrationEffect.DEFAULT_AMPLITUDE,
                             ),
                         )
@@ -411,7 +411,7 @@ internal class MSDLRepositoryImpl : MSDLRepository {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                                 VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
                             } else VibrationEffect.createOneShot(
-                                1000L,
+                                50L,
                                 VibrationEffect.DEFAULT_AMPLITUDE,
                             ),
                         )
