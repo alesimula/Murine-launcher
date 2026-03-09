@@ -72,6 +72,8 @@ constructor(@ApplicationContext private val context: Context, tracker: DaggerSin
                 }
             }
         } else wallpaperManagerCompat.apply {
+            // TODO in order for color hints to be retrieved by SDK 26 and below
+            // TODO the app must ask the user for storage permissions (and add them to the manifest)
             hints = getWallpaperColors(FLAG_SYSTEM)?.colorHints ?: 0
             val onColorsChangedListener = WallpaperManagerCompat.OnColorsChangedListenerCompat { colors, which ->
                 onColorsChangedCompat(colors, which)

@@ -10,7 +10,7 @@ It offers minimalistic but modern and clean custom looks and feel, and essential
 
 ## Compatibility
 
-Murine Launcher currently supports Androd 10 and above
+Murine Launcher currently supports Androd 8 and above
 
 Blur effects are supported on Android 12 and above.<br/>
 Some OEM/ROMs may hide or disable window-level blurs; if that's your case try to check for an &quot;Allow window-level blurs&quot; option in Display Options or Developer Options.<br/>
