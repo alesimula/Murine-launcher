@@ -21,8 +21,13 @@ import android.app.WallpaperManager
 import android.app.WallpaperManager.FLAG_SYSTEM
 import android.app.WallpaperManager.OnColorsChangedListener
 import android.content.Context
+import android.os.Build
 import androidx.annotation.MainThread
+import androidx.annotation.RequiresApi
 import androidx.annotation.VisibleForTesting
+import com.android.launcher3.Utilities
+import com.android.launcher3.compat.WallpaperColorsCompat
+import com.android.launcher3.compat.WallpaperManagerCompat
 import com.android.launcher3.dagger.ApplicationContext
 import com.android.launcher3.dagger.LauncherAppComponent
 import com.android.launcher3.dagger.LauncherAppSingleton
@@ -44,27 +49,51 @@ constructor(@ApplicationContext private val context: Context, tracker: DaggerSin
     private val wallpaperManager
         get() = context.getSystemService(WallpaperManager::class.java)!!
 
+    private val wallpaperManagerCompat
+        get() = WallpaperManagerCompat.getInstance(context)
+
     private val onColorHintsChangedListeners = mutableListOf<OnColorHintListener>()
 
     init {
-        hints = wallpaperManager.getWallpaperColors(FLAG_SYSTEM)?.colorHints ?: 0
-        val onColorsChangedListener = OnColorsChangedListener { colors, which ->
-            onColorsChanged(colors, which)
-        }
-        UI_HELPER_EXECUTOR.execute {
-            wallpaperManager.addOnColorsChangedListener(
-                onColorsChangedListener,
-                MAIN_EXECUTOR.handler,
-            )
-        }
-        tracker.addCloseable {
+        if (Utilities.ATLEAST_S) wallpaperManager.apply {
+            hints = getWallpaperColors(FLAG_SYSTEM)?.colorHints ?: 0
+            val onColorsChangedListener = OnColorsChangedListener { colors, which ->
+                onColorsChanged(colors, which)
+            }
             UI_HELPER_EXECUTOR.execute {
-                wallpaperManager.removeOnColorsChangedListener(onColorsChangedListener)
+                addOnColorsChangedListener(
+                    onColorsChangedListener,
+                    MAIN_EXECUTOR.handler,
+                )
+            }
+            tracker.addCloseable {
+                UI_HELPER_EXECUTOR.execute {
+                    removeOnColorsChangedListener(onColorsChangedListener)
+                }
+            }
+        } else wallpaperManagerCompat.apply {
+            hints = getWallpaperColors(FLAG_SYSTEM)?.colorHints ?: 0
+            val onColorsChangedListener = WallpaperManagerCompat.OnColorsChangedListenerCompat { colors, which ->
+                onColorsChangedCompat(colors, which)
+            }
+            addOnColorsChangedListener(onColorsChangedListener)
+            tracker.addCloseable {
+                removeOnColorsChangedListener(onColorsChangedListener)
             }
         }
     }
 
-    @MainThread
+    fun onColorsChangedCompat(colors: WallpaperColorsCompat?, which: Int) {
+        if ((which and FLAG_SYSTEM) != 0) {
+            val newHints = colors?.colorHints ?: 0
+            if (newHints != hints) {
+                hints = newHints
+                onColorHintsChangedListeners.forEach { it.onColorHintsChanged(newHints) }
+            }
+        }
+    }
+
+    @MainThread @RequiresApi(Build.VERSION_CODES.S)
     private fun onColorsChanged(colors: WallpaperColors?, which: Int) {
         if ((which and FLAG_SYSTEM) != 0) {
             val newHints = colors?.colorHints ?: 0

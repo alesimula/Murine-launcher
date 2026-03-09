@@ -27,7 +27,7 @@ android {
     namespace = 'com.android.launcher3'
 
     defaultConfig {
-        minSdkVersion 27
+        minSdkVersion 26
         targetSdkVersion 36
         versionCode 3
         versionName "0.3"
@@ -259,6 +259,7 @@ dependencies {
     implementation libs.androidx.core.animation
     implementation libs.androidx.material3
     implementation libs.androidx.tracing
+    implementation libs.androidx.palette.ktx
     implementation libs.material
     implementation libs.kotlinx.coroutines
 
