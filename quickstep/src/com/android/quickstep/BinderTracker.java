@@ -23,11 +23,11 @@ import android.os.Binder.ProxyTransactListener;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.RemoteException;
-import android.os.Trace;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.tracing.Trace;
 
 import com.android.launcher3.util.SafeCloseable;
 import com.android.launcher3.util.TraceHelper;

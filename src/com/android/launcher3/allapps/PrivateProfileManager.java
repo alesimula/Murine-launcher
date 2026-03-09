@@ -45,7 +45,6 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Trace;
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.util.Log;
@@ -61,6 +60,7 @@ import androidx.annotation.VisibleForTesting;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.tracing.Trace;
 
 import com.android.app.animation.Interpolators;
 import com.android.launcher3.BuildConfig;

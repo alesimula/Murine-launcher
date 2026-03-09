@@ -16,9 +16,9 @@
 package com.android.launcher3.util;
 
 import android.annotation.SuppressLint;
-import android.os.Trace;
 
 import androidx.annotation.MainThread;
+import androidx.tracing.Trace;
 
 import kotlin.random.Random;
 

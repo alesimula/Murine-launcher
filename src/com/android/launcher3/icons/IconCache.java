@@ -36,7 +36,6 @@ import android.content.pm.ShortcutInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.os.Looper;
-import android.os.Trace;
 import android.os.UserHandle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -47,6 +46,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.core.util.Pair;
+import androidx.tracing.Trace;
 
 import com.android.launcher3.Flags;
 import com.android.launcher3.InvariantDeviceProfile;

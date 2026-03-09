@@ -2,9 +2,9 @@ package com.android.launcher3
 
 import android.annotation.TargetApi
 import android.os.Build
-import android.os.Trace
 import android.util.Log
 import androidx.annotation.UiThread
+import androidx.tracing.Trace
 import com.android.launcher3.Flags.enableSmartspaceRemovalToggle
 import com.android.launcher3.LauncherConstants.TraceEvents
 import com.android.launcher3.Utilities.SHOULD_SHOW_FIRST_PAGE_WIDGET

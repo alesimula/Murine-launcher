@@ -16,8 +16,8 @@
 package com.android.quickstep.util.unfold
 
 import android.app.Activity
-import android.os.Trace
 import android.view.Surface
+import androidx.tracing.Trace
 import com.android.launcher3.Alarm
 import com.android.launcher3.DeviceProfile
 import com.android.launcher3.DeviceProfile.OnDeviceProfileChangeListener

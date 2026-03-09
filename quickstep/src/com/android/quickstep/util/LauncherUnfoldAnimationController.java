@@ -20,12 +20,12 @@ import static com.android.launcher3.LauncherAnimUtils.SCALE_INDEX_UNFOLD_ANIMATI
 import static com.android.launcher3.LauncherAnimUtils.WORKSPACE_SCALE_PROPERTY_FACTORY;
 
 import android.annotation.Nullable;
-import android.os.Trace;
 import android.util.FloatProperty;
 import android.util.MathUtils;
 import android.view.WindowManager;
 
 import androidx.core.view.OneShotPreDrawListener;
+import androidx.tracing.Trace;
 
 import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.DeviceProfile.OnDeviceProfileChangeListener;
@@ -122,15 +122,13 @@ public class LauncherUnfoldAnimationController implements OnDeviceProfileChangeL
     }
 
     private void preemptivelyStartAnimationOnNextFrame() {
-        Trace.asyncTraceBegin(Trace.TRACE_TAG_APP,
-                TRACE_WAIT_TO_HANDLE_UNFOLD_TRANSITION, /* cookie= */ 0);
+        Trace.beginAsyncSection(TRACE_WAIT_TO_HANDLE_UNFOLD_TRANSITION, /* cookie= */ 0);
 
         // Start the animation (and apply the transformations) in pre-draw listener to make sure
         // that the views are laid out as some transformations depend on the view sizes and position
         OneShotPreDrawListener.add(mLauncher.getWorkspace(),
                 () -> {
-                    Trace.asyncTraceEnd(Trace.TRACE_TAG_APP,
-                            TRACE_WAIT_TO_HANDLE_UNFOLD_TRANSITION, /* cookie= */ 0);
+                    Trace.endAsyncSection(TRACE_WAIT_TO_HANDLE_UNFOLD_TRANSITION, /* cookie= */ 0);
                     mPreemptiveProgressProvider.preemptivelyStartTransition(
                             /* initialProgress= */ 0f);
                 });

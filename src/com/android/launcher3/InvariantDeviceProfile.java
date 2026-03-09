@@ -45,7 +45,6 @@ import android.content.res.XmlResourceParser;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
-import android.os.Trace;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -59,6 +58,7 @@ import androidx.annotation.StyleRes;
 import androidx.annotation.VisibleForTesting;
 import androidx.annotation.XmlRes;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.tracing.Trace;
 
 import com.android.launcher3.config.FeatureFlags;
 import com.android.launcher3.dagger.ApplicationContext;

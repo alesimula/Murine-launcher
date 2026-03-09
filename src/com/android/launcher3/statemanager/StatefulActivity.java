@@ -23,11 +23,11 @@ import static com.android.launcher3.LauncherState.FLAG_NON_INTERACTIVE;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Trace;
 import android.view.LayoutInflater;
 import android.view.View;
 
 import androidx.annotation.CallSuper;
+import androidx.tracing.Trace;
 
 import com.android.launcher3.BaseActivity;
 import com.android.launcher3.LauncherRootView;

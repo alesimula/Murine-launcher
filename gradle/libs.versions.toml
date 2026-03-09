@@ -8,6 +8,7 @@ baselineprofile = "1.4.1"
 core = "1.17.0"
 annotation = "1.9.1"
 activity = "1.13.0-alpha01"
+tracing = "2.0.0-alpha01"
 coreAnimation = "1.0.0"
 dagger = "2.57.2"
 dexmaker = "1.2"
@@ -101,6 +102,7 @@ androidx-slice-builders = { module = "androidx.slice:slice-builders", version.re
 androidx-window = { module = "androidx.window:window", version.ref = "window" }
 androidx-fragment = { module = "androidx.fragment:fragment", version.ref = "fragment" }
 androidx-activity = { module = "androidx.activity:activity", version.ref = "activity" }
+androidx-tracing = { module = "androidx.tracing:tracing", version.ref = "tracing" }
 annotation = { module = "androidx.annotation:annotation", version.ref = "annotation" }
 core = { module = "androidx.core:core", version.ref = "core" }
 dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }

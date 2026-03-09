@@ -22,7 +22,6 @@ import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.os.SystemClock;
-import android.os.Trace;
 import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
@@ -37,6 +36,7 @@ import android.widget.RemoteViews;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.tracing.Trace;
 
 import com.android.launcher3.CheckLongPressHelper;
 import com.android.launcher3.Flags;

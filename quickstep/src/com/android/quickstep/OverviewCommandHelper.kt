@@ -20,7 +20,6 @@ import android.animation.AnimatorListenerAdapter
 import android.content.Intent
 import android.graphics.PointF
 import android.os.SystemClock
-import android.os.Trace
 import android.util.Log
 import android.view.Display.DEFAULT_DISPLAY
 import android.view.View
@@ -28,6 +27,7 @@ import android.window.TransitionInfo
 import androidx.annotation.BinderThread
 import androidx.annotation.UiThread
 import androidx.annotation.VisibleForTesting
+import androidx.tracing.Trace
 import com.android.app.tracing.traceSection
 import com.android.internal.jank.Cuj
 import com.android.launcher3.Flags.enableAltTabKqsOnConnectedDisplays

@@ -18,8 +18,8 @@ package com.android.quickstep.util
 
 import android.content.Context
 import android.content.Intent
-import android.os.Trace
 import android.view.Display.DEFAULT_DISPLAY
+import androidx.tracing.Trace
 import com.android.launcher3.provider.RestoreDbTask
 import com.android.launcher3.util.Executors
 import com.android.launcher3.util.LockedUserState

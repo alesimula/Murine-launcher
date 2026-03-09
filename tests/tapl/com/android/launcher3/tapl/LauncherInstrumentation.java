@@ -55,7 +55,6 @@ import android.os.DeadObjectException;
 import android.os.Parcelable;
 import android.os.RemoteException;
 import android.os.SystemClock;
-import android.os.Trace;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.InputDevice;
@@ -78,6 +77,7 @@ import androidx.test.uiautomator.StaleObjectException;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject2;
 import androidx.test.uiautomator.Until;
+import androidx.tracing.Trace;
 
 import com.android.launcher3.testing.shared.ResourceUtils;
 import com.android.launcher3.testing.shared.TestProtocol;

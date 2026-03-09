@@ -48,7 +48,6 @@ import android.content.pm.PackageInstaller.SessionInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ShortcutInfo;
 import android.os.Bundle;
-import android.os.Trace;
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.provider.Settings;
@@ -59,6 +58,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.annotation.WorkerThread;
+import androidx.tracing.Trace;
 
 import com.android.launcher3.Flags;
 import com.android.launcher3.InvariantDeviceProfile;

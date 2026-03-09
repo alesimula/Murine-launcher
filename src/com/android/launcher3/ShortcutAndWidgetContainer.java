@@ -29,12 +29,12 @@ import android.content.Context;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
-import android.os.Trace;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
+import androidx.tracing.Trace;
 
 import com.android.launcher3.CellLayout.ContainerType;
 import com.android.launcher3.celllayout.CellLayoutLayoutParams;

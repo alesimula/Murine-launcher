@@ -16,8 +16,8 @@
 package com.android.quickstep.util.unfold
 
 import android.os.Handler
-import android.os.Trace
 import android.util.Log
+import androidx.tracing.Trace
 import com.android.systemui.unfold.UnfoldTransitionProgressProvider
 import com.android.systemui.unfold.UnfoldTransitionProgressProvider.TransitionProgressListener
 

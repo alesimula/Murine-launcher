@@ -22,8 +22,9 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
-import android.os.Trace;
 import android.util.FloatProperty;
+
+import androidx.tracing.Trace;
 
 import com.android.launcher3.anim.AnimatorPlaybackController.Holder;
 
@@ -109,7 +110,7 @@ public class PendingAnimation extends AnimatedPropertySetter {
         if (Trace.isEnabled()) {
             super.addOnFrameListener(
                     animation -> Trace.setCounter(
-                            counterName, (long) (animation.getAnimatedFraction() * 100)));
+                            counterName, (int) (animation.getAnimatedFraction() * 100)));
         }
     }
 

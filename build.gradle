@@ -258,6 +258,7 @@ dependencies {
     implementation libs.androidx.window
     implementation libs.androidx.core.animation
     implementation libs.androidx.material3
+    implementation libs.androidx.tracing
     implementation libs.material
     implementation libs.kotlinx.coroutines
 

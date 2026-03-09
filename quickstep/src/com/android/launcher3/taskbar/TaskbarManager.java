@@ -50,7 +50,6 @@ import android.content.res.Configuration;
 import android.hardware.display.DisplayManager;
 import android.net.Uri;
 import android.os.Handler;
-import android.os.Trace;
 import android.provider.Settings;
 import android.util.ArraySet;
 import android.util.Log;
@@ -65,6 +64,7 @@ import android.window.DesktopExperienceFlags;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+import androidx.tracing.Trace;
 
 import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.InvariantDeviceProfile;
@@ -1346,7 +1346,7 @@ public class TaskbarManager implements DisplayDecorationListener {
 
             @Override
             public void onConfigurationChanged(Configuration newConfig) {
-                Trace.instantForTrack(Trace.TRACE_TAG_APP, "TaskbarManager",
+                android.os.Trace.instantForTrack(android.os.Trace.TRACE_TAG_APP, "TaskbarManager",
                         "onConfigurationChanged: " + newConfig);
                 debugTaskbarManager("onConfigurationChanged: " + newConfig, displayId);
 

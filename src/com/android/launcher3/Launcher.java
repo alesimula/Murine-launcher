@@ -135,7 +135,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.os.StrictMode;
 import android.os.SystemClock;
-import android.os.Trace;
 import android.os.UserHandle;
 import android.text.TextUtils;
 import android.text.method.TextKeyListener;
@@ -168,6 +167,7 @@ import androidx.annotation.RequiresApi;
 import androidx.annotation.UiThread;
 import androidx.annotation.VisibleForTesting;
 import androidx.core.os.BuildCompat;
+import androidx.tracing.Trace;
 import androidx.window.embedding.RuleController;
 
 import com.android.launcher3.DropTarget.DragObject;

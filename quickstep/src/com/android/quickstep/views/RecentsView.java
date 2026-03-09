@@ -17,8 +17,6 @@
 package com.android.quickstep.views;
 
 import static android.app.ActivityTaskManager.INVALID_TASK_ID;
-import static android.os.Trace.traceBegin;
-import static android.os.Trace.traceEnd;
 import static android.view.Surface.ROTATION_0;
 import static android.view.View.MeasureSpec.EXACTLY;
 import static android.view.View.MeasureSpec.makeMeasureSpec;
@@ -104,7 +102,6 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.os.Trace;
 import android.os.UserHandle;
 import android.os.VibrationEffect;
 import android.text.Layout;
@@ -139,6 +136,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.core.graphics.ColorUtils;
 import androidx.dynamicanimation.animation.SpringAnimation;
+import androidx.tracing.Trace;
 
 import com.android.internal.jank.Cuj;
 import com.android.launcher3.AbstractFloatingView;
@@ -1298,7 +1296,7 @@ public abstract class RecentsView<
 
     @Override
     public void onViewRemoved(View child) {
-        traceBegin(Trace.TRACE_TAG_APP, "RecentsView.onViewRemoved");
+        Trace.beginSection("RecentsView.onViewRemoved");
         super.onViewRemoved(child);
         // Clear the task data for the removed child if it was visible unless:
         // - It's the initial taskview for entering split screen, we only pretend to dismiss the
@@ -1310,7 +1308,7 @@ public abstract class RecentsView<
                 clearAndRecycleTaskView((TaskView) child);
             }
         }
-        traceEnd(Trace.TRACE_TAG_APP);
+        Trace.endSection();
     }
 
     private void clearAndRecycleTaskView(TaskView taskView) {
@@ -1329,7 +1327,7 @@ public abstract class RecentsView<
 
     @Override
     public void onViewAdded(View child) {
-        traceBegin(Trace.TRACE_TAG_APP, "RecentsView.onViewAdded");
+        Trace.beginSection("RecentsView.onViewAdded");
         super.onViewAdded(child);
         if (child instanceof TaskView) {
             mTaskViewCount++;
@@ -1340,7 +1338,7 @@ public abstract class RecentsView<
         child.setLayoutDirection(mIsRtl ? View.LAYOUT_DIRECTION_LTR : View.LAYOUT_DIRECTION_RTL);
         mActionsView.updateHiddenFlags(HIDDEN_NO_TASKS, false);
         updateEmptyMessage();
-        traceEnd(Trace.TRACE_TAG_APP);
+        Trace.endSection();
     }
 
     @Override
@@ -1938,7 +1936,7 @@ public abstract class RecentsView<
         }
 
         // Start here to avoid early returns and empty cases which have special logic
-        traceBegin(Trace.TRACE_TAG_APP, "RecentsView.applyLoadPlan");
+        Trace.beginSection("RecentsView.applyLoadPlan");
 
         TaskView currentTaskView = getTaskViewAt(mCurrentPage);
         int[] currentTaskIds = null;
@@ -1985,9 +1983,9 @@ public abstract class RecentsView<
         // TaskIds will no longer be valid after remove and re-add, clearing mTopRowIdSet.
         mAnyTaskHasBeenDismissed = false;
         mTopRowIdSet.clear();
-        traceBegin(Trace.TRACE_TAG_APP, "RecentsView.applyLoadPlan.removeAllViews");
+        Trace.beginSection("RecentsView.applyLoadPlan.removeAllViews");
         removeAllViews();
-        traceEnd(Trace.TRACE_TAG_APP);
+        Trace.endSection();
         // If we are entering Overview as a result of initiating a split from somewhere else
         // (e.g. split from Home), we need to make sure the staged app is not drawn as a thumbnail.
         int stagedTaskIdToBeRemoved;
@@ -2014,7 +2012,7 @@ public abstract class RecentsView<
             // Add `mAddDesktopButton` as the first child.
             addView(mAddDesktopButton);
         }
-        traceBegin(Trace.TRACE_TAG_APP, "RecentsView.applyLoadPlan.forLoop");
+        Trace.beginSection("RecentsView.applyLoadPlan.forLoop");
 
         // Add views as children based on whether it's grouped or single task. Looping through
         // taskGroups backwards populates the thumbnail grid from least recent to most recent.
@@ -2034,11 +2032,11 @@ public abstract class RecentsView<
 
             // If we need to remove half of a pair of tasks, force a TaskView with Type.SINGLE
             // to be a temporary container for the remaining task.
-            traceBegin(Trace.TRACE_TAG_APP, "RecentsView.applyLoadPlan.forLoop.createTaskView");
+            Trace.beginSection("RecentsView.applyLoadPlan.forLoop.createTaskView");
             TaskView taskView = getTaskViewFromPool(
                     containsStagedTask ? TaskViewType.SINGLE : groupTask.taskViewType);
-            traceEnd(Trace.TRACE_TAG_APP);
-            traceBegin(Trace.TRACE_TAG_APP, "RecentsView.applyLoadPlan.forLoop.bind");
+            Trace.endSection();
+            Trace.beginSection("RecentsView.applyLoadPlan.forLoop.bind");
             if (taskView instanceof GroupedTaskView groupedTaskView) {
                 var splitTask = (SplitTask) groupTask;
                 groupedTaskView.bind(splitTask.getTopLeftTask(),
@@ -2056,10 +2054,10 @@ public abstract class RecentsView<
                 taskView.bind(((SingleTask) groupTask).getTask(), mOrientationState,
                         mTaskOverlayFactory);
             }
-            traceEnd(Trace.TRACE_TAG_APP);
-            traceBegin(Trace.TRACE_TAG_APP, "RecentsView.applyLoadPlan.forLoop.addTaskView");
+            Trace.endSection();
+            Trace.beginSection("RecentsView.applyLoadPlan.forLoop.addTaskView");
             addView(taskView);
-            traceEnd(Trace.TRACE_TAG_APP);
+            Trace.endSection();
 
             // enables instance filtering if the feature flag for it is on
             if (FeatureFlags.ENABLE_MULTI_INSTANCE.get()) {
@@ -2067,7 +2065,7 @@ public abstract class RecentsView<
             }
         }
         // For loop end trace
-        traceEnd(Trace.TRACE_TAG_APP);
+        Trace.endSection();
 
         addView(mClearAllButton);
 
@@ -2087,10 +2085,10 @@ public abstract class RecentsView<
         setFocusedTaskViewId(
                 newFocusedTaskView != null ? newFocusedTaskView.getTaskViewId() : INVALID_TASK_ID);
 
-        traceBegin(Trace.TRACE_TAG_APP, "RecentsView.applyLoadPlan.layouts");
+        Trace.beginSection("RecentsView.applyLoadPlan.layouts");
         updateTaskSize();
         mUtils.updateChildTaskOrientations();
-        traceEnd(Trace.TRACE_TAG_APP);
+        Trace.endSection();
 
         TaskView newRunningTaskView = mUtils.getDesktopTaskViewForDeskId(runningTaskViewDeskId);
         if (newRunningTaskView == null) {
@@ -2145,7 +2143,7 @@ public abstract class RecentsView<
             });
         }
 
-        traceBegin(Trace.TRACE_TAG_APP, "RecentsView.applyLoadPlan.cleanupStates");
+        Trace.beginSection("RecentsView.applyLoadPlan.cleanupStates");
         if (mIgnoreResetTaskId != INVALID_TASK_ID &&
                 getTaskViewByTaskId(mIgnoreResetTaskId) != ignoreResetTaskView) {
             // If the taskView mapping is changing, do not preserve the visuals. Since we are
@@ -2160,10 +2158,10 @@ public abstract class RecentsView<
         if (isPageScrollsInitialized()) {
             onPageScrollsInitialized();
         }
-        traceEnd(Trace.TRACE_TAG_APP);
+        Trace.endSection();
 
         // applyLoadPlan end trace
-        traceEnd(Trace.TRACE_TAG_APP);
+        Trace.endSection();
     }
 
     private boolean isModal() {

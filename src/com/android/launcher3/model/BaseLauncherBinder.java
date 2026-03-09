@@ -27,12 +27,12 @@ import static com.android.launcher3.util.Executors.MAIN_EXECUTOR;
 import static com.android.launcher3.util.Executors.MODEL_EXECUTOR;
 
 import android.content.Context;
-import android.os.Trace;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.tracing.Trace;
 
 import com.android.launcher3.InvariantDeviceProfile;
 import com.android.launcher3.LauncherModel;

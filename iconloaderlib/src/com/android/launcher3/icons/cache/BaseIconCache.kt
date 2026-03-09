@@ -34,13 +34,13 @@ import android.graphics.BitmapFactory.Options
 import android.graphics.drawable.Drawable
 import android.os.Handler
 import android.os.Looper
-import android.os.Trace
 import android.os.UserHandle
 import android.text.TextUtils
 import android.util.Log
 import android.util.SparseArray
 import androidx.annotation.VisibleForTesting
 import androidx.annotation.WorkerThread
+import androidx.tracing.Trace
 import com.android.launcher3.Flags
 import com.android.launcher3.icons.cache.StaticFlags.extendibleThemeManager
 import com.android.launcher3.icons.BaseIconFactory
