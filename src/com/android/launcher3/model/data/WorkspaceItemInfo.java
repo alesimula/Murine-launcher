@@ -200,10 +200,22 @@ public class WorkspaceItemInfo extends ItemInfoWithIcon {
         if (shortcutInfo.isEnabled()) {
             runtimeStatusFlags &= ~FLAG_DISABLED_BY_PUBLISHER;
         } else {
-            Log.w(TAG, "updateFromDeepShortcutInfo: Updated shortcut has been disabled. "
-                    + " package=" + shortcutInfo.getPackage()
-                    + " disabledReason=" + shortcutInfo.getDisabledReason());
+            if (Utilities.ATLEAST_P) {
+                Log.w(TAG, "updateFromDeepShortcutInfo: Updated shortcut has been disabled. "
+                        + " package=" + shortcutInfo.getPackage()
+                        + " disabledReason=" + shortcutInfo.getDisabledReason());
+            }
             runtimeStatusFlags |= FLAG_DISABLED_BY_PUBLISHER;
+        }
+
+        if (Utilities.ATLEAST_P) {
+            if (shortcutInfo.getDisabledReason() == ShortcutInfo.DISABLED_REASON_VERSION_LOWER) {
+                runtimeStatusFlags |= FLAG_DISABLED_VERSION_LOWER;
+            } else {
+                runtimeStatusFlags &= ~FLAG_DISABLED_VERSION_LOWER;
+            }
+        } else {
+            runtimeStatusFlags &= ~FLAG_DISABLED_VERSION_LOWER;
         }
 
         if (shortcutInfo.getDisabledReason() == ShortcutInfo.DISABLED_REASON_VERSION_LOWER) {
@@ -212,9 +224,11 @@ public class WorkspaceItemInfo extends ItemInfoWithIcon {
             runtimeStatusFlags &= ~FLAG_DISABLED_VERSION_LOWER;
         }
 
-        Person[] persons = ApiWrapper.INSTANCE.get(context).getPersons(shortcutInfo);
-        personKeys = persons.length == 0 ? Utilities.EMPTY_STRING_ARRAY
-            : Arrays.stream(persons).map(Person::getKey).sorted().toArray(String[]::new);
+        if (Utilities.ATLEAST_Q) {
+            Person[] persons = ApiWrapper.INSTANCE.get(context).getPersons(shortcutInfo);
+            personKeys = persons.length == 0 ? Utilities.EMPTY_STRING_ARRAY
+                    : Arrays.stream(persons).map(Person::getKey).sorted().toArray(String[]::new);
+        }
     }
 
     @Nullable

@@ -110,7 +110,17 @@ open class FastBitmapDrawable(info: BitmapInfo?) : Drawable(), Callback {
     }
 
     protected open fun drawInternal(canvas: Canvas, bounds: Rect) {
-        canvas.drawBitmap(bitmapInfo.icon, null, bounds, paint)
+        // LC-Note: Fix crash Software rendering doesn't support hardware bitmaps
+        val bitmap = bitmapInfo.icon
+        if (!canvas.isHardwareAccelerated && bitmap.config == Bitmap.Config.HARDWARE) {
+            val swBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, false)
+            if (swBitmap != null) {
+                canvas.drawBitmap(swBitmap, null, bounds, paint)
+                swBitmap.recycle()
+            }
+        } else {
+            canvas.drawBitmap(bitmap, null, bounds, paint)
+        }
     }
 
     /** Returns the primary icon color, slightly tinted white */
