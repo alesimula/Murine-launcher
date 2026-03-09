@@ -21,6 +21,7 @@ import android.content.pm.LauncherApps;
 import android.content.pm.PackageInstaller;
 import android.content.pm.PackageInstaller.SessionInfo;
 import android.content.pm.PackageManager;
+import android.os.Process;
 import android.os.UserHandle;
 import android.text.TextUtils;
 
@@ -31,6 +32,7 @@ import androidx.annotation.WorkerThread;
 import com.android.launcher3.Flags;
 import com.android.launcher3.LauncherPrefs;
 import com.android.launcher3.SessionCommitReceiver;
+import com.android.launcher3.Utilities;
 import com.android.launcher3.dagger.ApplicationContext;
 import com.android.launcher3.dagger.LauncherAppSingleton;
 import com.android.launcher3.dagger.LauncherBaseAppComponent;
@@ -182,6 +184,9 @@ public class InstallSessionHelper {
 
     @NonNull
     public List<SessionInfo> getAllVerifiedSessions() {
+        if (!Utilities.ATLEAST_Q) {
+            return new ArrayList<>();
+        }
         List<SessionInfo> list = new ArrayList<>(
                 Objects.requireNonNull(mLauncherApps).getAllPackageInstallerSessions());
         Iterator<SessionInfo> it = list.iterator();
@@ -223,10 +228,13 @@ public class InstallSessionHelper {
                 && !promiseIconAddedForId(sessionInfo.getSessionId())) {
             // In case of unarchival, we do not want to add a workspace promise icon if one is
             // not already present. For general app installations however, we do support it.
-            if (!Flags.enableSupportForArchiving() || !sessionInfo.isUnarchival()) {
+            if (Utilities.ATLEAST_V && (!Flags.enableSupportForArchiving() || !sessionInfo.isUnarchival())) {
                 FileLog.d(LOG, "Adding package name to install queue: "
-                        + sessionInfo.getAppPackageName());
-
+                        + sessionInfo.getAppPackageName()
+                        + "Package installer: "
+                        + sessionInfo.getInstallerPackageName()
+                        + "Session id: "
+                        + sessionInfo.getSessionId());
                 ItemInstallQueue.INSTANCE.get(mAppContext)
                         .queueItem(sessionInfo.getAppPackageName(), getUserHandle(sessionInfo));
             }
@@ -238,7 +246,7 @@ public class InstallSessionHelper {
 
     public boolean verifySessionInfo(@Nullable final PackageInstaller.SessionInfo sessionInfo) {
         // For archived apps we always want to show promise icons and the checks below don't apply.
-        if (Flags.enableSupportForArchiving() && sessionInfo != null
+        if (Flags.enableSupportForArchiving() && sessionInfo != null && Utilities.ATLEAST_V
                 && sessionInfo.isUnarchival()) {
             return true;
         }
@@ -260,6 +268,6 @@ public class InstallSessionHelper {
     }
 
     public static UserHandle getUserHandle(@NonNull final SessionInfo info) {
-        return info.getUser();
+        return Utilities.ATLEAST_Q ? info.getUser() : Process.myUserHandle();
     }
 }

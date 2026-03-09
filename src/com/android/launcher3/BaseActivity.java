@@ -249,7 +249,7 @@ public abstract class BaseActivity extends Activity implements ActivityContext,
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (!Utilities.ATLEAST_Q) {
+        if (Utilities.ATLEAST_Q) {
             mLifecycleHelper.onActivityCreated(this, savedInstanceState);
         }
         registerBackDispatcher();
@@ -260,7 +260,7 @@ public abstract class BaseActivity extends Activity implements ActivityContext,
     protected void onStart() {
         addActivityFlags(ACTIVITY_STATE_STARTED);
         super.onStart();
-        if (!Utilities.ATLEAST_Q) {
+        if (Utilities.ATLEAST_Q) {
             mLifecycleHelper.onActivityStarted(this);
         }
         mEventCallbacks[EVENT_STARTED].executeAllAndClear();
@@ -273,7 +273,7 @@ public abstract class BaseActivity extends Activity implements ActivityContext,
     protected void onResume() {
         setResumed();
         super.onResume();
-        if (!Utilities.ATLEAST_Q) {
+        if (Utilities.ATLEAST_Q) {
             mLifecycleHelper.onActivityResumed(this);
         }
         mEventCallbacks[EVENT_RESUMED].executeAllAndClear();
@@ -298,7 +298,7 @@ public abstract class BaseActivity extends Activity implements ActivityContext,
         removeActivityFlags(ACTIVITY_STATE_STARTED | ACTIVITY_STATE_USER_ACTIVE);
         mForceInvisible = 0;
         super.onStop();
-        if (!Utilities.ATLEAST_Q) {
+        if (Utilities.ATLEAST_Q) {
             mLifecycleHelper.onActivityStopped(this);
         }
         mEventCallbacks[EVENT_STOPPED].executeAllAndClear();
@@ -312,7 +312,7 @@ public abstract class BaseActivity extends Activity implements ActivityContext,
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (!Utilities.ATLEAST_Q) {
+        if (Utilities.ATLEAST_Q) {
             mLifecycleHelper.onActivityDestroyed(this);
         }
         mEventCallbacks[EVENT_DESTROYED].executeAllAndClear();
@@ -323,7 +323,7 @@ public abstract class BaseActivity extends Activity implements ActivityContext,
     protected void onPause() {
         setPaused();
         super.onPause();
-        if (!Utilities.ATLEAST_Q) {
+        if (Utilities.ATLEAST_Q) {
             mLifecycleHelper.onActivityPaused(this);
         }
 
@@ -337,7 +337,7 @@ public abstract class BaseActivity extends Activity implements ActivityContext,
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (!Utilities.ATLEAST_Q) {
+        if (Utilities.ATLEAST_Q) {
             mLifecycleHelper.onActivitySaveInstanceState(this, outState);
         }
     }

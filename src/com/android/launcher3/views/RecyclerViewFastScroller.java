@@ -433,11 +433,13 @@ public class RecyclerViewFastScroller extends View {
         // swiping very close to the thumb area (not just within it's bound)
         // will also prevent back gesture
         SYSTEM_GESTURE_EXCLUSION_RECT.get(0).offset(mThumbDrawOffset.x, mThumbDrawOffset.y);
-        if (mSystemGestureInsets != null) {
-            SYSTEM_GESTURE_EXCLUSION_RECT.get(0).left =
-                    SYSTEM_GESTURE_EXCLUSION_RECT.get(0).right - mSystemGestureInsets.right;
+        if (Utilities.ATLEAST_Q) {
+            if (mSystemGestureInsets != null) {
+                SYSTEM_GESTURE_EXCLUSION_RECT.get(0).left =
+                        SYSTEM_GESTURE_EXCLUSION_RECT.get(0).right - mSystemGestureInsets.right;
+            }
+            setSystemGestureExclusionRects(SYSTEM_GESTURE_EXCLUSION_RECT);
         }
-        setSystemGestureExclusionRects(SYSTEM_GESTURE_EXCLUSION_RECT);
         canvas.restoreToCount(saveCount);
     }
 
@@ -448,7 +450,11 @@ public class RecyclerViewFastScroller extends View {
 
     @Override
     public WindowInsets onApplyWindowInsets(WindowInsets insets) {
-        mSystemGestureInsets = insets.getSystemGestureInsets();
+        if (Utilities.ATLEAST_Q) {
+            mSystemGestureInsets = insets.getSystemGestureInsets();
+        } else {
+            mSystemGestureInsets = null;
+        }
         return super.onApplyWindowInsets(insets);
     }
 

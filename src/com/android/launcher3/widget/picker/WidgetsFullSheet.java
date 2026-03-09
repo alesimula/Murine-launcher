@@ -61,6 +61,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.launcher3.BaseActivity;
 import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.R;
+import com.android.launcher3.Utilities;
 import com.android.launcher3.anim.PendingAnimation;
 import com.android.launcher3.compat.AccessibilityManagerCompat;
 import com.android.launcher3.model.UserManagerState;
@@ -905,9 +906,16 @@ public class WidgetsFullSheet extends BaseWidgetSheet
     }
 
     private void restoreAdapterStates(SparseArray<AdapterHolder> adapters) {
-        if (adapters.contains(AdapterHolder.WORK)) {
-            mAdapters.get(AdapterHolder.WORK).mWidgetsListAdapter.restoreState(
-                    adapters.get(AdapterHolder.WORK).mWidgetsListAdapter);
+        if (Utilities.ATLEAST_R) {
+            if (adapters.contains(AdapterHolder.WORK)) {
+                mAdapters.get(AdapterHolder.WORK).mWidgetsListAdapter.restoreState(
+                        adapters.get(AdapterHolder.WORK).mWidgetsListAdapter);
+            }
+        } else {
+            if (adapters.indexOfKey(AdapterHolder.WORK) >= 0) {
+                mAdapters.get(AdapterHolder.WORK).mWidgetsListAdapter.restoreState(
+                        adapters.get(AdapterHolder.WORK).mWidgetsListAdapter);
+            }
         }
         mAdapters.get(AdapterHolder.PRIMARY).mWidgetsListAdapter.restoreState(
                 adapters.get(AdapterHolder.PRIMARY).mWidgetsListAdapter);
@@ -950,9 +958,11 @@ public class WidgetsFullSheet extends BaseWidgetSheet
     @Override
     public void onDragStart(boolean start, float startDisplacement) {
         super.onDragStart(start, startDisplacement);
-        WindowInsetsController insetsController = getWindowInsetsController();
-        if (insetsController != null) {
-            insetsController.hide(WindowInsets.Type.ime());
+        if (Utilities.ATLEAST_R) {
+            WindowInsetsController insetsController = getWindowInsetsController();
+            if (insetsController != null) {
+                insetsController.hide(WindowInsets.Type.ime());
+            }
         }
     }
 

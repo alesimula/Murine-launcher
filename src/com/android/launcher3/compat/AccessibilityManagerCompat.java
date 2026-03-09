@@ -110,6 +110,6 @@ public class AccessibilityManagerCompat {
     }
 
     public static int getRecommendedTimeoutMillis(Context context, int originalTimeout, int flags) {
-        return getManager(context).getRecommendedTimeoutMillis(originalTimeout, flags);
+        return Utilities.ATLEAST_Q ? getManager(context).getRecommendedTimeoutMillis(originalTimeout, flags) : originalTimeout;
     }
 }

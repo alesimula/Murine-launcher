@@ -552,21 +552,23 @@ public abstract class BaseDragLayer<T extends Context & ActivityContext>
 
     @Override
     public WindowInsets dispatchApplyWindowInsets(WindowInsets insets) {
-        Insets gestureInsets = insets.getMandatorySystemGestureInsets();
-        int gestureInsetBottom = gestureInsets.bottom;
-        Insets imeInset = insets.getInsets(WindowInsets.Type.ime());
-        DeviceProfile dp = mContainer.getDeviceProfile();
-        if (dp.isTaskbarPresent) {
-            // Ignore taskbar gesture insets to avoid interfering with TouchControllers.
-            gestureInsetBottom = ResourceUtils.getNavbarSize(
-                    ResourceUtils.NAVBAR_BOTTOM_GESTURE_SIZE, getResources());
+        if (Utilities.ATLEAST_R) {
+            Insets gestureInsets = insets.getMandatorySystemGestureInsets();
+            int gestureInsetBottom = gestureInsets.bottom;
+            Insets imeInset = insets.getInsets(WindowInsets.Type.ime());
+            DeviceProfile dp = mContainer.getDeviceProfile();
+            if (dp.isTaskbarPresent) {
+                // Ignore taskbar gesture insets to avoid interfering with TouchControllers.
+                gestureInsetBottom = ResourceUtils.getNavbarSize(
+                        ResourceUtils.NAVBAR_BOTTOM_GESTURE_SIZE, getResources());
+            }
+            mSystemGestureRegion.set(
+                    Math.max(gestureInsets.left, imeInset.left),
+                    Math.max(gestureInsets.top, imeInset.top),
+                    Math.max(gestureInsets.right, imeInset.right),
+                    Math.max(gestureInsetBottom, imeInset.bottom)
+            );
         }
-        mSystemGestureRegion.set(
-                Math.max(gestureInsets.left, imeInset.left),
-                Math.max(gestureInsets.top, imeInset.top),
-                Math.max(gestureInsets.right, imeInset.right),
-                Math.max(gestureInsetBottom, imeInset.bottom)
-        );
         return super.dispatchApplyWindowInsets(insets);
     }
 }

@@ -16,6 +16,7 @@
 
 package com.google.android.msdl.data.repository
 
+import android.os.Build
 import android.os.VibrationEffect
 import com.google.android.msdl.data.model.HapticComposition
 import com.google.android.msdl.data.model.HapticCompositionPrimitive
@@ -192,7 +193,12 @@ internal class MSDLRepositoryImpl : MSDLRepository {
                                     delayMillis = 0,
                                 )
                             ),
-                            VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK),
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
+                            } else VibrationEffect.createOneShot(
+                                1000L,
+                                VibrationEffect.DEFAULT_AMPLITUDE,
+                            ),
                         )
                     },
                 HapticToken.LONG_PRESS to
@@ -205,7 +211,12 @@ internal class MSDLRepositoryImpl : MSDLRepository {
                                     delayMillis = 0,
                                 )
                             ),
-                            VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK),
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
+                            } else VibrationEffect.createOneShot(
+                                1000L,
+                                VibrationEffect.DEFAULT_AMPLITUDE,
+                            ),
                         )
                     },
                 HapticToken.SWIPE_THRESHOLD_INDICATOR to
@@ -218,7 +229,12 @@ internal class MSDLRepositoryImpl : MSDLRepository {
                                     delayMillis = 0,
                                 )
                             ),
-                            VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK),
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
+                            } else VibrationEffect.createOneShot(
+                                1000L,
+                                VibrationEffect.DEFAULT_AMPLITUDE,
+                            ),
                         )
                     },
                 HapticToken.TAP_HIGH_EMPHASIS to
@@ -231,7 +247,12 @@ internal class MSDLRepositoryImpl : MSDLRepository {
                                     delayMillis = 0,
                                 )
                             ),
-                            VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK),
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
+                            } else VibrationEffect.createOneShot(
+                                1000L,
+                                VibrationEffect.DEFAULT_AMPLITUDE,
+                            ),
                         )
                     },
                 HapticToken.TAP_MEDIUM_EMPHASIS to
@@ -244,7 +265,12 @@ internal class MSDLRepositoryImpl : MSDLRepository {
                                     delayMillis = 0,
                                 )
                             ),
-                            VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK),
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
+                            } else VibrationEffect.createOneShot(
+                                1000L,
+                                VibrationEffect.DEFAULT_AMPLITUDE,
+                            ),
                         )
                     },
                 HapticToken.DRAG_THRESHOLD_INDICATOR to
@@ -257,7 +283,12 @@ internal class MSDLRepositoryImpl : MSDLRepository {
                                     delayMillis = 0,
                                 )
                             ),
-                            VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK),
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
+                            } else VibrationEffect.createOneShot(
+                                1000L,
+                                VibrationEffect.DEFAULT_AMPLITUDE,
+                            ),
                         )
                     },
                 HapticToken.DRAG_INDICATOR_CONTINUOUS to
@@ -287,7 +318,12 @@ internal class MSDLRepositoryImpl : MSDLRepository {
                                     delayMillis = 0,
                                 )
                             ),
-                            VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK),
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
+                            } else VibrationEffect.createOneShot(
+                                1000L,
+                                VibrationEffect.DEFAULT_AMPLITUDE,
+                            ),
                         )
                     },
                 HapticToken.TAP_LOW_EMPHASIS to
@@ -300,7 +336,12 @@ internal class MSDLRepositoryImpl : MSDLRepository {
                                     delayMillis = 0,
                                 )
                             ),
-                            VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK),
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
+                            } else VibrationEffect.createOneShot(
+                                1000L,
+                                VibrationEffect.DEFAULT_AMPLITUDE,
+                            ),
                         )
                     },
                 HapticToken.KEYPRESS_STANDARD to
@@ -313,7 +354,12 @@ internal class MSDLRepositoryImpl : MSDLRepository {
                                     delayMillis = 0,
                                 )
                             ),
-                            VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK),
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
+                            } else VibrationEffect.createOneShot(
+                                1000L,
+                                VibrationEffect.DEFAULT_AMPLITUDE,
+                            ),
                         )
                     },
                 HapticToken.KEYPRESS_SPACEBAR to
@@ -326,7 +372,12 @@ internal class MSDLRepositoryImpl : MSDLRepository {
                                     delayMillis = 0,
                                 )
                             ),
-                            VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK),
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
+                            } else VibrationEffect.createOneShot(
+                                1000L,
+                                VibrationEffect.DEFAULT_AMPLITUDE,
+                            ),
                         )
                     },
                 HapticToken.KEYPRESS_RETURN to
@@ -339,7 +390,12 @@ internal class MSDLRepositoryImpl : MSDLRepository {
                                     delayMillis = 0,
                                 )
                             ),
-                            VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK),
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
+                            } else VibrationEffect.createOneShot(
+                                1000L,
+                                VibrationEffect.DEFAULT_AMPLITUDE,
+                            ),
                         )
                     },
                 HapticToken.KEYPRESS_DELETE to
@@ -352,7 +408,12 @@ internal class MSDLRepositoryImpl : MSDLRepository {
                                     delayMillis = 0,
                                 )
                             ),
-                            VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK),
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
+                            } else VibrationEffect.createOneShot(
+                                1000L,
+                                VibrationEffect.DEFAULT_AMPLITUDE,
+                            ),
                         )
                     },
             )

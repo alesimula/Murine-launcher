@@ -129,9 +129,11 @@ public class LauncherRootView extends InsettableFrameLayout {
             return;
         }
         mDisallowBackGesture = disallowBackGesture;
-        setSystemGestureExclusionRects((mForceHideBackArrow || mDisallowBackGesture)
-                ? SYSTEM_GESTURE_EXCLUSION_RECT
-                : Collections.emptyList());
+        if (Utilities.ATLEAST_Q) {
+            setSystemGestureExclusionRects((mForceHideBackArrow || mDisallowBackGesture)
+                    ? SYSTEM_GESTURE_EXCLUSION_RECT
+                    : Collections.emptyList());
+        }
     }
 
     public SysUiScrim getSysUiScrim() {

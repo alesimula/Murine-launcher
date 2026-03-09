@@ -315,7 +315,7 @@ public abstract class BaseWidgetSheet extends AbstractSlideInView<BaseActivity>
         if (mDisableNavBarScrim) {
             return 0;
         } else {
-            return insets.getTappableElementInsets().bottom;
+            return Utilities.ATLEAST_Q ? insets.getTappableElementInsets().bottom : insets.getStableInsetBottom();
         }
     }
 

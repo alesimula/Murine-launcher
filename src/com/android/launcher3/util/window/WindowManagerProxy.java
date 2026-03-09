@@ -41,21 +41,17 @@ import android.graphics.Rect;
 import android.hardware.display.DisplayManager;
 import android.os.Build;
 import android.util.ArrayMap;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.DisplayCutout;
 import android.view.Surface;
 import android.view.WindowInsets;
 import android.view.WindowManager;
-import android.view.WindowManagerImpl;
 import android.view.WindowMetrics;
-import android.window.WindowMetricsController;
-import android.window.WindowMetricsHelper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
-import androidx.core.view.ViewCompat;
+import androidx.core.view.DisplayCutoutCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.window.layout.WindowMetricsCalculator;
 
@@ -68,7 +64,9 @@ import com.android.launcher3.util.DaggerSingletonObject;
 import com.android.launcher3.util.NavigationMode;
 import com.android.launcher3.util.WindowBounds;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -172,7 +170,7 @@ public class WindowManagerProxy {
      */
     public WindowInsets normalizeWindowInsets(Context context, WindowInsets oldInsets,
             Rect outInsets) {
-        if (!mTaskbarDrawnInProcess) {
+        if (!Utilities.ATLEAST_R || !mTaskbarDrawnInProcess) {
             outInsets.set(oldInsets.getSystemWindowInsetLeft(), oldInsets.getSystemWindowInsetTop(),
                     oldInsets.getSystemWindowInsetRight(), oldInsets.getSystemWindowInsetBottom());
             return oldInsets;
@@ -348,14 +346,14 @@ public class WindowManagerProxy {
 
         navBarHeightPortrait = isTablet
                 ? (mTaskbarDrawnInProcess
-                        ? 0 : context.getResources().getDimensionPixelSize(R.dimen.taskbar_size))
+                ? 0 : context.getResources().getDimensionPixelSize(R.dimen.taskbar_size))
                 : getDimenByName(systemRes, NAVBAR_HEIGHT);
 
         navBarHeightLandscape = isTablet
                 ? (mTaskbarDrawnInProcess
-                        ? 0 : context.getResources().getDimensionPixelSize(R.dimen.taskbar_size))
+                ? 0 : context.getResources().getDimensionPixelSize(R.dimen.taskbar_size))
                 : (isTabletOrGesture
-                        ? getDimenByName(systemRes, NAVBAR_HEIGHT_LANDSCAPE) : 0);
+                ? getDimenByName(systemRes, NAVBAR_HEIGHT_LANDSCAPE) : 0);
         navbarWidthLandscape = isTabletOrGesture
                 ? 0
                 : getDimenByName(systemRes, NAVBAR_LANDSCAPE_LEFT_RIGHT_SIZE);
@@ -379,11 +377,11 @@ public class WindowManagerProxy {
                 statusBarHeight = statusBarHeightLandscape;
             }
 
-            DisplayCutout rotatedCutout = rotateCutout(
+            DisplayCutoutCompat rotatedCutout = rotateCutout(
                     displayInfo.cutout, displayInfo.size.x, displayInfo.size.y, rotation, i);
             Rect insets = getSafeInsets(rotatedCutout);
-            if (areBottomDisplayCutoutsSmallAndAtCorners(
-                    rotatedCutout.getBoundingRectBottom(),
+            if (rotatedCutout != null && areBottomDisplayCutoutsSmallAndAtCorners(
+                    getBottomDisplayCutout(rotatedCutout),
                     bounds.width(),
                     context.getResources())) {
                 insets.bottom = 0;
@@ -401,6 +399,29 @@ public class WindowManagerProxy {
             result.add(new WindowBounds(bounds, insets, i));
         }
         return result;
+    }
+
+    static boolean UNWRAP_METHOD_AVAILABLE = true;
+    static Method METHOD_DISPLAY_CUTOUT_UNWRAP = null;
+
+    protected static Rect getBottomDisplayCutout(DisplayCutoutCompat cutout) {
+        if (Utilities.ATLEAST_Q && UNWRAP_METHOD_AVAILABLE) try {
+            if (METHOD_DISPLAY_CUTOUT_UNWRAP == null) {
+                METHOD_DISPLAY_CUTOUT_UNWRAP = DisplayCutoutCompat.class.getDeclaredMethod("unwrap");
+                METHOD_DISPLAY_CUTOUT_UNWRAP.setAccessible(true);
+            }
+            var displayCutout = (DisplayCutout) METHOD_DISPLAY_CUTOUT_UNWRAP.invoke(cutout);
+            return displayCutout.getBoundingRectBottom();
+        } catch (Exception e) {UNWRAP_METHOD_AVAILABLE = false;}
+        List<Rect> rects = (cutout != null) ? cutout.getBoundingRects() : Collections.emptyList();
+        Rect bottomRect = null;
+        for (Rect r : rects) {
+            if (bottomRect == null || r.top > bottomRect.top) {
+                bottomRect = r;
+                break;
+            }
+        }
+        return bottomRect == null ? new Rect() : bottomRect;
     }
 
     /**
@@ -446,7 +467,7 @@ public class WindowManagerProxy {
     protected CachedDisplayInfo getDisplayInfo(WindowMetrics windowMetrics, int rotation) {
         Point size = new Point(windowMetrics.getBounds().right, windowMetrics.getBounds().bottom);
         return new CachedDisplayInfo(size, rotation,
-                windowMetrics.getWindowInsets().getDisplayCutout());
+                WindowInsetsCompat.toWindowInsetsCompat(windowMetrics.getWindowInsets()).getDisplayCutout());
     }
 
     /**
@@ -488,11 +509,11 @@ public class WindowManagerProxy {
     /**
      * Returns a DisplayCutout which represents a rotated version of the original
      */
-    protected DisplayCutout rotateCutout(DisplayCutout original, int startWidth, int startHeight,
+    protected DisplayCutoutCompat rotateCutout(DisplayCutoutCompat original, int startWidth, int startHeight,
             int fromRotation, int toRotation) {
         Rect safeCutout = getSafeInsets(original);
         rotateRect(safeCutout, deltaRotation(fromRotation, toRotation));
-        return new DisplayCutout(Insets.of(safeCutout), null, null, null, null);
+        return new DisplayCutoutCompat(androidx.core.graphics.Insets.of(safeCutout), null, null, null, null, androidx.core.graphics.Insets.NONE);
     }
 
     /**
@@ -511,13 +532,17 @@ public class WindowManagerProxy {
                 }
             }
         }
-        return NavigationMode.NO_BUTTON;
+        return Utilities.ATLEAST_S ? NavigationMode.NO_BUTTON : NavigationMode.THREE_BUTTONS;
     }
 
     /**
      * @see DisplayCutout#getSafeInsets
      */
-    public static Rect getSafeInsets(DisplayCutout cutout) {
+    public static Rect getSafeInsets(DisplayCutoutCompat cutout) {
+        if (Utilities.ATLEAST_Q) {
+            return new Rect(cutout.getSafeInsetLeft(), cutout.getSafeInsetTop(),
+                    cutout.getSafeInsetRight(), cutout.getSafeInsetBottom());
+        }
         return new Rect(cutout.getSafeInsetLeft(), cutout.getSafeInsetTop(),
                 cutout.getSafeInsetRight(), cutout.getSafeInsetBottom());
     }

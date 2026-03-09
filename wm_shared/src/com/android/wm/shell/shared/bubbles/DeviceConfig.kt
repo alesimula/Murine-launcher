@@ -16,14 +16,19 @@
 
 package com.android.wm.shell.shared.bubbles
 
+import android.app.Activity
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.res.Configuration
 import android.content.res.Configuration.ORIENTATION_LANDSCAPE
-import android.graphics.Insets
 import android.graphics.Rect
+import android.os.Build
 import android.view.View.LAYOUT_DIRECTION_RTL
 import android.view.WindowInsets
 import android.view.WindowManager
+import androidx.core.graphics.Insets
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import kotlin.math.max
 
 import com.android.wm.shell.shared.ShellSharedConstants.SMALL_TABLET_MAX_EDGE_DP
@@ -43,23 +48,56 @@ data class DeviceConfig(
 
         @JvmStatic
         fun create(context: Context, windowManager: WindowManager): DeviceConfig {
-            val windowMetrics = windowManager.currentWindowMetrics
-            val metricInsets = windowMetrics.windowInsets
-            val insets = metricInsets.getInsetsIgnoringVisibility(WindowInsets.Type.navigationBars()
-                    or WindowInsets.Type.statusBars()
-                    or WindowInsets.Type.displayCutout())
-            val windowBounds = windowMetrics.bounds
             val config: Configuration = context.resources.configuration
-            val isLandscape = context.resources.configuration.orientation == ORIENTATION_LANDSCAPE
-            val isRtl = context.resources.configuration.layoutDirection == LAYOUT_DIRECTION_RTL
+            val isLandscape = config.orientation == ORIENTATION_LANDSCAPE
+            val isRtl = config.layoutDirection == LAYOUT_DIRECTION_RTL
+
+            val windowBounds = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                windowManager.currentWindowMetrics.bounds
+            } else {
+                val displayMetrics = context.resources.displayMetrics
+                Rect(0, 0, displayMetrics.widthPixels, displayMetrics.heightPixels)
+            }
+
+
+            val finalInsets: androidx.core.graphics.Insets = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                val metricInsets = windowManager.currentWindowMetrics.windowInsets
+                val platformInsets = metricInsets.getInsetsIgnoringVisibility(
+                    WindowInsets.Type.navigationBars() or
+                            WindowInsets.Type.statusBars() or
+                            WindowInsets.Type.displayCutout()
+                )
+                androidx.core.graphics.Insets.of(platformInsets.left, platformInsets.top, platformInsets.right, platformInsets.bottom)
+            } else {
+                val compatInsets = getLegacyInsets(context)
+                compatInsets.getInsets(
+                    WindowInsetsCompat.Type.navigationBars() or
+                            WindowInsetsCompat.Type.statusBars() or
+                            WindowInsetsCompat.Type.displayCutout()
+                )
+            }
+
             return DeviceConfig(
-                    isLargeScreen = isLargeScreen(config),
-                    isSmallTablet = isSmallTablet(context),
-                    isLandscape = isLandscape,
-                    isRtl = isRtl,
-                    windowBounds = windowBounds,
-                    insets = insets
+                isLargeScreen = isLargeScreen(config),
+                isSmallTablet = isSmallTablet(context),
+                isLandscape = isLandscape,
+                isRtl = isRtl,
+                windowBounds = windowBounds,
+                insets = finalInsets // This is now a unified Insets object
             )
+        }
+
+        private fun getLegacyInsets(context: Context): WindowInsetsCompat {
+            val activity = context as? Activity
+                ?: (context as? ContextWrapper)?.baseContext as? Activity
+            val decorView = activity?.window?.decorView
+
+            return if (decorView != null) {
+                ViewCompat.getRootWindowInsets(decorView) ?: WindowInsetsCompat.CONSUMED
+            } else {
+                // If we really have no View, we return an empty builder
+                WindowInsetsCompat.Builder().build()
+            }
         }
 
         @JvmStatic

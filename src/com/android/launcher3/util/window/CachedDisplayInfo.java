@@ -20,11 +20,15 @@ import static com.android.launcher3.util.RotationUtils.rotateSize;
 
 import android.graphics.Insets;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.view.DisplayCutout;
 import android.view.Surface;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.DisplayCutoutCompat;
+
+import com.android.launcher3.Utilities;
 
 import java.util.Objects;
 
@@ -33,13 +37,13 @@ import java.util.Objects;
  */
 public class CachedDisplayInfo {
 
-    private static final DisplayCutout NO_CUTOUT =
-            new DisplayCutout(Insets.NONE, null, null, null, null);
+    private static final DisplayCutoutCompat NO_CUTOUT =
+            new DisplayCutoutCompat(androidx.core.graphics.Insets.NONE, null, null, null, null, androidx.core.graphics.Insets.NONE);
 
     public final Point size;
     public final int rotation;
     @NonNull
-    public final DisplayCutout cutout;
+    public final DisplayCutoutCompat cutout;
 
     public CachedDisplayInfo() {
         this(new Point(0, 0), 0);
@@ -49,7 +53,7 @@ public class CachedDisplayInfo {
         this(size, rotation, NO_CUTOUT);
     }
 
-    public CachedDisplayInfo(Point size, int rotation, @Nullable DisplayCutout cutout) {
+    public CachedDisplayInfo(Point size, int rotation, @Nullable DisplayCutoutCompat cutout) {
         this.size = size;
         this.rotation = rotation;
         this.cutout = cutout == null ? NO_CUTOUT : cutout;
@@ -65,7 +69,7 @@ public class CachedDisplayInfo {
         Point newSize = new Point(size);
         rotateSize(newSize, deltaRotation(rotation, Surface.ROTATION_0));
 
-        DisplayCutout newCutout = windowManagerProxy.rotateCutout(
+        DisplayCutoutCompat newCutout = windowManagerProxy.rotateCutout(
                 cutout, size.x, size.y, rotation, Surface.ROTATION_0);
         return new CachedDisplayInfo(newSize, Surface.ROTATION_0, newCutout);
     }
