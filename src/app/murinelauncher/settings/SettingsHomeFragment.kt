@@ -33,6 +33,7 @@ public final class SettingsHomeFragment: AbstractSettingsFragment() {
         const val GRID_SIZE_HEIGHT: String = "pref_grid_size_height"
         const val DOUBLE_TAP_TO_SLEEP: String = "pref_double_tap_to_sleep"
         const val SWIPE_DOWN_NOTIFICATIONS: String = "pref_swipe_down_notifications"
+        const val SHOW_SEARCH_BAR: String = "pref_show_search_bar"
         private const val REQUEST_DEVICE_ADMIN = 1001
 
         @JvmStatic @RequiresApi(Build.VERSION_CODES.P)
@@ -126,6 +127,7 @@ public final class SettingsHomeFragment: AbstractSettingsFragment() {
                 return true
             }
             SWIPE_DOWN_NOTIFICATIONS -> return true
+            SHOW_SEARCH_BAR -> return true
             else -> return true
         }
     }

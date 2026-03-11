@@ -1,0 +1,229 @@
+package app.murinelauncher.widget.search
+
+import android.app.SearchManager
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.util.AttributeSet
+import android.util.Log
+import android.view.KeyEvent
+import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import app.murinelauncher.widget.search.MurineSearchBarView.Companion.TAG
+import com.android.launcher3.AbstractFloatingView
+import com.android.launcher3.ExtendedEditText
+import com.android.launcher3.Launcher
+import com.android.launcher3.LauncherPrefs
+import com.android.launcher3.R
+import com.android.launcher3.views.ActivityContext
+import org.json.JSONArray
+
+class MurineSearchBoxView(context: Context, attrs: AttributeSet?) :
+    AbstractFloatingView(context, attrs) {
+
+    private lateinit var searchInput: ExtendedEditText
+    private lateinit var historyList: RecyclerView
+    private lateinit var container: LinearLayout
+    private val launcher: Launcher = ActivityContext.lookupContext<Launcher>(context)
+    private val launcherPrefs = LauncherPrefs.get(context)
+
+    override fun onFinishInflate() {
+        super.onFinishInflate()
+        container = findViewById(R.id.search_box_container)
+        searchInput = findViewById(R.id.search_input)
+        historyList = findViewById(R.id.search_history_list)
+
+        searchInput.setOnEditorActionListener { _, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH ||
+                (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER)
+            ) {
+                performSearch(searchInput.text.toString())
+                true
+            } else {
+                false
+            }
+        }
+        searchInput.setOnBackKeyListener {
+            close(true)
+            true
+        }
+
+        historyList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                    searchInput.hideKeyboard()
+                }
+            }
+        })
+
+        setupHistory()
+    }
+
+    private fun setupHistory() {
+        val history = getHistory(launcherPrefs)
+        if (history.isNotEmpty()) {
+            historyList.visibility = View.VISIBLE
+            historyList.layoutManager = LinearLayoutManager(context)
+            historyList.adapter = HistoryAdapter(history) { query ->
+                searchInput.setText(query)
+                performSearch(query)
+            }
+        } else {
+            historyList.visibility = View.GONE
+        }
+    }
+
+    private fun performSearch(query: String) {
+        performSearchImpl(context, launcherPrefs, query)
+        close(true)
+    }
+
+    override fun handleClose(animate: Boolean) {
+        searchInput.hideKeyboard()
+        if (animate) {
+            container.animate()
+                .translationY(-container.height.toFloat())
+                .alpha(0f)
+                .setDuration(200)
+                .withEndAction { launcher.dragLayer.removeView(this) }
+                .start()
+            animate().alpha(0f).setDuration(200).start()
+        } else {
+            launcher.dragLayer.removeView(this)
+        }
+    }
+
+    override fun isOfType(type: Int): Boolean = type and TYPE_OPTIONS_POPUP != 0
+
+    override fun onControllerInterceptTouchEvent(ev: MotionEvent): Boolean {
+        if (ev.action == MotionEvent.ACTION_DOWN) {
+            if (!launcher.dragLayer.isEventOverView(container, ev)) {
+                close(true)
+                return true
+            }
+        }
+        return false
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+
+        container.alpha = 0f
+        container.post {
+            val screenHeight = resources.displayMetrics.heightPixels
+            val maxAllowedHeight = (screenHeight) / 2
+
+            if (container.height > maxAllowedHeight) {
+                container.layoutParams.height = maxAllowedHeight
+                container.requestLayout()
+                container.post { startEnterAnimation() }
+            } else {
+                startEnterAnimation()
+            }
+        }
+
+        searchInput.postDelayed({
+            searchInput.showKeyboard()
+        }, 100)
+    }
+
+    private fun startEnterAnimation() {
+        container.translationY = -container.height.toFloat()
+        container.animate()
+            .alpha(1f)
+            .translationY(0f)
+            .setDuration(300)
+            .start()
+    }
+
+    private class HistoryAdapter(
+        private val items: List<String>,
+        private val onClick: (String) -> Unit
+    ) : RecyclerView.Adapter<HistoryAdapter.ViewHolder>() {
+
+        class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+            val textView: TextView = view.findViewById(R.id.history_text)
+        }
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+            val view = LayoutInflater.from(parent.context)
+                .inflate(R.layout.murine_search_history_item, parent, false)
+            return ViewHolder(view)
+        }
+
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            val item = items[position]
+            holder.textView.text = item
+            holder.itemView.setOnClickListener { onClick(item) }
+        }
+
+        override fun getItemCount() = items.size
+    }
+
+    companion object {
+        fun show(launcher: Launcher) {
+            val view = launcher.layoutInflater.inflate(
+                R.layout.murine_search_box,
+                launcher.dragLayer,
+                false
+            ) as MurineSearchBoxView
+            launcher.dragLayer.addView(view)
+            view.mIsOpen = true
+        }
+
+        private fun getLauncherPrefs(context: Context) = LauncherPrefs.get(context)
+
+        private fun getHistory(prefs: LauncherPrefs): MutableList<String> {
+            val jsonArray = JSONArray(prefs.get(LauncherPrefs.QSB_SEARCH_HISTORY))
+            return MutableList(jsonArray.length()) { jsonArray.getString(it) }
+        }
+
+        private fun saveToHistory(prefs: LauncherPrefs, query: String) {
+            val currentHistory = getHistory(prefs)
+            currentHistory.remove(query)
+            currentHistory.add(0, query)
+            val jsonArray = JSONArray(currentHistory.take(20))
+            prefs.put(LauncherPrefs.QSB_SEARCH_HISTORY.to(jsonArray.toString()))
+        }
+
+        private fun performSystemSearch(context: Context, query: String) {
+            try {
+                val intent = Intent(Intent.ACTION_WEB_SEARCH).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    putExtra(SearchManager.QUERY, query)
+                }
+                context.startActivity(intent)
+            } catch (e: ActivityNotFoundException) {
+                Log.w(TAG, "No web search activity found", e)
+            }
+        }
+
+        private fun performSearchImpl(context: Context, historyPrefs: LauncherPrefs, query: String) {
+            if (query.isBlank()) return
+            saveToHistory(historyPrefs, query)
+
+            try {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(SearchProvider.current.buildSearchUrl(query))).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+                context.startActivity(intent)
+            } catch (e: ActivityNotFoundException) {
+                Log.w(TAG, "Could not open search provider", e)
+                performSystemSearch(context, query)
+            }
+        }
+
+        @JvmStatic
+        public fun performDetachedWebSearch(context: Context, query: String) {
+            performSearchImpl(context, LauncherPrefs.get(context), query)
+        }
+    }
+}

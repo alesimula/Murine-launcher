@@ -105,8 +105,8 @@
             launcher:allAppsBorderSpaceHorizontal="8"
             launcher:allAppsBorderSpaceVertical="16"
             launcher:allAppsBorderSpaceLandscape="16"
-            launcher:hotseatBarBottomSpace="76"
-            launcher:hotseatBarBottomSpaceLandscape="40"
+            launcher:hotseatBarBottomSpace="16"
+            launcher:hotseatBarBottomSpaceLandscape="16"
             launcher:canBeDefault="true" />
 
     </grid-option>

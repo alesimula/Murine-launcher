@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Outer container background -->
+    <View
+        android:id="@+id/murine_search_container_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/murine_search_container_bg" />
+
+    <!-- Inner content: search plate + circle search button -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/murine_search_plate_height"
+        android:layout_gravity="center"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/murine_search_container_padding">
+
+        <!-- Search plate (inner card) -->
+        <FrameLayout
+            android:id="@+id/murine_search_plate"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <!-- Inner card background -->
+            <View
+                android:id="@+id/murine_search_bar_bg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/murine_search_bar_bg" />
+
+            <!-- Search plate content -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <!-- Search provider icon -->
+                <ImageView
+                    android:id="@+id/murine_search_logo"
+                    android:layout_width="@dimen/murine_search_icon_size"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/murine_search_button_desc"
+                    android:padding="12dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_murine_search_provider_google"
+                    android:tint="@color/murine_search_icon_tint" />
+
+                <!-- Hint text area -->
+                <TextView
+                    android:id="@+id/murine_search_hint"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="start|center_vertical"
+                    android:singleLine="true"
+                    android:text="@string/murine_search_hint"
+                    android:textColor="@color/murine_search_hint_color"
+                    android:textSize="14sp" />
+
+                <!-- Voice / mic button -->
+                <ImageButton
+                    android:id="@+id/murine_search_mic_btn"
+                    android:layout_width="@dimen/murine_search_icon_size"
+                    android:layout_height="match_parent"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/murine_voice_search_desc"
+                    android:padding="12dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_murine_mic"
+                    android:tint="@color/murine_search_icon_tint" />
+
+                <!-- Lens / visual search button -->
+                <ImageButton
+                    android:id="@+id/murine_search_lens_btn"
+                    android:layout_width="@dimen/murine_search_icon_size"
+                    android:layout_height="match_parent"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/murine_lens_desc"
+                    android:padding="12dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_murine_lens"
+                    android:tint="@color/murine_search_icon_tint"/>
+
+            </LinearLayout>
+        </FrameLayout>
+
+        <!-- Circle search button (right side) -->
+        <FrameLayout
+            android:id="@+id/murine_search_btn_container"
+            android:layout_width="@dimen/murine_search_plate_height"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/murine_search_container_padding">
+
+            <View
+                android:id="@+id/murine_search_circle_bg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/murine_search_circle_bg" />
+
+            <ImageButton
+                android:id="@+id/murine_assistant_search_btn"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/murine_search_button_desc"
+                android:padding="12dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_murine_assistant_search"
+                android:tint="@color/murine_search_icon_tint" />
+        </FrameLayout>
+
+    </LinearLayout>
+</merge>

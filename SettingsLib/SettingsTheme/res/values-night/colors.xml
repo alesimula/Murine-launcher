@@ -56,10 +56,10 @@
     <color name="settingslib_materialColorSurfaceBright">@color/settingslib_neutral_variant_card</color>
     <color name="settingslib_materialColorSurfaceDim">#131313</color>
     <color name="settingslib_materialColorSurfaceContainer">#1F1F1F</color>
-    <color name="settingslib_materialColorSurfaceContainerLowest">#1B1B1B</color>
-    <color name="settingslib_materialColorSurfaceContainerLow">#0E0E0E</color>
-    <color name="settingslib_materialColorSurfaceContainerHigh">#2A2A2A</color>
-    <color name="settingslib_materialColorSurfaceContainerHighest">#343434</color>
+    <color name="settingslib_materialColorSurfaceContainerLowest">#0C0E13</color>
+    <color name="settingslib_materialColorSurfaceContainerLow">#12171B</color>
+    <color name="settingslib_materialColorSurfaceContainerHigh">#1F2024</color>
+    <color name="settingslib_materialColorSurfaceContainerHighest">#33343A</color>
 
     <color name="settingslib_colorBackgroundLevel_high">@color/m3_ref_palette_red60</color>
     <color name="settingslib_colorContentLevel_high">@color/m3_ref_palette_red10</color>

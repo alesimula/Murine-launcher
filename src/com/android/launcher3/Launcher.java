@@ -42,6 +42,7 @@ import static com.android.launcher3.LauncherConstants.ActivityCodes.REQUEST_CREA
 import static com.android.launcher3.LauncherConstants.ActivityCodes.REQUEST_HOME_ROLE;
 import static com.android.launcher3.LauncherConstants.ActivityCodes.REQUEST_PICK_APPWIDGET;
 import static com.android.launcher3.LauncherConstants.ActivityCodes.REQUEST_RECONFIGURE_APPWIDGET;
+import static com.android.launcher3.LauncherConstants.ActivityCodes.REQUEST_TTS_WEB_SEARCH;
 import static com.android.launcher3.LauncherConstants.SavedInstanceKeys.RUNTIME_STATE;
 import static com.android.launcher3.LauncherConstants.SavedInstanceKeys.RUNTIME_STATE_CURRENT_SCREEN_IDS;
 import static com.android.launcher3.LauncherConstants.SavedInstanceKeys.RUNTIME_STATE_PENDING_ACTIVITY_RESULT;
@@ -136,6 +137,7 @@ import android.os.Parcelable;
 import android.os.StrictMode;
 import android.os.SystemClock;
 import android.os.UserHandle;
+import android.speech.RecognizerIntent;
 import android.text.TextUtils;
 import android.text.method.TextKeyListener;
 import android.util.FloatProperty;
@@ -293,6 +295,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import app.murinelauncher.graphics.WorkspaceBlurUtils;
+import app.murinelauncher.widget.search.MurineSearchBoxView;
 
 /**
  * Default launcher application.
@@ -921,6 +924,18 @@ public class Launcher extends StatefulActivity<LauncherState>
             return;
         }
         mPendingActivityResult = null;
+
+        if (requestCode == REQUEST_TTS_WEB_SEARCH) {
+            if (resultCode == RESULT_OK) {
+                ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                if (results != null && !results.isEmpty()) {
+                    // Result with highest confidence
+                    String query = results.get(0);
+                    MurineSearchBoxView.performDetachedWebSearch(this, query);
+                }
+            }
+            return;
+        }
 
         if (requestCode == REQUEST_HOME_ROLE) {
             if (resultCode != RESULT_OK) {

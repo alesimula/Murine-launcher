@@ -38,10 +38,11 @@
     <dimen name="spring_loaded_hotseat_top_margin">76dp</dimen>
     <dimen name="spring_loaded_hotseat_top_margin_wide_portrait">64dp</dimen>
 
-    <dimen name="dynamic_grid_hotseat_side_padding">0dp</dimen>
+    <dimen name="dynamic_grid_hotseat_side_padding">20dp</dimen>
 
     <!-- Scalable Grid -->
     <dimen name="min_qsb_margin">8dp</dimen>
+    <dimen name="min_qsb_margin_fullscreen">28dp</dimen>
 
     <!-- Workspace page indicator -->
     <dimen name="workspace_page_indicator_height">24dp</dimen>
@@ -439,7 +440,7 @@
         @*android:dimen/rounded_corner_content_padding
     </dimen>
     <dimen name="taskbar_stashed_size">0dp</dimen>
-    <dimen name="qsb_widget_height">0dp</dimen>
+    <dimen name="qsb_widget_height">@dimen/murine_search_widget_height</dimen>
     <dimen name="qsb_shadow_height">0dp</dimen>
     <dimen name="min_hotseat_icon_space">18dp</dimen>
     <dimen name="max_hotseat_icon_space">50dp</dimen>
@@ -577,4 +578,10 @@
     <!-- App Title Pill -->
     <dimen name="app_title_pill_horizontal_padding">4dp</dimen>
     <dimen name="app_title_pill_round_rect_padding">2dp</dimen>
+
+    <!-- Murine search bar dimensions -->
+    <dimen name="murine_search_widget_height">60dp</dimen> <!-- referenced by qsb_widget_height -->
+    <dimen name="murine_search_plate_height">48dp</dimen>
+    <dimen name="murine_search_container_padding">6dp</dimen>
+    <dimen name="murine_search_icon_size">48dp</dimen>
 </resources>

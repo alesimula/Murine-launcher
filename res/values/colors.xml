@@ -317,4 +317,10 @@
     <color name="all_apps_label_text_color">#2F2E2A</color>
     <color name="all_apps_search_bg_color">#14000000</color>
     <color name="all_apps_search_border_color">#22000000</color>
+
+    <!-- Murine search bar colors (light) -->
+    <color name="murine_search_container_color">@color/settingslib_materialColorSurfaceContainerHigh</color>
+    <color name="murine_search_bar_color">@color/settingslib_materialColorSurfaceBright</color>
+    <color name="murine_search_icon_tint">@color/settingslib_materialColorPrimary</color>
+    <color name="murine_search_hint_color">@color/settingslib_materialColorOnSurfaceVariant</color>
 </resources>

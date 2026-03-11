@@ -19,7 +19,6 @@ package com.android.launcher3;
 import static com.android.launcher3.GridType.GRID_TYPE_ANY;
 import static com.android.launcher3.GridType.GRID_TYPE_NON_ONE_GRID;
 import static com.android.launcher3.GridType.GRID_TYPE_ONE_GRID;
-import static com.android.launcher3.LauncherPrefs.DB_FILE;
 import static com.android.launcher3.LauncherPrefs.ENABLE_TWOLINE_ALLAPPS_TOGGLE;
 import static com.android.launcher3.LauncherPrefs.FIXED_LANDSCAPE_MODE;
 import static com.android.launcher3.LauncherPrefs.GRID_HEIGHT;
@@ -28,6 +27,7 @@ import static com.android.launcher3.LauncherPrefs.GRID_WIDTH;
 import static com.android.launcher3.LauncherPrefs.ICON_LABEL_SIZE;
 import static com.android.launcher3.LauncherPrefs.ICON_SIZE;
 import static com.android.launcher3.LauncherPrefs.NON_FIXED_LANDSCAPE_GRID_NAME;
+import static com.android.launcher3.LauncherPrefs.QSB_SHOW_SEARCH_BAR;
 import static com.android.launcher3.Utilities.dpiFromPx;
 import static com.android.launcher3.testing.shared.ResourceUtils.INVALID_RESOURCE_HANDLE;
 import static com.android.launcher3.util.DisplayController.CHANGE_DENSITY;
@@ -66,8 +66,6 @@ import com.android.launcher3.dagger.LauncherAppComponent;
 import com.android.launcher3.dagger.LauncherAppSingleton;
 import com.android.launcher3.graphics.ThemeManager;
 import com.android.launcher3.icons.DotRenderer;
-import com.android.launcher3.logging.FileLog;
-import com.android.launcher3.model.DeviceGridState;
 import com.android.launcher3.provider.RestoreDbTask;
 import com.android.launcher3.testing.shared.ResourceUtils;
 import com.android.launcher3.util.DaggerSingletonObject;
@@ -308,7 +306,8 @@ public class InvariantDeviceProfile {
             } else if (GRID_WIDTH.getSharedPrefKey().equals(key) ||
                     GRID_HEIGHT.getSharedPrefKey().equals(key) ||
                     ICON_SIZE.getSharedPrefKey().equals(key) ||
-                    ICON_LABEL_SIZE.getSharedPrefKey().equals(key)) {
+                    ICON_LABEL_SIZE.getSharedPrefKey().equals(key) ||
+                    QSB_SHOW_SEARCH_BAR.getSharedPrefKey().equals(key)) {
                 onConfigChanged(context);
             }
         };

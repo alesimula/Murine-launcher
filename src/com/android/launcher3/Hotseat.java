@@ -256,7 +256,7 @@ public class Hotseat extends CellLayout implements Insettable {
                 lp.width = grid.hotseatBarSizePx + insets.right;
             }
         } else {
-            mQsb.setVisibility(View.VISIBLE);
+            mQsb.setVisibility(grid.hotseatQsbHeight > 0 ? View.VISIBLE : View.GONE);
             lp.gravity = Gravity.BOTTOM;
             lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
             lp.height = grid.hotseatBarSizePx;

@@ -25,6 +25,7 @@ import app.murinelauncher.settings.SettingsGeneralFragment
 import app.murinelauncher.settings.SettingsHomeFragment
 import app.murinelauncher.settings.SettingsIconsFragment
 import app.murinelauncher.theme.ThemeOverride
+import app.murinelauncher.widget.search.SearchProvider
 import com.android.launcher3.BuildConfig.WIDGET_ON_FIRST_SCREEN
 import com.android.launcher3.GridType.Companion.GRID_TYPE_ANY
 import com.android.launcher3.InvariantDeviceProfile.GRID_NAME_PREFS_KEY
@@ -383,6 +384,12 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
                 RotationHelper.getAllowRotationDefaultValue(DisplayController.INSTANCE.get(it).info)
             }
 
+        @JvmField
+        val QSB_SHOW_SEARCH_BAR = backedUpItem(SettingsHomeFragment.SHOW_SEARCH_BAR, true)
+        @JvmField
+        val QSB_SEARCH_PROVIDER = backedUpItem("qsb_search_provider", SearchProvider.DUCKDUCKGO, EncryptionType.DEVICE_PROTECTED)
+        @JvmField
+        val QSB_SEARCH_HISTORY = backedUpItem("qsb_search_history", "[]", EncryptionType.ENCRYPTED)
         @JvmField
         val FIXED_LANDSCAPE_MODE = backedUpItem(SettingsHomeFragment.FIXED_LANDSCAPE_MODE, false)
         @JvmField

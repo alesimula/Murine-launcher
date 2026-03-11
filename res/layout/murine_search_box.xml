@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<app.murinelauncher.widget.search.MurineSearchBoxView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:focusable="true">
+
+    <LinearLayout
+        android:id="@+id/search_box_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:layout_marginTop="24dp"
+        android:layout_marginHorizontal="16dp"
+        android:background="@drawable/murine_search_box_bg"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:elevation="8dp">
+
+        <com.android.launcher3.ExtendedEditText
+            android:id="@+id/search_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/murine_search_input_bg"
+            android:hint="@string/murine_search_hint"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:maxLines="1"
+            android:padding="12dp"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textColorHint="?android:attr/textColorSecondary" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/search_history_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:layout_marginTop="8dp"
+            android:maxHeight="300dp"
+            android:visibility="gone" />
+
+    </LinearLayout>
+</app.murinelauncher.widget.search.MurineSearchBoxView>

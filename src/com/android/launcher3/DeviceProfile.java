@@ -68,6 +68,7 @@ import com.android.launcher3.util.CellContentDimensions;
 import com.android.launcher3.util.DisplayController;
 import com.android.launcher3.util.DisplayController.Info;
 import com.android.launcher3.util.IconSizeSteps;
+import com.android.launcher3.util.NavigationMode;
 import com.android.launcher3.util.ResourceHelper;
 import com.android.launcher3.util.WindowBounds;
 import com.android.launcher3.util.window.WindowManagerProxy;
@@ -179,6 +180,7 @@ public class DeviceProfile {
     public int iconDrawablePaddingPx;
     private int mIconDrawablePaddingOriginalPx;
     public boolean iconCenterVertically;
+    public boolean showQsb;
 
     public float cellScaleToFit;
     public int cellWidthPx;
@@ -613,9 +615,12 @@ public class DeviceProfile {
 
         workspaceCellPaddingXPx = res.getDimensionPixelSize(R.dimen.dynamic_grid_cell_padding_x);
 
-        hotseatQsbHeight = res.getDimensionPixelSize(R.dimen.qsb_widget_height);
-        hotseatQsbShadowHeight = res.getDimensionPixelSize(R.dimen.qsb_shadow_height);
-        hotseatQsbVisualHeight = hotseatQsbHeight - 2 * hotseatQsbShadowHeight;
+        // Hide search bar if preference is disabled
+        showQsb = LauncherPrefs.QSB_SHOW_SEARCH_BAR.get(context);
+
+        hotseatQsbHeight = showQsb ? res.getDimensionPixelSize(R.dimen.qsb_widget_height) : 0;
+        hotseatQsbShadowHeight = showQsb ? res.getDimensionPixelSize(R.dimen.qsb_shadow_height) : 0;
+        hotseatQsbVisualHeight = showQsb ? hotseatQsbHeight - 2 * hotseatQsbShadowHeight : 0;
 
         // Whether QSB might be inline in appropriate orientation (e.g. landscape).
         boolean canQsbInline = (isTwoPanels ? inv.inlineQsb[INDEX_TWO_PANEL_PORTRAIT]
@@ -633,7 +638,11 @@ public class DeviceProfile {
                 isTwoPanels ? inv.numDatabaseAllAppsColumns : inv.numAllAppsColumns;
 
         int hotseatBarBottomSpace;
-        int minQsbMargin = res.getDimensionPixelSize(R.dimen.min_qsb_margin);
+        boolean hasPhysicalButtons = !isGestureMode
+                && mInfo.getNavigationMode() == NavigationMode.THREE_BUTTONS
+                && mInsets.bottom == 0;
+        int minQsbMargin = res.getDimensionPixelSize(isGestureMode || hasPhysicalButtons ?
+                R.dimen.min_qsb_margin_fullscreen : R.dimen.min_qsb_margin);
 
         if (mIsResponsiveGrid) {
             float responsiveAspectRatio = (float) widthPx / heightPx;
@@ -668,8 +677,11 @@ public class DeviceProfile {
         }
 
         if (!isVerticalBarLayout()) {
-            // Have a little space between the inset and the QSB
-            if (mInsets.bottom + minQsbMargin > hotseatBarBottomSpace) {
+            if ((isGestureMode || hasPhysicalButtons) && !isTaskbarPresent) {
+                // Gesture navigation: don't reserve extra space for a nav bar that isn't there
+                hotseatBarBottomSpacePx = mInsets.bottom + Math.max(minQsbMargin, hotseatBarBottomSpace);
+            } else if (mInsets.bottom + minQsbMargin > hotseatBarBottomSpace) {
+                // Have a little space between the inset and the QSB
                 int availableSpace = hotseatQsbSpace - (mInsets.bottom - hotseatBarBottomSpace);
 
                 // Only change the spaces if there is space
@@ -687,6 +699,11 @@ public class DeviceProfile {
             } else {
                 hotseatBarBottomSpacePx = hotseatBarBottomSpace;
             }
+        }
+
+        // If search bar is hidden, collapse its spacing as well
+        if (hotseatQsbHeight == 0) {
+            hotseatQsbSpace = 0;
         }
 
         springLoadedHotseatBarTopMarginPx = shouldApplyWidePortraitDimens
@@ -978,7 +995,10 @@ public class DeviceProfile {
      * necessary.
      */
     public void recalculateHotseatWidthAndBorderSpace() {
-        if (!mIsScalableGrid) return;
+        if (!mIsScalableGrid) {
+            if (showQsb) hotseatQsbWidth = calculateQsbWidth(hotseatBorderSpace);
+            return;
+        }
 
         updateHotseatWidthAndBorderSpace(inv.numColumns);
         int numWorkspaceColumns = getPanelCount() * inv.numColumns;
