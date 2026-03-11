@@ -33,7 +33,7 @@ android {
         versionName "0.4"
 
         buildConfigField "boolean", "IS_STUDIO_BUILD", "false"
-        buildConfigField "boolean", "QSB_ON_FIRST_SCREEN", "true"
+        buildConfigField "boolean", "QSB_ON_FIRST_SCREEN", "false"
         buildConfigField "boolean", "IS_DEBUG_DEVICE", "false"
         buildConfigField "boolean", "WIDGET_ON_FIRST_SCREEN", "true"
         buildConfigField "boolean", "WIDGETS_ENABLED", "true"
