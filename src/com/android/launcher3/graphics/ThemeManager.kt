@@ -18,6 +18,7 @@ package com.android.launcher3.graphics
 
 import android.content.Context
 import android.content.res.Resources
+import app.murinelauncher.settings.SettingsIconsFragment
 import com.android.launcher3.EncryptionType
 import com.android.launcher3.Item
 import com.android.launcher3.LauncherPrefChangeListener
@@ -156,11 +157,9 @@ constructor(
     companion object {
 
         @JvmField val INSTANCE = DaggerSingletonObject(LauncherAppComponent::getThemeManager)
-        const val KEY_ICON_SHAPE = "icon_shape_model"
-
         const val KEY_THEMED_ICONS = "themed_icons"
         @JvmField val THEMED_ICONS = backedUpItem(KEY_THEMED_ICONS, false, EncryptionType.ENCRYPTED)
-        @JvmField val PREF_ICON_SHAPE = backedUpItem(KEY_ICON_SHAPE, ShapesProvider.IconShape.IOS, EncryptionType.ENCRYPTED)
+        @JvmField val PREF_ICON_SHAPE = backedUpItem(SettingsIconsFragment.ICON_SHAPE_KEY, ShapesProvider.IconShape.IOS, EncryptionType.ENCRYPTED)
 
         private const val ACTION_OVERLAY_CHANGED = "android.intent.action.OVERLAY_CHANGED"
         private val CONFIG_ICON_MASK_RES_ID: Int =

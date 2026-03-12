@@ -26,10 +26,11 @@
         android:widgetLayout="@layout/notification_pref_warning" />
 
     <PreferenceCategory android:title="@string/pref_subcategory_appearance">
-        <Preference
+        <app.murinelauncher.widget.radio.RadioGroupPreference
             android:key="pref_icon_shape"
             android:title="@string/pref_icon_shape_title"
-            android:persistent="false" />
+            app:iconPosition="end"
+            app:iconTint="@color/settingslib_materialColorOnSurfaceVariant" />
         <com.android.settingslib.widget.ExpandablePreference
             android:title="@string/pref_group_icon_scale_title"
             android:summary="@string/pref_group_icon_scale_desc">

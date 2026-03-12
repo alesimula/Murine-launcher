@@ -671,6 +671,19 @@
         <attr name="customTickPositions" format="string" />
     </declare-styleable>
 
+    <!-- Base attributes available to RadioGroupPreference. -->
+    <declare-styleable name="RadioGroupPreference">
+        <attr name="sheetTitle" format="string|reference" />
+        <attr name="iconPosition" format="enum">
+            <enum name="start" value="0" />
+            <enum name="end" value="1" />
+        </attr>
+        <attr name="indexedEntries" format="integer" />
+        <attr name="showPreviewIcon" format="boolean" />
+        <attr name="iconTint" format="color|reference" />
+        <attr name="tintSheetIcons" format="boolean" />
+    </declare-styleable>
+
     <declare-styleable name="WarningCardPreference">
         <attr name="formatHtml" format="boolean" />
         <attr name="cardIcon" format="reference" />

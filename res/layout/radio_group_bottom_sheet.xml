@@ -13,9 +13,9 @@
         android:layout_marginBottom="-8dp"/>
 
     <TextView
+        android:id="@+id/sheet_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/pref_icon_shape_title"
         android:textAppearance="@style/HomeSettings.TitleMedium"
         android:paddingStart="24dp"
         android:paddingEnd="24dp"

@@ -1,13 +1,12 @@
 package app.murinelauncher.settings
 
-import android.os.Bundle
-import android.view.View
 import androidx.preference.Preference
-import app.murinelauncher.widget.IconShapeBottomSheet
+import app.murinelauncher.graphics.IconShapeDrawables
+import app.murinelauncher.widget.radio.RadioGroupPreference
 import com.android.launcher3.BuildConfig
-import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.R
 import com.android.launcher3.graphics.ThemeManager
+import com.android.launcher3.shapes.ShapesProvider
 import com.android.launcher3.util.DisplayController
 
 public final class SettingsIconsFragment: AbstractSettingsFragment() {
@@ -23,31 +22,19 @@ public final class SettingsIconsFragment: AbstractSettingsFragment() {
 
     override fun getPreferenceTitle(): Int? = R.string.pref_category_icons_title
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        updateIconShapePreference()
-    }
-
     override fun initPreference(preference: Preference, info: DisplayController.Info): Boolean {
         when (preference.key) {
             NOTIFICATION_DOTS_PREFERENCE_KEY -> return BuildConfig.NOTIFICATION_DOTS_ENABLED
             ICON_SHAPE_KEY -> {
-                preference.setOnPreferenceClickListener {
-                    val sheet = IconShapeBottomSheet()
-                    sheet.setOnShapeSelectedListener { _ -> updateIconShapePreference() }
-                    sheet.show(childFragmentManager, IconShapeBottomSheet.TAG)
-                    true
+                preference as RadioGroupPreference
+                preference.asEnum(ShapesProvider.IconShape::class.java).apply {
+                    setDefaultValue(ThemeManager.PREF_ICON_SHAPE.defaultValue)
+                    setTextProvider { ctx, shape -> ctx.getString(shape.title) }
+                    setIconProvider { ctx, shape -> IconShapeDrawables.getShapePreviewDrawable(ctx, shape) }
                 }
                 return true
             }
             else -> return true
         }
-    }
-
-    private fun updateIconShapePreference() {
-        val pref = findPreference<Preference>(ICON_SHAPE_KEY) ?: return
-        val shape = LauncherPrefs.INSTANCE.get(requireContext()).get(ThemeManager.PREF_ICON_SHAPE)
-        pref.summary = requireContext().getString(shape.title)
-        pref.icon = IconShapeBottomSheet.getShapePreviewDrawable(requireContext(), shape)
     }
 }
