@@ -13,6 +13,8 @@
     <string name="pref_category_home_desc">Customize your home screen</string>
     <string name="pref_category_drawer_title">App drawer</string>
     <string name="pref_category_drawer_desc">Customize your app drawer</string>
+    <string name="pref_category_qsb_title">Search</string>
+    <string name="pref_category_qsb_desc">Customize quick search box</string>
     <string name="pref_category_misc_title">Miscellaneous</string>
     <string name="pref_category_misc_desc">Other options</string>
 
@@ -51,6 +53,18 @@
     <string name="pref_double_tap_to_sleep_summary">Double tap on empty space to lock the screen</string>
     <string name="pref_swipe_down_notifications_title">Swipe down for notifications</string>
     <string name="pref_swipe_down_notifications_summary">Swipe down on home screen to expand the notification shade</string>
+
+    <!-- Murine search bar -->
+    <string name="murine_search_hint">Search…</string>
+    <string name="murine_search_hint_provider">Search with %1$s</string>
+    <string name="murine_search_button_desc">Search</string>
+    <string name="murine_voice_search_desc">Voice search</string>
+    <string name="murine_voice_search_prompt">Speak now...</string>
+    <string name="murine_lens_desc">Visual search</string>
+    <!-- Murine search bar preferences -->
+    <string name="pref_qsb_show_search_bar_title">Show search bar</string>
+    <string name="pref_qsb_enable_lens_title">Enable Lens</string>
+    <string name="pref_qsb_enable_lens_summary">Show Google Lens button in quick search</string>
 
     <string name="pref_blur_unsupported_warning"><![CDATA[The wallpaper blur may or may not be fully supported or enabled by this OEM/ROM; If you encounter issues, try to check for an &quot;Allow window-level blurs&quot; option in Display Options or Developer Options.<br/>Alternatively, try enabling <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">this Magisk module</a> on rooted devices]]></string>
 </resources>

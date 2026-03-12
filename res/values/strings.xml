@@ -549,14 +549,4 @@
     <!-- Content description for install app icon -->
     <string name="ps_add_button_content_description">Install apps to Private Space</string>
     <string name="ps_app_content_description">Add files and more to Private Space</string>
-
-    <!-- Murine search bar -->
-    <string name="murine_search_hint">Search…</string>
-    <string name="murine_search_hint_provider">Search with %1$s</string>
-    <string name="murine_search_button_desc">Search</string>
-    <string name="murine_voice_search_desc">Voice search</string>
-    <string name="murine_voice_search_prompt">Speak now...</string>
-    <string name="murine_lens_desc">Visual search</string>
-    <string name="pref_show_search_bar_title">Show search bar</string>
-    <string name="pref_show_search_bar_summary">Show the search bar in the dock</string>
 </resources>

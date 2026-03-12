@@ -16,6 +16,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.android.launcher3.Launcher
 import com.android.launcher3.LauncherConstants
+import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.R
 import com.android.launcher3.views.ActivityContext
 
@@ -50,13 +51,9 @@ class MurineSearchBarView @JvmOverloads constructor(
         assistantSearchButton = findViewById(R.id.murine_assistant_search_btn)
         searchPlate = findViewById(R.id.murine_search_plate)
 
-        applyConfig()
-        setupClickListeners()
-    }
-
-    private fun applyConfig() {
-        lensButton.visibility = if (SearchBarConfig.SEARCH_DISABLE_LENS) View.GONE else View.VISIBLE
+        lensButton.visibility = if (LauncherPrefs.QSB_SHOW_LENS.get(context)) View.VISIBLE else View.GONE
         updateHint()
+        setupClickListeners()
     }
 
     private fun updateHint() {

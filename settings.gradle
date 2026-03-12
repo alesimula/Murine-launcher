@@ -76,6 +76,8 @@ include ':SettingsLib-ExpandablePreference'
 project(':SettingsLib-ExpandablePreference').projectDir = new File(rootDir, 'SettingsLib/ExpandablePreference')
 include ':SettingsLib-SegmentedButtonPreference'
 project(':SettingsLib-SegmentedButtonPreference').projectDir = new File(rootDir, 'SettingsLib/SegmentedButtonPreference')
+include ':SettingsLib-MainSwitchPreference'
+project(':SettingsLib-MainSwitchPreference').projectDir = new File(rootDir, 'SettingsLib/MainSwitchPreference')
 
 include ':compatLib'
 include ':compatLib:compatLibVQ'

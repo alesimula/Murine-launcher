@@ -24,6 +24,7 @@ import app.murinelauncher.settings.SettingsDrawerFragment
 import app.murinelauncher.settings.SettingsGeneralFragment
 import app.murinelauncher.settings.SettingsHomeFragment
 import app.murinelauncher.settings.SettingsIconsFragment
+import app.murinelauncher.settings.SettingsQsbFragment
 import app.murinelauncher.theme.ThemeOverride
 import app.murinelauncher.widget.search.SearchProvider
 import com.android.launcher3.BuildConfig.WIDGET_ON_FIRST_SCREEN
@@ -385,7 +386,9 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
             }
 
         @JvmField
-        val QSB_SHOW_SEARCH_BAR = backedUpItem(SettingsHomeFragment.SHOW_SEARCH_BAR, true)
+        val QSB_SHOW_SEARCH_BAR = backedUpItem(SettingsQsbFragment.SHOW_SEARCH_BAR, true)
+        @JvmField
+        val QSB_SHOW_LENS = backedUpItem(SettingsQsbFragment.SHOW_LENS, true)
         @JvmField
         val QSB_SEARCH_PROVIDER = backedUpItem("qsb_search_provider", SearchProvider.DUCKDUCKGO, EncryptionType.DEVICE_PROTECTED)
         @JvmField

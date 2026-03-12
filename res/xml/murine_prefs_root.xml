@@ -40,6 +40,11 @@
         android:summary="@string/pref_category_drawer_desc"
         android:fragment="app.murinelauncher.settings.SettingsDrawerFragment"/>
     <Preference
+        android:icon="@drawable/ic_settings_qsb"
+        android:title="@string/pref_category_qsb_title"
+        android:summary="@string/pref_category_qsb_desc"
+        android:fragment="app.murinelauncher.settings.SettingsQsbFragment"/>
+    <Preference
         android:icon="@drawable/ic_settings_misc"
         android:title="@string/pref_category_misc_title"
         android:summary="@string/pref_category_misc_desc"

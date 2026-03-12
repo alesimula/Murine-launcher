@@ -40,13 +40,6 @@
         launcher:logIdOn="615"
         launcher:logIdOff="616" />
 
-    <SwitchPreferenceCompat
-        android:key="pref_show_search_bar"
-        android:title="@string/pref_show_search_bar_title"
-        android:summary="@string/pref_show_search_bar_summary"
-        android:defaultValue="true"
-        android:persistent="true" />
-
     <PreferenceCategory android:title="@string/pref_subcategory_layout">
         <com.android.settingslib.widget.ExpandablePreference
             android:title="@string/pref_group_grid_size_title"
