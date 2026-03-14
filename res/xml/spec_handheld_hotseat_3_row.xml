@@ -5,7 +5,7 @@
         <hotseatSpec
             launcher:maxAvailableSize="9999dp"
             launcher:dimensionType="width">
-            <hotseatQsbSpace launcher:fixedSize="8dp" />
+            <hotseatQsbSpace launcher:fixedSize="10dp" />
             <edgePadding launcher:fixedSize="16dp" />
         </hotseatSpec>
     </specs>

@@ -51,4 +51,13 @@
 
 <!-- Workspace grid visualization parameters -->
     <dimen name="grid_visualization_horizontal_cell_spacing">6dp</dimen>
+
+<!-- Murine search bar dimensions (tablet) -->
+    <dimen name="murine_search_widget_height">72dp</dimen>
+    <dimen name="murine_search_plate_height">56dp</dimen>
+    <dimen name="murine_search_container_padding">8dp</dimen>
+    <dimen name="murine_search_buttons_padding">8dp</dimen>
+    <dimen name="murine_search_provider_icon_size">28.8dp</dimen>
+    <dimen name="murine_search_bar_icons_size">28.8dp</dimen>
+    <dimen name="murine_search_text_size">16.8sp</dimen>
 </resources>

@@ -1,4 +1,4 @@
-package app.murinelauncher.settings;
+package app.murinelauncher.settings.common;
 
 import static android.provider.Settings.Global.DEVELOPMENT_SETTINGS_ENABLED;
 import static com.android.launcher3.BuildConfig.IS_DEBUG_DEVICE;
@@ -8,7 +8,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.TextUtils;
+
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,6 +31,10 @@ import com.android.launcher3.util.DisplayController;
 import com.android.launcher3.util.SettingsCache;
 import com.android.settingslib.widget.SettingsBasePreferenceFragment;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * This fragment shows the launcher preferences.
  */
@@ -38,6 +47,8 @@ public abstract class AbstractSettingsFragment extends SettingsBasePreferenceFra
 
     private boolean mRestartOnResume = false;
 
+    private FrameLayout mStickyWrapper;
+
     private String mHighLightKey;
 
     private boolean mPreferenceHighlighted = false;
@@ -48,6 +59,15 @@ public abstract class AbstractSettingsFragment extends SettingsBasePreferenceFra
     protected abstract int getPreferenceScreenResId();
 
     protected @Nullable Integer getPreferenceTitle() {return null;}
+
+    /**
+     * Returns the set of preference keys that should stick to the top of the list
+     * when scrolled past (calendar-month-header style). Override in subclasses.
+     */
+    @NonNull
+    protected Set<String> getStickyKeys() {
+        return Collections.emptySet();
+    }
 
     /**
      * Initializes a preference. This is called for every preference. Returning false here
@@ -142,6 +162,25 @@ public abstract class AbstractSettingsFragment extends SettingsBasePreferenceFra
     }
 
     @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View original = super.onCreateView(inflater, container, savedInstanceState);
+        if (!getStickyKeys().isEmpty()) {
+            // Wrap in a FrameLayout so the sticky overlay can be placed
+            // on top of the entire preference list reliably.
+            mStickyWrapper = new FrameLayout(requireContext());
+            mStickyWrapper.setLayoutParams(new ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT));
+            mStickyWrapper.addView(original, new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT));
+            return mStickyWrapper;
+        }
+        return original;
+    }
+
+    @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         var res = getContext().getResources();
         int bottomPadding = res.getDimensionPixelSize(com.android.settingslib.widget.theme.R.dimen.settingslib_expressive_space_small1);
@@ -162,6 +201,50 @@ public abstract class AbstractSettingsFragment extends SettingsBasePreferenceFra
 
         // Overriding Text Direction in the Androidx preference library to support RTL
         view.setTextDirection(View.TEXT_DIRECTION_LOCALE);
+
+        // Sticky header support
+        listView.post(this::setupStickyHeaders);
+    }
+
+    /**
+     * Sets up sticky-header behaviour on the RecyclerView based on {@link #getStickyKeys()}.
+     */
+    private void setupStickyHeaders() {
+        // Guard: the Runnable may fire after the fragment is detached.
+        if (!isAdded() || getView() == null) return;
+        Set<String> keys = getStickyKeys();
+        if (keys.isEmpty()) return;
+
+        PreferenceScreen screen = getPreferenceScreen();
+        if (screen == null) return;
+
+        RecyclerView listView = getListView();
+        RecyclerView.Adapter<?> adapter = listView.getAdapter();
+        if (!(adapter instanceof PreferenceGroup.PreferencePositionCallback callback)) return;
+
+        Set<Integer> stickyPositions = new HashSet<>();
+        for (String key : keys) {
+            int pos = callback.getPreferenceAdapterPosition(key);
+            if (pos >= 0) stickyPositions.add(pos);
+        }
+
+        if (stickyPositions.isEmpty()) return;
+        if (mStickyWrapper == null) return;
+
+        FrameLayout stickyOverlay = new FrameLayout(requireContext());
+        stickyOverlay.setVisibility(View.GONE);
+
+        // Elevation + no outline = draws above everything without a shadow
+        stickyOverlay.setElevation(1f);
+        stickyOverlay.setOutlineProvider(null);
+
+        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                Gravity.TOP);
+        mStickyWrapper.addView(stickyOverlay, lp);
+
+        new StickyHeaderDecoration(listView, stickyPositions, stickyOverlay);
     }
 
     @Override
@@ -206,6 +289,12 @@ public abstract class AbstractSettingsFragment extends SettingsBasePreferenceFra
     public void onSettingsChanged(boolean isEnabled) {
         // Developer options changed, try recreate
         tryRecreateActivity();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mStickyWrapper = null;
     }
 
     @Override

@@ -16,6 +16,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.android.launcher3.Launcher
 import com.android.launcher3.LauncherConstants
+import com.android.launcher3.LauncherPrefChangeListener
 import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.R
 import com.android.launcher3.views.ActivityContext
@@ -51,8 +52,7 @@ class MurineSearchBarView @JvmOverloads constructor(
         assistantSearchButton = findViewById(R.id.murine_assistant_search_btn)
         searchPlate = findViewById(R.id.murine_search_plate)
 
-        lensButton.visibility = if (LauncherPrefs.QSB_SHOW_LENS.get(context)) View.VISIBLE else View.GONE
-        updateHint()
+        refreshProvider()
         setupClickListeners()
     }
 
@@ -159,10 +159,40 @@ class MurineSearchBarView @JvmOverloads constructor(
     }
 
     /**
-     * Call this when the search provider changes to refresh the UI.
+     * Call this when the search provider or QSB config changes to refresh the UI.
      */
     fun refreshProvider() {
+        SearchProvider.load(context)
+        searchLogo.setImageResource(SearchProvider.current.iconRes)
+        lensButton.visibility = if (LauncherPrefs.QSB_SHOW_LENS.get(context)) View.VISIBLE else View.GONE
         updateHint()
+    }
+
+    private val prefListener = LauncherPrefChangeListener { key ->
+        when (key) {
+            LauncherPrefs.QSB_SEARCH_PROVIDER.sharedPrefKey,
+            LauncherPrefs.QSB_SHOW_LENS.sharedPrefKey -> {
+                post { refreshProvider() }
+            }
+        }
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        LauncherPrefs.get(context).addListener(
+            prefListener,
+            LauncherPrefs.QSB_SEARCH_PROVIDER,
+            LauncherPrefs.QSB_SHOW_LENS
+        )
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        LauncherPrefs.get(context).removeListener(
+            prefListener,
+            LauncherPrefs.QSB_SEARCH_PROVIDER,
+            LauncherPrefs.QSB_SHOW_LENS
+        )
     }
 
     companion object {

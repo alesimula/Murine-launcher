@@ -1,13 +1,10 @@
 package app.murinelauncher.settings
 
-import android.content.pm.ActivityInfo
 import androidx.annotation.VisibleForTesting
 import androidx.preference.Preference
+import app.murinelauncher.settings.common.AbstractSettingsFragment
 import com.android.launcher3.BuildConfig
-import com.android.launcher3.Flags
-import com.android.launcher3.InvariantDeviceProfile
 import com.android.launcher3.R
-import com.android.launcher3.states.RotationHelper
 import com.android.launcher3.util.DisplayController
 
 public final class SettingsRootFragment: AbstractSettingsFragment() {

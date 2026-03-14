@@ -11,12 +11,11 @@ import android.provider.Settings
 import android.text.TextUtils
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.annotation.VisibleForTesting
 import androidx.preference.Preference
 import androidx.preference.SwitchPreferenceCompat
 import app.murinelauncher.receiver.ScreenOffAdminReceiver
 import app.murinelauncher.service.MurineAccessibilityService
-import com.android.launcher3.BuildConfig
+import app.murinelauncher.settings.common.AbstractSettingsFragment
 import com.android.launcher3.Flags
 import com.android.launcher3.InvariantDeviceProfile
 import com.android.launcher3.LauncherPrefs

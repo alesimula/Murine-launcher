@@ -1,15 +1,9 @@
 package app.murinelauncher.settings
 
-import android.os.SystemProperties
-import android.util.Log
-import android.view.WindowManager
 import androidx.preference.Preference
-import app.murinelauncher.graphics.WorkspaceBlurUtils
-import com.android.launcher3.LauncherPrefs
+import app.murinelauncher.settings.common.AbstractSettingsFragment
 import com.android.launcher3.R
-import com.android.launcher3.Utilities.getSystemProperty
 import com.android.launcher3.util.DisplayController
-import com.android.settingslib.widget.SegmentedButtonPreference
 
 
 public final class SettingsMiscFragment: AbstractSettingsFragment() {

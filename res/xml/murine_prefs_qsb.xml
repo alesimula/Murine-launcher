@@ -26,6 +26,10 @@
     <com.android.settingslib.widget.SpacePreference
         android:layout_height="@dimen/settingslib_expressive_space_small4" />
 
+    <app.murinelauncher.widget.radio.RadioGroupPreference
+        android:key="qsb_search_provider"
+        android:title="@string/pref_qsb_search_provider_title"
+        android:persistent="true" />
     <SwitchPreferenceCompat
         android:key="qsb_enable_lens"
         android:title="@string/pref_qsb_enable_lens_title"

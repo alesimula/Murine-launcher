@@ -1,16 +1,13 @@
 package app.murinelauncher.settings
 
-import android.os.Bundle
-import android.view.View
-import android.view.ViewGroup
 import androidx.preference.Preference
 import androidx.preference.TwoStatePreference
+import app.murinelauncher.settings.common.AbstractSettingsFragment
+import app.murinelauncher.widget.radio.RadioGroupPreference
+import app.murinelauncher.widget.search.SearchProvider
 import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.R
 import com.android.launcher3.util.DisplayController
-import com.android.settingslib.widget.MainSwitchBar
-import com.android.settingslib.widget.MainSwitchPreference
-import com.google.android.material.appbar.AppBarLayout
 import java.util.ArrayDeque
 
 
@@ -19,11 +16,14 @@ public final class SettingsQsbFragment: AbstractSettingsFragment() {
     companion object {
         const val SHOW_SEARCH_BAR: String = "qsb_show_search_bar" // Master switch
         const val SHOW_LENS: String = "qsb_enable_lens"
+        const val SEARCH_PROVIDER: String = "qsb_search_provider"
     }
 
     override fun getPreferenceScreenResId() = R.xml.murine_prefs_qsb
 
     override fun getPreferenceTitle(): Int? = R.string.pref_category_qsb_title
+
+    override fun getStickyKeys(): Set<String> = setOf(SHOW_SEARCH_BAR)
 
     val MASTER_DISABLED_PREFS = ArrayDeque<Preference>()
 
@@ -44,6 +44,13 @@ public final class SettingsQsbFragment: AbstractSettingsFragment() {
                     if (isEnabled) masterSwitchRestorePreferences()
                     else masterSwitchDisablePreferences()
                     true
+                }
+                return true
+            }
+            SEARCH_PROVIDER -> {
+                preference as RadioGroupPreference
+                preference.asEnum(SearchProvider::class.java).apply {
+                    setTextProvider { _, provider -> provider.displayName }
                 }
                 return true
             }

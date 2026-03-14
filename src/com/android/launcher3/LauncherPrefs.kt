@@ -390,7 +390,7 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
         @JvmField
         val QSB_SHOW_LENS = backedUpItem(SettingsQsbFragment.SHOW_LENS, true)
         @JvmField
-        val QSB_SEARCH_PROVIDER = backedUpItem("qsb_search_provider", SearchProvider.DUCKDUCKGO, EncryptionType.DEVICE_PROTECTED)
+        val QSB_SEARCH_PROVIDER = backedUpItem("qsb_search_provider", SearchProvider.DUCKDUCKGO, EncryptionType.ENCRYPTED)
         @JvmField
         val QSB_SEARCH_HISTORY = backedUpItem("qsb_search_history", "[]", EncryptionType.ENCRYPTED)
         @JvmField
