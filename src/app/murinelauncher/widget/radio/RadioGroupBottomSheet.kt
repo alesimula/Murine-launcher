@@ -114,6 +114,8 @@ class RadioGroupBottomSheet : BottomSheetDialogFragment() {
             val screen = preferenceManager.createPreferenceScreen(ctx)
             val textProv = sheet.textProvider ?: return
             val iconProv = sheet.iconProvider
+            // Always move icons to END to not show icon reserved space if there is no icon provider
+            val iconPosition = if (iconProv == null) IconPosition.END else sheet.iconPosition
             for (i in 0 until sheet.entryCount) {
                 val icon = iconProv?.invoke(i)
                 if (icon != null && sheet.sheetIconTint != null) {
@@ -121,7 +123,7 @@ class RadioGroupBottomSheet : BottomSheetDialogFragment() {
                 }
                 screen.addPreference(
                     createEntryPref(ctx, i, textProv(i), icon,
-                        i == sheet.currentIndex, sheet.iconPosition)
+                        i == sheet.currentIndex, iconPosition)
                 )
             }
             preferenceScreen = screen
