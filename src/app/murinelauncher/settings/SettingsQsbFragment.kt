@@ -1,7 +1,9 @@
 package app.murinelauncher.settings
 
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.preference.Preference
 import androidx.preference.TwoStatePreference
+import app.murinelauncher.graphics.IconShapeDrawables
 import app.murinelauncher.settings.common.AbstractSettingsFragment
 import app.murinelauncher.widget.radio.RadioGroupPreference
 import app.murinelauncher.widget.search.SearchProvider
@@ -50,7 +52,9 @@ public final class SettingsQsbFragment: AbstractSettingsFragment() {
             SEARCH_PROVIDER -> {
                 preference as RadioGroupPreference
                 preference.asEnum(SearchProvider::class.java).apply {
+                    setDefaultValue(LauncherPrefs.QSB_SEARCH_PROVIDER.defaultValue)
                     setTextProvider { _, provider -> provider.displayName }
+                    setIconProvider { ctx, provider -> AppCompatResources.getDrawable(ctx, provider.iconRes) }
                 }
                 return true
             }

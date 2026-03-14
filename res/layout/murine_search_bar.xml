@@ -41,9 +41,9 @@
                 <ImageView
                     android:id="@+id/murine_search_logo"
                     android:layout_width="@dimen/murine_search_plate_height"
-                    android:layout_height="match_parent"
+                    android:layout_height="@dimen/murine_search_provider_icon_size"
                     android:contentDescription="@string/murine_search_button_desc"
-                    android:scaleType="centerInside"
+                    android:scaleType="fitCenter"
                     android:tint="@color/murine_search_icon_tint" />
 
                 <!-- Hint text area -->
@@ -76,7 +76,7 @@
                         android:contentDescription="@string/murine_voice_search_desc"
                         android:adjustViewBounds="true"
                         android:scaleType="centerInside"
-                        android:src="@drawable/ic_murine_mic"
+                        android:src="@drawable/ic_qsb_murine_mic"
                         android:tint="@color/murine_search_icon_tint" />
 
                     <!-- Lens / visual search button -->
@@ -88,7 +88,7 @@
                         android:contentDescription="@string/murine_lens_desc"
                         android:adjustViewBounds="true"
                         android:scaleType="centerInside"
-                        android:src="@drawable/ic_murine_lens"
+                        android:src="@drawable/ic_qsb_murine_lens"
                         android:tint="@color/murine_search_icon_tint"/>
 
                 </LinearLayout>
@@ -116,7 +116,7 @@
                 android:background="@drawable/murine_search_btn_ripple"
                 android:contentDescription="@string/murine_search_button_desc"
                 android:scaleType="centerInside"
-                android:src="@drawable/ic_murine_assistant_search"
+                android:src="@drawable/ic_qsb_murine_assistant_search"
                 android:tint="@color/murine_search_icon_tint" />
         </FrameLayout>
 

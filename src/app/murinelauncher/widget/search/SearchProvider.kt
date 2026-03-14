@@ -27,7 +27,7 @@ enum class SearchProvider(
         displayName = "DuckDuckGo",
         searchUrlTemplate = "https://duckduckgo.com/?q=%s",
         homepageUrl = "https://duckduckgo.com",
-        iconRes = R.drawable.ic_murine_search_provider_google
+        iconRes = R.drawable.ic_murine_search_provider_duck
     ),
     QWANT(
         displayName = "Qwant",
