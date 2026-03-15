@@ -29,15 +29,9 @@ public final class SettingsQsbFragment: AbstractSettingsFragment() {
 
     val MASTER_DISABLED_PREFS = ArrayDeque<Preference>()
 
-
-    override fun initPreference(preference: Preference, info: DisplayController.Info): Boolean {
-        // Only show master switch when QSB is disabled
+    fun initPreferenceImpl(preference: Preference, info: DisplayController.Info, masterSwitch: Boolean): Boolean {
+        // The master switch switches off QSB and the rest of the preferences in this page
         val masterSwitch = LauncherPrefs.QSB_SHOW_SEARCH_BAR.get(requireContext())
-        if (!masterSwitch && preference.key != SHOW_SEARCH_BAR) {
-            MASTER_DISABLED_PREFS.push(preference)
-            return false
-        }
-
         when (preference.key) {
             SHOW_SEARCH_BAR -> {
                 (preference as TwoStatePreference).isChecked = masterSwitch
@@ -60,6 +54,17 @@ public final class SettingsQsbFragment: AbstractSettingsFragment() {
             }
             else -> return true
         }
+    }
+
+    override fun initPreference(preference: Preference, info: DisplayController.Info): Boolean {
+        // Only show master switch when QSB is disabled
+        val masterSwitch = LauncherPrefs.QSB_SHOW_SEARCH_BAR.get(requireContext())
+        val initPref = initPreferenceImpl(preference, info, masterSwitch);
+        if (initPref && !masterSwitch && preference.key != SHOW_SEARCH_BAR) {
+            MASTER_DISABLED_PREFS.push(preference)
+            return false
+        }
+        return initPref
     }
 
     private fun masterSwitchDisablePreferences() {
