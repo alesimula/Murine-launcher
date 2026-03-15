@@ -580,11 +580,11 @@
     <dimen name="app_title_pill_round_rect_padding">2dp</dimen>
 
     <!-- Murine search bar dimensions -->
-    <dimen name="murine_search_widget_height">60dp</dimen> <!-- referenced by qsb_widget_height -->
-    <dimen name="murine_search_plate_height">48dp</dimen>
-    <dimen name="murine_search_container_padding">6dp</dimen>
-    <dimen name="murine_search_buttons_padding">6dp</dimen>
-    <dimen name="murine_search_provider_icon_size">24dp</dimen>
-    <dimen name="murine_search_bar_icons_size">24dp</dimen>
+    <dimen name="murine_search_widget_height">@dimen/_42sdp</dimen> <!-- referenced by qsb_widget_height -->
+    <dimen name="murine_search_plate_height">@dimen/_34sdp</dimen>
+    <dimen name="murine_search_container_padding">@dimen/_4sdp</dimen>
+    <dimen name="murine_search_buttons_padding">@dimen/_4sdp</dimen>
+    <dimen name="murine_search_provider_icon_size">@dimen/_17sdp</dimen>
+    <dimen name="murine_search_bar_icons_size">@dimen/_17sdp</dimen>
     <dimen name="murine_search_text_size">14sp</dimen>
 </resources>

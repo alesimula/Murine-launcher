@@ -266,6 +266,7 @@ dependencies {
     implementation libs.protobuf.javalite
     implementation libs.chickenhook.restrictionbypass
     implementation libs.rikka.refine.runtime
+    implementation libs.intuit.sdp
 
     api libs.lottie
     implementation libs.dagger
