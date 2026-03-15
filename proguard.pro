@@ -2,7 +2,7 @@
 
 # Optimization options.
 -allowaccessmodification
--dontoptimize
+##-dontoptimize
 -dontpreverify
 -dontusemixedcaseclassnames
 -dontskipnonpubliclibraryclasses
