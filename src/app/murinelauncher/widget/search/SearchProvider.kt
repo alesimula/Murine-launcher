@@ -52,6 +52,12 @@ enum class SearchProvider(
         searchUrlTemplate = "https://search.brave.com/search?q=%s",
         homepageUrl = "https://search.brave.com",
         iconRes = R.drawable.ic_murine_search_provider_brave
+    ),
+    BING(
+        displayName = "Bing",
+        searchUrlTemplate = "https://www.bing.com/search?q=%s",
+        homepageUrl = "https://www.bing.com",
+        iconRes = R.drawable.ic_murine_search_provider_bing
     );
 
     fun buildSearchUrl(query: String): String {
