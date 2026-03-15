@@ -29,29 +29,29 @@ enum class SearchProvider(
         homepageUrl = "https://duckduckgo.com",
         iconRes = R.drawable.ic_murine_search_provider_duck
     ),
+    STARTPAGE(
+        displayName = "Startpage",
+        searchUrlTemplate = "https://www.startpage.com/do/dsearch?query=%s",
+        homepageUrl = "https://www.startpage.com",
+        iconRes = R.drawable.ic_murine_search_provider_startpage
+    ),
     QWANT(
         displayName = "Qwant",
         searchUrlTemplate = "https://www.qwant.com/?q=%s",
         homepageUrl = "https://www.qwant.com",
-        iconRes = R.drawable.ic_murine_search_provider_google
+        iconRes = R.drawable.ic_murine_search_provider_qwant
     ),
     ECOSIA(
         displayName = "Ecosia",
         searchUrlTemplate = "https://www.ecosia.org/search?q=%s",
         homepageUrl = "https://www.ecosia.org",
-        iconRes = R.drawable.ic_murine_search_provider_google
-    ),
-    STARTPAGE(
-        displayName = "Startpage",
-        searchUrlTemplate = "https://www.startpage.com/do/dsearch?query=%s",
-        homepageUrl = "https://www.startpage.com",
-        iconRes = R.drawable.ic_murine_search_provider_google
+        iconRes = R.drawable.ic_murine_search_provider_ecosia
     ),
     BRAVE(
         displayName = "Brave Search",
         searchUrlTemplate = "https://search.brave.com/search?q=%s",
         homepageUrl = "https://search.brave.com",
-        iconRes = R.drawable.ic_murine_search_provider_google
+        iconRes = R.drawable.ic_murine_search_provider_brave
     );
 
     fun buildSearchUrl(query: String): String {
