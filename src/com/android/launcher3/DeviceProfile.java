@@ -1381,7 +1381,8 @@ public class DeviceProfile {
         if (mIsResponsiveGrid) {
             updateAllAppsWithResponsiveMeasures();
         } else {
-            updateAllAppsIconSize(scale, context.getResources());
+            // FIX: always use user-selected scaling for drawable icon size
+            updateAllAppsIconSize(1f, context.getResources());
         }
         updateAllAppsContainerWidth();
         if (isVerticalLayout && !mIsResponsiveGrid) {

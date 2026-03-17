@@ -340,7 +340,7 @@ public class InvariantDeviceProfile {
         DisplayOption displayOption =
                 invDistWeightedInterpolate(displayInfo, new ArrayList<>(allOptions),
                         displayInfo.getDeviceType());
-        applyDynamicScaling(context, displayOption, isTablet);
+        applyDynamicScaling(context, displayOption, isTablet, displayInfo);
 
         if (!displayOption.grid.name.equals(gridName)) {
             mPrefs.put(GRID_NAME, displayOption.grid.name);
@@ -350,13 +350,16 @@ public class InvariantDeviceProfile {
         return targetGridName;
     }
 
-    public void applyDynamicScaling(Context context, DisplayOption displayOption, boolean isTablet) {
+    public void applyDynamicScaling(Context context, DisplayOption displayOption, boolean isTablet, Info displayInfo) {
         // Higher = smaller icons/spacing as grid gets bigger
         float densityAggression = 0.1f;
         // Higher = more aggressive capping when iconSize increases
         float growthAggression = 1.0f;
 
-        float screenWidthDp = context.getResources().getConfiguration().smallestScreenWidthDp;
+        // FIX: use DisplayController.Info to always retrieve correct display dimensions
+        float screenWidthDp = dpiFromPx(
+                Math.min(displayInfo.currentSize.x, displayInfo.currentSize.y),
+                displayInfo.getDensityDpi());
         float referenceWidthDp = isTablet ? 680f : 360f;
         float widthScale = screenWidthDp / referenceWidthDp;
         int iconSizeRaw = ICON_SIZE.get(context);
