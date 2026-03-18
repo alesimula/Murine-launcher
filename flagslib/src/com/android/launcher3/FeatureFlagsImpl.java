@@ -688,7 +688,8 @@ public final class FeatureFlagsImpl implements FeatureFlags {
 
     @Override
     public boolean enableSmartspaceAsAWidget() {
-        if (isReadFromNew) {
+        return true;
+        /*if (isReadFromNew) {
             if (!isCached) {
                 init();
             }
@@ -697,13 +698,14 @@ public final class FeatureFlagsImpl implements FeatureFlags {
                 load_overrides_launcher();
             }
         }
-        return enableSmartspaceAsAWidget;
+        return enableSmartspaceAsAWidget;*/
 
     }
 
     @Override
     public boolean enableSmartspaceRemovalToggle() {
-        if (isReadFromNew) {
+        return true;
+        /*if (isReadFromNew) {
             if (!isCached) {
                 init();
             }
@@ -712,7 +714,7 @@ public final class FeatureFlagsImpl implements FeatureFlags {
                 load_overrides_launcher();
             }
         }
-        return enableSmartspaceRemovalToggle;
+        return enableSmartspaceRemovalToggle;*/
 
     }
 

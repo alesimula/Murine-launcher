@@ -19,6 +19,8 @@ import android.graphics.Rect;
 import android.view.View;
 
 import com.android.launcher3.CellLayout;
+import com.android.launcher3.LauncherPrefs;
+import com.android.launcher3.model.data.LauncherAppWidgetInfo;
 import com.android.launcher3.util.CellAndSpan;
 import com.android.launcher3.util.GridOccupancy;
 
@@ -27,6 +29,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
+
+import app.murinelauncher.widget.smartspace.SmartspaceMode;
 
 /**
  * Contains the logic of a reorder.
@@ -158,7 +162,7 @@ public class ReorderAlgorithm {
             CellLayoutLayoutParams lp = (CellLayoutLayoutParams) child.getLayoutParams();
             r1.set(c.cellX, c.cellY, c.cellX + c.spanX, c.cellY + c.spanY);
             if (Rect.intersects(r0, r1)) {
-                if (!lp.canReorder) {
+                if (!lp.canReorder || isSmartspaceWidget(child)) {
                     return false;
                 }
                 intersectingViews.add(child);
@@ -263,8 +267,8 @@ public class ReorderAlgorithm {
                 if (!cluster.views.contains(v) && v != dragView) {
                     if (cluster.isViewTouchingEdge(v, whichEdge)) {
                         CellLayoutLayoutParams lp = (CellLayoutLayoutParams) v.getLayoutParams();
-                        if (!lp.canReorder) {
-                            // The push solution includes the all apps button, this is not viable.
+                        if (!lp.canReorder || isSmartspaceWidget(v)) {
+                            // The push solution includes the all apps button or an immovable item, this is not viable.
                             fail = true;
                             break;
                         }
@@ -647,5 +651,18 @@ public class ReorderAlgorithm {
             bestXY[1] = -1;
         }
         return bestXY;
+    }
+
+    /**
+     * Returns true if the view is a smartspace widget pinned at (0,0).
+     * Such widgets must never be displaced by the reorder algorithm.
+     */
+    private static boolean isSmartspaceWidget(View v) {
+        Object tag = v.getTag();
+        boolean hasSmartspace = !SmartspaceMode.DISABLED.equals(LauncherPrefs.SMARTSPACE_MODE.get(v.getContext()));
+        if (hasSmartspace && tag instanceof LauncherAppWidgetInfo info) {
+            return info.cellX == 0 && info.cellY == 0;
+        }
+        return false;
     }
 }

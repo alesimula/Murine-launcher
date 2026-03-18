@@ -205,7 +205,9 @@
     <dimen name="minimum_icon_label_size">8sp</dimen>
 
     <!--  Used for custom widgets  -->
-    <array name="custom_widget_providers"/>
+    <array name="custom_widget_providers">
+        <item>app.murinelauncher.widget.smartspace.MurineClockWidgetPlugin</item>
+    </array>
 
     <!-- Embed parameters -->
     <dimen name="activity_split_ratio"  format="float">0.5</dimen>

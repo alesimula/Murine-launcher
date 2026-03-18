@@ -32,6 +32,7 @@ import android.view.View.OnLongClickListener;
 import com.android.launcher3.DragSource;
 import com.android.launcher3.DropTarget;
 import com.android.launcher3.Launcher;
+import com.android.launcher3.LauncherPrefs;
 import com.android.launcher3.celllayout.CellInfo;
 import com.android.launcher3.config.FeatureFlags;
 import com.android.launcher3.dragndrop.DragController;
@@ -48,6 +49,8 @@ import com.android.launcher3.widget.NavigableAppWidgetHostView;
 import com.android.launcher3.widget.PendingItemDragHelper;
 import com.android.launcher3.widget.WidgetCell;
 import com.android.launcher3.widget.WidgetImageView;
+
+import app.murinelauncher.widget.smartspace.SmartspaceMode;
 
 /**
  * Class to handle long-clicks on workspace items and start drag as a result.
@@ -74,6 +77,15 @@ public class ItemLongClickListener {
             return false;
         }
         if (!(v.getTag() instanceof ItemInfo)) return false;
+
+        // Prevent dragging smartspace widgets pinned at (0,0) on the first screen
+        boolean hasSmartspace = !SmartspaceMode.DISABLED.equals(LauncherPrefs.SMARTSPACE_MODE.get(launcher));
+        if (hasSmartspace && v.getTag() instanceof com.android.launcher3.model.data.LauncherAppWidgetInfo lai
+                && lai.container == com.android.launcher3.LauncherSettings.Favorites.CONTAINER_DESKTOP
+                && lai.screenId == com.android.launcher3.WorkspaceLayoutManager.FIRST_SCREEN_ID
+                && lai.cellX == 0 && lai.cellY == 0) {
+            return false;
+        }
 
         launcher.setWaitingForResult(null);
         beginDrag(v, launcher, (ItemInfo) v.getTag(), new DragOptions());

@@ -180,6 +180,7 @@ import com.android.launcher3.allapps.DiscoveryBounce;
 import com.android.launcher3.anim.AnimationSuccessListener;
 import com.android.launcher3.anim.PropertyListBuilder;
 import com.android.launcher3.apppairs.AppPairIcon;
+import com.android.launcher3.celllayout.CellLayoutLayoutParams;
 import com.android.launcher3.celllayout.CellPosMapper;
 import com.android.launcher3.celllayout.CellPosMapper.CellPos;
 import com.android.launcher3.celllayout.CellPosMapper.TwoPanelCellPosMapper;
@@ -296,6 +297,7 @@ import java.util.stream.Stream;
 
 import app.murinelauncher.graphics.WorkspaceBlurUtils;
 import app.murinelauncher.widget.search.MurineSearchBoxView;
+import app.murinelauncher.widget.smartspace.SmartspaceMode;
 
 /**
  * Default launcher application.
@@ -2342,9 +2344,30 @@ public class Launcher extends StatefulActivity<LauncherState>
                 continue;
             }
             if (enableWorkspaceInflation() && view instanceof LauncherAppWidgetHostView lv) {
-                view = getAppWidgetHolder().attachViewToHostAndGetAttachedView(lv);
+                /*
+                Skip host re-attachment for custom widgets — recycleExistingView
+                replaces them with a PendingAppWidgetHostView that loses the tag,
+                causing the null-tag check below to delete the widget from DB.
+                 */
+                if (!(item instanceof LauncherAppWidgetInfo lai && lai.isCustomWidget())) {
+                    view = getAppWidgetHolder().attachViewToHostAndGetAttachedView(lv);
+                }
+            }
+            if (view.getTag() == null) {
+                getModelWriter().deleteItemFromDatabase(item,
+                        "corrupt item: view inflated but tag is null");
+                continue;
             }
             workspace.addInScreenFromBind(view, item);
+            // Lock smartspace widgets at (0,0) on first screen so they can't be displaced
+            boolean hasSmartspace = !SmartspaceMode.DISABLED.equals(LauncherPrefs.SMARTSPACE_MODE.get(view.getContext()));
+            if (hasSmartspace && item instanceof LauncherAppWidgetInfo
+                    && item.container == LauncherSettings.Favorites.CONTAINER_DESKTOP
+                    && item.screenId == WorkspaceLayoutManager.FIRST_SCREEN_ID
+                    && item.cellX == 0 && item.cellY == 0
+                    && view.getLayoutParams() instanceof CellLayoutLayoutParams clp) {
+                clp.canReorder = false;
+            }
             if (boundAnim != null) {
                 // Animate all the applications up now
                 view.setAlpha(0f);

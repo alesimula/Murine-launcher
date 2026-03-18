@@ -67,5 +67,14 @@
     <string name="pref_qsb_enable_lens_title">Enable Lens</string>
     <string name="pref_qsb_enable_lens_summary">Show Google Lens button in quick search</string>
 
+    <!-- Murine smartspace / clock widget -->
+    <string name="smartspace_mode_clock">Clock</string>
+    <string name="smartspace_mode_google">Google Smartspace</string>
+    <string name="smartspace_mode_disabled">Disabled</string>
+    <string name="pref_smartspace_title">First screen widget</string>
+    <string name="pref_smartspace_summary_clock">Shows a clock with today\'s date</string>
+    <string name="pref_smartspace_summary_google">Shows Google\'s Smartspace widget</string>
+    <string name="pref_smartspace_summary_disabled">No widget on the first screen</string>
+
     <string name="pref_blur_unsupported_warning"><![CDATA[The wallpaper blur may or may not be fully supported or enabled by this OEM/ROM; If you encounter issues, try to check for an &quot;Allow window-level blurs&quot; option in Display Options or Developer Options.<br/>Alternatively, try enabling <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">this Magisk module</a> on rooted devices]]></string>
 </resources>

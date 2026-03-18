@@ -27,6 +27,7 @@ import com.android.launcher3.Flags
 import com.android.launcher3.InvariantDeviceProfile
 import com.android.launcher3.InvariantDeviceProfile.OnIDPChangeListener
 import com.android.launcher3.LauncherModel
+import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.LauncherPrefs.Companion.getPrefs
 import com.android.launcher3.Utilities
 import com.android.launcher3.dagger.ApplicationContext
@@ -151,6 +152,15 @@ constructor(
             lifeCycle.addCloseable {
                 getPrefs(context).unregisterOnSharedPreferenceChangeListener(smartSpacePrefChanges)
             }
+        }
+
+        // Murine smartspace mode changes
+        val smartspaceModeChanges = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+            if (LauncherPrefs.SMARTSPACE_MODE.sharedPrefKey == key) model.forceReload()
+        }
+        getPrefs(context).registerOnSharedPreferenceChangeListener(smartspaceModeChanges)
+        lifeCycle.addCloseable {
+            getPrefs(context).unregisterOnSharedPreferenceChangeListener(smartspaceModeChanges)
         }
 
         // Custom widgets

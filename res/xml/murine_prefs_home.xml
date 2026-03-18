@@ -41,6 +41,14 @@
         launcher:logIdOff="616" />
 
     <PreferenceCategory android:title="@string/pref_subcategory_layout">
+
+        <app.murinelauncher.widget.radio.RadioGroupPreference
+            android:icon="@drawable/ic_settings_smartspace"
+            android:key="pref_smartspace_mode"
+            android:title="@string/pref_smartspace_title"
+            android:persistent="true"
+            app:showPreviewIcon="false"/>
+
         <com.android.settingslib.widget.ExpandablePreference
             android:title="@string/pref_group_grid_size_title"
             android:summary="@string/pref_group_grid_size_desc">

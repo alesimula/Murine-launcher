@@ -27,6 +27,7 @@ import app.murinelauncher.settings.SettingsIconsFragment
 import app.murinelauncher.settings.SettingsQsbFragment
 import app.murinelauncher.theme.ThemeOverride
 import app.murinelauncher.widget.search.SearchProvider
+import app.murinelauncher.widget.smartspace.SmartspaceMode
 import com.android.launcher3.BuildConfig.WIDGET_ON_FIRST_SCREEN
 import com.android.launcher3.GridType.Companion.GRID_TYPE_ANY
 import com.android.launcher3.InvariantDeviceProfile.GRID_NAME_PREFS_KEY
@@ -393,6 +394,8 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
         val QSB_SEARCH_PROVIDER = backedUpItem("qsb_search_provider", SearchProvider.DUCKDUCKGO, EncryptionType.ENCRYPTED)
         @JvmField
         val QSB_SEARCH_HISTORY = backedUpItem("qsb_search_history", "[]", EncryptionType.ENCRYPTED)
+        @JvmField
+        val SMARTSPACE_MODE = backedUpItem("pref_smartspace_mode", SmartspaceMode.MURINE_CLOCK, EncryptionType.ENCRYPTED)
         @JvmField
         val FIXED_LANDSCAPE_MODE = backedUpItem(SettingsHomeFragment.FIXED_LANDSCAPE_MODE, false)
         @JvmField

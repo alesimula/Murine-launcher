@@ -131,6 +131,8 @@ constructor(
         modelDelegate.init(this, mBgAllAppsList, mBgDataModel)
     }
 
+    val bgDataModel: BgDataModel get() = mBgDataModel
+
     fun newModelCallbacks() = ModelLauncherCallbacks(this::enqueueModelUpdateTask)
 
     /** Adds the provided items to the workspace. */

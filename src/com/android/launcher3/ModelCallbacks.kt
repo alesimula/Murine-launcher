@@ -26,9 +26,15 @@ import com.android.launcher3.util.Preconditions
 import com.android.launcher3.util.RunnableList
 import com.android.launcher3.util.TraceHelper
 import com.android.launcher3.util.ViewOnDrawExecutor
-import com.android.launcher3.widget.PendingAddWidgetInfo
-import com.android.launcher3.widget.model.WidgetsListBaseEntry
 import java.util.function.Predicate
+import android.content.ComponentName
+import app.murinelauncher.widget.smartspace.MurineClockWidgetPlugin
+import app.murinelauncher.widget.smartspace.SmartspaceMode
+import com.android.launcher3.model.data.LauncherAppWidgetInfo
+import com.android.launcher3.widget.custom.CustomWidgetManager
+import com.android.launcher3.celllayout.CellLayoutLayoutParams
+import com.android.launcher3.widget.LauncherAppWidgetProviderInfo
+import com.android.launcher3.widget.model.WidgetsListBaseEntry
 
 private const val TAG = "ModelCallbacks"
 
@@ -275,33 +281,224 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
     }
 
     override fun bindSmartspaceWidget() {
-        val cl: CellLayout? =
-            launcher.workspace.getScreenWithId(WorkspaceLayoutManager.FIRST_SCREEN_ID)
-        val spanX = InvariantDeviceProfile.INSTANCE.get(launcher).numSearchContainerColumns
+        val mode = LauncherPrefs.SMARTSPACE_MODE.get(launcher)
+        val cl = launcher.workspace.getScreenWithId(FIRST_SCREEN_ID) ?: run {
+            android.util.Log.w(TAG, "bindSmartspaceWidget: first screen not found")
+            return
+        }
+        val idp = InvariantDeviceProfile.INSTANCE.get(launcher)
+        // Clamp to actual grid columns — after a grid resize numSearchContainerColumns
+        // may momentarily exceed the CellLayout column count.
+        val spanX = idp.numSearchContainerColumns.coerceAtMost(idp.numColumns).coerceAtLeast(1)
+        android.util.Log.d(TAG, "bindSmartspaceWidget: mode=$mode spanX=$spanX " +
+            "cols=${idp.numColumns} searchCols=${idp.numSearchContainerColumns}")
 
-        if (cl?.isRegionVacant(0, 0, spanX, 1) != true) {
+        // Both widget types are persisted in DB.
+        val existingInDb = findExistingSmartspaceInBgModel()
+        val existingView = findExistingSmartspaceView(cl)
+        android.util.Log.d(TAG, "bindSmartspaceWidget: existingInDb=${existingInDb?.providerName} " +
+            "pos=(${existingInDb?.cellX},${existingInDb?.cellY}) span=${existingInDb?.spanX} " +
+            "existingView=${existingView != null}")
+
+        // If DB widget matches desired mode, span, AND position, keep it — fix up the view if needed
+        if (existingInDb != null
+            && existingMatchesMode(existingInDb, mode)
+            && existingInDb.spanX == spanX
+            && existingInDb.cellX == 0 && existingInDb.cellY == 0
+        ) {
+            // Reinforce canReorder=false (may have been reset by workspace rebuild)
+            if (existingView != null) {
+                (existingView.layoutParams as? CellLayoutLayoutParams)?.canReorder = false
+            }
+            // For the Murine clock, the view inflated on BG thread may be empty because
+            // CustomWidgetManager.onPluginConnected runs async on MAIN_EXECUTOR and
+            // wasn't ready when WidgetInflater ran. Recreate the VIEW (not DB entry).
+            if (mode == SmartspaceMode.MURINE_CLOCK && existingView != null) {
+                val vg = existingView as? android.view.ViewGroup
+                if (vg == null || vg.childCount == 0) {
+                    launcher.workspace.removeWorkspaceItem(existingView)
+                    recreateClockView(cl, existingInDb)
+                }
+            }
+            android.util.Log.d(TAG, "bindSmartspaceWidget: keeping existing, match OK")
             return
         }
 
-        val widgetsListBaseEntry: WidgetsListBaseEntry =
-            launcher.widgetPickerDataProvider.get().allWidgets.firstOrNull {
-                item: WidgetsListBaseEntry ->
-                item.mPkgItem.packageName == BuildConfig.APPLICATION_ID
-            } ?: return
-
-        val info =
-            PendingAddWidgetInfo(
-                widgetsListBaseEntry.mWidgets[0].widgetInfo,
-                LauncherSettings.Favorites.CONTAINER_DESKTOP,
+        // TODO fix user defined smartspace being deleted
+        // Mismatch or missing — remove existing from DB and workspace
+        if (existingInDb != null) {
+            android.util.Log.d(TAG, "bindSmartspaceWidget: removing stale widget from DB")
+            launcher.modelWriter.deleteWidgetInfo(
+                existingInDb, launcher.appWidgetHolder, "smartspace cleanup"
             )
-        launcher.addPendingItem(
-            info,
-            info.container,
-            WorkspaceLayoutManager.FIRST_SCREEN_ID,
-            intArrayOf(0, 0),
-            info.spanX,
-            info.spanY,
+        }
+        // TODO fix user defined smartspace being deleted
+        if (existingView != null) {
+            android.util.Log.d(TAG, "bindSmartspaceWidget: removing stale view")
+            launcher.workspace.removeWorkspaceItem(existingView)
+        }
+
+        if (mode == SmartspaceMode.DISABLED) return
+
+        // Force-clear any non-smartspace items that might occupy the target region
+        // (e.g. icons shifted to (0,0) by grid migration after a grid resize).
+        clearSmartspaceRegion(cl, spanX)
+
+        android.util.Log.d(TAG, "bindSmartspaceWidget: creating new widget, mode=$mode")
+        when (mode) {
+            SmartspaceMode.MURINE_CLOCK -> addMurineClockWidget(cl, spanX)
+            SmartspaceMode.GOOGLE_SMARTSPACE -> addGoogleSmartspaceWidget(cl, spanX)
+            else -> {}
+        }
+    }
+
+    private val MURINE_CLOCK_CN = ComponentName(
+        "android",
+        LauncherAppWidgetProviderInfo.CLS_CUSTOM_WIDGET_PREFIX +
+            MurineClockWidgetPlugin::class.java.name
+    )
+
+    private val GOOGLE_SMARTSPACE_CN = ComponentName(
+        SmartspaceMode.GOOGLE_SMARTSPACE_PACKAGE,
+        SmartspaceMode.GOOGLE_SMARTSPACE_PROVIDER
+    )
+
+    private fun findExistingSmartspaceInBgModel(): LauncherAppWidgetInfo? {
+        val bgDataModel = LauncherAppState.getInstance(launcher).model.bgDataModel
+        synchronized(bgDataModel) {
+            for (i in 0 until bgDataModel.itemsIdMap.size()) {
+                val item = bgDataModel.itemsIdMap.valueAt(i)
+                if (item is LauncherAppWidgetInfo
+                    && item.container == LauncherSettings.Favorites.CONTAINER_DESKTOP
+                    && item.screenId == FIRST_SCREEN_ID
+                    && (item.providerName == MURINE_CLOCK_CN || item.providerName == GOOGLE_SMARTSPACE_CN)
+                ) {
+                    return item
+                }
+            }
+        }
+        return null
+    }
+
+    private fun existingMatchesMode(info: LauncherAppWidgetInfo, mode: SmartspaceMode): Boolean {
+        return when (mode) {
+            SmartspaceMode.MURINE_CLOCK -> info.isCustomWidget() && info.providerName == MURINE_CLOCK_CN
+            SmartspaceMode.GOOGLE_SMARTSPACE -> !info.isCustomWidget() && info.providerName == GOOGLE_SMARTSPACE_CN
+            SmartspaceMode.DISABLED -> false
+        }
+    }
+
+    private fun findExistingSmartspaceView(cl: CellLayout): android.view.View? {
+        val container = cl.shortcutsAndWidgets
+        for (i in 0 until container.childCount) {
+            val child = container.getChildAt(i) ?: continue
+            val info = child.tag as? LauncherAppWidgetInfo ?: continue
+            if (info.providerName == MURINE_CLOCK_CN || info.providerName == GOOGLE_SMARTSPACE_CN) {
+                return child
+            }
+        }
+        return null
+    }
+
+    private fun clearSmartspaceRegion(cl: CellLayout, spanX: Int) {
+        val container = cl.shortcutsAndWidgets
+        val toRemove = mutableListOf<android.view.View>()
+        for (i in 0 until container.childCount) {
+            val child = container.getChildAt(i) ?: continue
+            val lp = child.layoutParams as? CellLayoutLayoutParams ?: continue
+            // Remove any item whose cells overlap with the smartspace region (0,0)→(spanX-1,0)
+            if (lp.getCellY() == 0 && lp.getCellX() < spanX
+                && lp.getCellX() + lp.cellHSpan > 0
+            ) {
+                toRemove.add(child)
+            }
+        }
+        for (view in toRemove) {
+            val info = view.tag as? ItemInfo
+            launcher.workspace.removeWorkspaceItem(view)
+            if (info != null) {
+                launcher.modelWriter.deleteItemFromDatabase(info, "cleared for smartspace")
+            }
+        }
+    }
+
+    private fun recreateClockView(cl: CellLayout, info: LauncherAppWidgetInfo) {
+        val cwm = CustomWidgetManager.INSTANCE.get(launcher)
+        val providerInfo = cwm.getWidgetProvider(MURINE_CLOCK_CN) ?: return
+        val hostView = launcher.appWidgetHolder.createView(info.appWidgetId, providerInfo)
+        hostView.setTag(info)
+        hostView.visibility = android.view.View.VISIBLE
+        // Pre-set layout params with canReorder=false so addInScreen reuses them
+        hostView.layoutParams = CellLayoutLayoutParams(0, 0, info.spanX, info.spanY).apply {
+            canReorder = false
+        }
+        launcher.workspace.addInScreen(hostView, info)
+    }
+
+    private fun addMurineClockWidget(cl: CellLayout, spanX: Int) {
+        val cwm = CustomWidgetManager.INSTANCE.get(launcher)
+        val providerInfo = cwm.getWidgetProvider(MURINE_CLOCK_CN) ?: run {
+            android.util.Log.w(TAG, "addMurineClockWidget: provider is null, plugin not ready")
+            return
+        }
+        val appWidgetId = cwm.allocateCustomAppWidgetId(MURINE_CLOCK_CN)
+        val hostView = launcher.appWidgetHolder.createView(appWidgetId, providerInfo)
+
+        val widgetInfo = LauncherAppWidgetInfo(appWidgetId, providerInfo.provider, providerInfo, hostView)
+        widgetInfo.spanX = spanX
+        widgetInfo.spanY = 1
+        widgetInfo.minSpanX = spanX
+        widgetInfo.minSpanY = 1
+
+        launcher.modelWriter.addItemToDatabase(
+            widgetInfo,
+            LauncherSettings.Favorites.CONTAINER_DESKTOP,
+            FIRST_SCREEN_ID,
+            0, 0
         )
+        hostView.setTag(widgetInfo)
+        hostView.visibility = android.view.View.VISIBLE
+        // Pre-set layout params with canReorder=false so addInScreen reuses them
+        hostView.layoutParams = CellLayoutLayoutParams(0, 0, spanX, 1).apply {
+            canReorder = false
+        }
+        launcher.workspace.addInScreen(hostView, widgetInfo)
+    }
+
+    private fun addGoogleSmartspaceWidget(cl: CellLayout, spanX: Int) {
+        val wmh = com.android.launcher3.widget.WidgetManagerHelper(launcher)
+        val providerInfo = wmh.findProvider(GOOGLE_SMARTSPACE_CN, android.os.Process.myUserHandle()) ?: run {
+            android.util.Log.w(TAG, "addGoogleSmartspaceWidget: Google provider not found")
+            return
+        }
+
+        val appWidgetId = launcher.appWidgetHolder.allocateAppWidgetId()
+        val bound = wmh.bindAppWidgetIdIfAllowed(appWidgetId, providerInfo, null)
+        if (!bound) {
+            launcher.appWidgetHolder.deleteAppWidgetId(appWidgetId)
+            return
+        }
+
+        val hostView = launcher.appWidgetHolder.createView(appWidgetId, providerInfo)
+        val widgetInfo = LauncherAppWidgetInfo(appWidgetId, providerInfo.provider, providerInfo, hostView)
+        widgetInfo.spanX = spanX
+        widgetInfo.spanY = 1
+        widgetInfo.minSpanX = spanX
+        widgetInfo.minSpanY = 1
+
+        launcher.modelWriter.addItemToDatabase(
+            widgetInfo,
+            LauncherSettings.Favorites.CONTAINER_DESKTOP,
+            FIRST_SCREEN_ID,
+            0, 0
+        )
+        hostView.setTag(widgetInfo)
+        hostView.visibility = android.view.View.VISIBLE
+        // Pre-set layout params with canReorder=false so addInScreen reuses them
+        hostView.layoutParams = CellLayoutLayoutParams(0, 0, spanX, 1).apply {
+            canReorder = false
+        }
+        launcher.workspace.addInScreen(hostView, widgetInfo)
     }
 
     override fun bindScreens(orderedScreenIds: LIntArray) {

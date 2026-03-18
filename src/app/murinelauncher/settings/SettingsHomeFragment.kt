@@ -11,9 +11,12 @@ import android.provider.Settings
 import android.text.TextUtils
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.preference.Preference
 import androidx.preference.SwitchPreferenceCompat
 import app.murinelauncher.receiver.ScreenOffAdminReceiver
+import app.murinelauncher.widget.radio.RadioGroupPreference
+import app.murinelauncher.widget.smartspace.SmartspaceMode
 import app.murinelauncher.service.MurineAccessibilityService
 import app.murinelauncher.settings.common.AbstractSettingsFragment
 import com.android.launcher3.Flags
@@ -32,6 +35,7 @@ public final class SettingsHomeFragment: AbstractSettingsFragment() {
         const val GRID_SIZE_HEIGHT: String = "pref_grid_size_height"
         const val DOUBLE_TAP_TO_SLEEP: String = "pref_double_tap_to_sleep"
         const val SWIPE_DOWN_NOTIFICATIONS: String = "pref_swipe_down_notifications"
+        const val SMARTSPACE_MODE: String = "pref_smartspace_mode"
         private const val REQUEST_DEVICE_ADMIN = 1001
 
         @JvmStatic @RequiresApi(Build.VERSION_CODES.P)
@@ -125,6 +129,16 @@ public final class SettingsHomeFragment: AbstractSettingsFragment() {
                 return true
             }
             SWIPE_DOWN_NOTIFICATIONS -> return true
+            SMARTSPACE_MODE -> {
+                preference as RadioGroupPreference
+                preference.asEnum(SmartspaceMode::class.java).apply {
+                    setDefaultValue(LauncherPrefs.SMARTSPACE_MODE.defaultValue)
+                    setTextProvider { c, mode -> mode.getDisplayName(c) }
+                    setIconProvider { c, mode -> AppCompatResources.getDrawable(c, mode.iconRes) }
+                    setSummaryProvider { c, mode -> mode.getSummary(c) }
+                }
+                return true
+            }
             else -> return true
         }
     }

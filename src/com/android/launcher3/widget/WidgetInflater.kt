@@ -73,8 +73,14 @@ constructor(
                 update = true
             }
         } else {
-            appWidgetInfo =
-                widgetHelper.getLauncherAppWidgetInfo(item.appWidgetId, item.targetComponent)
+            if (item.appWidgetId <= LauncherAppWidgetInfo.CUSTOM_WIDGET_ID) {
+                // Custom widgets aren't real AppWidgets — look them up via CustomWidgetManager
+                appWidgetInfo = com.android.launcher3.widget.custom.CustomWidgetManager
+                    .INSTANCE.get(context).getWidgetProvider(item.providerName)
+            } else {
+                appWidgetInfo =
+                    widgetHelper.getLauncherAppWidgetInfo(item.appWidgetId, item.targetComponent)
+            }
             if (appWidgetInfo == null) {
                 if (item.appWidgetId <= LauncherAppWidgetInfo.CUSTOM_WIDGET_ID) {
                     removalReason = "CustomWidgetManager cannot find provider from that widget id."

@@ -258,6 +258,7 @@ public class LauncherAppWidgetProviderInfo extends AppWidgetProviderInfo impleme
         if (Utilities.ATLEAST_S) {
             return getActivityInfo().applicationInfo;
         }
+        if (mPM == null) return null;
         try {
             return mPM.getApplicationInfo(provider.getPackageName(), 0);
         } catch (PackageManager.NameNotFoundException e) {
