@@ -35,6 +35,8 @@ class RadioGroupBottomSheet : BottomSheetDialogFragment() {
     private var textProvider: ((Int) -> CharSequence)? = null
     private var iconProvider: ((Int) -> Drawable?)? = null
     private var sheetIconTint: Int? = null
+    private var isVisibleProvider: ((Int) -> Boolean)? = null
+    private var isEnabledProvider: ((Int) -> Boolean)? = null
 
     fun configure(
         title: CharSequence?,
@@ -44,6 +46,8 @@ class RadioGroupBottomSheet : BottomSheetDialogFragment() {
         textProvider: (Int) -> CharSequence,
         iconProvider: ((Int) -> Drawable?)?,
         iconTint: Int? = null,
+        isVisibleProvider: ((Int) -> Boolean)? = null,
+        isEnabledProvider: ((Int) -> Boolean)? = null,
         listener: OnItemSelectedListener
     ) {
         this.sheetTitle = title
@@ -53,6 +57,8 @@ class RadioGroupBottomSheet : BottomSheetDialogFragment() {
         this.textProvider = textProvider
         this.iconProvider = iconProvider
         this.sheetIconTint = iconTint
+        this.isVisibleProvider = isVisibleProvider
+        this.isEnabledProvider = isEnabledProvider
         this.listener = listener
     }
 
@@ -117,14 +123,15 @@ class RadioGroupBottomSheet : BottomSheetDialogFragment() {
             // Always move icons to END to not show icon reserved space if there is no icon provider
             val iconPosition = if (iconProv == null) IconPosition.END else sheet.iconPosition
             for (i in 0 until sheet.entryCount) {
+                if (sheet.isVisibleProvider?.invoke(i) == false) continue
                 val icon = iconProv?.invoke(i)
                 if (icon != null && sheet.sheetIconTint != null) {
                     icon.colorFilter = PorterDuffColorFilter(sheet.sheetIconTint!!, PorterDuff.Mode.SRC_IN)
                 }
-                screen.addPreference(
-                    createEntryPref(ctx, i, textProv(i), icon,
-                        i == sheet.currentIndex, iconPosition)
-                )
+                val pref = createEntryPref(ctx, i, textProv(i), icon,
+                    i == sheet.currentIndex, iconPosition)
+                if (sheet.isEnabledProvider?.invoke(i) == false) pref.isEnabled = false
+                screen.addPreference(pref)
             }
             preferenceScreen = screen
         }
@@ -179,6 +186,15 @@ class RadioGroupBottomSheet : BottomSheetDialogFragment() {
 
         override fun onBindViewHolder(holder: PreferenceViewHolder) {
             super.onBindViewHolder(holder)
+
+            val titleView = holder.findViewById(android.R.id.title) as? TextView
+            val iconView = holder.findViewById(android.R.id.icon)
+
+            val radioButtonAlpha = if (isEnabled) 1.0f else 0.6f
+            titleView?.alpha = radioButtonAlpha
+            iconView?.alpha = radioButtonAlpha
+            holder.itemView.alpha = radioButtonAlpha
+
             if (iconPosition == IconPosition.END) {
                 val iconFrame =
                     holder.findViewById(com.android.settingslib.widget.theme.R.id.icon_frame)

@@ -39,6 +39,8 @@ class RadioGroupPreference @JvmOverloads constructor(
     internal var currentIdxProvider: (() -> Int)? = null
     internal var onSelectedIdx: ((Int) -> Unit)? = null
     internal var summaryProviderIdx: ((Context, Int) -> CharSequence?)? = null
+    internal var isVisibleProviderIdx: ((Context, Int) -> Boolean)? = null
+    internal var isEnabledProviderIdx: ((Context, Int) -> Boolean)? = null
 
     private var enumEntries: Array<out Enum<*>>? = null
     private var fragmentManager: FragmentManager? = null
@@ -99,6 +101,14 @@ class RadioGroupPreference @JvmOverloads constructor(
     fun setSummaryProvider(provider: ((Context, Int) -> CharSequence?)?) {
         summaryProviderIdx = provider
         scheduleViewUpdate()
+    }
+
+    fun setVisibleProvider(provider: ((Context, Int) -> Boolean)?) {
+        isVisibleProviderIdx = provider
+    }
+
+    fun setEnabledProvider(provider: ((Context, Int) -> Boolean)?) {
+        isEnabledProviderIdx = provider
     }
 
     /**
@@ -248,6 +258,8 @@ class RadioGroupPreference @JvmOverloads constructor(
             textProvider = { i -> tp(ctx, i) },
             iconProvider = iconProviderIdx?.let { p -> { i -> p(ctx, i) } },
             iconTint = if (tintSheetIcons) resolveIconTint() else null,
+            isVisibleProvider = isVisibleProviderIdx?.let { p -> { i -> p(ctx, i) } },
+            isEnabledProvider = isEnabledProviderIdx?.let { p -> { i -> p(ctx, i) } },
             listener = RadioGroupBottomSheet.OnItemSelectedListener { index ->
                 if (!callChangeListener(index)) return@OnItemSelectedListener
                 persistValue(index)
@@ -288,6 +300,14 @@ class RadioGroupPreference @JvmOverloads constructor(
         fun setSummaryProvider(provider: ((Context, T) -> CharSequence?)?) {
             preference.summaryProviderIdx = provider?.let { p -> { ctx, i -> p(ctx, entries[i]) } }
             preference.scheduleViewUpdate()
+        }
+
+        fun setVisibleProvider(provider: ((Context, T) -> Boolean)?) {
+            preference.isVisibleProviderIdx = provider?.let { p -> { ctx, i -> p(ctx, entries[i]) } }
+        }
+
+        fun setEnabledProvider(provider: ((Context, T) -> Boolean)?) {
+            preference.isEnabledProviderIdx = provider?.let { p -> { ctx, i -> p(ctx, entries[i]) } }
         }
     }
 }
