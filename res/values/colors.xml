@@ -315,8 +315,10 @@
     <color name="all_apps_blur_overlay_color">#80FFFFFF</color>
 
     <color name="all_apps_label_text_color">#2F2E2A</color>
+    <color name="all_apps_label_text_color_inverse">#E9E2E2</color>
     <color name="all_apps_search_bg_color">#14000000</color>
     <color name="all_apps_search_border_color">#22000000</color>
+    <color name="all_apps_tabs_bg_color">#19000000</color>
 
     <!-- Murine search bar colors (light) -->
     <color name="murine_search_container_color">@color/settingslib_materialColorSurfaceContainerHigh</color>

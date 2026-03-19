@@ -104,6 +104,8 @@ constructor(
             )
         }
 
+        // Load string cache at least once
+        UI_HELPER_EXECUTOR.execute { model.modelDelegate.loadStringCache(model.bgDataModel.stringCache) }
         // Device profile policy changes
         val dpUpdateReceiver =
             SimpleBroadcastReceiver(context, UI_HELPER_EXECUTOR) { model.reloadStringCache() }

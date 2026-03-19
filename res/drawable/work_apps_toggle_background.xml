@@ -18,7 +18,7 @@
     <item>
         <shape android:shape="rectangle">
             <corners android:radius="@dimen/work_fab_radius" />
-            <solid android:color="@color/all_apps_tab_background_selected" />
+            <solid android:color="@color/settingslib_materialColorPrimary" />
             <padding
                 android:left="@dimen/work_profile_footer_padding"
                 android:right="@dimen/work_profile_footer_padding" />

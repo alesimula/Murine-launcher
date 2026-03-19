@@ -26,7 +26,7 @@
             <corners android:radius="@dimen/rounded_button_radius" />
             <stroke
                 android:width="@dimen/work_apps_paused_button_stroke"
-                android:color="@color/work_turn_on_stroke" />
+                android:color="@color/settingslib_materialColorPrimary" />
         </shape>
     </item>
 </ripple>
