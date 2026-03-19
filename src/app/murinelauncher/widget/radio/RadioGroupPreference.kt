@@ -309,5 +309,11 @@ class RadioGroupPreference @JvmOverloads constructor(
         fun setEnabledProvider(provider: ((Context, T) -> Boolean)?) {
             preference.isEnabledProviderIdx = provider?.let { p -> { ctx, i -> p(ctx, entries[i]) } }
         }
+
+        fun setOnPreferenceChangeListener(listener: ((T?) -> Boolean)?) {
+            preference.onPreferenceChangeListener = listener?.let { l -> OnPreferenceChangeListener {
+                _, i ->  l((i as? Int)?.let { entries[i] }) }
+            }
+        }
     }
 }

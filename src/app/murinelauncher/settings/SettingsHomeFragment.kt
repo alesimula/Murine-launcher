@@ -60,6 +60,7 @@ public final class SettingsHomeFragment: AbstractSettingsFragment() {
     override fun getPreferenceTitle(): Int? = R.string.pref_category_home_title
 
     override fun initPreference(preference: Preference, info: DisplayController.Info): Boolean {
+        val isGoogleSmartspaceAvailable = kotlin.lazy { SmartspaceMode.isGoogleSmartspaceAvailable(requireContext()) }
         var isTablet = InvariantDeviceProfile.INSTANCE.get(requireContext()).deviceType == InvariantDeviceProfile.TYPE_TABLET;
         when (preference.key) {
             RotationHelper.ALLOW_ROTATION_PREFERENCE_KEY -> {
@@ -136,6 +137,17 @@ public final class SettingsHomeFragment: AbstractSettingsFragment() {
                     setTextProvider { c, mode -> mode.getDisplayName(c) }
                     setIconProvider { c, mode -> AppCompatResources.getDrawable(c, mode.iconRes) }
                     setSummaryProvider { c, mode -> mode.getSummary(c) }
+                    setEnabledProvider { c, mode ->
+                        if (mode == SmartspaceMode.GOOGLE_SMARTSPACE) isGoogleSmartspaceAvailable.value
+                        else true
+                    }
+                    setOnPreferenceChangeListener { value ->
+                        val ctx = requireContext()
+                        val oldMode = LauncherPrefs.SMARTSPACE_MODE.get(ctx)
+                        if (value == SmartspaceMode.DISABLED && oldMode != SmartspaceMode.DISABLED)
+                            LauncherPrefs.get(ctx).put(LauncherPrefs.PENDING_SMARTSPACE_REMOVAL, true)
+                        true
+                    }
                 }
                 return true
             }

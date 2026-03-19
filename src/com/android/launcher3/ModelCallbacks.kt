@@ -324,18 +324,27 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
             return
         }
 
-        // TODO fix user defined smartspace being deleted
-        // Mismatch or missing — remove existing from DB and workspace
-        if (existingInDb != null) {
-            android.util.Log.d(TAG, "bindSmartspaceWidget: removing stale widget from DB")
-            launcher.modelWriter.deleteWidgetInfo(
-                existingInDb, launcher.appWidgetHolder, "smartspace cleanup"
-            )
-        }
-        // TODO fix user defined smartspace being deleted
-        if (existingView != null) {
-            android.util.Log.d(TAG, "bindSmartspaceWidget: removing stale view")
-            launcher.workspace.removeWorkspaceItem(existingView)
+        // Decide whether to remove the existing widget
+        val shouldRemove = if (existingInDb == null) false
+            else if (existingInDb.isCustomWidget()) true
+            else if (mode == SmartspaceMode.DISABLED) LauncherPrefs.PENDING_SMARTSPACE_REMOVAL.get(launcher)
+            else true
+
+        if (shouldRemove) {
+            if (existingInDb != null) {
+                android.util.Log.d(TAG, "bindSmartspaceWidget: removing stale widget from DB")
+                launcher.modelWriter.deleteWidgetInfo(
+                    existingInDb, launcher.appWidgetHolder, "smartspace cleanup"
+                )
+            }
+            if (existingView != null) {
+                android.util.Log.d(TAG, "bindSmartspaceWidget: removing stale view")
+                launcher.workspace.removeWorkspaceItem(existingView)
+            }
+            LauncherPrefs.get(launcher).put(LauncherPrefs.PENDING_SMARTSPACE_REMOVAL, false)
+        } else if (existingInDb != null) {
+            android.util.Log.d(TAG, "bindSmartspaceWidget: keeping user-placed widget (no pending removal)")
+            return
         }
 
         if (mode == SmartspaceMode.DISABLED) return
@@ -472,11 +481,28 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
             return
         }
 
-        val appWidgetId = launcher.appWidgetHolder.allocateAppWidgetId()
-        val bound = wmh.bindAppWidgetIdIfAllowed(appWidgetId, providerInfo, null)
-        if (!bound) {
-            launcher.appWidgetHolder.deleteAppWidgetId(appWidgetId)
-            return
+        // Use pre-bound widget ID if available (from a previous bind-permission grant)
+        val pendingId = LauncherPrefs.PENDING_SMARTSPACE_WIDGET_ID.get(launcher)
+        val appWidgetId: Int
+        if (pendingId > 0) {
+            appWidgetId = pendingId
+            LauncherPrefs.get(launcher).put(LauncherPrefs.PENDING_SMARTSPACE_WIDGET_ID, -1)
+            android.util.Log.d(TAG, "addGoogleSmartspaceWidget: using pre-bound widget ID $appWidgetId")
+        } else {
+            appWidgetId = launcher.appWidgetHolder.allocateAppWidgetId()
+            val bound = wmh.bindAppWidgetIdIfAllowed(appWidgetId, providerInfo, null)
+            if (!bound) {
+                // Not allowed - request permission via the system bind dialog
+                android.util.Log.d(TAG, "addGoogleSmartspaceWidget: requesting bind permission")
+                LauncherPrefs.get(launcher).put(
+                    LauncherPrefs.PENDING_SMARTSPACE_WIDGET_ID, appWidgetId
+                )
+                launcher.appWidgetHolder.startBindFlow(
+                    launcher, appWidgetId, providerInfo,
+                    LauncherConstants.ActivityCodes.REQUEST_BIND_SMARTSPACE
+                )
+                return
+            }
         }
 
         val hostView = launcher.appWidgetHolder.createView(appWidgetId, providerInfo)

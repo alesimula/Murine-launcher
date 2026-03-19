@@ -397,6 +397,10 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
         @JvmField
         val SMARTSPACE_MODE = backedUpItem("pref_smartspace_mode", SmartspaceMode.MURINE_CLOCK, EncryptionType.ENCRYPTED)
         @JvmField
+        val PENDING_SMARTSPACE_REMOVAL = nonRestorableItem("pending_smartspace_removal", false)
+        @JvmField
+        val PENDING_SMARTSPACE_WIDGET_ID = nonRestorableItem("pending_smartspace_widget_id", -1)
+        @JvmField
         val FIXED_LANDSCAPE_MODE = backedUpItem(SettingsHomeFragment.FIXED_LANDSCAPE_MODE, false)
         @JvmField
         val THEME_DAY_NIGHT = backedUpItem(SettingsGeneralFragment.LAUNCHER_THEME_DAY_NIGHT, if (ThemeOverride.supportsSystemTheme) ThemeOverride.THEME_SYSTEM else ThemeOverride.THEME_DARK)

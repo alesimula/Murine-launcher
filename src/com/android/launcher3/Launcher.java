@@ -36,6 +36,7 @@ import static com.android.launcher3.LauncherAnimUtils.SCALE_INDEX_WIDGET_TRANSIT
 import static com.android.launcher3.LauncherAnimUtils.SPRING_LOADED_EXIT_DELAY;
 import static com.android.launcher3.LauncherAnimUtils.WORKSPACE_SCALE_PROPERTY_FACTORY;
 import static com.android.launcher3.LauncherConstants.ActivityCodes.REQUEST_BIND_APPWIDGET;
+import static com.android.launcher3.LauncherConstants.ActivityCodes.REQUEST_BIND_SMARTSPACE;
 import static com.android.launcher3.LauncherConstants.ActivityCodes.REQUEST_BIND_PENDING_APPWIDGET;
 import static com.android.launcher3.LauncherConstants.ActivityCodes.REQUEST_CREATE_APPWIDGET;
 import static com.android.launcher3.LauncherConstants.ActivityCodes.REQUEST_CREATE_SHORTCUT;
@@ -946,6 +947,21 @@ public class Launcher extends StatefulActivity<LauncherState>
                         this.getString(R.string.set_default_home_app,
                                 this.getString(R.string.derived_app_name)),
                         Toast.LENGTH_LONG).show();
+            }
+            return;
+        }
+
+        if (requestCode == REQUEST_BIND_SMARTSPACE) {
+            int smartspaceWidgetId = data != null
+                    ? data.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, -1) : -1;
+            if (resultCode == RESULT_OK && smartspaceWidgetId > 0) {
+                LauncherPrefs.get(this).put(LauncherPrefs.PENDING_SMARTSPACE_WIDGET_ID, smartspaceWidgetId);
+                mModel.forceReload();
+            } else {
+                // Permission denied - clean up and revert to DISABLED
+                if (smartspaceWidgetId > 0) getAppWidgetHolder().deleteAppWidgetId(smartspaceWidgetId);
+                LauncherPrefs.get(this).put(LauncherPrefs.PENDING_SMARTSPACE_WIDGET_ID, -1);
+                LauncherPrefs.get(this).put(LauncherPrefs.SMARTSPACE_MODE, SmartspaceMode.DISABLED);
             }
             return;
         }

@@ -39,6 +39,7 @@ public class LauncherConstants {
      */
     public static class ActivityCodes {
 
+        public static final int REQUEST_BIND_SMARTSPACE = 15;
         public static final int REQUEST_BIND_PENDING_APPWIDGET = 12;
         public static final int REQUEST_RECONFIGURE_APPWIDGET = 13;
         public static final int REQUEST_HOME_ROLE = 14;

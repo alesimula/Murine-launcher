@@ -1,7 +1,6 @@
 package app.murinelauncher.widget.smartspace
 
 import android.content.Context
-import app.murinelauncher.util.delegate.OneTimeFun
 import com.android.launcher3.R
 
 /**
@@ -38,7 +37,7 @@ enum class SmartspaceMode(
             "com.google.android.apps.gsa.staticplugins.smartspace.widget.SmartspaceWidgetProvider"
 
         @JvmStatic
-        val isGoogleSmartspaceAvailable by OneTimeFun.with { context: Context ->
+        fun isGoogleSmartspaceAvailable(context: Context): Boolean {
             try {
                 val info = context.packageManager.getProviderInfo(
                     android.content.ComponentName(
@@ -46,17 +45,17 @@ enum class SmartspaceMode(
                         GOOGLE_SMARTSPACE_PROVIDER
                     ), 0
                 )
-                return@with true
+                return true
             } catch (_: android.content.pm.PackageManager.NameNotFoundException) {
                 // Try via AppWidgetManager as it's a widget provider, not a content provider
                 try {
                     val awm = android.appwidget.AppWidgetManager.getInstance(context)
-                    awm.getInstalledProviders(android.appwidget.AppWidgetProviderInfo.WIDGET_CATEGORY_HOME_SCREEN).any {
+                    return awm.getInstalledProviders(android.appwidget.AppWidgetProviderInfo.WIDGET_CATEGORY_HOME_SCREEN).any {
                         it.provider.packageName == GOOGLE_SMARTSPACE_PACKAGE &&
                                 it.provider.className == GOOGLE_SMARTSPACE_PROVIDER
                     }
                 } catch (_: Exception) {
-                    return@with false
+                    return false
                 }
             }
         }
