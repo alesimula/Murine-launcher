@@ -1,0 +1,3 @@
+A modern, lightweight FOSS Launcher3 fork delivering an enhanced stock Android experience, providing a familiar AOSP feel out of the box, with some sprinkles on top :3
+
+It offers a minimalistic yet polished interface with essential customization options, with zero bloat.

@@ -1,0 +1,1 @@
+A modern, lightweight Launcher3 fork delivering an enhanced stock Android experience.
