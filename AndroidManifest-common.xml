@@ -79,6 +79,10 @@
         android:restoreAnyVersion="true"
         android:supportsRtl="true" >
 
+        <meta-data
+            android:name="com.android.systemui.action.PLUGIN_CONNECTED"
+            android:value="app.murinelauncher.widget.smartspace.MurineClockWidgetPlugin" />
+
         <!-- Intent received when a session is committed -->
         <receiver
             android:name="com.android.launcher3.SessionCommitReceiver"

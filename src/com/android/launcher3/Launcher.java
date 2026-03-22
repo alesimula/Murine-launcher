@@ -956,7 +956,7 @@ public class Launcher extends StatefulActivity<LauncherState>
                     ? data.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, -1) : -1;
             if (resultCode == RESULT_OK && smartspaceWidgetId > 0) {
                 LauncherPrefs.get(this).put(LauncherPrefs.PENDING_SMARTSPACE_WIDGET_ID, smartspaceWidgetId);
-                mModel.forceReload();
+                mModelCallbacks.bindSmartspaceWidget();
             } else {
                 // Permission denied - clean up and revert to DISABLED
                 if (smartspaceWidgetId > 0) getAppWidgetHolder().deleteAppWidgetId(smartspaceWidgetId);
