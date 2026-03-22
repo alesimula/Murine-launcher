@@ -100,7 +100,7 @@ android {
     sourceSets {
         main {
             res.srcDirs = ['res']
-            java.srcDirs = ['src', 'src_plugins', 'tests/shared', 'system_ext', 'tests/multivalentTests/shared', 'systemui_core/shared']
+            java.srcDirs = ['src', 'src_plugins' /*, 'tests/shared', 'system_ext', 'tests/multivalentTests/shared', 'systemui_core/shared'*/]
             manifest.srcFile 'AndroidManifest-common.xml'
             proto {
                 srcDirs = ['protos/', 'quickstep/protos_overrides/']
@@ -118,7 +118,7 @@ android {
         //}
 
         aosp {
-            java.srcDirs = ['src_flags', 'src_shortcuts_overrides']
+            java.srcDirs = [/*'src_flags',*/ 'src_shortcuts_overrides']
         }
 
         aospWithoutQuickstep {
@@ -145,7 +145,7 @@ android {
         }
 
         withoutQuickstep {
-            java.srcDirs = ['src_ui_overrides']
+            //java.srcDirs = ['src_ui_overrides']
         }
 
         withQuickstep {
@@ -306,13 +306,15 @@ dependencies {
     implementation project(':compatLib:compatLibVU')
     implementation project(':compatLib:compatLibVV')
     implementation project(':compatLib:compatLibVBaklava')
+
+    implementation project(':systemUIPluginCore')
 }
 
 dependencies {
     // Recents lib dependency
     withQuickstepImplementation fileTree(dir: "${FRAMEWORK_PREBUILTS_DIR}", include: 'sysui_shared.jar')
     // Required for AOSP to compile. This is already included in the sysui_shared.jar
-    withoutQuickstepImplementation fileTree(dir: "${FRAMEWORK_PREBUILTS_DIR}", include: 'plugin_core.jar')
+    //withoutQuickstepImplementation fileTree(dir: "${FRAMEWORK_PREBUILTS_DIR}", include: 'plugin_core.jar')
 
     l3goImplementation files('prebuilts/libs/libandroid_browser_helper.jar')
 //    withQuickstepImplementation files('prebuilts/libs/SettingsLibCollapsingToolbarBaseActivity.jar')
@@ -321,22 +323,23 @@ dependencies {
     withQuickstepImplementation files('prebuilts/libs/SystemUI-shared-utils_kotlin.jar')
     withQuickstepImplementation files('prebuilts/libs/SystemUIUnfoldLib.jar')
     withQuickstepImplementation files('prebuilts/libs/SystemUIUnfoldLib_kotlin.jar')
-    implementation files('prebuilts/libs/SystemUI-statsd.jar')
+    //implementation files('prebuilts/libs/SystemUI-statsd.jar') // Removed direct usage
     withQuickstepImplementation files('prebuilts/libs/contextualeducationlib.jar')
     withQuickstepImplementation files('prebuilts/libs/WindowManager-Shell-shared.jar')
     withQuickstepImplementation files('prebuilts/libs/WindowManager-Shell-shared_kotlin.jar')
-    implementation files('prebuilts/libs/am_flags_lib.jar')
-    implementation files('prebuilts/libs/PlatformAnimationLib.jar')
-    implementation files('prebuilts/libs/PlatformAnimationLib_kotlin.jar')
-    implementation files('prebuilts/libs/PluginAnnotationLib.jar')
-    implementation files('prebuilts/libs/PluginAnnotationLib_kotlin.jar')
-    implementation files('prebuilts/libs/PluginCoreLib.jar')
-    implementation files('prebuilts/libs/PluginCoreLib_kotlin.jar')
-    implementation files('prebuilts/libs/view_capture_proto.jar')
-//    implementation files('prebuilts/libs/tracinglib-platform.jar')
-    implementation files('prebuilts/libs/tracinglib-platform.jar')
-    implementation files('prebuilts/libs/view_capture.jar')
-    implementation files('prebuilts/libs/view_capture_kotlin.jar')
+
+    // Commented unnecessary dependancies, or replaced with withQuickstepImplementation
+    withQuickstepImplementation files('prebuilts/libs/am_flags_lib.jar') // only used in quickstep
+    withQuickstepImplementation files('prebuilts/libs/PlatformAnimationLib.jar') // only used in quickstep
+    withQuickstepImplementation files('prebuilts/libs/PlatformAnimationLib_kotlin.jar') // possibly used, but only in quickstep
+    //implementation files('prebuilts/libs/PluginAnnotationLib.jar') // part of [systemUIPluginCore]
+    //implementation files('prebuilts/libs/PluginAnnotationLib_kotlin.jar') // Not used
+    //implementation files('prebuilts/libs/PluginCoreLib.jar') // added decompiled stubs as dep [systemUIPluginCore]
+    //implementation files('prebuilts/libs/PluginCoreLib_kotlin.jar') // Not used
+    //implementation files('prebuilts/libs/view_capture_proto.jar') // Not used
+    //implementation files('prebuilts/libs/tracinglib-platform.jar')  // Not used
+    //implementation files('prebuilts/libs/view_capture.jar') // Not used
+    //implementation files('prebuilts/libs/view_capture_kotlin.jar') // Not used
     //releaseImplementation files('prebuilts/libs/aconfig-annotations-lib.jar')
     compileOnly files('prebuilts/libs/framework-16.jar')
 }
