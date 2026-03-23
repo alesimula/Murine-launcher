@@ -31,8 +31,6 @@ Last tested on:
 
 ## Buy me a beer
 
-[
-    ![Donate with PayPal]
-    (https://raw.githubusercontent.com/stefan-niedermann/paypal-donate-button/master/paypal-donate-button.png)
-]
-(https://www.paypal.com/donate/?hosted_button_id=3HRAWU9KVYKKS)
+<a href="https://www.paypal.com/donate/?hosted_button_id=3HRAWU9KVYKKS">
+  <img src="https://raw.githubusercontent.com/stefan-niedermann/paypal-donate-button/master/paypal-donate-button.png" alt="Donate with PayPal" />
+</a>
