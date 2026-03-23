@@ -222,16 +222,6 @@ public class WorkspaceTouchListener extends GestureDetector.SimpleOnGestureListe
         return false;
     }
 
-    @Override
-    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-        if (e1 == null || e2 == null || !mLauncher.isInState(NORMAL)) return false;
-        boolean enabled = LauncherPrefs.GESTURE_SWIPE_DOWN_NOTIFICATIONS.get(mLauncher);
-        if (enabled && velocityY > 0 && (e2.getY() - e1.getY()) > mTouchSlop) {
-            expandNotifications();
-            return true;
-        }
-        return false;
-    }
 
     private void lockScreenLegacy() {
         DevicePolicyManager dpm = (DevicePolicyManager)
@@ -255,16 +245,6 @@ public class WorkspaceTouchListener extends GestureDetector.SimpleOnGestureListe
         }
     }
 
-    @SuppressWarnings("WrongConstant")
-    private void expandNotifications() {
-        try {
-            Object sbService = mLauncher.getSystemService("statusbar");
-            if (sbService != null) {
-                sbService.getClass().getMethod("expandNotificationsPanel").invoke(sbService);
-            }
-        } catch (Exception ignored) {
-        }
-    }
 
     private void maybeShowMenu() {
         if (mLongPressState == STATE_REQUESTED) {
