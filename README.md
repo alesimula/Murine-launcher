@@ -28,3 +28,11 @@ Last tested on:
 
  - Android Studio: Panda 2 (2025.3.2)
  - Gradle: 9.3.1 (bundled)
+
+## Buy me a beer
+
+[
+    ![Donate with PayPal]
+    (https://raw.githubusercontent.com/stefan-niedermann/paypal-donate-button/master/paypal-donate-button.png)
+]
+(https://www.paypal.com/donate/?hosted_button_id=3HRAWU9KVYKKS)
