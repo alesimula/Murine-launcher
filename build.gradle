@@ -15,6 +15,7 @@ plugins {
 }
 
 final String ANDROID_TOP = "${rootDir}"
+// Old 'prebuilts', nor used anymore, stashed to: https://github.com/alesimula/old-resources-m-launcher
 final String FRAMEWORK_PREBUILTS_DIR = "${ANDROID_TOP}/prebuilts/libs/"
 
 // ------------------ Framework stub compilation pipeline ------------------
