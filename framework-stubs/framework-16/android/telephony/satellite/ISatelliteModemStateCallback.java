@@ -1,0 +1,42 @@
+package android.telephony.satellite;
+
+public interface ISatelliteModemStateCallback extends android.os.IInterface {
+    public static final java.lang.String DESCRIPTOR = "android.telephony.satellite.ISatelliteModemStateCallback";
+    public void onSatelliteModemStateChanged(int p0) throws android.os.RemoteException;
+    public void onEmergencyModeChanged(boolean p0) throws android.os.RemoteException;
+    public void onRegistrationFailure(int p0) throws android.os.RemoteException;
+    public void onTerrestrialNetworkAvailableChanged(boolean p0) throws android.os.RemoteException;
+
+    public static class Default implements android.telephony.satellite.ISatelliteModemStateCallback {
+        public Default() {}
+        public void onSatelliteModemStateChanged(int p0) throws android.os.RemoteException {}
+        public void onEmergencyModeChanged(boolean p0) throws android.os.RemoteException {}
+        public void onRegistrationFailure(int p0) throws android.os.RemoteException {}
+        public void onTerrestrialNetworkAvailableChanged(boolean p0) throws android.os.RemoteException {}
+        public android.os.IBinder asBinder() { return null; }
+    }
+
+    public static abstract class Stub extends android.os.Binder implements android.telephony.satellite.ISatelliteModemStateCallback {
+        static final int TRANSACTION_onSatelliteModemStateChanged = 1;
+        static final int TRANSACTION_onEmergencyModeChanged = 2;
+        static final int TRANSACTION_onRegistrationFailure = 3;
+        static final int TRANSACTION_onTerrestrialNetworkAvailableChanged = 4;
+        public Stub() { super(); }
+        public static android.telephony.satellite.ISatelliteModemStateCallback asInterface(android.os.IBinder p0) { return null; }
+        public android.os.IBinder asBinder() { return null; }
+        public static java.lang.String getDefaultTransactionName(int p0) { return null; }
+        public java.lang.String getTransactionName(int p0) { return null; }
+        public boolean onTransact(int p0, android.os.Parcel p1, android.os.Parcel p2, int p3) throws android.os.RemoteException { return false; }
+        public int getMaxTransactionId() { return 0; }
+
+        private static class Proxy implements android.telephony.satellite.ISatelliteModemStateCallback {
+            Proxy(android.os.IBinder p0) {}
+            public android.os.IBinder asBinder() { return null; }
+            public java.lang.String getInterfaceDescriptor() { return null; }
+            public void onSatelliteModemStateChanged(int p0) throws android.os.RemoteException {}
+            public void onEmergencyModeChanged(boolean p0) throws android.os.RemoteException {}
+            public void onRegistrationFailure(int p0) throws android.os.RemoteException {}
+            public void onTerrestrialNetworkAvailableChanged(boolean p0) throws android.os.RemoteException {}
+        }
+    }
+}

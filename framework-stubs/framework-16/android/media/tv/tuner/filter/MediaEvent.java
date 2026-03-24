@@ -1,0 +1,32 @@
+package android.media.tv.tuner.filter;
+
+@android.annotation.SystemApi
+public class MediaEvent extends android.media.tv.tuner.filter.FilterEvent {
+    public int getStreamId() { return 0; }
+    public boolean isPtsPresent() { return false; }
+    public long getPts() { return 0L; }
+    public boolean isDtsPresent() { return false; }
+    public long getDts() { return 0L; }
+    public long getDataLength() { return 0L; }
+    public long getOffset() { return 0L; }
+    @android.annotation.Nullable
+    public android.media.MediaCodec.LinearBlock getLinearBlock() { return null; }
+    public boolean isSecureMemory() { return false; }
+    public long getAvDataId() { return 0L; }
+    public long getAudioHandle() { return 0L; }
+    public int getMpuSequenceNumber() { return 0; }
+    public boolean isPrivateData() { return false; }
+    public int getScIndexMask() { return 0; }
+    @android.annotation.Nullable
+    public android.media.tv.tuner.filter.AudioDescriptor getExtraMetaData() { return null; }
+    @android.annotation.NonNull
+    public java.util.List<android.media.AudioPresentation> getAudioPresentations() { return null; }
+    @android.annotation.FlaggedApi("android.media.tv.flags.tuner_w_apis")
+    public int getNumDataPieces() { return 0; }
+    @android.annotation.FlaggedApi("android.media.tv.flags.tuner_w_apis")
+    public int getIndexInDataGroup() { return 0; }
+    @android.annotation.FlaggedApi("android.media.tv.flags.tuner_w_apis")
+    public int getDataGroupId() { return 0; }
+    protected void finalize() {}
+    public void release() {}
+}

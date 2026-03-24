@@ -1,0 +1,36 @@
+package android.app;
+
+@java.lang.Deprecated
+public class LocalActivityManager {
+    static final int RESTORED = 0;
+    static final int INITIALIZING = 1;
+    static final int CREATED = 2;
+    static final int STARTED = 3;
+    static final int RESUMED = 4;
+    static final int DESTROYED = 5;
+    public LocalActivityManager(android.app.Activity p0, boolean p1) {}
+    public android.view.Window startActivity(java.lang.String p0, android.content.Intent p1) { return null; }
+    public android.view.Window destroyActivity(java.lang.String p0, boolean p1) { return null; }
+    public android.app.Activity getCurrentActivity() { return null; }
+    public java.lang.String getCurrentId() { return null; }
+    public android.app.Activity getActivity(java.lang.String p0) { return null; }
+    public void dispatchCreate(android.os.Bundle p0) {}
+    public android.os.Bundle saveInstanceState() { return null; }
+    public void dispatchResume() {}
+    public void dispatchPause(boolean p0) {}
+    public void dispatchStop() {}
+    public java.util.HashMap<java.lang.String, java.lang.Object> dispatchRetainNonConfigurationInstance() { return null; }
+    public void removeAllActivities() {}
+    public void dispatchDestroy(boolean p0) {}
+
+    private static class LocalActivityRecord extends android.os.Binder {
+        final java.lang.String id = null;
+        android.content.Intent intent;
+        android.content.pm.ActivityInfo activityInfo;
+        android.app.Activity activity;
+        android.view.Window window;
+        android.os.Bundle instanceState;
+        int curState;
+        LocalActivityRecord(java.lang.String p0, android.content.Intent p1) { super(); }
+    }
+}

@@ -1,0 +1,44 @@
+package com.android.internal.org.bouncycastle.asn1.misc;
+
+public interface MiscObjectIdentifiers {
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier netscape = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier netscapeCertType = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier netscapeBaseURL = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier netscapeRevocationURL = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier netscapeCARevocationURL = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier netscapeRenewalURL = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier netscapeCApolicyURL = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier netscapeSSLServerName = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier netscapeCertComment = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier verisign = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier verisignCzagExtension = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier verisignPrivate_6_9 = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier verisignOnSiteJurisdictionHash = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier verisignBitString_6_13 = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier verisignDnbDunsNumber = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier verisignIssStrongCrypto = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier novell = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier novellSecurityAttribs = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier entrust = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier entrustVersionExtension = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier cast5CBC = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier hMAC_SHA1 = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier as_sys_sec_alg_ideaCBC = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier cryptlib = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier cryptlib_algorithm = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier cryptlib_algorithm_blowfish_ECB = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier cryptlib_algorithm_blowfish_CBC = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier cryptlib_algorithm_blowfish_CFB = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier cryptlib_algorithm_blowfish_OFB = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier blake2 = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_blake2b160 = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_blake2b256 = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_blake2b384 = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_blake2b512 = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_blake2s128 = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_blake2s160 = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_blake2s224 = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_blake2s256 = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_scrypt = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_alg_composite = null;
+}

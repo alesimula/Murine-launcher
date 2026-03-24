@@ -1,0 +1,15 @@
+package android.telephony;
+
+public final class RadioAccessSpecifier implements android.os.Parcelable {
+    @android.annotation.NonNull
+    public static final android.os.Parcelable.Creator<android.telephony.RadioAccessSpecifier> CREATOR = null;
+    public RadioAccessSpecifier(int p0, int[] p1, int[] p2) {}
+    public int getRadioAccessNetwork() { return 0; }
+    public int[] getBands() { return null; }
+    public int[] getChannels() { return null; }
+    public int describeContents() { return 0; }
+    public void writeToParcel(android.os.Parcel p0, int p1) {}
+    public boolean equals(java.lang.Object p0) { return false; }
+    public int hashCode() { return 0; }
+    public java.lang.String toString() { return null; }
+}

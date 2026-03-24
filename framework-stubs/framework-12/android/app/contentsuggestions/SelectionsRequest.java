@@ -1,0 +1,26 @@
+package android.app.contentsuggestions;
+
+@android.annotation.SystemApi
+public final class SelectionsRequest implements android.os.Parcelable {
+    private final int mTaskId = 0;
+    private final android.graphics.Point mInterestPoint = null;
+    private final android.os.Bundle mExtras = null;
+    public static final android.os.Parcelable.Creator<android.app.contentsuggestions.SelectionsRequest> CREATOR = null;
+    private SelectionsRequest(int p0, android.graphics.Point p1, android.os.Bundle p2) {}
+    public int getTaskId() { return 0; }
+    public android.graphics.Point getInterestPoint() { return null; }
+    public android.os.Bundle getExtras() { return null; }
+    public int describeContents() { return 0; }
+    public void writeToParcel(android.os.Parcel p0, int p1) {}
+
+    @android.annotation.SystemApi
+    public static final class Builder {
+        private final int mTaskId = 0;
+        private android.graphics.Point mInterestPoint;
+        private android.os.Bundle mExtras;
+        public Builder(int p0) {}
+        public android.app.contentsuggestions.SelectionsRequest.Builder setExtras(android.os.Bundle p0) { return null; }
+        public android.app.contentsuggestions.SelectionsRequest.Builder setInterestPoint(android.graphics.Point p0) { return null; }
+        public android.app.contentsuggestions.SelectionsRequest build() { return null; }
+    }
+}

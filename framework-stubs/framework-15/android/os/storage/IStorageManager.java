@@ -1,0 +1,324 @@
+package android.os.storage;
+
+public interface IStorageManager extends android.os.IInterface {
+    public void registerListener(android.os.storage.IStorageEventListener p0) throws android.os.RemoteException;
+    public void unregisterListener(android.os.storage.IStorageEventListener p0) throws android.os.RemoteException;
+    @android.annotation.EnforcePermission("android.permission.SHUTDOWN")
+    public void shutdown(android.os.storage.IStorageShutdownObserver p0) throws android.os.RemoteException;
+    public void mountObb(java.lang.String p0, java.lang.String p1, android.os.storage.IObbActionListener p2, int p3, android.content.res.ObbInfo p4) throws android.os.RemoteException;
+    public void unmountObb(java.lang.String p0, boolean p1, android.os.storage.IObbActionListener p2, int p3) throws android.os.RemoteException;
+    public boolean isObbMounted(java.lang.String p0) throws android.os.RemoteException;
+    public java.lang.String getMountedObbPath(java.lang.String p0) throws android.os.RemoteException;
+    public android.os.storage.StorageVolume[] getVolumeList(int p0, java.lang.String p1, int p2) throws android.os.RemoteException;
+    public void mkdirs(java.lang.String p0, java.lang.String p1) throws android.os.RemoteException;
+    public long lastMaintenance() throws android.os.RemoteException;
+    @android.annotation.EnforcePermission("android.permission.MOUNT_UNMOUNT_FILESYSTEMS")
+    public void runMaintenance() throws android.os.RemoteException;
+    public android.os.storage.DiskInfo[] getDisks() throws android.os.RemoteException;
+    public android.os.storage.VolumeInfo[] getVolumes(int p0) throws android.os.RemoteException;
+    public android.os.storage.VolumeRecord[] getVolumeRecords(int p0) throws android.os.RemoteException;
+    @android.annotation.EnforcePermission("android.permission.MOUNT_UNMOUNT_FILESYSTEMS")
+    public void mount(java.lang.String p0) throws android.os.RemoteException;
+    @android.annotation.EnforcePermission("android.permission.MOUNT_UNMOUNT_FILESYSTEMS")
+    public void unmount(java.lang.String p0) throws android.os.RemoteException;
+    @android.annotation.EnforcePermission("android.permission.MOUNT_FORMAT_FILESYSTEMS")
+    public void format(java.lang.String p0) throws android.os.RemoteException;
+    @android.annotation.EnforcePermission("android.permission.MOUNT_FORMAT_FILESYSTEMS")
+    public void partitionPublic(java.lang.String p0) throws android.os.RemoteException;
+    @android.annotation.EnforcePermission("android.permission.MOUNT_FORMAT_FILESYSTEMS")
+    public void partitionPrivate(java.lang.String p0) throws android.os.RemoteException;
+    @android.annotation.EnforcePermission("android.permission.MOUNT_FORMAT_FILESYSTEMS")
+    public void partitionMixed(java.lang.String p0, int p1) throws android.os.RemoteException;
+    @android.annotation.EnforcePermission("android.permission.MOUNT_UNMOUNT_FILESYSTEMS")
+    public void setVolumeNickname(java.lang.String p0, java.lang.String p1) throws android.os.RemoteException;
+    @android.annotation.EnforcePermission("android.permission.MOUNT_UNMOUNT_FILESYSTEMS")
+    public void setVolumeUserFlags(java.lang.String p0, int p1, int p2) throws android.os.RemoteException;
+    @android.annotation.EnforcePermission("android.permission.MOUNT_UNMOUNT_FILESYSTEMS")
+    public void forgetVolume(java.lang.String p0) throws android.os.RemoteException;
+    @android.annotation.EnforcePermission("android.permission.MOUNT_UNMOUNT_FILESYSTEMS")
+    public void forgetAllVolumes() throws android.os.RemoteException;
+    public java.lang.String getPrimaryStorageUuid() throws android.os.RemoteException;
+    @android.annotation.EnforcePermission("android.permission.MOUNT_UNMOUNT_FILESYSTEMS")
+    public void setPrimaryStorageUuid(java.lang.String p0, android.content.pm.IPackageMoveObserver p1) throws android.os.RemoteException;
+    @android.annotation.EnforcePermission("android.permission.MOUNT_FORMAT_FILESYSTEMS")
+    public void benchmark(java.lang.String p0, android.os.IVoldTaskListener p1) throws android.os.RemoteException;
+    @android.annotation.EnforcePermission("android.permission.MOUNT_UNMOUNT_FILESYSTEMS")
+    public void setDebugFlags(int p0, int p1) throws android.os.RemoteException;
+    @android.annotation.EnforcePermission("android.permission.STORAGE_INTERNAL")
+    public void createUserStorageKeys(int p0, boolean p1) throws android.os.RemoteException;
+    @android.annotation.EnforcePermission("android.permission.STORAGE_INTERNAL")
+    public void destroyUserStorageKeys(int p0) throws android.os.RemoteException;
+    @android.annotation.EnforcePermission("android.permission.STORAGE_INTERNAL")
+    public void unlockCeStorage(int p0, byte[] p1) throws android.os.RemoteException;
+    @android.annotation.EnforcePermission("android.permission.STORAGE_INTERNAL")
+    public void lockCeStorage(int p0) throws android.os.RemoteException;
+    public boolean isCeStorageUnlocked(int p0) throws android.os.RemoteException;
+    @android.annotation.EnforcePermission("android.permission.STORAGE_INTERNAL")
+    public void prepareUserStorage(java.lang.String p0, int p1, int p2) throws android.os.RemoteException;
+    @android.annotation.EnforcePermission("android.permission.STORAGE_INTERNAL")
+    public void destroyUserStorage(java.lang.String p0, int p1, int p2) throws android.os.RemoteException;
+    @android.annotation.EnforcePermission("android.permission.STORAGE_INTERNAL")
+    public void setCeStorageProtection(int p0, byte[] p1) throws android.os.RemoteException;
+    @android.annotation.EnforcePermission("android.permission.MOUNT_FORMAT_FILESYSTEMS")
+    public void fstrim(int p0, android.os.IVoldTaskListener p1) throws android.os.RemoteException;
+    public com.android.internal.os.AppFuseMount mountProxyFileDescriptorBridge() throws android.os.RemoteException;
+    public android.os.ParcelFileDescriptor openProxyFileDescriptor(int p0, int p1, int p2) throws android.os.RemoteException;
+    public long getCacheQuotaBytes(java.lang.String p0, int p1) throws android.os.RemoteException;
+    public long getCacheSizeBytes(java.lang.String p0, int p1) throws android.os.RemoteException;
+    public long getAllocatableBytes(java.lang.String p0, int p1, java.lang.String p2) throws android.os.RemoteException;
+    public void allocateBytes(java.lang.String p0, long p1, int p2, java.lang.String p3) throws android.os.RemoteException;
+    public void runIdleMaintenance() throws android.os.RemoteException;
+    public void abortIdleMaintenance() throws android.os.RemoteException;
+    public void commitChanges() throws android.os.RemoteException;
+    public boolean supportsCheckpoint() throws android.os.RemoteException;
+    public void startCheckpoint(int p0) throws android.os.RemoteException;
+    @android.annotation.EnforcePermission("android.permission.MOUNT_FORMAT_FILESYSTEMS")
+    public boolean needsCheckpoint() throws android.os.RemoteException;
+    public void abortChanges(java.lang.String p0, boolean p1) throws android.os.RemoteException;
+    public void fixupAppDir(java.lang.String p0) throws android.os.RemoteException;
+    public void disableAppDataIsolation(java.lang.String p0, int p1, int p2) throws android.os.RemoteException;
+    public android.app.PendingIntent getManageSpaceActivityIntent(java.lang.String p0, int p1) throws android.os.RemoteException;
+    public void notifyAppIoBlocked(java.lang.String p0, int p1, int p2, int p3) throws android.os.RemoteException;
+    public void notifyAppIoResumed(java.lang.String p0, int p1, int p2, int p3) throws android.os.RemoteException;
+    @android.annotation.EnforcePermission("android.permission.WRITE_MEDIA_STORAGE")
+    public int getExternalStorageMountMode(int p0, java.lang.String p1) throws android.os.RemoteException;
+    public boolean isAppIoBlocked(java.lang.String p0, int p1, int p2, int p3) throws android.os.RemoteException;
+    public void setCloudMediaProvider(java.lang.String p0) throws android.os.RemoteException;
+    public java.lang.String getCloudMediaProvider() throws android.os.RemoteException;
+    public long getInternalStorageBlockDeviceSize() throws android.os.RemoteException;
+    @android.annotation.EnforcePermission("android.permission.READ_PRIVILEGED_PHONE_STATE")
+    public int getInternalStorageRemainingLifetime() throws android.os.RemoteException;
+
+    public static class Default implements android.os.storage.IStorageManager {
+        public Default() {}
+        public void registerListener(android.os.storage.IStorageEventListener p0) throws android.os.RemoteException {}
+        public void unregisterListener(android.os.storage.IStorageEventListener p0) throws android.os.RemoteException {}
+        public void shutdown(android.os.storage.IStorageShutdownObserver p0) throws android.os.RemoteException {}
+        public void mountObb(java.lang.String p0, java.lang.String p1, android.os.storage.IObbActionListener p2, int p3, android.content.res.ObbInfo p4) throws android.os.RemoteException {}
+        public void unmountObb(java.lang.String p0, boolean p1, android.os.storage.IObbActionListener p2, int p3) throws android.os.RemoteException {}
+        public boolean isObbMounted(java.lang.String p0) throws android.os.RemoteException { return false; }
+        public java.lang.String getMountedObbPath(java.lang.String p0) throws android.os.RemoteException { return null; }
+        public android.os.storage.StorageVolume[] getVolumeList(int p0, java.lang.String p1, int p2) throws android.os.RemoteException { return null; }
+        public void mkdirs(java.lang.String p0, java.lang.String p1) throws android.os.RemoteException {}
+        public long lastMaintenance() throws android.os.RemoteException { return 0L; }
+        public void runMaintenance() throws android.os.RemoteException {}
+        public android.os.storage.DiskInfo[] getDisks() throws android.os.RemoteException { return null; }
+        public android.os.storage.VolumeInfo[] getVolumes(int p0) throws android.os.RemoteException { return null; }
+        public android.os.storage.VolumeRecord[] getVolumeRecords(int p0) throws android.os.RemoteException { return null; }
+        public void mount(java.lang.String p0) throws android.os.RemoteException {}
+        public void unmount(java.lang.String p0) throws android.os.RemoteException {}
+        public void format(java.lang.String p0) throws android.os.RemoteException {}
+        public void partitionPublic(java.lang.String p0) throws android.os.RemoteException {}
+        public void partitionPrivate(java.lang.String p0) throws android.os.RemoteException {}
+        public void partitionMixed(java.lang.String p0, int p1) throws android.os.RemoteException {}
+        public void setVolumeNickname(java.lang.String p0, java.lang.String p1) throws android.os.RemoteException {}
+        public void setVolumeUserFlags(java.lang.String p0, int p1, int p2) throws android.os.RemoteException {}
+        public void forgetVolume(java.lang.String p0) throws android.os.RemoteException {}
+        public void forgetAllVolumes() throws android.os.RemoteException {}
+        public java.lang.String getPrimaryStorageUuid() throws android.os.RemoteException { return null; }
+        public void setPrimaryStorageUuid(java.lang.String p0, android.content.pm.IPackageMoveObserver p1) throws android.os.RemoteException {}
+        public void benchmark(java.lang.String p0, android.os.IVoldTaskListener p1) throws android.os.RemoteException {}
+        public void setDebugFlags(int p0, int p1) throws android.os.RemoteException {}
+        public void createUserStorageKeys(int p0, boolean p1) throws android.os.RemoteException {}
+        public void destroyUserStorageKeys(int p0) throws android.os.RemoteException {}
+        public void unlockCeStorage(int p0, byte[] p1) throws android.os.RemoteException {}
+        public void lockCeStorage(int p0) throws android.os.RemoteException {}
+        public boolean isCeStorageUnlocked(int p0) throws android.os.RemoteException { return false; }
+        public void prepareUserStorage(java.lang.String p0, int p1, int p2) throws android.os.RemoteException {}
+        public void destroyUserStorage(java.lang.String p0, int p1, int p2) throws android.os.RemoteException {}
+        public void setCeStorageProtection(int p0, byte[] p1) throws android.os.RemoteException {}
+        public void fstrim(int p0, android.os.IVoldTaskListener p1) throws android.os.RemoteException {}
+        public com.android.internal.os.AppFuseMount mountProxyFileDescriptorBridge() throws android.os.RemoteException { return null; }
+        public android.os.ParcelFileDescriptor openProxyFileDescriptor(int p0, int p1, int p2) throws android.os.RemoteException { return null; }
+        public long getCacheQuotaBytes(java.lang.String p0, int p1) throws android.os.RemoteException { return 0L; }
+        public long getCacheSizeBytes(java.lang.String p0, int p1) throws android.os.RemoteException { return 0L; }
+        public long getAllocatableBytes(java.lang.String p0, int p1, java.lang.String p2) throws android.os.RemoteException { return 0L; }
+        public void allocateBytes(java.lang.String p0, long p1, int p2, java.lang.String p3) throws android.os.RemoteException {}
+        public void runIdleMaintenance() throws android.os.RemoteException {}
+        public void abortIdleMaintenance() throws android.os.RemoteException {}
+        public void commitChanges() throws android.os.RemoteException {}
+        public boolean supportsCheckpoint() throws android.os.RemoteException { return false; }
+        public void startCheckpoint(int p0) throws android.os.RemoteException {}
+        public boolean needsCheckpoint() throws android.os.RemoteException { return false; }
+        public void abortChanges(java.lang.String p0, boolean p1) throws android.os.RemoteException {}
+        public void fixupAppDir(java.lang.String p0) throws android.os.RemoteException {}
+        public void disableAppDataIsolation(java.lang.String p0, int p1, int p2) throws android.os.RemoteException {}
+        public android.app.PendingIntent getManageSpaceActivityIntent(java.lang.String p0, int p1) throws android.os.RemoteException { return null; }
+        public void notifyAppIoBlocked(java.lang.String p0, int p1, int p2, int p3) throws android.os.RemoteException {}
+        public void notifyAppIoResumed(java.lang.String p0, int p1, int p2, int p3) throws android.os.RemoteException {}
+        public int getExternalStorageMountMode(int p0, java.lang.String p1) throws android.os.RemoteException { return 0; }
+        public boolean isAppIoBlocked(java.lang.String p0, int p1, int p2, int p3) throws android.os.RemoteException { return false; }
+        public void setCloudMediaProvider(java.lang.String p0) throws android.os.RemoteException {}
+        public java.lang.String getCloudMediaProvider() throws android.os.RemoteException { return null; }
+        public long getInternalStorageBlockDeviceSize() throws android.os.RemoteException { return 0L; }
+        public int getInternalStorageRemainingLifetime() throws android.os.RemoteException { return 0; }
+        public android.os.IBinder asBinder() { return null; }
+    }
+
+    public static abstract class Stub extends android.os.Binder implements android.os.storage.IStorageManager {
+        public static final java.lang.String DESCRIPTOR = "android.os.storage.IStorageManager";
+        static final int TRANSACTION_registerListener = 1;
+        static final int TRANSACTION_unregisterListener = 2;
+        static final int TRANSACTION_shutdown = 20;
+        static final int TRANSACTION_mountObb = 22;
+        static final int TRANSACTION_unmountObb = 23;
+        static final int TRANSACTION_isObbMounted = 24;
+        static final int TRANSACTION_getMountedObbPath = 25;
+        static final int TRANSACTION_getVolumeList = 30;
+        static final int TRANSACTION_mkdirs = 35;
+        static final int TRANSACTION_lastMaintenance = 42;
+        static final int TRANSACTION_runMaintenance = 43;
+        static final int TRANSACTION_getDisks = 45;
+        static final int TRANSACTION_getVolumes = 46;
+        static final int TRANSACTION_getVolumeRecords = 47;
+        static final int TRANSACTION_mount = 48;
+        static final int TRANSACTION_unmount = 49;
+        static final int TRANSACTION_format = 50;
+        static final int TRANSACTION_partitionPublic = 51;
+        static final int TRANSACTION_partitionPrivate = 52;
+        static final int TRANSACTION_partitionMixed = 53;
+        static final int TRANSACTION_setVolumeNickname = 54;
+        static final int TRANSACTION_setVolumeUserFlags = 55;
+        static final int TRANSACTION_forgetVolume = 56;
+        static final int TRANSACTION_forgetAllVolumes = 57;
+        static final int TRANSACTION_getPrimaryStorageUuid = 58;
+        static final int TRANSACTION_setPrimaryStorageUuid = 59;
+        static final int TRANSACTION_benchmark = 60;
+        static final int TRANSACTION_setDebugFlags = 61;
+        static final int TRANSACTION_createUserStorageKeys = 62;
+        static final int TRANSACTION_destroyUserStorageKeys = 63;
+        static final int TRANSACTION_unlockCeStorage = 64;
+        static final int TRANSACTION_lockCeStorage = 65;
+        static final int TRANSACTION_isCeStorageUnlocked = 66;
+        static final int TRANSACTION_prepareUserStorage = 67;
+        static final int TRANSACTION_destroyUserStorage = 68;
+        static final int TRANSACTION_setCeStorageProtection = 71;
+        static final int TRANSACTION_fstrim = 73;
+        static final int TRANSACTION_mountProxyFileDescriptorBridge = 74;
+        static final int TRANSACTION_openProxyFileDescriptor = 75;
+        static final int TRANSACTION_getCacheQuotaBytes = 76;
+        static final int TRANSACTION_getCacheSizeBytes = 77;
+        static final int TRANSACTION_getAllocatableBytes = 78;
+        static final int TRANSACTION_allocateBytes = 79;
+        static final int TRANSACTION_runIdleMaintenance = 80;
+        static final int TRANSACTION_abortIdleMaintenance = 81;
+        static final int TRANSACTION_commitChanges = 84;
+        static final int TRANSACTION_supportsCheckpoint = 85;
+        static final int TRANSACTION_startCheckpoint = 86;
+        static final int TRANSACTION_needsCheckpoint = 87;
+        static final int TRANSACTION_abortChanges = 88;
+        static final int TRANSACTION_fixupAppDir = 90;
+        static final int TRANSACTION_disableAppDataIsolation = 91;
+        static final int TRANSACTION_getManageSpaceActivityIntent = 92;
+        static final int TRANSACTION_notifyAppIoBlocked = 93;
+        static final int TRANSACTION_notifyAppIoResumed = 94;
+        static final int TRANSACTION_getExternalStorageMountMode = 95;
+        static final int TRANSACTION_isAppIoBlocked = 96;
+        static final int TRANSACTION_setCloudMediaProvider = 97;
+        static final int TRANSACTION_getCloudMediaProvider = 98;
+        static final int TRANSACTION_getInternalStorageBlockDeviceSize = 99;
+        static final int TRANSACTION_getInternalStorageRemainingLifetime = 100;
+        public Stub(android.os.PermissionEnforcer p0) { super(); }
+        @java.lang.Deprecated
+        public Stub() { super(); }
+        public static android.os.storage.IStorageManager asInterface(android.os.IBinder p0) { return null; }
+        public android.os.IBinder asBinder() { return null; }
+        public static java.lang.String getDefaultTransactionName(int p0) { return null; }
+        public java.lang.String getTransactionName(int p0) { return null; }
+        public boolean onTransact(int p0, android.os.Parcel p1, android.os.Parcel p2, int p3) throws android.os.RemoteException { return false; }
+        protected void shutdown_enforcePermission() throws java.lang.SecurityException {}
+        protected void runMaintenance_enforcePermission() throws java.lang.SecurityException {}
+        protected void mount_enforcePermission() throws java.lang.SecurityException {}
+        protected void unmount_enforcePermission() throws java.lang.SecurityException {}
+        protected void format_enforcePermission() throws java.lang.SecurityException {}
+        protected void partitionPublic_enforcePermission() throws java.lang.SecurityException {}
+        protected void partitionPrivate_enforcePermission() throws java.lang.SecurityException {}
+        protected void partitionMixed_enforcePermission() throws java.lang.SecurityException {}
+        protected void setVolumeNickname_enforcePermission() throws java.lang.SecurityException {}
+        protected void setVolumeUserFlags_enforcePermission() throws java.lang.SecurityException {}
+        protected void forgetVolume_enforcePermission() throws java.lang.SecurityException {}
+        protected void forgetAllVolumes_enforcePermission() throws java.lang.SecurityException {}
+        protected void setPrimaryStorageUuid_enforcePermission() throws java.lang.SecurityException {}
+        protected void benchmark_enforcePermission() throws java.lang.SecurityException {}
+        protected void setDebugFlags_enforcePermission() throws java.lang.SecurityException {}
+        protected void createUserStorageKeys_enforcePermission() throws java.lang.SecurityException {}
+        protected void destroyUserStorageKeys_enforcePermission() throws java.lang.SecurityException {}
+        protected void unlockCeStorage_enforcePermission() throws java.lang.SecurityException {}
+        protected void lockCeStorage_enforcePermission() throws java.lang.SecurityException {}
+        protected void prepareUserStorage_enforcePermission() throws java.lang.SecurityException {}
+        protected void destroyUserStorage_enforcePermission() throws java.lang.SecurityException {}
+        protected void setCeStorageProtection_enforcePermission() throws java.lang.SecurityException {}
+        protected void fstrim_enforcePermission() throws java.lang.SecurityException {}
+        protected void needsCheckpoint_enforcePermission() throws java.lang.SecurityException {}
+        protected void getExternalStorageMountMode_enforcePermission() throws java.lang.SecurityException {}
+        protected void getInternalStorageRemainingLifetime_enforcePermission() throws java.lang.SecurityException {}
+        public int getMaxTransactionId() { return 0; }
+
+        private static class Proxy implements android.os.storage.IStorageManager {
+            Proxy(android.os.IBinder p0) {}
+            public android.os.IBinder asBinder() { return null; }
+            public java.lang.String getInterfaceDescriptor() { return null; }
+            public void registerListener(android.os.storage.IStorageEventListener p0) throws android.os.RemoteException {}
+            public void unregisterListener(android.os.storage.IStorageEventListener p0) throws android.os.RemoteException {}
+            public void shutdown(android.os.storage.IStorageShutdownObserver p0) throws android.os.RemoteException {}
+            public void mountObb(java.lang.String p0, java.lang.String p1, android.os.storage.IObbActionListener p2, int p3, android.content.res.ObbInfo p4) throws android.os.RemoteException {}
+            public void unmountObb(java.lang.String p0, boolean p1, android.os.storage.IObbActionListener p2, int p3) throws android.os.RemoteException {}
+            public boolean isObbMounted(java.lang.String p0) throws android.os.RemoteException { return false; }
+            public java.lang.String getMountedObbPath(java.lang.String p0) throws android.os.RemoteException { return null; }
+            public android.os.storage.StorageVolume[] getVolumeList(int p0, java.lang.String p1, int p2) throws android.os.RemoteException { return null; }
+            public void mkdirs(java.lang.String p0, java.lang.String p1) throws android.os.RemoteException {}
+            public long lastMaintenance() throws android.os.RemoteException { return 0L; }
+            public void runMaintenance() throws android.os.RemoteException {}
+            public android.os.storage.DiskInfo[] getDisks() throws android.os.RemoteException { return null; }
+            public android.os.storage.VolumeInfo[] getVolumes(int p0) throws android.os.RemoteException { return null; }
+            public android.os.storage.VolumeRecord[] getVolumeRecords(int p0) throws android.os.RemoteException { return null; }
+            public void mount(java.lang.String p0) throws android.os.RemoteException {}
+            public void unmount(java.lang.String p0) throws android.os.RemoteException {}
+            public void format(java.lang.String p0) throws android.os.RemoteException {}
+            public void partitionPublic(java.lang.String p0) throws android.os.RemoteException {}
+            public void partitionPrivate(java.lang.String p0) throws android.os.RemoteException {}
+            public void partitionMixed(java.lang.String p0, int p1) throws android.os.RemoteException {}
+            public void setVolumeNickname(java.lang.String p0, java.lang.String p1) throws android.os.RemoteException {}
+            public void setVolumeUserFlags(java.lang.String p0, int p1, int p2) throws android.os.RemoteException {}
+            public void forgetVolume(java.lang.String p0) throws android.os.RemoteException {}
+            public void forgetAllVolumes() throws android.os.RemoteException {}
+            public java.lang.String getPrimaryStorageUuid() throws android.os.RemoteException { return null; }
+            public void setPrimaryStorageUuid(java.lang.String p0, android.content.pm.IPackageMoveObserver p1) throws android.os.RemoteException {}
+            public void benchmark(java.lang.String p0, android.os.IVoldTaskListener p1) throws android.os.RemoteException {}
+            public void setDebugFlags(int p0, int p1) throws android.os.RemoteException {}
+            public void createUserStorageKeys(int p0, boolean p1) throws android.os.RemoteException {}
+            public void destroyUserStorageKeys(int p0) throws android.os.RemoteException {}
+            public void unlockCeStorage(int p0, byte[] p1) throws android.os.RemoteException {}
+            public void lockCeStorage(int p0) throws android.os.RemoteException {}
+            public boolean isCeStorageUnlocked(int p0) throws android.os.RemoteException { return false; }
+            public void prepareUserStorage(java.lang.String p0, int p1, int p2) throws android.os.RemoteException {}
+            public void destroyUserStorage(java.lang.String p0, int p1, int p2) throws android.os.RemoteException {}
+            public void setCeStorageProtection(int p0, byte[] p1) throws android.os.RemoteException {}
+            public void fstrim(int p0, android.os.IVoldTaskListener p1) throws android.os.RemoteException {}
+            public com.android.internal.os.AppFuseMount mountProxyFileDescriptorBridge() throws android.os.RemoteException { return null; }
+            public android.os.ParcelFileDescriptor openProxyFileDescriptor(int p0, int p1, int p2) throws android.os.RemoteException { return null; }
+            public long getCacheQuotaBytes(java.lang.String p0, int p1) throws android.os.RemoteException { return 0L; }
+            public long getCacheSizeBytes(java.lang.String p0, int p1) throws android.os.RemoteException { return 0L; }
+            public long getAllocatableBytes(java.lang.String p0, int p1, java.lang.String p2) throws android.os.RemoteException { return 0L; }
+            public void allocateBytes(java.lang.String p0, long p1, int p2, java.lang.String p3) throws android.os.RemoteException {}
+            public void runIdleMaintenance() throws android.os.RemoteException {}
+            public void abortIdleMaintenance() throws android.os.RemoteException {}
+            public void commitChanges() throws android.os.RemoteException {}
+            public boolean supportsCheckpoint() throws android.os.RemoteException { return false; }
+            public void startCheckpoint(int p0) throws android.os.RemoteException {}
+            public boolean needsCheckpoint() throws android.os.RemoteException { return false; }
+            public void abortChanges(java.lang.String p0, boolean p1) throws android.os.RemoteException {}
+            public void fixupAppDir(java.lang.String p0) throws android.os.RemoteException {}
+            public void disableAppDataIsolation(java.lang.String p0, int p1, int p2) throws android.os.RemoteException {}
+            public android.app.PendingIntent getManageSpaceActivityIntent(java.lang.String p0, int p1) throws android.os.RemoteException { return null; }
+            public void notifyAppIoBlocked(java.lang.String p0, int p1, int p2, int p3) throws android.os.RemoteException {}
+            public void notifyAppIoResumed(java.lang.String p0, int p1, int p2, int p3) throws android.os.RemoteException {}
+            public int getExternalStorageMountMode(int p0, java.lang.String p1) throws android.os.RemoteException { return 0; }
+            public boolean isAppIoBlocked(java.lang.String p0, int p1, int p2, int p3) throws android.os.RemoteException { return false; }
+            public void setCloudMediaProvider(java.lang.String p0) throws android.os.RemoteException {}
+            public java.lang.String getCloudMediaProvider() throws android.os.RemoteException { return null; }
+            public long getInternalStorageBlockDeviceSize() throws android.os.RemoteException { return 0L; }
+            public int getInternalStorageRemainingLifetime() throws android.os.RemoteException { return 0; }
+        }
+    }
+}

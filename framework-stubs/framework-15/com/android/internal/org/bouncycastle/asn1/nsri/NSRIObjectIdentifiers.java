@@ -1,0 +1,43 @@
+package com.android.internal.org.bouncycastle.asn1.nsri;
+
+public interface NSRIObjectIdentifiers {
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier nsri = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_algorithm = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_sea = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_pad = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_pad_null = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_pad_1 = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_aria128_ecb = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_aria128_cbc = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_aria128_cfb = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_aria128_ofb = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_aria128_ctr = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_aria192_ecb = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_aria192_cbc = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_aria192_cfb = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_aria192_ofb = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_aria192_ctr = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_aria256_ecb = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_aria256_cbc = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_aria256_cfb = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_aria256_ofb = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_aria256_ctr = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_aria128_cmac = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_aria192_cmac = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_aria256_cmac = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_aria128_ocb2 = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_aria192_ocb2 = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_aria256_ocb2 = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_aria128_gcm = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_aria192_gcm = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_aria256_gcm = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_aria128_ccm = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_aria192_ccm = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_aria256_ccm = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_aria128_kw = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_aria192_kw = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_aria256_kw = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_aria128_kwp = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_aria192_kwp = null;
+    public static final com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier id_aria256_kwp = null;
+}

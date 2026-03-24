@@ -1,0 +1,45 @@
+package android.audio.policy.configuration.V7_0;
+
+public class DevicePorts {
+    public DevicePorts() {}
+    @android.annotation.Nullable
+    public java.util.List<android.audio.policy.configuration.V7_0.DevicePorts.DevicePort> getDevicePort() { return null; }
+    @android.annotation.NonNull
+    static android.audio.policy.configuration.V7_0.DevicePorts read(org.xmlpull.v1.XmlPullParser p0) throws org.xmlpull.v1.XmlPullParserException, java.io.IOException, javax.xml.datatype.DatatypeConfigurationException { return null; }
+
+    public static class DevicePort {
+        public DevicePort() {}
+        @android.annotation.Nullable
+        public java.util.List<android.audio.policy.configuration.V7_0.Profile> getProfile() { return null; }
+        @android.annotation.Nullable
+        public android.audio.policy.configuration.V7_0.Gains getGains() { return null; }
+        boolean hasGains() { return false; }
+        public void setGains(android.audio.policy.configuration.V7_0.Gains p0) {}
+        @android.annotation.Nullable
+        public java.lang.String getTagName() { return null; }
+        boolean hasTagName() { return false; }
+        public void setTagName(java.lang.String p0) {}
+        @android.annotation.Nullable
+        public java.lang.String getType() { return null; }
+        boolean hasType() { return false; }
+        public void setType(java.lang.String p0) {}
+        @android.annotation.Nullable
+        public android.audio.policy.configuration.V7_0.Role getRole() { return null; }
+        boolean hasRole() { return false; }
+        public void setRole(android.audio.policy.configuration.V7_0.Role p0) {}
+        @android.annotation.Nullable
+        public java.lang.String getAddress() { return null; }
+        boolean hasAddress() { return false; }
+        public void setAddress(java.lang.String p0) {}
+        @android.annotation.Nullable
+        public boolean get_default() { return false; }
+        boolean has_default() { return false; }
+        public void set_default(boolean p0) {}
+        @android.annotation.Nullable
+        public java.util.List<java.lang.String> getEncodedFormats() { return null; }
+        boolean hasEncodedFormats() { return false; }
+        public void setEncodedFormats(java.util.List<java.lang.String> p0) {}
+        @android.annotation.NonNull
+        static android.audio.policy.configuration.V7_0.DevicePorts.DevicePort read(org.xmlpull.v1.XmlPullParser p0) throws org.xmlpull.v1.XmlPullParserException, java.io.IOException, javax.xml.datatype.DatatypeConfigurationException { return null; }
+    }
+}

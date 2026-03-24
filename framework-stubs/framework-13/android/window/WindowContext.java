@@ -1,0 +1,15 @@
+package android.window;
+
+public class WindowContext extends android.content.ContextWrapper implements android.window.WindowProvider {
+    public WindowContext(android.content.Context p0, int p1, android.os.Bundle p2) { super(null); }
+    public void attachToDisplayArea() {}
+    public java.lang.Object getSystemService(java.lang.String p0) { return null; }
+    protected void finalize() throws java.lang.Throwable {}
+    public void release() {}
+    public void destroy() {}
+    public void registerComponentCallbacks(android.content.ComponentCallbacks p0) {}
+    public void unregisterComponentCallbacks(android.content.ComponentCallbacks p0) {}
+    public void dispatchConfigurationChanged(android.content.res.Configuration p0) {}
+    public int getWindowType() { return 0; }
+    public android.os.Bundle getWindowContextOptions() { return null; }
+}

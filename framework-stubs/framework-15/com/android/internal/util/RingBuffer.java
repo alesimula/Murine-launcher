@@ -1,0 +1,13 @@
+package com.android.internal.util;
+
+public class RingBuffer<T extends java.lang.Object> {
+    @java.lang.Deprecated
+    public RingBuffer(java.lang.Class<T> p0, int p1) {}
+    public RingBuffer(java.util.function.Supplier<T> p0, java.util.function.IntFunction<T[]> p1, int p2) {}
+    public int size() { return 0; }
+    public boolean isEmpty() { return false; }
+    public void clear() {}
+    public void append(T p0) {}
+    public T getNextSlot() { return null; }
+    public T[] toArray() { return null; }
+}

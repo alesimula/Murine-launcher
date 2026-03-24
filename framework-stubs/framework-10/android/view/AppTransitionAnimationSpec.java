@@ -1,0 +1,14 @@
+package android.view;
+
+public class AppTransitionAnimationSpec implements android.os.Parcelable {
+    public final int taskId = 0;
+    public final android.graphics.GraphicBuffer buffer = null;
+    public final android.graphics.Rect rect = null;
+    public static final android.os.Parcelable.Creator<android.view.AppTransitionAnimationSpec> CREATOR = null;
+    @android.annotation.UnsupportedAppUsage
+    public AppTransitionAnimationSpec(int p0, android.graphics.GraphicBuffer p1, android.graphics.Rect p2) {}
+    public AppTransitionAnimationSpec(android.os.Parcel p0) {}
+    public int describeContents() { return 0; }
+    public void writeToParcel(android.os.Parcel p0, int p1) {}
+    public java.lang.String toString() { return null; }
+}

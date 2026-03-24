@@ -1,0 +1,54 @@
+package android.memory;
+
+public final class MemoryEnums {
+    public static final int WRITEBACK_UNSPECIFIED = 0;
+    public static final int WRITEBACK_NOT_SUPPORTED = 1;
+    public static final int WRITEBACK_SUCCESS = 2;
+    public static final int WRITEBACK_BACKOFF_TIME = 3;
+    public static final int WRITEBACK_CALCULATE_IDLE_FAIL = 4;
+    public static final int WRITEBACK_MARK_IDLE_FAIL = 5;
+    public static final int WRITEBACK_TRIGGER_FAIL = 6;
+    public static final int WRITEBACK_LIMIT = 7;
+    public static final int WRITEBACK_INVALID_LIMIT = 8;
+    public static final int WRITEBACK_ACCESS_WRITEBACK_LIMIT_FAIL = 9;
+    public static final int WRITEBACK_LOAD_STATS_FAIL = 10;
+    public static final int WRITEBACK_TRY_MARK_IDLE_AGAIN = 11;
+    public static final int RECOMPRESSION_UNSPECIFIED = 0;
+    public static final int RECOMPRESSION_NOT_SUPPORTED = 1;
+    public static final int RECOMPRESSION_SUCCESS = 2;
+    public static final int RECOMPRESSION_BACKOFF_TIME = 3;
+    public static final int RECOMPRESSION_CALCULATE_IDLE_FAIL = 4;
+    public static final int RECOMPRESSION_MARK_IDLE_FAIL = 5;
+    public static final int RECOMPRESSION_TRIGGER_FAIL = 6;
+    public static final int RECOMPRESSION_TRY_MARK_IDLE_AGAIN = 7;
+    public static final int ZRAM_SETUP_UNSPECIFIED = 0;
+    public static final int ZRAM_SETUP_SUCCESS = 1;
+    public static final int ZRAM_SETUP_CHECK_STATUS = 2;
+    public static final int ZRAM_SETUP_ACTIVATED = 3;
+    public static final int ZRAM_SETUP_PARSE_SPEC = 4;
+    public static final int ZRAM_SETUP_UPDATE_DISK_SIZE_FAIL = 5;
+    public static final int ZRAM_SETUP_SWAP_ON_FAIL = 6;
+    public static final int ZRAM_SETUP_MK_SWAP_FAIL = 7;
+    public static final int COMP_ALGORITHM_SETUP_UNSPECIFIED = 0;
+    public static final int COMP_ALGORITHM_SETUP_SUCCESS = 1;
+    public static final int COMP_ALGORITHM_SETUP_FAIL = 2;
+    public static final int WRITEBACK_SETUP_UNSPECIFIED = 0;
+    public static final int WRITEBACK_SETUP_SUCCESS = 1;
+    public static final int WRITEBACK_SETUP_CHECK_STATUS = 2;
+    public static final int WRITEBACK_SETUP_NOT_SUPPORTED = 3;
+    public static final int WRITEBACK_SETUP_ACTIVATED = 4;
+    public static final int WRITEBACK_SETUP_PARSE_SPEC = 5;
+    public static final int WRITEBACK_SETUP_DEVICE_SIZE_ZERO = 6;
+    public static final int WRITEBACK_SETUP_SET_ACTUAL_DEVICE_SIZE_FAIL = 7;
+    public static final int WRITEBACK_SETUP_CREATE_BACKING_FILE_FAIL = 8;
+    public static final int WRITEBACK_SETUP_CREATE_BACKING_DEVICE_FAIL = 9;
+    public static final int WRITEBACK_SETUP_SET_WRITEBACK_DEVICE_FAIL = 10;
+    public static final int WRITEBACK_SETUP_WRITEBACK_LIMIT_ENABLE_FAIL = 11;
+    public static final int RECOMPRESSION_SETUP_UNSPECIFIED = 0;
+    public static final int RECOMPRESSION_SETUP_SUCCESS = 1;
+    public static final int RECOMPRESSION_SETUP_CHECK_STATUS = 2;
+    public static final int RECOMPRESSION_SETUP_NOT_SUPPORTED = 3;
+    public static final int RECOMPRESSION_SETUP_ACTIVATED = 4;
+    public static final int RECOMPRESSION_SETUP_SET_RECOMP_ALGORITHM_FAIL = 5;
+    public MemoryEnums() {}
+}

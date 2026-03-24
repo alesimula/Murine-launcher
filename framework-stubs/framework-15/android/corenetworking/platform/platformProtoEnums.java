@@ -1,0 +1,56 @@
+package android.corenetworking.platform;
+
+public final class platformProtoEnums {
+    public static final int IT_UNKNOWN = 0;
+    public static final int IT_IPV4 = 1;
+    public static final int IT_IPV6 = 2;
+    public static final int IT_IPV4V6 = 3;
+    public static final int ET_UNKNOWN = 0;
+    public static final int ET_UDP = 1;
+    public static final int ET_ESP = 2;
+    public static final int CS_UNKNOWN = 0;
+    public static final int CS_CONNECTED = 1;
+    public static final int CS_DISCONNECTED = 2;
+    public static final int TYPE_VPN_NONE = 0;
+    public static final int TYPE_VPN_SERVICE = 1;
+    public static final int TYPE_VPN_PLATFORM = 2;
+    public static final int TYPE_VPN_LEGACY = 3;
+    public static final int TYPE_VPN_OEM = 4;
+    public static final int RA_NONE = 0;
+    public static final int RA_MOBIKE = 1;
+    public static final int RA_SESSION_RESET = 2;
+    public static final int TYPE_UNKNOWN = 0;
+    public static final int TYPE_PPTP = 1;
+    public static final int TYPE_L2TP_IPSEC_PSK = 2;
+    public static final int TYPE_L2TP_IPSEC_RSA = 3;
+    public static final int TYPE_TYPE_IPSEC_XAUTH_PSK = 4;
+    public static final int TYPE_IPSEC_XAUTH_RSA = 5;
+    public static final int TYPE_IPSEC_HYBRID_RSA = 6;
+    public static final int TYPE_IKEV2_IPSEC_USER_PASS = 7;
+    public static final int TYPE_IKEV2_IPSEC_PSK = 8;
+    public static final int TYPE_IKEV2_IPSEC_RSA = 9;
+    public static final int TYPE_IKEV2_FROM_IKE_TUN_CONN_PARAMS = 10;
+    public static final int EC_UNKNOWN = 0;
+    public static final int EC_NO_ERROR = 1;
+    public static final int EC_UNSUPPORTED_CRITICAL_PAYLOAD = 2;
+    public static final int EC_INVALID_IKE_SPI = 3;
+    public static final int EC_INVALID_MAJOR_VERSION = 4;
+    public static final int EC_INVALID_SYNTAX = 5;
+    public static final int EC_INVALID_MESSAGE_ID = 6;
+    public static final int EC_NO_PROPOSAL_CHOSEN = 7;
+    public static final int EC_INVALID_KE_PAYLOAD = 8;
+    public static final int EC_AUTHENTICATION_FAILED = 9;
+    public static final int EC_SINGLE_PAIR_REQUIRED = 10;
+    public static final int EC_NO_ADDITIONAL_SAS = 11;
+    public static final int EC_INTERNAL_ADDRESS_FAILURE = 12;
+    public static final int EC_FAILED_CP_REQUIRED = 13;
+    public static final int EC_TS_UNACCEPTABLE = 14;
+    public static final int EC_INVALID_SELECTORS = 15;
+    public static final int EC_TEMPORARY_FAILURE = 16;
+    public static final int EC_CHILD_SA_NOT_FOUND = 17;
+    public static final int EC_NETWORK_UNKNOWN_HOST = 18;
+    public static final int EC_NETWORK_PROTOCOL_TIMEOUT = 19;
+    public static final int EC_NETWORK_LOST = 20;
+    public static final int EC_NETWORK_IO = 21;
+    public platformProtoEnums() {}
+}

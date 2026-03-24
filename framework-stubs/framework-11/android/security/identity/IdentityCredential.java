@@ -1,0 +1,17 @@
+package android.security.identity;
+
+public abstract class IdentityCredential {
+    protected IdentityCredential() {}
+    public abstract java.security.KeyPair createEphemeralKeyPair();
+    public abstract void setReaderEphemeralPublicKey(java.security.PublicKey p0) throws java.security.InvalidKeyException;
+    public abstract byte[] encryptMessageToReader(byte[] p0);
+    public abstract byte[] decryptMessageFromReader(byte[] p0) throws android.security.identity.MessageDecryptionException;
+    public abstract java.util.Collection<java.security.cert.X509Certificate> getCredentialKeyCertificateChain();
+    public abstract void setAllowUsingExhaustedKeys(boolean p0);
+    public abstract long getCredstoreOperationHandle();
+    public abstract android.security.identity.ResultData getEntries(byte[] p0, java.util.Map<java.lang.String, java.util.Collection<java.lang.String>> p1, byte[] p2, byte[] p3) throws android.security.identity.SessionTranscriptMismatchException, android.security.identity.NoAuthenticationKeyAvailableException, android.security.identity.InvalidReaderSignatureException, android.security.identity.EphemeralPublicKeyNotFoundException, android.security.identity.InvalidRequestMessageException;
+    public abstract void setAvailableAuthenticationKeys(int p0, int p1);
+    public abstract java.util.Collection<java.security.cert.X509Certificate> getAuthKeysNeedingCertification();
+    public abstract void storeStaticAuthenticationData(java.security.cert.X509Certificate p0, byte[] p1) throws android.security.identity.UnknownAuthenticationKeyException;
+    public abstract int[] getAuthenticationDataUsageCount();
+}

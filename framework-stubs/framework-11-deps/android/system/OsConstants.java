@@ -1,0 +1,122 @@
+package android.system;
+
+public class OsConstants {
+    public OsConstants() {}
+    public int EACCES = 0;
+    public int ENOENT = 0;
+    public int O_RDONLY = 0;
+    public int EXDEV = 0;
+    public int S_IROTH = 0;
+    public int EEXIST = 0;
+    public boolean S_ISREG(int p0) { return false; }
+    public boolean S_ISDIR(int p0) { return false; }
+    public int SEEK_SET = 0;
+    public int SEEK_CUR = 0;
+    public int EBUSY = 0;
+    public int EUSERS = 0;
+    public int ENODEV = 0;
+    public int EOPNOTSUPP = 0;
+    public int EPERM = 0;
+    public int EINVAL = 0;
+    public int ENOSYS = 0;
+    public int EPIPE = 0;
+    public int ETIMEDOUT = 0;
+    public int AF_UNIX = 0;
+    public int SOCK_SEQPACKET = 0;
+    public int F_OK = 0;
+    public int ENONET = 0;
+    public int EAGAIN = 0;
+    public int EPROTONOSUPPORT = 0;
+    public int RT_SCOPE_HOST = 0;
+    public int RT_SCOPE_LINK = 0;
+    public int RT_SCOPE_SITE = 0;
+    public int RT_SCOPE_UNIVERSE = 0;
+    public int IFA_F_DEPRECATED = 0;
+    public int IFA_F_PERMANENT = 0;
+    public int IFA_F_DADFAILED = 0;
+    public int IFA_F_TENTATIVE = 0;
+    public int IFA_F_OPTIMISTIC = 0;
+    public int FIONREAD = 0;
+    public int SOCK_DGRAM = 0;
+    public int SOCK_STREAM = 0;
+    public int SHUT_RD = 0;
+    public int SHUT_WR = 0;
+    public int SOL_SOCKET = 0;
+    public int SO_SNDTIMEO = 0;
+    public int SO_LINGER = 0;
+    public int IPPROTO_TCP = 0;
+    public int TCP_NODELAY = 0;
+    public int SO_RCVTIMEO = 0;
+    public int SO_SNDBUF = 0;
+    public int SO_RCVBUF = 0;
+    public int SO_REUSEADDR = 0;
+    public int IPPROTO_UDP = 0;
+    public int ENOTCONN = 0;
+    public int AF_INET = 0;
+    public int AF_INET6 = 0;
+    public java.lang.String errnoName(int p0) { return null; }
+    public int EALREADY = 0;
+    public int EINPROGRESS = 0;
+    public int SO_BINDTODEVICE = 0;
+    public boolean S_ISFIFO(int p0) { return false; }
+    public int SPLICE_F_MOVE = 0;
+    public int SPLICE_F_MORE = 0;
+    public int O_RDWR = 0;
+    public int O_CREAT = 0;
+    public int O_WRONLY = 0;
+    public int O_TRUNC = 0;
+    public int O_APPEND = 0;
+    public int O_ACCMODE = 0;
+    public int R_OK = 0;
+    public int W_OK = 0;
+    public int PROT_READ = 0;
+    public int MAP_SHARED = 0;
+    public int F_DUPFD_CLOEXEC = 0;
+    public int O_CLOEXEC = 0;
+    public int S_IRWXU = 0;
+    public int S_IRWXG = 0;
+    public int S_IWOTH = 0;
+    public int F_DUPFD = 0;
+    public int SOCK_CLOEXEC = 0;
+    public boolean S_ISCHR(int p0) { return false; }
+    public boolean S_ISLNK(int p0) { return false; }
+    public int POLLIN = 0;
+    public int EINTR = 0;
+    public int ESRCH = 0;
+    public int EBADF = 0;
+    public int PROT_WRITE = 0;
+    public int PROT_EXEC = 0;
+    public int PROT_NONE = 0;
+    public int ENOTSUP = 0;
+    public int ENOSPC = 0;
+    public int ENODATA = 0;
+    public int MAP_POPULATE = 0;
+    public int _SC_PAGESIZE = 0;
+    public int S_IRGRP = 0;
+    public int S_IXGRP = 0;
+    public int S_IXOTH = 0;
+    public int PR_SET_NO_NEW_PRIVS = 0;
+    public int EMFILE = 0;
+    public int _SC_CLK_TCK = 0;
+    public int _LINUX_CAPABILITY_VERSION_3 = 0;
+    public int CAP_TO_INDEX(int p0) { return 0; }
+    public int CAP_TO_MASK(int p0) { return 0; }
+    public int PR_CAP_AMBIENT = 0;
+    public int PR_CAP_AMBIENT_RAISE = 0;
+    public int F_SETFD = 0;
+    public int S_IRWXO = 0;
+    public int CAP_IPC_LOCK = 0;
+    public int CAP_KILL = 0;
+    public int CAP_NET_ADMIN = 0;
+    public int CAP_NET_BIND_SERVICE = 0;
+    public int CAP_NET_BROADCAST = 0;
+    public int CAP_NET_RAW = 0;
+    public int CAP_SYS_MODULE = 0;
+    public int CAP_SYS_NICE = 0;
+    public int CAP_SYS_PTRACE = 0;
+    public int CAP_SYS_TIME = 0;
+    public int CAP_SYS_TTY_CONFIG = 0;
+    public int CAP_WAKE_ALARM = 0;
+    public int CAP_BLOCK_SUSPEND = 0;
+    public int CAP_LAST_CAP = 0;
+}

@@ -1,0 +1,41 @@
+package android.hardware.tv.tuner;
+
+public interface IDvrCallback extends android.os.IInterface {
+    public static final int VERSION = 3;
+    public static final java.lang.String HASH = "b0d0067a930514438d7772c2e02069c7370f3620";
+    public static final java.lang.String DESCRIPTOR = null;
+    public void onPlaybackStatus(int p0) throws android.os.RemoteException;
+    public void onRecordStatus(byte p0) throws android.os.RemoteException;
+    public int getInterfaceVersion() throws android.os.RemoteException;
+    public java.lang.String getInterfaceHash() throws android.os.RemoteException;
+
+    public static class Default implements android.hardware.tv.tuner.IDvrCallback {
+        public Default() {}
+        public void onPlaybackStatus(int p0) throws android.os.RemoteException {}
+        public void onRecordStatus(byte p0) throws android.os.RemoteException {}
+        public int getInterfaceVersion() { return 0; }
+        public java.lang.String getInterfaceHash() { return null; }
+        public android.os.IBinder asBinder() { return null; }
+    }
+
+    public static abstract class Stub extends android.os.Binder implements android.hardware.tv.tuner.IDvrCallback {
+        static final int TRANSACTION_onPlaybackStatus = 1;
+        static final int TRANSACTION_onRecordStatus = 2;
+        static final int TRANSACTION_getInterfaceVersion = 16777215;
+        static final int TRANSACTION_getInterfaceHash = 16777214;
+        public Stub() { super(); }
+        public static android.hardware.tv.tuner.IDvrCallback asInterface(android.os.IBinder p0) { return null; }
+        public android.os.IBinder asBinder() { return null; }
+        public boolean onTransact(int p0, android.os.Parcel p1, android.os.Parcel p2, int p3) throws android.os.RemoteException { return false; }
+
+        private static class Proxy implements android.hardware.tv.tuner.IDvrCallback {
+            Proxy(android.os.IBinder p0) {}
+            public android.os.IBinder asBinder() { return null; }
+            public java.lang.String getInterfaceDescriptor() { return null; }
+            public void onPlaybackStatus(int p0) throws android.os.RemoteException {}
+            public void onRecordStatus(byte p0) throws android.os.RemoteException {}
+            public int getInterfaceVersion() throws android.os.RemoteException { return 0; }
+            public synchronized java.lang.String getInterfaceHash() throws android.os.RemoteException { return null; }
+        }
+    }
+}

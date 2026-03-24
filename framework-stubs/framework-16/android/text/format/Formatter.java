@@ -1,0 +1,32 @@
+package android.text.format;
+
+public final class Formatter {
+    public static final int FLAG_SHORTER = 1;
+    public static final int FLAG_CALCULATE_ROUNDED = 2;
+    public static final int FLAG_SI_UNITS = 4;
+    public static final int FLAG_IEC_UNITS = 8;
+    public Formatter() {}
+    public static java.lang.String formatFileSize(android.content.Context p0, long p1) { return null; }
+    public static java.lang.String formatFileSize(android.content.Context p0, long p1, int p2) { return null; }
+    public static java.lang.String formatShortFileSize(android.content.Context p0, long p1) { return null; }
+    public static android.text.format.Formatter.BytesResult formatBytes(android.content.res.Resources p0, long p1, int p2) { return null; }
+    @java.lang.Deprecated
+    public static java.lang.String formatIpAddress(int p0) { return null; }
+    public static java.lang.String formatShortElapsedTime(android.content.Context p0, long p1) { return null; }
+    public static java.lang.String formatShortElapsedTimeRoundingUpToMinutes(android.content.Context p0, long p1) { return null; }
+
+    public static class BytesResult {
+        public final java.lang.String value = null;
+        public final java.lang.String units = null;
+        public final java.lang.String unitsContentDescription = null;
+        public final long roundedBytes = 0L;
+        public BytesResult(java.lang.String p0, java.lang.String p1, java.lang.String p2, long p3) {}
+    }
+
+    public static class RoundedBytesResult {
+        public final float value = 0.0f;
+        public final int fractionDigits = 0;
+        public final long roundedBytes = 0L;
+        public static android.text.format.Formatter.RoundedBytesResult roundBytes(long p0, int p1) { return null; }
+    }
+}

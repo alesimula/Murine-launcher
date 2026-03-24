@@ -1,0 +1,17 @@
+package com.android.net.module.util;
+
+public final class CollectionUtils {
+    private CollectionUtils() {}
+    public static <T extends java.lang.Object> boolean isEmpty(T[] p0) { return false; }
+    public static <T extends java.lang.Object> boolean isEmpty(java.util.Collection<T> p0) { return false; }
+    public static int[] toIntArray(java.util.Collection<java.lang.Integer> p0) { return null; }
+    public static long[] toLongArray(java.util.Collection<java.lang.Long> p0) { return null; }
+    public static <T extends java.lang.Object> boolean all(java.util.Collection<T> p0, java.util.function.Predicate<T> p1) { return false; }
+    public static <T extends java.lang.Object> boolean any(java.util.Collection<T> p0, java.util.function.Predicate<T> p1) { return false; }
+    public static <T extends java.lang.Object> int indexOf(java.util.Collection<T> p0, java.util.function.Predicate<T> p1) { return 0; }
+    public static <T extends java.lang.Object> boolean any(android.util.SparseArray<T> p0, java.util.function.Predicate<T> p1) { return false; }
+    public static boolean contains(int[] p0, int p1) { return false; }
+    public static <T extends java.lang.Object> boolean contains(T[] p0, T p1) { return false; }
+    public static <T extends java.lang.Object> int indexOf(T[] p0, T p1) { return 0; }
+    public static <T extends java.lang.Object> java.util.ArrayList<T> filter(java.util.Collection<T> p0, java.util.function.Predicate<T> p1) { return null; }
+}

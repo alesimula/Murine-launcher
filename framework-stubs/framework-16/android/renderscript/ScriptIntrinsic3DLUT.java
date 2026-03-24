@@ -1,0 +1,11 @@
+package android.renderscript;
+
+@java.lang.Deprecated
+public final class ScriptIntrinsic3DLUT extends android.renderscript.ScriptIntrinsic {
+    ScriptIntrinsic3DLUT() { super(0L, null); }
+    public static android.renderscript.ScriptIntrinsic3DLUT create(android.renderscript.RenderScript p0, android.renderscript.Element p1) { return null; }
+    public void setLUT(android.renderscript.Allocation p0) {}
+    public void forEach(android.renderscript.Allocation p0, android.renderscript.Allocation p1) {}
+    public void forEach(android.renderscript.Allocation p0, android.renderscript.Allocation p1, android.renderscript.Script.LaunchOptions p2) {}
+    public android.renderscript.Script.KernelID getKernelID() { return null; }
+}

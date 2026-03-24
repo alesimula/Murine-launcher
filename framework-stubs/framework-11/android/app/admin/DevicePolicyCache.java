@@ -1,0 +1,15 @@
+package android.app.admin;
+
+public abstract class DevicePolicyCache {
+    protected DevicePolicyCache() {}
+    public static android.app.admin.DevicePolicyCache getInstance() { return null; }
+    public abstract boolean isScreenCaptureAllowed(int p0, boolean p1);
+    public abstract int getPasswordQuality(int p0);
+
+    private static class EmptyDevicePolicyCache extends android.app.admin.DevicePolicyCache {
+        private static final android.app.admin.DevicePolicyCache.EmptyDevicePolicyCache INSTANCE = null;
+        private EmptyDevicePolicyCache() { super(); }
+        public boolean isScreenCaptureAllowed(int p0, boolean p1) { return false; }
+        public int getPasswordQuality(int p0) { return 0; }
+    }
+}

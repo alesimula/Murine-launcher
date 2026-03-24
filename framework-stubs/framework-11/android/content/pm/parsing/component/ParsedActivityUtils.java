@@ -1,0 +1,13 @@
+package android.content.pm.parsing.component;
+
+public class ParsedActivityUtils {
+    private static final java.lang.String TAG = "PackageParsing";
+    public ParsedActivityUtils() {}
+    public static android.content.pm.parsing.result.ParseResult<android.content.pm.parsing.component.ParsedActivity> parseActivityOrReceiver(java.lang.String[] p0, android.content.pm.parsing.ParsingPackage p1, android.content.res.Resources p2, android.content.res.XmlResourceParser p3, int p4, boolean p5, android.content.pm.parsing.result.ParseInput p6) throws org.xmlpull.v1.XmlPullParserException, java.io.IOException { return null; }
+    public static android.content.pm.parsing.result.ParseResult<android.content.pm.parsing.component.ParsedActivity> parseActivityAlias(android.content.pm.parsing.ParsingPackage p0, android.content.res.Resources p1, android.content.res.XmlResourceParser p2, boolean p3, android.content.pm.parsing.result.ParseInput p4) throws org.xmlpull.v1.XmlPullParserException, java.io.IOException { return null; }
+    private static android.content.pm.parsing.result.ParseResult<android.content.pm.parsing.component.ParsedActivity> parseActivityOrAlias(android.content.pm.parsing.component.ParsedActivity p0, android.content.pm.parsing.ParsingPackage p1, java.lang.String p2, android.content.res.XmlResourceParser p3, android.content.res.Resources p4, android.content.res.TypedArray p5, boolean p6, boolean p7, boolean p8, android.content.pm.parsing.result.ParseInput p9, int p10, int p11, int p12) throws java.io.IOException, org.xmlpull.v1.XmlPullParserException { return null; }
+    private static android.content.pm.parsing.result.ParseResult<android.content.pm.parsing.component.ParsedIntentInfo> parseIntentFilter(android.content.pm.parsing.ParsingPackage p0, android.content.pm.parsing.component.ParsedActivity p1, boolean p2, boolean p3, android.content.res.Resources p4, android.content.res.XmlResourceParser p5, android.content.pm.parsing.result.ParseInput p6) throws java.io.IOException, org.xmlpull.v1.XmlPullParserException { return null; }
+    private static int getActivityResizeMode(android.content.pm.parsing.ParsingPackage p0, android.content.res.TypedArray p1, int p2) { return 0; }
+    private static android.content.pm.parsing.result.ParseResult<android.content.pm.ActivityInfo.WindowLayout> parseLayout(android.content.res.Resources p0, android.util.AttributeSet p1, android.content.pm.parsing.result.ParseInput p2) { return null; }
+    private static android.content.pm.parsing.result.ParseResult<android.content.pm.ActivityInfo.WindowLayout> resolveWindowLayout(android.content.pm.parsing.component.ParsedActivity p0, android.content.pm.parsing.result.ParseInput p1) { return null; }
+}

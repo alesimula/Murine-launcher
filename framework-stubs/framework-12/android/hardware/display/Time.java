@@ -1,0 +1,14 @@
+package android.hardware.display;
+
+public final class Time implements android.os.Parcelable {
+    private final int mHour = 0;
+    private final int mMinute = 0;
+    private final int mSecond = 0;
+    private final int mNano = 0;
+    public static final android.os.Parcelable.Creator<android.hardware.display.Time> CREATOR = null;
+    public Time(java.time.LocalTime p0) {}
+    public Time(android.os.Parcel p0) {}
+    public int describeContents() { return 0; }
+    public void writeToParcel(android.os.Parcel p0, int p1) {}
+    public java.time.LocalTime getLocalTime() { return null; }
+}

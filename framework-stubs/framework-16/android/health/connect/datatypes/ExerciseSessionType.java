@@ -1,0 +1,69 @@
+package android.health.connect.datatypes;
+
+public final class ExerciseSessionType {
+    public static final int EXERCISE_SESSION_TYPE_BADMINTON = 1;
+    public static final int EXERCISE_SESSION_TYPE_BASEBALL = 2;
+    public static final int EXERCISE_SESSION_TYPE_BASKETBALL = 3;
+    public static final int EXERCISE_SESSION_TYPE_BIKING = 4;
+    public static final int EXERCISE_SESSION_TYPE_BIKING_STATIONARY = 5;
+    public static final int EXERCISE_SESSION_TYPE_BOOT_CAMP = 6;
+    public static final int EXERCISE_SESSION_TYPE_BOXING = 7;
+    public static final int EXERCISE_SESSION_TYPE_CALISTHENICS = 8;
+    public static final int EXERCISE_SESSION_TYPE_CRICKET = 9;
+    public static final int EXERCISE_SESSION_TYPE_DANCING = 10;
+    public static final int EXERCISE_SESSION_TYPE_ELLIPTICAL = 60;
+    public static final int EXERCISE_SESSION_TYPE_EXERCISE_CLASS = 11;
+    public static final int EXERCISE_SESSION_TYPE_FENCING = 12;
+    public static final int EXERCISE_SESSION_TYPE_FOOTBALL_AMERICAN = 13;
+    public static final int EXERCISE_SESSION_TYPE_FOOTBALL_AUSTRALIAN = 14;
+    public static final int EXERCISE_SESSION_TYPE_FRISBEE_DISC = 15;
+    public static final int EXERCISE_SESSION_TYPE_GOLF = 16;
+    @java.lang.Deprecated
+    @android.annotation.FlaggedApi("com.android.healthfitness.flags.deprecate_exercise_session_type_breathing")
+    public static final int EXERCISE_SESSION_TYPE_GUIDED_BREATHING = 17;
+    public static final int EXERCISE_SESSION_TYPE_GYMNASTICS = 18;
+    public static final int EXERCISE_SESSION_TYPE_HANDBALL = 19;
+    public static final int EXERCISE_SESSION_TYPE_HIGH_INTENSITY_INTERVAL_TRAINING = 20;
+    public static final int EXERCISE_SESSION_TYPE_HIKING = 21;
+    public static final int EXERCISE_SESSION_TYPE_ICE_HOCKEY = 22;
+    public static final int EXERCISE_SESSION_TYPE_ICE_SKATING = 23;
+    public static final int EXERCISE_SESSION_TYPE_MARTIAL_ARTS = 24;
+    public static final int EXERCISE_SESSION_TYPE_OTHER_WORKOUT = 58;
+    public static final int EXERCISE_SESSION_TYPE_PADDLING = 25;
+    public static final int EXERCISE_SESSION_TYPE_PARAGLIDING = 26;
+    public static final int EXERCISE_SESSION_TYPE_PILATES = 27;
+    public static final int EXERCISE_SESSION_TYPE_RACQUETBALL = 28;
+    public static final int EXERCISE_SESSION_TYPE_ROCK_CLIMBING = 29;
+    public static final int EXERCISE_SESSION_TYPE_ROLLER_HOCKEY = 30;
+    public static final int EXERCISE_SESSION_TYPE_ROWING = 31;
+    public static final int EXERCISE_SESSION_TYPE_ROWING_MACHINE = 61;
+    public static final int EXERCISE_SESSION_TYPE_RUGBY = 32;
+    public static final int EXERCISE_SESSION_TYPE_RUNNING = 33;
+    public static final int EXERCISE_SESSION_TYPE_RUNNING_TREADMILL = 34;
+    public static final int EXERCISE_SESSION_TYPE_SAILING = 35;
+    public static final int EXERCISE_SESSION_TYPE_SCUBA_DIVING = 36;
+    public static final int EXERCISE_SESSION_TYPE_SKATING = 37;
+    public static final int EXERCISE_SESSION_TYPE_SKIING = 38;
+    public static final int EXERCISE_SESSION_TYPE_SNOWBOARDING = 39;
+    public static final int EXERCISE_SESSION_TYPE_SNOWSHOEING = 40;
+    public static final int EXERCISE_SESSION_TYPE_SOCCER = 41;
+    public static final int EXERCISE_SESSION_TYPE_SOFTBALL = 42;
+    public static final int EXERCISE_SESSION_TYPE_SQUASH = 43;
+    public static final int EXERCISE_SESSION_TYPE_STAIR_CLIMBING = 44;
+    public static final int EXERCISE_SESSION_TYPE_STAIR_CLIMBING_MACHINE = 59;
+    public static final int EXERCISE_SESSION_TYPE_STRENGTH_TRAINING = 45;
+    public static final int EXERCISE_SESSION_TYPE_STRETCHING = 46;
+    public static final int EXERCISE_SESSION_TYPE_SURFING = 47;
+    public static final int EXERCISE_SESSION_TYPE_SWIMMING_OPEN_WATER = 48;
+    public static final int EXERCISE_SESSION_TYPE_SWIMMING_POOL = 49;
+    public static final int EXERCISE_SESSION_TYPE_TABLE_TENNIS = 50;
+    public static final int EXERCISE_SESSION_TYPE_TENNIS = 51;
+    public static final int EXERCISE_SESSION_TYPE_UNKNOWN = 0;
+    public static final int EXERCISE_SESSION_TYPE_VOLLEYBALL = 52;
+    public static final int EXERCISE_SESSION_TYPE_WALKING = 53;
+    public static final int EXERCISE_SESSION_TYPE_WATER_POLO = 54;
+    public static final int EXERCISE_SESSION_TYPE_WEIGHTLIFTING = 55;
+    public static final int EXERCISE_SESSION_TYPE_WHEELCHAIR = 56;
+    public static final int EXERCISE_SESSION_TYPE_YOGA = 57;
+    ExerciseSessionType() {}
+}

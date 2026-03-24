@@ -1,0 +1,9 @@
+package com.android.internal.org.bouncycastle.crypto.modes.gcm;
+
+public class Tables4kGCMMultiplier implements com.android.internal.org.bouncycastle.crypto.modes.gcm.GCMMultiplier {
+    private byte[] H;
+    private long[][] T;
+    public Tables4kGCMMultiplier() {}
+    public void init(byte[] p0) {}
+    public void multiplyH(byte[] p0) {}
+}

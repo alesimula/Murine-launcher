@@ -1,0 +1,58 @@
+package android.app.admin.flags;
+
+public class CustomFeatureFlags implements android.app.admin.flags.FeatureFlags {
+    public CustomFeatureFlags(java.util.function.BiPredicate<java.lang.String, java.util.function.Predicate<android.app.admin.flags.FeatureFlags>> p0) {}
+    public boolean activeAdminCleanup() { return false; }
+    public boolean allowQueryingProfileType() { return false; }
+    public boolean assistContentUserRestrictionEnabled() { return false; }
+    public boolean associateDisallowGrantAdminWithPermission() { return false; }
+    public boolean backupConnectedAppsSettings() { return false; }
+    public boolean backupServiceSecurityLogEventEnabled() { return false; }
+    public boolean coexistenceMigrationForSupervisionEnabled() { return false; }
+    public boolean crossUserSuspensionEnabledRo() { return false; }
+    public boolean dedicatedDeviceControlApiEnabled() { return false; }
+    public boolean defaultSmsPersonalAppSuspensionFixEnabled() { return false; }
+    public boolean devicePolicySizeTrackingEnabled() { return false; }
+    public boolean deviceTheftApiEnabled() { return false; }
+    public boolean deviceTheftImplEnabled() { return false; }
+    public boolean disallowUserControlStoppedStateFix() { return false; }
+    public boolean dpeBasedOnAsyncApisEnabled() { return false; }
+    public boolean enableSupervisionServiceSync() { return false; }
+    public boolean enterpriseEsimUsingCarrierPrivileges() { return false; }
+    public boolean esimManagementEnabled() { return false; }
+    public boolean esimManagementUxEnabled() { return false; }
+    public boolean headlessDeviceOwnerSingleUserEnabled() { return false; }
+    public boolean headlessSingleMinTargetSdk() { return false; }
+    public boolean internalLogEventListener() { return false; }
+    public boolean isMtePolicyEnforced() { return false; }
+    public boolean isRecursiveRequiredAppMergingEnabled() { return false; }
+    public boolean lockNowCoexistence() { return false; }
+    public boolean managementModePolicyMetrics() { return false; }
+    public boolean onboardingBugreportStorageBugFix() { return false; }
+    public boolean onboardingBugreportV2Enabled() { return false; }
+    public boolean onboardingConsentlessBugreports() { return false; }
+    public boolean permissionMigrationForZeroTrustApiEnabled() { return false; }
+    public boolean policyEngineMigrationV2Enabled() { return false; }
+    public boolean provisioningContextParameter() { return false; }
+    public boolean quietModeCredentialBugFix() { return false; }
+    public boolean removeManagedEsimOnWorkProfileDeletion() { return false; }
+    public boolean removeManagedProfileEnabled() { return false; }
+    public boolean resetPasswordWithTokenCoexistence() { return false; }
+    public boolean secondaryLockscreenApiEnabled() { return false; }
+    public boolean securityLogV2Enabled() { return false; }
+    public boolean setApplicationRestrictionsCoexistence() { return false; }
+    public boolean setAutoTimeEnabledCoexistence() { return false; }
+    public boolean setAutoTimeZoneEnabledCoexistence() { return false; }
+    public boolean setBackupServiceEnabledCoexistence() { return false; }
+    public boolean setKeyguardDisabledFeaturesCoexistence() { return false; }
+    public boolean setMtePolicyCoexistence() { return false; }
+    public boolean setPermissionGrantStateCoexistence() { return false; }
+    public boolean splitCreateManagedProfileEnabled() { return false; }
+    public boolean suspendPackagesCoexistence() { return false; }
+    public boolean unmanagedModeMigration() { return false; }
+    public boolean unsuspendNotSuspended() { return false; }
+    public boolean usePolicyIntersectionForPermittedInputMethods() { return false; }
+    public boolean isFlagReadOnlyOptimized(java.lang.String p0) { return false; }
+    protected boolean getValue(java.lang.String p0, java.util.function.Predicate<android.app.admin.flags.FeatureFlags> p1) { return false; }
+    public java.util.List<java.lang.String> getFlagNames() { return null; }
+}

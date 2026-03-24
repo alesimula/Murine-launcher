@@ -1,0 +1,41 @@
+package javax.microedition.khronos.opengles;
+
+public interface GL11Ext extends javax.microedition.khronos.opengles.GL {
+    public static final int GL_MATRIX_INDEX_ARRAY_BUFFER_BINDING_OES = 35742;
+    public static final int GL_MATRIX_INDEX_ARRAY_OES = 34884;
+    public static final int GL_MATRIX_INDEX_ARRAY_POINTER_OES = 34889;
+    public static final int GL_MATRIX_INDEX_ARRAY_SIZE_OES = 34886;
+    public static final int GL_MATRIX_INDEX_ARRAY_STRIDE_OES = 34888;
+    public static final int GL_MATRIX_INDEX_ARRAY_TYPE_OES = 34887;
+    public static final int GL_MATRIX_PALETTE_OES = 34880;
+    public static final int GL_MAX_PALETTE_MATRICES_OES = 34882;
+    public static final int GL_MAX_VERTEX_UNITS_OES = 34468;
+    public static final int GL_TEXTURE_CROP_RECT_OES = 35741;
+    public static final int GL_WEIGHT_ARRAY_BUFFER_BINDING_OES = 34974;
+    public static final int GL_WEIGHT_ARRAY_OES = 34477;
+    public static final int GL_WEIGHT_ARRAY_POINTER_OES = 34476;
+    public static final int GL_WEIGHT_ARRAY_SIZE_OES = 34475;
+    public static final int GL_WEIGHT_ARRAY_STRIDE_OES = 34474;
+    public static final int GL_WEIGHT_ARRAY_TYPE_OES = 34473;
+    public void glTexParameterfv(int p0, int p1, float[] p2, int p3);
+    public void glCurrentPaletteMatrixOES(int p0);
+    public void glDrawTexfOES(float p0, float p1, float p2, float p3, float p4);
+    public void glDrawTexfvOES(float[] p0, int p1);
+    public void glDrawTexfvOES(java.nio.FloatBuffer p0);
+    public void glDrawTexiOES(int p0, int p1, int p2, int p3, int p4);
+    public void glDrawTexivOES(int[] p0, int p1);
+    public void glDrawTexivOES(java.nio.IntBuffer p0);
+    public void glDrawTexsOES(short p0, short p1, short p2, short p3, short p4);
+    public void glDrawTexsvOES(short[] p0, int p1);
+    public void glDrawTexsvOES(java.nio.ShortBuffer p0);
+    public void glDrawTexxOES(int p0, int p1, int p2, int p3, int p4);
+    public void glDrawTexxvOES(int[] p0, int p1);
+    public void glDrawTexxvOES(java.nio.IntBuffer p0);
+    public void glEnable(int p0);
+    public void glEnableClientState(int p0);
+    public void glLoadPaletteFromModelViewMatrixOES();
+    public void glMatrixIndexPointerOES(int p0, int p1, int p2, java.nio.Buffer p3);
+    public void glMatrixIndexPointerOES(int p0, int p1, int p2, int p3);
+    public void glWeightPointerOES(int p0, int p1, int p2, java.nio.Buffer p3);
+    public void glWeightPointerOES(int p0, int p1, int p2, int p3);
+}

@@ -1,0 +1,19 @@
+package android.text;
+
+class PackedObjectVector<E extends java.lang.Object> {
+    private int mColumns;
+    private int mRows;
+    private int mRowGapStart;
+    private int mRowGapLength;
+    private java.lang.Object[] mValues;
+    public PackedObjectVector(int p0) {}
+    public E getValue(int p0, int p1) { return null; }
+    public void setValue(int p0, int p1, E p2) {}
+    public void insertAt(int p0, E[] p1) {}
+    public void deleteAt(int p0, int p1) {}
+    public int size() { return 0; }
+    public int width() { return 0; }
+    private void growBuffer() {}
+    private void moveRowGapTo(int p0) {}
+    public void dump() {}
+}

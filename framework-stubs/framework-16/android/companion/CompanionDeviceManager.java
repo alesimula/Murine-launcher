@@ -1,0 +1,197 @@
+package android.companion;
+
+@android.annotation.SuppressLint("LongLogTag")
+public final class CompanionDeviceManager {
+    public static final int RESULT_OK = -1;
+    public static final int RESULT_CANCELED = 0;
+    public static final int RESULT_USER_REJECTED = 1;
+    public static final int RESULT_DISCOVERY_TIMEOUT = 2;
+    public static final int RESULT_INTERNAL_ERROR = 3;
+    @android.annotation.FlaggedApi("android.companion.association_failure_code")
+    public static final int RESULT_SECURITY_ERROR = 4;
+    public static final java.lang.String REASON_USER_REJECTED = "user_rejected";
+    public static final java.lang.String REASON_DISCOVERY_TIMEOUT = "discovery_timeout";
+    public static final java.lang.String REASON_INTERNAL_ERROR = "internal_error";
+    public static final java.lang.String REASON_CANCELED = "canceled";
+    public static final int FLAG_CALL_METADATA = 1;
+    @java.lang.Deprecated
+    public static final java.lang.String EXTRA_DEVICE = "android.companion.extra.DEVICE";
+    public static final java.lang.String EXTRA_ASSOCIATION = "android.companion.extra.ASSOCIATION";
+    public static final int MESSAGE_REQUEST_PING = 1669362552;
+    public static final int MESSAGE_ONEWAY_PING = 1132491640;
+    public static final int MESSAGE_REQUEST_REMOTE_AUTHENTICATION = 1669494629;
+    public static final int MESSAGE_REQUEST_CONTEXT_SYNC = 1667729539;
+    public static final int MESSAGE_ONEWAY_TASK_CONTINUITY = 1130858628;
+    public static final int MESSAGE_REQUEST_PERMISSION_RESTORE = 1669491075;
+    public static final int MESSAGE_ONEWAY_FROM_WEARABLE = 1131446919;
+    public static final int MESSAGE_ONEWAY_TO_WEARABLE = 1132755335;
+    public static final int TRANSPORT_FLAG_EXTEND_PATCH_DIFF = 1;
+    public CompanionDeviceManager(android.companion.ICompanionDeviceManager p0, android.content.Context p1) {}
+    @android.annotation.RequiresPermission(anyOf={"android.permission.REQUEST_COMPANION_PROFILE_WATCH", "android.permission.REQUEST_COMPANION_PROFILE_COMPUTER", "android.permission.REQUEST_COMPANION_PROFILE_APP_STREAMING", "android.permission.REQUEST_COMPANION_PROFILE_AUTOMOTIVE_PROJECTION"}, conditional=true)
+    public void associate(android.companion.AssociationRequest p0, android.companion.CompanionDeviceManager.Callback p1, android.os.Handler p2) {}
+    @android.annotation.RequiresPermission(anyOf={"android.permission.REQUEST_COMPANION_PROFILE_WATCH", "android.permission.REQUEST_COMPANION_PROFILE_COMPUTER", "android.permission.REQUEST_COMPANION_PROFILE_APP_STREAMING", "android.permission.REQUEST_COMPANION_PROFILE_AUTOMOTIVE_PROJECTION"}, conditional=true)
+    public void associate(android.companion.AssociationRequest p0, java.util.concurrent.Executor p1, android.companion.CompanionDeviceManager.Callback p2) {}
+    @android.annotation.Nullable
+    public android.content.IntentSender buildAssociationCancellationIntent() { return null; }
+    public void enableSystemDataSyncForTypes(int p0, int p1) {}
+    public void disableSystemDataSyncForTypes(int p0, int p1) {}
+    public void enablePermissionsSync(int p0) {}
+    public void disablePermissionsSync(int p0) {}
+    public android.companion.datatransfer.PermissionSyncRequest getPermissionSyncRequest(int p0) { return null; }
+    @java.lang.Deprecated
+    @android.annotation.NonNull
+    public java.util.List<java.lang.String> getAssociations() { return null; }
+    @android.annotation.NonNull
+    public java.util.List<android.companion.AssociationInfo> getMyAssociations() { return null; }
+    @java.lang.Deprecated
+    public void disassociate(java.lang.String p0) {}
+    public void disassociate(int p0) {}
+    public void requestNotificationAccess(android.content.ComponentName p0) {}
+    @java.lang.Deprecated
+    public boolean hasNotificationAccess(android.content.ComponentName p0) { return false; }
+    @android.annotation.SystemApi
+    @android.annotation.RequiresPermission("android.permission.MANAGE_COMPANION_DEVICES")
+    public boolean isDeviceAssociatedForWifiConnection(java.lang.String p0, android.net.MacAddress p1, android.os.UserHandle p2) { return false; }
+    @android.annotation.SystemApi
+    @android.annotation.RequiresPermission("android.permission.MANAGE_COMPANION_DEVICES")
+    @android.annotation.NonNull
+    public java.util.List<android.companion.AssociationInfo> getAllAssociations() { return null; }
+    @android.annotation.RequiresPermission("android.permission.MANAGE_COMPANION_DEVICES")
+    @android.annotation.NonNull
+    public java.util.List<android.companion.AssociationInfo> getAllAssociations(int p0) { return null; }
+    @android.annotation.SystemApi
+    @android.annotation.RequiresPermission("android.permission.MANAGE_COMPANION_DEVICES")
+    public void addOnAssociationsChangedListener(java.util.concurrent.Executor p0, android.companion.CompanionDeviceManager.OnAssociationsChangedListener p1) {}
+    @android.annotation.RequiresPermission("android.permission.MANAGE_COMPANION_DEVICES")
+    public void addOnAssociationsChangedListener(java.util.concurrent.Executor p0, android.companion.CompanionDeviceManager.OnAssociationsChangedListener p1, int p2) {}
+    @android.annotation.SystemApi
+    @android.annotation.RequiresPermission("android.permission.MANAGE_COMPANION_DEVICES")
+    public void removeOnAssociationsChangedListener(android.companion.CompanionDeviceManager.OnAssociationsChangedListener p0) {}
+    @android.annotation.RequiresPermission("android.permission.USE_COMPANION_TRANSPORTS")
+    public void addOnTransportsChangedListener(java.util.concurrent.Executor p0, java.util.function.Consumer<java.util.List<android.companion.AssociationInfo>> p1) {}
+    @android.annotation.RequiresPermission("android.permission.USE_COMPANION_TRANSPORTS")
+    public void removeOnTransportsChangedListener(java.util.function.Consumer<java.util.List<android.companion.AssociationInfo>> p0) {}
+    @android.annotation.RequiresPermission("android.permission.USE_COMPANION_TRANSPORTS")
+    public void sendMessage(int p0, byte[] p1, int[] p2) {}
+    @android.annotation.RequiresPermission("android.permission.USE_COMPANION_TRANSPORTS")
+    public void addOnMessageReceivedListener(java.util.concurrent.Executor p0, int p1, java.util.function.BiConsumer<java.lang.Integer, byte[]> p2) {}
+    @android.annotation.RequiresPermission("android.permission.USE_COMPANION_TRANSPORTS")
+    public void removeOnMessageReceivedListener(int p0, java.util.function.BiConsumer<java.lang.Integer, byte[]> p1) {}
+    @android.annotation.SystemApi
+    @android.annotation.RequiresPermission("android.permission.MANAGE_COMPANION_DEVICES")
+    public boolean canPairWithoutPrompt(java.lang.String p0, java.lang.String p1, android.os.UserHandle p2) { return false; }
+    @android.annotation.FlaggedApi("android.companion.unpair_associated_device")
+    @android.annotation.RequiresPermission("android.permission.BLUETOOTH_CONNECT")
+    public boolean removeBond(int p0) { return false; }
+    @java.lang.Deprecated
+    @android.annotation.FlaggedApi("android.companion.device_presence")
+    @android.annotation.RequiresPermission("android.permission.REQUEST_OBSERVE_COMPANION_DEVICE_PRESENCE")
+    public void startObservingDevicePresence(java.lang.String p0) throws android.companion.DeviceNotAssociatedException {}
+    @java.lang.Deprecated
+    @android.annotation.FlaggedApi("android.companion.device_presence")
+    @android.annotation.RequiresPermission("android.permission.REQUEST_OBSERVE_COMPANION_DEVICE_PRESENCE")
+    public void stopObservingDevicePresence(java.lang.String p0) throws android.companion.DeviceNotAssociatedException {}
+    @android.annotation.FlaggedApi("android.companion.device_presence")
+    @android.annotation.RequiresPermission("android.permission.REQUEST_OBSERVE_COMPANION_DEVICE_PRESENCE")
+    public void startObservingDevicePresence(android.companion.ObservingDevicePresenceRequest p0) {}
+    @android.annotation.FlaggedApi("android.companion.device_presence")
+    @android.annotation.RequiresPermission("android.permission.REQUEST_OBSERVE_COMPANION_DEVICE_PRESENCE")
+    public void stopObservingDevicePresence(android.companion.ObservingDevicePresenceRequest p0) {}
+    @java.lang.Deprecated
+    @android.annotation.RequiresPermission("android.permission.DELIVER_COMPANION_MESSAGES")
+    public void dispatchMessage(int p0, int p1, byte[] p2) throws android.companion.DeviceNotAssociatedException {}
+    @android.annotation.RequiresPermission("android.permission.DELIVER_COMPANION_MESSAGES")
+    public void attachSystemDataTransport(int p0, java.io.InputStream p1, java.io.OutputStream p2) throws android.companion.DeviceNotAssociatedException {}
+    @android.annotation.RequiresPermission("android.permission.DELIVER_COMPANION_MESSAGES")
+    public void attachSystemDataTransport(int p0, java.io.InputStream p1, java.io.OutputStream p2, int p3) throws android.companion.DeviceNotAssociatedException {}
+    @android.annotation.RequiresPermission("android.permission.DELIVER_COMPANION_MESSAGES")
+    public void detachSystemDataTransport(int p0) throws android.companion.DeviceNotAssociatedException {}
+    @android.annotation.SystemApi
+    @android.annotation.RequiresPermission("android.permission.ASSOCIATE_COMPANION_DEVICES")
+    public void associate(java.lang.String p0, android.net.MacAddress p1, byte[] p2) {}
+    @android.annotation.SystemApi
+    @android.annotation.RequiresPermission("android.permission.REQUEST_COMPANION_SELF_MANAGED")
+    public void notifyDeviceAppeared(int p0) {}
+    @android.annotation.SystemApi
+    @android.annotation.RequiresPermission("android.permission.REQUEST_COMPANION_SELF_MANAGED")
+    public void notifyDeviceDisappeared(int p0) {}
+    @android.annotation.Nullable
+    public android.content.IntentSender buildPermissionTransferUserConsentIntent(int p0) throws android.companion.DeviceNotAssociatedException { return null; }
+    @android.annotation.FlaggedApi("android.companion.perm_sync_user_consent")
+    public boolean isPermissionTransferUserConsented(int p0) { return false; }
+    @java.lang.Deprecated
+    public void startSystemDataTransfer(int p0) throws android.companion.DeviceNotAssociatedException {}
+    public void startSystemDataTransfer(int p0, java.util.concurrent.Executor p1, android.os.OutcomeReceiver<java.lang.Void, android.companion.CompanionException> p2) throws android.companion.DeviceNotAssociatedException {}
+    public boolean isCompanionApplicationBound() { return false; }
+    @android.annotation.RequiresPermission("android.permission.MANAGE_COMPANION_DEVICES")
+    public void enableSecureTransport(boolean p0) {}
+    @java.lang.Deprecated
+    @android.annotation.FlaggedApi("android.companion.association_verification")
+    public void setDeviceId(int p0, android.companion.DeviceId p1) {}
+    @android.annotation.FlaggedApi("android.companion.association_verification")
+    @android.annotation.Nullable
+    public android.companion.DeviceId createAndSetDeviceId(int p0, android.companion.DeviceId p1) { return null; }
+    @android.annotation.SystemApi
+    @android.annotation.FlaggedApi("android.companion.association_verification")
+    @android.annotation.RequiresPermission("android.permission.ACCESS_COMPANION_INFO")
+    @android.annotation.Nullable
+    public android.companion.AssociationInfo getAssociationByDeviceId(android.companion.DeviceId p0) { return null; }
+
+    private static class AssociationRequestCallbackProxy extends android.companion.IAssociationRequestCallback.Stub {
+        public void onAssociationPending(android.app.PendingIntent p0) {}
+        public void onAssociationCreated(android.companion.AssociationInfo p0) {}
+        public void onFailure(int p0, java.lang.CharSequence p1) {}
+    }
+
+    public static abstract class Callback {
+        public Callback() {}
+        @java.lang.Deprecated
+        public void onDeviceFound(android.content.IntentSender p0) {}
+        public void onAssociationPending(android.content.IntentSender p0) {}
+        public void onAssociationCreated(android.companion.AssociationInfo p0) {}
+        public abstract void onFailure(java.lang.CharSequence p0);
+        @android.annotation.FlaggedApi("android.companion.association_failure_code")
+        public void onFailure(int p0, java.lang.CharSequence p1) {}
+    }
+
+    @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.SOURCE)
+    public static @interface DataSyncTypes {
+    }
+
+    @android.annotation.SystemApi
+    public static interface OnAssociationsChangedListener {
+        public void onAssociationsChanged(java.util.List<android.companion.AssociationInfo> p0);
+    }
+
+    private static class OnAssociationsChangedListenerProxy extends android.companion.IOnAssociationsChangedListener.Stub {
+        public void onAssociationsChanged(java.util.List<android.companion.AssociationInfo> p0) {}
+    }
+
+    private static class OnMessageReceivedListenerProxy extends android.companion.IOnMessageReceivedListener.Stub {
+        public void onMessageReceived(int p0, byte[] p1) {}
+    }
+
+    private static class OnTransportsChangedListenerProxy extends android.companion.IOnTransportsChangedListener.Stub {
+        public void onTransportsChanged(java.util.List<android.companion.AssociationInfo> p0) {}
+    }
+
+    @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.SOURCE)
+    public static @interface ResultCode {
+    }
+
+    private static class SystemDataTransferCallbackProxy extends android.companion.ISystemDataTransferCallback.Stub {
+        public void onResult() {}
+        public void onError(java.lang.String p0) {}
+    }
+
+    private class Transport {
+        Transport(android.companion.CompanionDeviceManager p0, int p1, java.io.InputStream p2, java.io.OutputStream p3) {}
+        Transport(android.companion.CompanionDeviceManager p0, int p1, java.io.InputStream p2, java.io.OutputStream p3, int p4) {}
+        public void start() throws java.io.IOException {}
+        public void stop() {}
+    }
+
+    @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.SOURCE)
+    public static @interface TransportFlags {
+    }
+}

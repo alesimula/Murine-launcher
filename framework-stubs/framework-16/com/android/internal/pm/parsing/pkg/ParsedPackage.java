@@ -1,0 +1,48 @@
+package com.android.internal.pm.parsing.pkg;
+
+public interface ParsedPackage extends com.android.server.pm.pkg.AndroidPackage {
+    public com.android.internal.pm.parsing.pkg.AndroidPackageInternal hideAsFinal();
+    public com.android.internal.pm.parsing.pkg.ParsedPackage addUsesLibrary(int p0, java.lang.String p1);
+    public com.android.internal.pm.parsing.pkg.ParsedPackage addUsesOptionalLibrary(int p0, java.lang.String p1);
+    public com.android.internal.pm.parsing.pkg.ParsedPackage capPermissionPriorities();
+    public com.android.internal.pm.parsing.pkg.ParsedPackage clearAdoptPermissions();
+    public com.android.internal.pm.parsing.pkg.ParsedPackage clearOriginalPackages();
+    public com.android.internal.pm.parsing.pkg.ParsedPackage clearProtectedBroadcasts();
+    public com.android.internal.pm.parsing.pkg.ParsedPackage setBaseApkPath(java.lang.String p0);
+    public com.android.internal.pm.parsing.pkg.ParsedPackage setPath(java.lang.String p0);
+    public com.android.internal.pm.parsing.pkg.ParsedPackage setNativeLibraryDir(java.lang.String p0);
+    public com.android.internal.pm.parsing.pkg.ParsedPackage setNativeLibraryRootDir(java.lang.String p0);
+    public com.android.internal.pm.parsing.pkg.ParsedPackage setPackageName(java.lang.String p0);
+    public com.android.internal.pm.parsing.pkg.ParsedPackage setPrimaryCpuAbi(java.lang.String p0);
+    public com.android.internal.pm.parsing.pkg.ParsedPackage setSecondaryCpuAbi(java.lang.String p0);
+    public com.android.internal.pm.parsing.pkg.ParsedPackage setSigningDetails(android.content.pm.SigningDetails p0);
+    public com.android.internal.pm.parsing.pkg.ParsedPackage setSplitCodePaths(java.lang.String[] p0);
+    public com.android.internal.pm.parsing.pkg.ParsedPackage setNativeLibraryRootRequiresIsa(boolean p0);
+    public com.android.internal.pm.parsing.pkg.ParsedPackage setAllComponentsDirectBootAware(boolean p0);
+    public com.android.internal.pm.parsing.pkg.ParsedPackage setFactoryTest(boolean p0);
+    public com.android.internal.pm.parsing.pkg.ParsedPackage setApex(boolean p0);
+    public com.android.internal.pm.parsing.pkg.ParsedPackage setUpdatableSystem(boolean p0);
+    public com.android.internal.pm.parsing.pkg.ParsedPackage setEmergencyInstaller(java.lang.String p0);
+    public com.android.internal.pm.parsing.pkg.ParsedPackage markNotActivitiesAsNotExportedIfSingleUser();
+    public com.android.internal.pm.parsing.pkg.ParsedPackage setOdm(boolean p0);
+    public com.android.internal.pm.parsing.pkg.ParsedPackage setOem(boolean p0);
+    public com.android.internal.pm.parsing.pkg.ParsedPackage setPrivileged(boolean p0);
+    public com.android.internal.pm.parsing.pkg.ParsedPackage setProduct(boolean p0);
+    public com.android.internal.pm.parsing.pkg.ParsedPackage setSignedWithPlatformKey(boolean p0);
+    public com.android.internal.pm.parsing.pkg.ParsedPackage setSystem(boolean p0);
+    public com.android.internal.pm.parsing.pkg.ParsedPackage setSystemExt(boolean p0);
+    public com.android.internal.pm.parsing.pkg.ParsedPackage setVendor(boolean p0);
+    public com.android.internal.pm.parsing.pkg.ParsedPackage removePermission(int p0);
+    public com.android.internal.pm.parsing.pkg.ParsedPackage removeUsesLibrary(java.lang.String p0);
+    public com.android.internal.pm.parsing.pkg.ParsedPackage removeUsesOptionalLibrary(java.lang.String p0);
+    public com.android.internal.pm.parsing.pkg.ParsedPackage setCoreApp(boolean p0);
+    public com.android.internal.pm.parsing.pkg.ParsedPackage setStub(boolean p0);
+    public com.android.internal.pm.parsing.pkg.ParsedPackage setRestrictUpdateHash(byte[] p0);
+    public com.android.internal.pm.parsing.pkg.ParsedPackage setSecondaryNativeLibraryDir(java.lang.String p0);
+    public com.android.internal.pm.parsing.pkg.ParsedPackage setUid(int p0);
+    public com.android.internal.pm.parsing.pkg.ParsedPackage setVersionCode(int p0);
+    public com.android.internal.pm.parsing.pkg.ParsedPackage setVersionCodeMajor(int p0);
+    public com.android.internal.pm.parsing.pkg.ParsedPackage setDefaultToDeviceProtectedStorage(boolean p0);
+    public com.android.internal.pm.parsing.pkg.ParsedPackage setDirectBootAware(boolean p0);
+    public com.android.internal.pm.parsing.pkg.ParsedPackage setPersistent(boolean p0);
+}

@@ -1,0 +1,14 @@
+package android.window;
+
+public final class DisplayAreaInfo implements android.os.Parcelable {
+    public final android.window.WindowContainerToken token = null;
+    public final android.content.res.Configuration configuration = null;
+    public final int displayId = 0;
+    public final int featureId = 0;
+    public static final android.os.Parcelable.Creator<android.window.DisplayAreaInfo> CREATOR = null;
+    public DisplayAreaInfo(android.window.WindowContainerToken p0, int p1, int p2) {}
+    private DisplayAreaInfo(android.os.Parcel p0) {}
+    public void writeToParcel(android.os.Parcel p0, int p1) {}
+    public java.lang.String toString() { return null; }
+    public int describeContents() { return 0; }
+}

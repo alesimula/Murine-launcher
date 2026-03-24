@@ -1,0 +1,12 @@
+package android.view;
+
+public final class InputApplicationHandle {
+    private long ptr;
+    public final java.lang.String name = null;
+    public final long dispatchingTimeoutMillis = 0L;
+    public final android.os.IBinder token = null;
+    private native void nativeDispose();
+    public InputApplicationHandle(android.os.IBinder p0, java.lang.String p1, long p2) {}
+    public InputApplicationHandle(android.view.InputApplicationHandle p0) {}
+    protected void finalize() throws java.lang.Throwable {}
+}

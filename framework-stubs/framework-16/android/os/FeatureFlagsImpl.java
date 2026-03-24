@@ -1,0 +1,62 @@
+package android.os;
+
+public final class FeatureFlagsImpl implements android.os.FeatureFlags {
+    public FeatureFlagsImpl() {}
+    public boolean adpf25q2Metrics() { return false; }
+    public boolean adpfCapMaxBatchSize() { return false; }
+    public boolean adpfGpuReportActualWorkDuration() { return false; }
+    public boolean adpfGraphicsPipeline() { return false; }
+    public boolean adpfHwuiGpu() { return false; }
+    public boolean adpfMeasureDuringInputEventBoost() { return false; }
+    public boolean adpfObtainviewBoost() { return false; }
+    public boolean adpfPlatformPowerEfficiency() { return false; }
+    public boolean adpfPreferPowerEfficiency() { return false; }
+    public boolean adpfUseFmqChannel() { return false; }
+    public boolean adpfUseFmqChannelFixed() { return false; }
+    public boolean adpfUseLoadHints() { return false; }
+    public boolean allowConsentlessBugreportDelegatedConsent() { return false; }
+    public boolean allowPrivateProfile() { return false; }
+    public boolean allowThermalHalSkinForecast() { return false; }
+    public boolean allowThermalHeadroomThresholds() { return false; }
+    public boolean allowThermalThresholdsCallback() { return false; }
+    public boolean androidOsBuildVanillaIceCream() { return false; }
+    public boolean apiForBackportedFixes() { return false; }
+    public boolean appZygoteRetryStart() { return false; }
+    public boolean asyncTraceForTrack() { return false; }
+    public boolean batteryPartStatusApi() { return false; }
+    public boolean batterySaverSupportedCheckApi() { return false; }
+    public boolean batteryServiceSupportCurrentAdbCommand() { return false; }
+    public boolean binderFrozenStateChangeCallback() { return false; }
+    public boolean bugreportDeferredConsentScreenshotFix() { return false; }
+    public boolean bugreportMultiDisplayScreenshotEnabled() { return false; }
+    public boolean countClassInstancesApi() { return false; }
+    public boolean cpuGpuHeadrooms() { return false; }
+    public boolean disableMadviseArtfileDefault() { return false; }
+    public boolean disallowCellularNullCiphersRestriction() { return false; }
+    public boolean enableAngleAllowList() { return false; }
+    public boolean enableHasBinders() { return false; }
+    public boolean getPrivateSpaceSettings() { return false; }
+    public boolean ipcDataCacheModuleAdservices() { return false; }
+    public boolean ipcDataCacheTestmodeApis() { return false; }
+    public boolean lowLightDreamBehavior() { return false; }
+    public boolean mainlineVcnPlatformApi() { return false; }
+    public boolean materialColors102024() { return false; }
+    public boolean materialColors202503() { return false; }
+    public boolean materialMotionTokens() { return false; }
+    public boolean materialShapeTokens() { return false; }
+    public boolean messageQueueTestability() { return false; }
+    public boolean networkTimeUsesSharedMemory() { return false; }
+    public boolean orderedBroadcastMultiplePermissions() { return false; }
+    public boolean parcelMarshallBytebuffer() { return false; }
+    public boolean perfettoSdkTracing() { return false; }
+    public boolean perfettoSdkTracingV2() { return false; }
+    public boolean removeAppProfilerPssCollection() { return false; }
+    public boolean securityStateService() { return false; }
+    public boolean stateOfHealthPublic() { return false; }
+    public boolean storageLifetimeApi() { return false; }
+    public boolean strictModeRestrictedNetwork() { return false; }
+    public boolean telemetryApisFrameworkInitialization() { return false; }
+    public boolean updateEngineApi() { return false; }
+    public boolean useConcurrentMessageQueueInApps() { return false; }
+    public boolean zygoteAppLaunchLatencyAblation() { return false; }
+}

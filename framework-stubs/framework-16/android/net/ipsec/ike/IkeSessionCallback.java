@@ -1,0 +1,27 @@
+package android.net.ipsec.ike;
+
+public interface IkeSessionCallback {
+    @android.annotation.FlaggedApi("com.android.ipsec.flags.liveness_check_api")
+    public static final int LIVENESS_STATUS_BACKGROUND_ONGOING = 3;
+    @android.annotation.FlaggedApi("com.android.ipsec.flags.liveness_check_api")
+    public static final int LIVENESS_STATUS_BACKGROUND_STARTED = 2;
+    @android.annotation.FlaggedApi("com.android.ipsec.flags.liveness_check_api")
+    public static final int LIVENESS_STATUS_FAILURE = 5;
+    @android.annotation.FlaggedApi("com.android.ipsec.flags.liveness_check_api")
+    public static final int LIVENESS_STATUS_ON_DEMAND_ONGOING = 1;
+    @android.annotation.FlaggedApi("com.android.ipsec.flags.liveness_check_api")
+    public static final int LIVENESS_STATUS_ON_DEMAND_STARTED = 0;
+    @android.annotation.FlaggedApi("com.android.ipsec.flags.liveness_check_api")
+    public static final int LIVENESS_STATUS_SUCCESS = 4;
+    public void onClosed();
+    @java.lang.Deprecated
+    default public void onClosedExceptionally(android.net.ipsec.ike.exceptions.IkeException p0) {}
+    default public void onClosedWithException(android.net.ipsec.ike.exceptions.IkeException p0) {}
+    default public void onError(android.net.ipsec.ike.exceptions.IkeException p0) {}
+    @java.lang.Deprecated
+    default public void onError(android.net.ipsec.ike.exceptions.IkeProtocolException p0) {}
+    default public void onIkeSessionConnectionInfoChanged(android.net.ipsec.ike.IkeSessionConnectionInfo p0) {}
+    @android.annotation.FlaggedApi("com.android.ipsec.flags.liveness_check_api")
+    default public void onLivenessStatusChanged(int p0) {}
+    public void onOpened(android.net.ipsec.ike.IkeSessionConfiguration p0);
+}

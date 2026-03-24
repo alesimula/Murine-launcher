@@ -1,0 +1,102 @@
+package android.telephony;
+
+public class SignalStrength implements android.os.Parcelable {
+    public static final int SIGNAL_STRENGTH_NONE_OR_UNKNOWN = 0;
+    public static final int SIGNAL_STRENGTH_POOR = 1;
+    public static final int SIGNAL_STRENGTH_MODERATE = 2;
+    public static final int SIGNAL_STRENGTH_GOOD = 3;
+    public static final int SIGNAL_STRENGTH_GREAT = 4;
+    public static final int NUM_SIGNAL_STRENGTH_BINS = 5;
+    public static final int INVALID = 2147483647;
+    android.telephony.CellSignalStrengthCdma mCdma;
+    android.telephony.CellSignalStrengthGsm mGsm;
+    android.telephony.CellSignalStrengthWcdma mWcdma;
+    android.telephony.CellSignalStrengthTdscdma mTdscdma;
+    android.telephony.CellSignalStrengthLte mLte;
+    android.telephony.CellSignalStrengthNr mNr;
+    @android.annotation.NonNull
+    public static final android.os.Parcelable.Creator<android.telephony.SignalStrength> CREATOR = null;
+    public SignalStrength() {}
+    public SignalStrength(android.telephony.CellSignalStrengthCdma p0, android.telephony.CellSignalStrengthGsm p1, android.telephony.CellSignalStrengthWcdma p2, android.telephony.CellSignalStrengthTdscdma p3, android.telephony.CellSignalStrengthLte p4, android.telephony.CellSignalStrengthNr p5) {}
+    @android.annotation.NonNull
+    public java.util.List<android.telephony.CellSignalStrength> getCellSignalStrengths() { return null; }
+    @android.annotation.NonNull
+    public <T extends android.telephony.CellSignalStrength> java.util.List<T> getCellSignalStrengths(java.lang.Class<T> p0) { return null; }
+    public void updateLevel(android.os.PersistableBundle p0, android.telephony.ServiceState p1) {}
+    public SignalStrength(android.telephony.SignalStrength p0) {}
+    protected void copyFrom(android.telephony.SignalStrength p0) {}
+    public SignalStrength(android.os.Parcel p0) {}
+    public void writeToParcel(android.os.Parcel p0, int p1) {}
+    public long getTimestampMillis() { return 0L; }
+    public int describeContents() { return 0; }
+    @java.lang.Deprecated
+    public int getGsmSignalStrength() { return 0; }
+    @java.lang.Deprecated
+    public int getGsmBitErrorRate() { return 0; }
+    @java.lang.Deprecated
+    public int getCdmaDbm() { return 0; }
+    @java.lang.Deprecated
+    public int getCdmaEcio() { return 0; }
+    @java.lang.Deprecated
+    public int getEvdoDbm() { return 0; }
+    @java.lang.Deprecated
+    public int getEvdoEcio() { return 0; }
+    @java.lang.Deprecated
+    public int getEvdoSnr() { return 0; }
+    @java.lang.Deprecated
+    public int getLteSignalStrength() { return 0; }
+    @java.lang.Deprecated
+    public int getLteRsrp() { return 0; }
+    @java.lang.Deprecated
+    public int getLteRsrq() { return 0; }
+    @java.lang.Deprecated
+    public int getLteRssnr() { return 0; }
+    @java.lang.Deprecated
+    public int getLteCqi() { return 0; }
+    public int getLevel() { return 0; }
+    @java.lang.Deprecated
+    public int getAsuLevel() { return 0; }
+    @java.lang.Deprecated
+    public int getDbm() { return 0; }
+    @java.lang.Deprecated
+    public int getGsmDbm() { return 0; }
+    @java.lang.Deprecated
+    public int getGsmLevel() { return 0; }
+    @java.lang.Deprecated
+    public int getGsmAsuLevel() { return 0; }
+    @java.lang.Deprecated
+    public int getCdmaLevel() { return 0; }
+    @java.lang.Deprecated
+    public int getCdmaAsuLevel() { return 0; }
+    @java.lang.Deprecated
+    public int getEvdoLevel() { return 0; }
+    @java.lang.Deprecated
+    public int getEvdoAsuLevel() { return 0; }
+    @java.lang.Deprecated
+    public int getLteDbm() { return 0; }
+    @java.lang.Deprecated
+    public int getLteLevel() { return 0; }
+    @java.lang.Deprecated
+    public int getLteAsuLevel() { return 0; }
+    @java.lang.Deprecated
+    public boolean isGsm() { return false; }
+    @java.lang.Deprecated
+    public int getTdScdmaDbm() { return 0; }
+    @java.lang.Deprecated
+    public int getTdScdmaLevel() { return 0; }
+    @java.lang.Deprecated
+    public int getTdScdmaAsuLevel() { return 0; }
+    @java.lang.Deprecated
+    public int getWcdmaRscp() { return 0; }
+    @java.lang.Deprecated
+    public int getWcdmaAsuLevel() { return 0; }
+    @java.lang.Deprecated
+    public int getWcdmaDbm() { return 0; }
+    @java.lang.Deprecated
+    public int getWcdmaLevel() { return 0; }
+    public int hashCode() { return 0; }
+    public boolean equals(java.lang.Object p0) { return false; }
+    public java.lang.String toString() { return null; }
+    @java.lang.Deprecated
+    public void fillInNotifierBundle(android.os.Bundle p0) {}
+}

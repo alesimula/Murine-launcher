@@ -1,0 +1,178 @@
+package android.telecom;
+
+public class TelecomManager {
+    public static final java.lang.String ACTION_INCOMING_CALL = "android.telecom.action.INCOMING_CALL";
+    public static final java.lang.String ACTION_NEW_UNKNOWN_CALL = "android.telecom.action.NEW_UNKNOWN_CALL";
+    public static final java.lang.String ACTION_CONFIGURE_PHONE_ACCOUNT = "android.telecom.action.CONFIGURE_PHONE_ACCOUNT";
+    public static final java.lang.String ACTION_SHOW_CALL_ACCESSIBILITY_SETTINGS = "android.telecom.action.SHOW_CALL_ACCESSIBILITY_SETTINGS";
+    public static final java.lang.String ACTION_SHOW_CALL_SETTINGS = "android.telecom.action.SHOW_CALL_SETTINGS";
+    public static final java.lang.String ACTION_SHOW_RESPOND_VIA_SMS_SETTINGS = "android.telecom.action.SHOW_RESPOND_VIA_SMS_SETTINGS";
+    public static final java.lang.String ACTION_CHANGE_PHONE_ACCOUNTS = "android.telecom.action.CHANGE_PHONE_ACCOUNTS";
+    public static final java.lang.String ACTION_PHONE_ACCOUNT_REGISTERED = "android.telecom.action.PHONE_ACCOUNT_REGISTERED";
+    public static final java.lang.String ACTION_PHONE_ACCOUNT_UNREGISTERED = "android.telecom.action.PHONE_ACCOUNT_UNREGISTERED";
+    public static final java.lang.String ACTION_CHANGE_DEFAULT_DIALER = "android.telecom.action.CHANGE_DEFAULT_DIALER";
+    public static final java.lang.String ACTION_DEFAULT_DIALER_CHANGED = "android.telecom.action.DEFAULT_DIALER_CHANGED";
+    public static final java.lang.String EXTRA_CHANGE_DEFAULT_DIALER_PACKAGE_NAME = "android.telecom.extra.CHANGE_DEFAULT_DIALER_PACKAGE_NAME";
+    public static final java.lang.String ACTION_DEFAULT_CALL_SCREENING_APP_CHANGED = "android.telecom.action.DEFAULT_CALL_SCREENING_APP_CHANGED";
+    public static final java.lang.String EXTRA_DEFAULT_CALL_SCREENING_APP_COMPONENT_NAME = "android.telecom.extra.DEFAULT_CALL_SCREENING_APP_COMPONENT_NAME";
+    public static final java.lang.String EXTRA_IS_DEFAULT_CALL_SCREENING_APP = "android.telecom.extra.IS_DEFAULT_CALL_SCREENING_APP";
+    public static final java.lang.String EXTRA_START_CALL_WITH_SPEAKERPHONE = "android.telecom.extra.START_CALL_WITH_SPEAKERPHONE";
+    public static final java.lang.String EXTRA_START_CALL_WITH_VIDEO_STATE = "android.telecom.extra.START_CALL_WITH_VIDEO_STATE";
+    public static final java.lang.String EXTRA_INCOMING_VIDEO_STATE = "android.telecom.extra.INCOMING_VIDEO_STATE";
+    public static final java.lang.String EXTRA_PHONE_ACCOUNT_HANDLE = "android.telecom.extra.PHONE_ACCOUNT_HANDLE";
+    public static final java.lang.String EXTRA_CALL_SUBJECT = "android.telecom.extra.CALL_SUBJECT";
+    public static final java.lang.String EXTRA_INCOMING_CALL_ADDRESS = "android.telecom.extra.INCOMING_CALL_ADDRESS";
+    public static final java.lang.String EXTRA_INCOMING_CALL_EXTRAS = "android.telecom.extra.INCOMING_CALL_EXTRAS";
+    public static final java.lang.String EXTRA_CALL_EXTERNAL_RINGER = "android.telecom.extra.CALL_EXTERNAL_RINGER";
+    public static final java.lang.String EXTRA_OUTGOING_CALL_EXTRAS = "android.telecom.extra.OUTGOING_CALL_EXTRAS";
+    @android.annotation.SystemApi
+    public static final java.lang.String EXTRA_IS_USER_INTENT_EMERGENCY_CALL = "android.telecom.extra.IS_USER_INTENT_EMERGENCY_CALL";
+    public static final java.lang.String EXTRA_UNKNOWN_CALL_HANDLE = "android.telecom.extra.UNKNOWN_CALL_HANDLE";
+    public static final java.lang.String EXTRA_CALL_CREATED_TIME_MILLIS = "android.telecom.extra.CALL_CREATED_TIME_MILLIS";
+    public static final java.lang.String EXTRA_CALL_TELECOM_ROUTING_START_TIME_MILLIS = "android.telecom.extra.CALL_TELECOM_ROUTING_START_TIME_MILLIS";
+    public static final java.lang.String EXTRA_CALL_TELECOM_ROUTING_END_TIME_MILLIS = "android.telecom.extra.CALL_TELECOM_ROUTING_END_TIME_MILLIS";
+    public static final java.lang.String EXTRA_CALL_DISCONNECT_CAUSE = "android.telecom.extra.CALL_DISCONNECT_CAUSE";
+    public static final java.lang.String EXTRA_CALL_DISCONNECT_MESSAGE = "android.telecom.extra.CALL_DISCONNECT_MESSAGE";
+    @android.annotation.SystemApi
+    public static final java.lang.String EXTRA_CONNECTION_SERVICE = "android.telecom.extra.CONNECTION_SERVICE";
+    public static final java.lang.String EXTRA_CALL_TECHNOLOGY_TYPE = "android.telecom.extra.CALL_TECHNOLOGY_TYPE";
+    public static final java.lang.String EXTRA_CALL_NETWORK_TYPE = "android.telecom.extra.CALL_NETWORK_TYPE";
+    public static final java.lang.String GATEWAY_PROVIDER_PACKAGE = "android.telecom.extra.GATEWAY_PROVIDER_PACKAGE";
+    public static final java.lang.String GATEWAY_ORIGINAL_ADDRESS = "android.telecom.extra.GATEWAY_ORIGINAL_ADDRESS";
+    public static final java.lang.String EXTRA_CALL_BACK_NUMBER = "android.telecom.extra.CALL_BACK_NUMBER";
+    public static final java.lang.String EXTRA_NEW_OUTGOING_CALL_CANCEL_TIMEOUT = "android.telecom.extra.NEW_OUTGOING_CALL_CANCEL_TIMEOUT";
+    @android.annotation.UnsupportedAppUsage(maxTargetSdk=28, trackingBug=119305590L)
+    public static final java.lang.String EXTRA_IS_HANDOVER = "android.telecom.extra.IS_HANDOVER";
+    public static final java.lang.String EXTRA_IS_HANDOVER_CONNECTION = "android.telecom.extra.IS_HANDOVER_CONNECTION";
+    public static final java.lang.String EXTRA_HANDOVER_FROM_PHONE_ACCOUNT = "android.telecom.extra.HANDOVER_FROM_PHONE_ACCOUNT";
+    public static final java.lang.String EXTRA_CALL_AUDIO_STATE = "android.telecom.extra.CALL_AUDIO_STATE";
+    public static final java.lang.String EXTRA_START_CALL_WITH_RTT = "android.telecom.extra.START_CALL_WITH_RTT";
+    public static final java.lang.String METADATA_IN_CALL_SERVICE_UI = "android.telecom.IN_CALL_SERVICE_UI";
+    public static final java.lang.String METADATA_IN_CALL_SERVICE_CAR_MODE_UI = "android.telecom.IN_CALL_SERVICE_CAR_MODE_UI";
+    public static final java.lang.String METADATA_IN_CALL_SERVICE_RINGING = "android.telecom.IN_CALL_SERVICE_RINGING";
+    public static final java.lang.String METADATA_INCLUDE_EXTERNAL_CALLS = "android.telecom.INCLUDE_EXTERNAL_CALLS";
+    public static final java.lang.String METADATA_INCLUDE_SELF_MANAGED_CALLS = "android.telecom.INCLUDE_SELF_MANAGED_CALLS";
+    public static final char DTMF_CHARACTER_PAUSE = ',';
+    public static final char DTMF_CHARACTER_WAIT = ';';
+    @android.annotation.SystemApi
+    public static final int TTY_MODE_OFF = 0;
+    @android.annotation.SystemApi
+    public static final int TTY_MODE_FULL = 1;
+    @android.annotation.SystemApi
+    public static final int TTY_MODE_HCO = 2;
+    @android.annotation.SystemApi
+    public static final int TTY_MODE_VCO = 3;
+    public static final java.lang.String ACTION_CURRENT_TTY_MODE_CHANGED = "android.telecom.action.CURRENT_TTY_MODE_CHANGED";
+    public static final java.lang.String EXTRA_CURRENT_TTY_MODE = "android.telecom.intent.extra.CURRENT_TTY_MODE";
+    public static final java.lang.String ACTION_TTY_PREFERRED_MODE_CHANGED = "android.telecom.action.TTY_PREFERRED_MODE_CHANGED";
+    public static final java.lang.String EXTRA_TTY_PREFERRED_MODE = "android.telecom.intent.extra.TTY_PREFERRED";
+    public static final java.lang.String ACTION_SHOW_MISSED_CALLS_NOTIFICATION = "android.telecom.action.SHOW_MISSED_CALLS_NOTIFICATION";
+    public static final java.lang.String EXTRA_NOTIFICATION_COUNT = "android.telecom.extra.NOTIFICATION_COUNT";
+    public static final java.lang.String EXTRA_NOTIFICATION_PHONE_NUMBER = "android.telecom.extra.NOTIFICATION_PHONE_NUMBER";
+    @android.annotation.SystemApi
+    public static final java.lang.String EXTRA_CLEAR_MISSED_CALLS_INTENT = "android.telecom.extra.CLEAR_MISSED_CALLS_INTENT";
+    @android.annotation.SystemApi
+    public static final java.lang.String EXTRA_CALL_BACK_INTENT = "android.telecom.extra.CALL_BACK_INTENT";
+    public static final android.content.ComponentName EMERGENCY_DIALER_COMPONENT = null;
+    public static final java.lang.String EXTRA_USE_ASSISTED_DIALING = "android.telecom.extra.USE_ASSISTED_DIALING";
+    public static final java.lang.String EXTRA_CALL_SOURCE = "android.telecom.extra.CALL_SOURCE";
+    public static final int PRESENTATION_ALLOWED = 1;
+    public static final int PRESENTATION_RESTRICTED = 2;
+    public static final int PRESENTATION_UNKNOWN = 3;
+    public static final int PRESENTATION_PAYPHONE = 4;
+    private static final java.lang.String TAG = "TelecomManager";
+    private final android.content.Context mContext = null;
+    private final com.android.internal.telecom.ITelecomService mTelecomServiceOverride = null;
+    @android.annotation.UnsupportedAppUsage(maxTargetSdk=28)
+    public static android.telecom.TelecomManager from(android.content.Context p0) { return null; }
+    public TelecomManager(android.content.Context p0) {}
+    public TelecomManager(android.content.Context p0, com.android.internal.telecom.ITelecomService p1) {}
+    public android.telecom.PhoneAccountHandle getDefaultOutgoingPhoneAccount(java.lang.String p0) { return null; }
+    public android.telecom.PhoneAccountHandle getUserSelectedOutgoingPhoneAccount() { return null; }
+    @android.annotation.SystemApi
+    public void setUserSelectedOutgoingPhoneAccount(android.telecom.PhoneAccountHandle p0) {}
+    public android.telecom.PhoneAccountHandle getSimCallManager() { return null; }
+    public android.telecom.PhoneAccountHandle getSimCallManagerForSubscription(int p0) { return null; }
+    @android.annotation.UnsupportedAppUsage(maxTargetSdk=28, trackingBug=119305590L)
+    public android.telecom.PhoneAccountHandle getSimCallManager(int p0) { return null; }
+    @android.annotation.SystemApi
+    public android.telecom.PhoneAccountHandle getConnectionManager() { return null; }
+    @android.annotation.SystemApi
+    public java.util.List<android.telecom.PhoneAccountHandle> getPhoneAccountsSupportingScheme(java.lang.String p0) { return null; }
+    public java.util.List<android.telecom.PhoneAccountHandle> getCallCapablePhoneAccounts() { return null; }
+    public java.util.List<android.telecom.PhoneAccountHandle> getSelfManagedPhoneAccounts() { return null; }
+    @android.annotation.UnsupportedAppUsage(maxTargetSdk=28, trackingBug=119305590L)
+    public java.util.List<android.telecom.PhoneAccountHandle> getCallCapablePhoneAccounts(boolean p0) { return null; }
+    @android.annotation.SystemApi
+    @android.annotation.SuppressLint("Doclava125")
+    public java.util.List<android.telecom.PhoneAccountHandle> getPhoneAccountsForPackage() { return null; }
+    public android.telecom.PhoneAccount getPhoneAccount(android.telecom.PhoneAccountHandle p0) { return null; }
+    @android.annotation.SystemApi
+    public int getAllPhoneAccountsCount() { return 0; }
+    @android.annotation.SystemApi
+    public java.util.List<android.telecom.PhoneAccount> getAllPhoneAccounts() { return null; }
+    @android.annotation.SystemApi
+    public java.util.List<android.telecom.PhoneAccountHandle> getAllPhoneAccountHandles() { return null; }
+    public void registerPhoneAccount(android.telecom.PhoneAccount p0) {}
+    public void unregisterPhoneAccount(android.telecom.PhoneAccountHandle p0) {}
+    @android.annotation.SystemApi
+    @android.annotation.SuppressLint("Doclava125")
+    public void clearPhoneAccounts() {}
+    @android.annotation.SystemApi
+    @android.annotation.SuppressLint("Doclava125")
+    public void clearAccounts() {}
+    public void clearAccountsForPackage(java.lang.String p0) {}
+    @android.annotation.SystemApi
+    @android.annotation.SuppressLint("Doclava125")
+    public android.content.ComponentName getDefaultPhoneApp() { return null; }
+    public java.lang.String getDefaultDialerPackage() { return null; }
+    @android.annotation.SystemApi
+    @java.lang.Deprecated
+    public boolean setDefaultDialer(java.lang.String p0) { return false; }
+    public java.lang.String getSystemDialerPackage() { return null; }
+    public boolean isVoiceMailNumber(android.telecom.PhoneAccountHandle p0, java.lang.String p1) { return false; }
+    public java.lang.String getVoiceMailNumber(android.telecom.PhoneAccountHandle p0) { return null; }
+    public java.lang.String getLine1Number(android.telecom.PhoneAccountHandle p0) { return null; }
+    public boolean isInCall() { return false; }
+    public boolean isInManagedCall() { return false; }
+    @android.annotation.SystemApi
+    public int getCallState() { return 0; }
+    @android.annotation.SystemApi
+    public boolean isRinging() { return false; }
+    @java.lang.Deprecated
+    public boolean endCall() { return false; }
+    @java.lang.Deprecated
+    public void acceptRingingCall() {}
+    @java.lang.Deprecated
+    public void acceptRingingCall(int p0) {}
+    public void silenceRinger() {}
+    public boolean isTtySupported() { return false; }
+    @android.annotation.SystemApi
+    public int getCurrentTtyMode() { return 0; }
+    public void addNewIncomingCall(android.telecom.PhoneAccountHandle p0, android.os.Bundle p1) {}
+    @android.annotation.SystemApi
+    public void addNewUnknownCall(android.telecom.PhoneAccountHandle p0, android.os.Bundle p1) {}
+    public boolean handleMmi(java.lang.String p0) { return false; }
+    public boolean handleMmi(java.lang.String p0, android.telecom.PhoneAccountHandle p1) { return false; }
+    public android.net.Uri getAdnUriForPhoneAccount(android.telecom.PhoneAccountHandle p0) { return null; }
+    public void cancelMissedCallsNotification() {}
+    public void showInCallScreen(boolean p0) {}
+    public void placeCall(android.net.Uri p0, android.os.Bundle p1) {}
+    @android.annotation.SystemApi
+    public void enablePhoneAccount(android.telecom.PhoneAccountHandle p0, boolean p1) {}
+    @android.annotation.SystemApi
+    public android.telecom.TelecomAnalytics dumpAnalytics() { return null; }
+    public android.content.Intent createManageBlockedNumbersIntent() { return null; }
+    public boolean isIncomingCallPermitted(android.telecom.PhoneAccountHandle p0) { return false; }
+    public boolean isOutgoingCallPermitted(android.telecom.PhoneAccountHandle p0) { return false; }
+    public void acceptHandover(android.net.Uri p0, int p1, android.telecom.PhoneAccountHandle p2) {}
+    @android.annotation.SystemApi
+    public boolean isInEmergencyCall() { return false; }
+    public void handleCallIntent(android.content.Intent p0) {}
+    private com.android.internal.telecom.ITelecomService getTelecomService() { return null; }
+    private boolean isServiceConnected() { return false; }
+
+    @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.SOURCE)
+    public static @interface TtyMode {
+    }
+}
