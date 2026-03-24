@@ -15,6 +15,8 @@ public final class Flags {
     /** @hide */
     public static final String FLAG_ENABLE_BUBBLE_STASHING = "com.android.wm.shell.enable_bubble_stashing";
     /** @hide */
+    public static final String FLAG_ENABLE_BUBBLE_TO_FULLSCREEN = "com.android.wm.shell.enable_bubble_to_fullscreen";
+    /** @hide */
     public static final String FLAG_ENABLE_BUBBLES_LONG_PRESS_NAV_HANDLE = "com.android.wm.shell.enable_bubbles_long_press_nav_handle";
     /** @hide */
     public static final String FLAG_ENABLE_LEFT_RIGHT_SPLIT_IN_PORTRAIT = "com.android.wm.shell.enable_left_right_split_in_portrait";
@@ -153,6 +155,10 @@ public final class Flags {
     public static boolean enableCreateAnyBubble() {
 
         return FEATURE_FLAGS.enableCreateAnyBubble();
+    }
+
+    public static boolean enableBubbleToFullscreen() {
+        return FEATURE_FLAGS.enableBubbleToFullscreen();
     }
 
     private static FeatureFlags FEATURE_FLAGS = new FeatureFlagsImpl();

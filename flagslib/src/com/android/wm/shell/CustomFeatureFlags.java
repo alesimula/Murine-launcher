@@ -52,6 +52,13 @@ public class CustomFeatureFlags implements FeatureFlags {
     }
 
     @Override
+
+    public boolean enableBubbleToFullscreen() {
+        return getValue(Flags.FLAG_ENABLE_BUBBLE_TO_FULLSCREEN,
+                FeatureFlags::enableBubbleStashing);
+    }
+
+    @Override
     
     public boolean enableBubbleStashing() {
         return getValue(Flags.FLAG_ENABLE_BUBBLE_STASHING,

@@ -21,6 +21,9 @@ public interface FeatureFlags {
     
     
     boolean enableBubbleStashing();
+
+
+    boolean enableBubbleToFullscreen();
     
     
     boolean enableBubblesLongPressNavHandle();

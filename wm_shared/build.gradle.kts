@@ -34,4 +34,5 @@ dependencies {
     implementation("androidx.dynamicanimation:dynamicanimation-ktx:1.1.0")
     implementation("androidx.window:window:1.5.1")
     implementation("javax.inject:javax.inject:1")
+    compileOnly(project(":flags"))
 }

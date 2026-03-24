@@ -15,6 +15,7 @@ public final class FeatureFlagsImpl implements FeatureFlags {
     private static boolean enableBubbleAnything = false;
     private static boolean enableBubbleBar = false;
     private static boolean enableBubbleStashing = false;
+    private static boolean enableBubbleToFullscreen = false;
     private static boolean enableBubblesLongPressNavHandle = false;
     private static boolean enableLeftRightSplitInPortrait = true;
     private static boolean enableNewBubbleAnimations = false;
@@ -45,7 +46,10 @@ public final class FeatureFlagsImpl implements FeatureFlags {
         enableBubbleStashing = foundPackage;
 
 
-        enableBubblesLongPressNavHandle = foundPackage ;
+        enableBubbleToFullscreen = foundPackage;
+
+
+        enableBubblesLongPressNavHandle = foundPackage;
 
 
         enableLeftRightSplitInPortrait = foundPackage;
@@ -94,8 +98,8 @@ public final class FeatureFlagsImpl implements FeatureFlags {
                     properties.getBoolean(Flags.FLAG_ENABLE_BUBBLE_BAR, false);
             enableBubbleStashing =
                     properties.getBoolean(Flags.FLAG_ENABLE_BUBBLE_STASHING, false);
-            enableBubblesLongPressNavHandle =
-                    properties.getBoolean(Flags.FLAG_ENABLE_BUBBLES_LONG_PRESS_NAV_HANDLE, false);
+            enableBubbleToFullscreen =
+                    properties.getBoolean(Flags.FLAG_ENABLE_BUBBLE_TO_FULLSCREEN, false);
             enableLeftRightSplitInPortrait =
                     properties.getBoolean(Flags.FLAG_ENABLE_LEFT_RIGHT_SPLIT_IN_PORTRAIT, true);
             enableNewBubbleAnimations =
@@ -214,6 +218,23 @@ public final class FeatureFlagsImpl implements FeatureFlags {
             }
         }
         return enableBubbleStashing;
+
+    }
+
+    @Override
+
+
+    public boolean enableBubbleToFullscreen() {
+        if (isReadFromNew) {
+            if (!isCached) {
+                init();
+            }
+        } else {
+            if (!multitasking_is_cached) {
+                load_overrides_multitasking();
+            }
+        }
+        return enableBubbleToFullscreen;
 
     }
 
