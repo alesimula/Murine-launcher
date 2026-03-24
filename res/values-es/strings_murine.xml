@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="pref_group_grid_size_title">Tamaño de la cuadrícula</string>
+    <string name="pref_group_grid_size_desc">Cambiar el número de filas y columnas</string>
+    <string name="pref_group_icon_scale_title">Escala de iconos</string>
+    <string name="pref_group_icon_scale_desc">Cambiar el tamaño de los iconos y etiquetas</string>
+
+    <string name="pref_category_general_title">General</string>
+    <string name="pref_category_general_desc">Preferencias globales</string>
+    <string name="pref_category_icons_title">Iconos</string>
+    <string name="pref_category_icons_desc">Configurar el tamaño y la apariencia de los iconos</string>
+    <string name="pref_category_home_title">Pantalla de inicio</string>
+    <string name="pref_category_home_desc">Personaliza tu pantalla de inicio</string>
+    <string name="pref_category_drawer_title">Cajón de apps</string>
+    <string name="pref_category_drawer_desc">Personaliza tu cajón de aplicaciones</string>
+    <string name="pref_category_qsb_title">Búsqueda</string>
+    <string name="pref_category_qsb_desc">Personaliza la barra de búsqueda rápida</string>
+    <string name="pref_category_misc_title">Varios</string>
+    <string name="pref_category_misc_desc">Otras opciones</string>
+
+    <string name="pref_subcategory_day_night">Tema de la interfaz</string>
+    <string name="pref_subcategory_layout">Diseño</string>
+    <string name="pref_subcategory_appearance">Apariencia</string>
+    <string name="pref_subcategory_gestures">Gestos</string>
+
+    <string name="pref_label_ui_mode_system">Sistema</string>
+    <string name="pref_label_ui_mode_day">Claro</string>
+    <string name="pref_label_ui_mode_night">Oscuro</string>
+    <string name="pref_label_grid_width">Ancho de la cuadrícula</string>
+    <string name="pref_label_grid_height">Alto de la cuadrícula</string>
+    <string name="pref_label_icon_size">Tamaño del icono (%)</string>
+    <string name="pref_label_icon_label_size">Tamaño de la etiqueta (%)</string>
+
+    <string name="pref_icon_shape_title">Forma del icono</string>
+    <string name="icon_shape_system">Sistema</string>
+    <string name="icon_shape_circle">Círculo</string>
+    <string name="icon_shape_tofu">Tofu</string>
+    <string name="icon_shape_ios">iOS</string>
+    <string name="icon_shape_squircle">Squircle</string>
+    <string name="icon_shape_xperia">Xperia</string>
+    <string name="icon_shape_riceballs">RiceBalls</string>
+
+    <string name="pref_drawer_type_title">Tipo de cajón</string>
+    <string name="drawer_type_frosted">Difuminado</string>
+    <string name="drawer_type_mica">MICA</string>
+    <string name="drawer_type_translucent">Translúcido</string>
+
+    <string name="pref_blur_preview_title">Vista previa del modo desenfoque</string>
+    <string name="pref_blur_preview_desc">Desenfocar el fondo mientras se arrastran iconos y widgets</string>
+
+    <string name="pref_accessibility_request_toast">Por favor, permite que Murine Launcher use los servicios de accesibilidad</string>
+    <string name="pref_double_tap_to_sleep_title">Doble toque para bloquear</string>
+    <string name="pref_double_tap_to_sleep_summary">Toca dos veces en un espacio vacío para bloquear la pantalla</string>
+    <string name="pref_swipe_down_notifications_title">Deslizar hacia abajo para notificaciones</string>
+    <string name="pref_swipe_down_notifications_summary">Desliza hacia abajo en la pantalla de inicio para expandir las notificaciones</string>
+
+    <!-- Murine search bar -->
+    <string name="murine_search_hint">Buscar…</string>
+    <string name="murine_search_hint_provider">Buscar con %1$s</string>
+    <string name="murine_search_button_desc">Buscar</string>
+    <string name="murine_voice_search_desc">Búsqueda por voz</string>
+    <string name="murine_voice_search_prompt">Habla ahora...</string>
+    <string name="murine_lens_desc">Búsqueda visual</string>
+    <!-- Murine search bar preferences -->
+    <string name="pref_qsb_show_search_bar_title">Mostrar barra de búsqueda</string>
+    <string name="pref_qsb_search_provider_title">Proveedor de búsqueda</string>
+    <string name="pref_qsb_enable_lens_title">Activar Lens</string>
+    <string name="pref_qsb_enable_lens_summary">Mostrar el botón de Google Lens en la búsqueda rápida</string>
+
+    <!-- Murine smartspace / clock widget -->
+    <string name="smartspace_mode_clock">Reloj</string>
+    <string name="smartspace_mode_google">Google Smartspace</string>
+    <string name="smartspace_mode_disabled">Desactivado</string>
+    <string name="pref_smartspace_title">Widget en pantalla principal</string>
+    <string name="pref_smartspace_summary_clock">Muestra reloj con la fecha de hoy</string>
+    <string name="pref_smartspace_summary_google">Muestra widget Smartspace de Google</string>
+    <string name="pref_smartspace_summary_disabled">Sin widget en pantalla principal</string>
+
+    <string name="pref_blur_unsupported_warning"><![CDATA[El desenfoque del fondo puede no estar completamente soportado o habilitado por este OEM/ROM; si encuentras problemas, intenta buscar una opción de &quot;Permitir desenfoques a nivel de ventana&quot; en las opciones de pantalla o en las opciones de desarrollador.<br/>Alternativamente, prueba a activar <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">este módulo de Magisk</a> en dispositivos con root]]></string>
+</resources>
