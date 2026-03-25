@@ -26,27 +26,7 @@ ext.resolveJitpackStub = { String version ->
             project.dependencies.create("com.github.alesimula:android-framework-stubs:${version}")
     )
     config.transitive = false
-
-    def resolveTask = tasks.register("prepareExternalStub_${version.replace('.', '_')}") {
-        def outputJar = layout.buildDirectory.file("framework-stubs/framework-stub-${version}.jar").get().asFile
-        outputs.file(outputJar)
-
-        doLast {
-            def resolvedFiles = config.getFiles()
-            if (resolvedFiles.isEmpty()) {
-                throw new GradleException("Could not resolve framework-stubs:${version}. Check JitPack build status.")
-            }
-            def resolvedFile = resolvedFiles.iterator().next()
-            outputJar.parentFile.mkdirs()
-            java.nio.file.Files.copy(resolvedFile.toPath(), outputJar.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
-            println "Successfully resolved JitPack stub: ${outputJar.absolutePath}"
-        }
-    }
-
-    return [
-        task: resolveTask,
-        jar: file("${layout.buildDirectory.get()}/framework-stubs/framework-stub-${version}.jar")
-    ]
+    return project.files(config.resolve())
 }
 
 // Register framework stubs for all supported versions
@@ -242,25 +222,20 @@ allprojects {
             }
         }*/
 
-        // Like addFrameworkJarInternal, but for a JAR produced by a build task.
-        // Classpath injection and dependsOn are both filtered by excludePrefix
-        // to avoid circular deps with stub compilation tasks.
-        addFrameworkStubsInternal = { Project proj, String excludePrefix, Map stubsInfo ->
-            def jarFile = stubsInfo.jar        // concrete File
-            def jarTask = stubsInfo.task        // TaskProvider
+        // Prepend a framework stub jar to the compile classpath.
+        // excludePrefix filters JavaCompile tasks to avoid circular deps.
+        addFrameworkStubsInternal = { Project proj, String excludePrefix, def stubsConfig ->
             proj.dependencies {
-                compileOnly proj.files(jarFile)
+                compileOnly proj.files(stubsConfig)
             }
             proj.gradle.projectsEvaluated {
                 proj.tasks.withType(JavaCompile).configureEach { task ->
                     if (!task.name.startsWith(excludePrefix)) {
-                        classpath = proj.files(jarFile, classpath)
-                        dependsOn jarTask
+                        classpath = proj.files(stubsConfig, classpath)
                     }
                 }
                 proj.tasks.withType(KotlinCompile).configureEach {
-                    libraries.setFrom proj.files(jarFile, libraries)
-                    dependsOn jarTask
+                    libraries.setFrom proj.files(stubsConfig, libraries)
                 }
             }
         }
