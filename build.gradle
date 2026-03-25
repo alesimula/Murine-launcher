@@ -23,60 +23,42 @@ final String FRAMEWORK_PREBUILTS_DIR = "${ANDROID_TOP}/prebuilts/libs/"
 // framework-stubs/<name>-deps/ (compileOnly fake deps, not packaged in JAR).
 // Generate with: python framework-stubs/jar_stubify.py <jar> framework-stubs/<name> --fake-deps
 
-ext.registerFrameworkStubTasks = { String name ->
-    def srcDir  = file("${rootDir}/framework-stubs/${name}")
-    def depsDir = file("${rootDir}/framework-stubs/${name}-deps")
+ext.resolveJitpackStub = { String version ->
+    def config = project.configurations.detachedConfiguration(
+            project.dependencies.create("com.github.alesimula:android-framework-stubs:${version}")
+    )
+    config.transitive = false
 
-    def compileDeps = tasks.register("compileFrameworkStubsDeps_${name}", JavaCompile) {
-        description = "Compile fake dependency stubs for ${name}"
-        source = fileTree(depsDir) { include '**/*.java' }
-        classpath = files()
-        destinationDirectory = layout.buildDirectory.dir("frameworkStubs/${name}/deps-classes")
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-        options.encoding = 'UTF-8'
-        // Deps may reference types from main stubs (e.g. android.os.Parcelable)
-        options.sourcepath = files(depsDir, srcDir)
-    }
+    def resolveTask = tasks.register("prepareExternalStub_${version.replace('.', '_')}") {
+        def outputJar = layout.buildDirectory.file("framework-stubs/framework-stub-${version}.jar").get().asFile
+        outputs.file(outputJar)
 
-    def compileStubs = tasks.register("compileFrameworkStubs_${name}", JavaCompile) {
-        description = "Compile framework stubs for ${name}"
-        dependsOn compileDeps
-        source = fileTree(srcDir) {
-            include '**/*.java'
-            // Exclude JDK module packages (split package conflict with JDK 17 modules)
-            exclude 'javax/xml/**', 'org/xml/**', 'org/w3c/**', 'sun/**'
+        doLast {
+            def resolvedFiles = config.getFiles()
+            if (resolvedFiles.isEmpty()) {
+                throw new GradleException("Could not resolve framework-stubs:${version}. Check JitPack build status.")
+            }
+            def resolvedFile = resolvedFiles.iterator().next()
+            outputJar.parentFile.mkdirs()
+            java.nio.file.Files.copy(resolvedFile.toPath(), outputJar.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+            println "Successfully resolved JitPack stub: ${outputJar.absolutePath}"
         }
-        classpath = files(compileDeps.flatMap { it.destinationDirectory })
-        destinationDirectory = layout.buildDirectory.dir("frameworkStubs/${name}/classes")
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-        options.encoding = 'UTF-8'
-        options.compilerArgs += ['-Xmaxerrs', '50000']
-    }
-
-    def jarStubs = tasks.register("jarFrameworkStubs_${name}", Jar) {
-        description = "Package framework stubs JAR for ${name}"
-        dependsOn compileStubs
-        from compileStubs.flatMap { it.destinationDirectory }
-        archiveFileName = "${name}-stubs.jar"
-        destinationDirectory = layout.buildDirectory.dir("frameworkStubs/${name}")
     }
 
     return [
-        task: jarStubs,
-        jar:  new File(project.buildDir, "frameworkStubs/${name}/${name}-stubs.jar")
+        task: resolveTask,
+        jar: file("${layout.buildDirectory.get()}/framework-stubs/framework-stub-${version}.jar")
     ]
 }
 
 // Register framework stubs for all supported versions
-def frameworkStubs10 = registerFrameworkStubTasks('framework-10')
-def frameworkStubs11 = registerFrameworkStubTasks('framework-11')
-def frameworkStubs12 = registerFrameworkStubTasks('framework-12')
-def frameworkStubs13 = registerFrameworkStubTasks('framework-13')
-def frameworkStubs14 = registerFrameworkStubTasks('framework-14')
-def frameworkStubs15 = registerFrameworkStubTasks('framework-15')
-def frameworkStubs16 = registerFrameworkStubTasks('framework-16')
+def frameworkStubs10 = resolveJitpackStub('10-r1')
+def frameworkStubs11 = resolveJitpackStub('11-r1')
+def frameworkStubs12 = resolveJitpackStub('12-r1')
+def frameworkStubs13 = resolveJitpackStub('13-r1')
+def frameworkStubs14 = resolveJitpackStub('14-r1')
+def frameworkStubs15 = resolveJitpackStub('15-r1')
+def frameworkStubs16 = resolveJitpackStub('16-r2')
 
 apply plugin: 'com.google.protobuf'
 apply plugin: 'org.jetbrains.kotlin.android'
