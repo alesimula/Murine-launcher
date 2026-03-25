@@ -1,8 +1,0 @@
-package com.android.internal.org.bouncycastle.its.asn1;
-
-public class LinkageValue extends com.android.internal.org.bouncycastle.asn1.ASN1Object {
-    private final byte[] value = null;
-    private LinkageValue(com.android.internal.org.bouncycastle.asn1.ASN1OctetString p0) { super(); }
-    public static com.android.internal.org.bouncycastle.its.asn1.LinkageValue getInstance(java.lang.Object p0) { return null; }
-    public com.android.internal.org.bouncycastle.asn1.ASN1Primitive toASN1Primitive() { return null; }
-}

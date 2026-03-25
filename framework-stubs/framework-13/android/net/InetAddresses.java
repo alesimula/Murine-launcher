@@ -1,7 +1,0 @@
-package android.net;
-
-public class InetAddresses {
-    public static boolean isNumericAddress(java.lang.String p0) { return false; }
-    @android.annotation.NonNull
-    public static java.net.InetAddress parseNumericAddress(java.lang.String p0) { return null; }
-}

@@ -1,9 +1,0 @@
-package com.android.internal.hidden_from_bootclasspath.android.credentials.flags;
-
-public class FakeFeatureFlagsImpl extends com.android.internal.hidden_from_bootclasspath.android.credentials.flags.CustomFeatureFlags {
-    public FakeFeatureFlagsImpl() { super(null); }
-    public FakeFeatureFlagsImpl(com.android.internal.hidden_from_bootclasspath.android.credentials.flags.FeatureFlags p0) { super(null); }
-    protected boolean getValue(java.lang.String p0, java.util.function.Predicate<com.android.internal.hidden_from_bootclasspath.android.credentials.flags.FeatureFlags> p1) { return false; }
-    public void setFlag(java.lang.String p0, boolean p1) {}
-    public void resetAll() {}
-}

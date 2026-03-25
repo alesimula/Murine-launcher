@@ -1,7 +1,0 @@
-package android.net.util;
-
-public final class NetUtils {
-    public NetUtils() {}
-    public static boolean addressTypeMatches(java.net.InetAddress p0, java.net.InetAddress p1) { return false; }
-    public static android.net.RouteInfo selectBestRoute(java.util.Collection<android.net.RouteInfo> p0, java.net.InetAddress p1) { return null; }
-}

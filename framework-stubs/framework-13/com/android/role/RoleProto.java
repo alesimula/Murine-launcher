@@ -1,7 +1,0 @@
-package com.android.role;
-
-public final class RoleProto {
-    public static final long NAME = 1138166333441L;
-    public static final long HOLDERS = 2237677961218L;
-    public RoleProto() {}
-}

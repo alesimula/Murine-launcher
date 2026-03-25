@@ -1,6 +1,0 @@
-package com.android.internal.org.bouncycastle.its.asn1;
-
-public class ValidityPeriod extends com.android.internal.org.bouncycastle.asn1.ASN1Object {
-    public ValidityPeriod() { super(); }
-    public com.android.internal.org.bouncycastle.asn1.ASN1Primitive toASN1Primitive() { return null; }
-}

@@ -1,6 +1,0 @@
-package android.hardware.graphics.common;
-
-public @interface Compression {
-    public static final long NONE = 0L;
-    public static final long DISPLAY_STREAM_COMPRESSION = 1L;
-}
