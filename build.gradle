@@ -18,10 +18,8 @@ final String ANDROID_TOP = "${rootDir}"
 // Old 'prebuilts', nor used anymore, stashed to: https://github.com/alesimula/old-resources-m-launcher
 final String FRAMEWORK_PREBUILTS_DIR = "${ANDROID_TOP}/prebuilts/libs/"
 
-// ------------------ Framework stub compilation pipeline ------------------
-// Pre-generated stubs live under framework-stubs/<name>/ (sources) and
-// framework-stubs/<name>-deps/ (compileOnly fake deps, not packaged in JAR).
-// Generate with: python framework-stubs/jar_stubify.py <jar> framework-stubs/<name> --fake-deps
+// ------------------ Framework stub dependency pipeline ------------------
+// Framework stubs retrieved from Jitpack in order to prepend them to the classpath
 
 ext.resolveJitpackStub = { String version ->
     def config = project.configurations.detachedConfiguration(
