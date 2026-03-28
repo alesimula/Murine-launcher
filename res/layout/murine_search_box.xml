@@ -31,7 +31,7 @@
             android:textColor="?android:attr/textColorPrimary"
             android:textColorHint="?android:attr/textColorSecondary" />
 
-        <androidx.recyclerview.widget.RecyclerView
+        <app.murinelauncher.widget.SpringRecyclerView
             android:id="@+id/search_history_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

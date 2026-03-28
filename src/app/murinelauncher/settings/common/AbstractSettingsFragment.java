@@ -75,6 +75,10 @@ public abstract class AbstractSettingsFragment extends SettingsBasePreferenceFra
      */
     protected abstract boolean initPreference(@NonNull Preference preference, @NonNull DisplayController.Info info);
 
+    protected boolean initAnonymousPreference(@NonNull Preference preference, @NonNull DisplayController.Info info) {
+        return true;
+    };
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         if (BuildConfig.IS_DEBUG_DEVICE) {
@@ -264,7 +268,7 @@ public abstract class AbstractSettingsFragment extends SettingsBasePreferenceFra
             }
         }
         String key = preference.getKey();
-        if (key == null) return true;
+        if (key == null) return initAnonymousPreference(preference, info);
         return initPreference(preference, info);
     }
 

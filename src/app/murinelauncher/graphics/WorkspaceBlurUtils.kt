@@ -11,8 +11,8 @@ import android.view.View
 import android.view.ViewRootImpl
 import android.view.Window
 import androidx.core.util.Consumer
+import app.murinelauncher.util.function.TriConsumer
 import com.android.internal.graphics.drawable.BackgroundBlurDrawable
-import com.android.internal.util.function.TriConsumer
 import com.android.launcher3.Launcher
 import com.android.launcher3.R
 import com.android.launcher3.Utilities
@@ -22,11 +22,13 @@ import java.util.concurrent.ConcurrentHashMap
 
 class WorkspaceBlurUtils {
     companion object {
+        val Drawable.isBlurDrawable; get() = isBlurSupportedSDK && this is BackgroundBlurDrawable
         private var lastBlurDrawable: BackgroundBlurDrawable? = null;
         // Must be the first declaration
         @JvmStatic private val BLUR_TYPES: MutableList<BlurType> = mutableListOf<BlurType>()
         @JvmStatic val PREVIEW : BlurType = DetachedBlurType(20, false)
         @JvmStatic val NONE : BlurType = DetachedBlurType(0, false)
+        @JvmStatic val SEARCH : BlurType = DetachedBlurType(88, false)
 
         enum class DRAWER_TYPES(val type: DrawerBlurType, val label: Int, val icon: Int) {
             GLASS(DrawerBlurType.GLASS, R.string.drawer_type_frosted, R.drawable.ic_pref_drawer_frosted),
@@ -56,7 +58,7 @@ class WorkspaceBlurUtils {
             getSystemPropertyFlag("ro.surface_flinger.supports_background_blur", false) && !isBlurDisabled
         }
 
-        @JvmStatic val isBlurSupportedSDK get() = Utilities.ATLEAST_S
+        @JvmStatic inline val isBlurSupportedSDK get() = Utilities.ATLEAST_S
 
         @JvmStatic val isBlurSupported get() = isBlurSupportedSDK && isBlurSupportedOEM
 
@@ -89,6 +91,7 @@ class WorkspaceBlurUtils {
          * @param block: param 1: blur drawable; param 2: is new; param 3: is different from last queried (global)
          */
         open fun withBlurDrawable(view: View, block: TriConsumer<BackgroundBlurDrawable, Boolean, Boolean>): Boolean {
+            if (!isBlurSupportedSDK) return false;
             val viewRoot: ViewRootImpl? = viewRootProvider(view)
             var isNew = false
             if (viewRoot != null) {

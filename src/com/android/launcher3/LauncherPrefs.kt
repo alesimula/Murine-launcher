@@ -391,9 +391,15 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
         @JvmField
         val QSB_SHOW_LENS = backedUpItem(SettingsQsbFragment.SHOW_LENS, true)
         @JvmField
-        val QSB_SEARCH_PROVIDER = backedUpItem("qsb_search_provider", SearchProvider.DUCKDUCKGO, EncryptionType.ENCRYPTED)
+        val QSB_SEARCH_PROVIDER = backedUpItem(SettingsQsbFragment.SEARCH_PROVIDER, SearchProvider.DUCKDUCKGO, EncryptionType.ENCRYPTED)
         @JvmField
         val QSB_SEARCH_HISTORY = backedUpItem("qsb_search_history", "[]", EncryptionType.ENCRYPTED)
+        @JvmField
+        val QSB_BUBBLE_BLUR = backedUpItem(SettingsQsbFragment.SEARCH_BUBBLE_BLUR, WorkspaceBlurUtils.isBlurSupported)
+        @JvmField
+        val QSB_ALPHA = backedUpItem(SettingsQsbFragment.SEARCH_BAR_ALPHA, 100)
+        @JvmField
+        val QSB_BUBBLE_ALPHA = backedUpItem(SettingsQsbFragment.SEARCH_BUBBLE_ALPHA, 90)
         @JvmField
         val SMARTSPACE_MODE = backedUpItem("pref_smartspace_mode", SmartspaceMode.MURINE_CLOCK, EncryptionType.ENCRYPTED)
         @JvmField

@@ -4,6 +4,8 @@
     <string name="pref_group_grid_size_desc">Change the number of rows and columns</string>
     <string name="pref_group_icon_scale_title">Icon scale</string>
     <string name="pref_group_icon_scale_desc">Change the scale of icons and labels</string>
+    <string name="pref_group_qsb_transparency">Transparency</string>
+    <string name="pref_group_qsb_transparency_desc">Set transparency effects for quick search box</string>
 
     <string name="pref_category_general_title">General</string>
     <string name="pref_category_general_desc">Global preferences</string>
@@ -66,6 +68,10 @@
     <string name="pref_qsb_search_provider_title">Search provider</string>
     <string name="pref_qsb_enable_lens_title">Enable Lens</string>
     <string name="pref_qsb_enable_lens_summary">Show Google Lens button in quick search</string>
+    <string name="pref_qsb_box_blur">Blur search bubble</string>
+    <string name="pref_qsb_box_blur_desc">Show MICA effect for search bubble</string>
+    <string name="pref_qsb_bar_alpha">Search bar alpha</string>
+    <string name="pref_qsb_box_alpha">Search bubble alpha</string>
 
     <!-- Murine smartspace / clock widget -->
     <string name="smartspace_mode_clock">Clock</string>

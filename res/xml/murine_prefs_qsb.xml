@@ -31,10 +31,48 @@
         android:title="@string/pref_qsb_search_provider_title"
         android:persistent="true"
         app:showPreviewIcon="false"/>
-    <SwitchPreferenceCompat
-        android:key="qsb_enable_lens"
-        android:title="@string/pref_qsb_enable_lens_title"
-        android:summary="@string/pref_qsb_enable_lens_summary"
-        android:defaultValue="true"
-        android:persistent="true" />
+
+    <PreferenceCategory android:title="@string/pref_subcategory_appearance">
+        <SwitchPreferenceCompat
+            android:key="qsb_enable_lens"
+            android:title="@string/pref_qsb_enable_lens_title"
+            android:summary="@string/pref_qsb_enable_lens_summary"
+            android:defaultValue="true"
+            android:persistent="true" />
+        <com.android.settingslib.widget.ExpandablePreference
+            android:title="@string/pref_group_qsb_transparency"
+            android:summary="@string/pref_group_qsb_transparency_desc">
+            <SwitchPreferenceCompat
+                android:key="qsb_box_blur"
+                android:title="@string/pref_qsb_box_blur"
+                android:summary="@string/pref_qsb_box_blur_desc"
+                android:persistent="true" />
+
+            <app.murinelauncher.widget.CustomSeekBarPreference
+                android:title="@string/pref_qsb_bar_alpha"
+                android:summary="@string/pref_group_qsb_transparency"
+                android:key="qsb_bar_alpha"
+                android:defaultValue="100"
+                android:min="75"
+                android:max="100"
+                app:units="%"
+                app:tickInterval="5"
+                app:showIncrementButtons="true"
+                app:showTicks="true">
+            </app.murinelauncher.widget.CustomSeekBarPreference>
+
+            <app.murinelauncher.widget.CustomSeekBarPreference
+                android:title="@string/pref_qsb_box_alpha"
+                android:key="qsb_box_alpha"
+                android:summary="@string/pref_group_qsb_transparency"
+                android:defaultValue="90"
+                android:min="75"
+                android:max="100"
+                app:units="%"
+                app:tickInterval="5"
+                app:showIncrementButtons="true"
+                app:showTicks="true">
+            </app.murinelauncher.widget.CustomSeekBarPreference>
+        </com.android.settingslib.widget.ExpandablePreference>
+    </PreferenceCategory>
 </androidx.preference.PreferenceScreen>

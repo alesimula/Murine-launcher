@@ -4,7 +4,7 @@ import android.app.SearchManager
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
+import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.util.Log
 import android.view.KeyEvent
@@ -15,14 +15,18 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.graphics.ColorUtils
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import app.murinelauncher.graphics.WorkspaceBlurUtils
+import app.murinelauncher.graphics.WorkspaceBlurUtils.Companion.isBlurDrawable
 import app.murinelauncher.widget.search.MurineSearchBarView.Companion.TAG
 import com.android.launcher3.AbstractFloatingView
 import com.android.launcher3.ExtendedEditText
 import com.android.launcher3.Launcher
 import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.R
+import com.android.launcher3.Utilities
 import com.android.launcher3.views.ActivityContext
 import org.json.JSONArray
 
@@ -34,6 +38,8 @@ class MurineSearchBoxView(context: Context, attrs: AttributeSet?) :
     private lateinit var container: LinearLayout
     private val launcher: Launcher = ActivityContext.lookupContext<Launcher>(context)
     private val launcherPrefs = LauncherPrefs.get(context)
+    private var isBlurEnabled = false
+    private var maxAlpha = 0.9f
 
     override fun onFinishInflate() {
         super.onFinishInflate()
@@ -89,10 +95,10 @@ class MurineSearchBoxView(context: Context, attrs: AttributeSet?) :
     override fun handleClose(animate: Boolean) {
         searchInput.hideKeyboard()
         if (animate) {
-            container.animate()
-                .translationY(-container.height.toFloat())
-                .alpha(0f)
-                .setDuration(200)
+            var animator = container.animate().translationY(-container.height.toFloat())
+            if (container.background.isBlurDrawable) container.alpha = 1f
+            else animator.alpha(0f)
+            animator.setDuration(200)
                 .withEndAction { launcher.dragLayer.removeView(this) }
                 .start()
             animate().alpha(0f).setDuration(200).start()
@@ -117,6 +123,8 @@ class MurineSearchBoxView(context: Context, attrs: AttributeSet?) :
         super.onAttachedToWindow()
 
         container.alpha = 0f
+        isBlurEnabled = LauncherPrefs.QSB_BUBBLE_BLUR.get(launcher)
+        maxAlpha = LauncherPrefs.QSB_BUBBLE_ALPHA.get(launcher) / 100f
         container.post {
             val screenHeight = resources.displayMetrics.heightPixels
             val maxAllowedHeight = (screenHeight) / 2
@@ -136,12 +144,21 @@ class MurineSearchBoxView(context: Context, attrs: AttributeSet?) :
     }
 
     private fun startEnterAnimation() {
+        val background = container.background as GradientDrawable
+        val dark = Utilities.isDarkTheme(getContext())
+        val blurColor = background.color?.defaultColor?.let { ColorUtils.setAlphaComponent(it, if (dark) 200 else 165) }
+        if (isBlurEnabled) WorkspaceBlurUtils.SEARCH.withBlurDrawable(launcher) {drawable, isNew, isChanged ->
+            drawable.setCornerRadius(background.cornerRadius)
+            if (blurColor != null) drawable.setColor(blurColor)
+            drawable.setBlurRadius(WorkspaceBlurUtils.SEARCH.radius)
+            container.background = drawable
+        }
+
         container.translationY = -container.height.toFloat()
-        container.animate()
-            .alpha(1f)
-            .translationY(0f)
-            .setDuration(300)
-            .start()
+        var animator = container.animate()
+        if (container.background.isBlurDrawable) container.alpha = 1f
+        else animator.alpha(maxAlpha)
+        animator.translationY(0f).setDuration(300).start()
     }
 
     private class HistoryAdapter(
@@ -169,6 +186,7 @@ class MurineSearchBoxView(context: Context, attrs: AttributeSet?) :
     }
 
     companion object {
+
         fun show(launcher: Launcher) {
             val view = launcher.layoutInflater.inflate(
                 R.layout.murine_search_box,

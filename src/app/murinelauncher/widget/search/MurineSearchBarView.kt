@@ -10,10 +10,14 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.animation.DecelerateInterpolator
+import android.view.animation.Interpolator
+import android.view.animation.PathInterpolator
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import com.android.app.animation.Interpolators
 import com.android.launcher3.Launcher
 import com.android.launcher3.LauncherConstants
 import com.android.launcher3.LauncherPrefChangeListener
@@ -38,12 +42,20 @@ class MurineSearchBarView @JvmOverloads constructor(
     private val searchPlate: View
     private val searchPrompt: String
 
+    private val containerBg: View
+    private val barBg: View
+    private val circleBg: View
+
     init {
         SearchProvider.load(context)
         clipChildren = false
         clipToPadding = false
         LayoutInflater.from(context).inflate(R.layout.murine_search_bar, this, true)
         searchPrompt = context.resources.getString(R.string.murine_voice_search_prompt)
+
+        containerBg = findViewById<View>(R.id.murine_search_container_bg)
+        barBg = findViewById<View>(R.id.murine_search_bar_bg)
+        circleBg = findViewById<View>(R.id.murine_search_circle_bg)
 
         searchLogo = findViewById(R.id.murine_search_logo)
         searchHint = findViewById(R.id.murine_search_hint)
@@ -166,12 +178,21 @@ class MurineSearchBarView @JvmOverloads constructor(
         searchLogo.setImageResource(SearchProvider.current.iconRes)
         lensButton.visibility = if (LauncherPrefs.QSB_SHOW_LENS.get(context)) View.VISIBLE else View.GONE
         updateHint()
+        var alpha = LauncherPrefs.QSB_ALPHA.get(context) / 100f
+        val alphaLayer1 = DECELERATE_OUTER.getInterpolation(alpha)
+        val innerAlpha = alpha * DECELERATE_INNER.getInterpolation(alpha)
+
+        this.alpha = 1f * Interpolators.DECELERATE.getInterpolation(alpha)
+        containerBg.alpha = alphaLayer1
+        barBg.alpha = innerAlpha
+        circleBg.alpha = innerAlpha
     }
 
     private val prefListener = LauncherPrefChangeListener { key ->
         when (key) {
             LauncherPrefs.QSB_SEARCH_PROVIDER.sharedPrefKey,
-            LauncherPrefs.QSB_SHOW_LENS.sharedPrefKey -> {
+            LauncherPrefs.QSB_SHOW_LENS.sharedPrefKey,
+            LauncherPrefs.QSB_ALPHA.sharedPrefKey -> {
                 post { refreshProvider() }
             }
         }
@@ -196,6 +217,8 @@ class MurineSearchBarView @JvmOverloads constructor(
     }
 
     companion object {
+        val DECELERATE_OUTER: Interpolator = DecelerateInterpolator(0.8f)
+        val DECELERATE_INNER: Interpolator = DecelerateInterpolator(0.9f)
         const val TAG = "MurineSearchBar"
     }
 }
