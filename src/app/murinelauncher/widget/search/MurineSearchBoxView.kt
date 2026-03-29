@@ -40,6 +40,7 @@ class MurineSearchBoxView(context: Context, attrs: AttributeSet?) :
     private val launcherPrefs = LauncherPrefs.get(context)
     private var isBlurEnabled = false
     private var maxAlpha = 0.9f
+    private var maxContainerHeight = 0
 
     override fun onFinishInflate() {
         super.onFinishInflate()
@@ -74,16 +75,36 @@ class MurineSearchBoxView(context: Context, attrs: AttributeSet?) :
     }
 
     private fun setupHistory() {
-        val history = getHistory(launcherPrefs)
+        val history = trimHistory(launcherPrefs)
         if (history.isNotEmpty()) {
             historyList.visibility = View.VISIBLE
             historyList.layoutManager = LinearLayoutManager(context)
-            historyList.adapter = HistoryAdapter(history) { query ->
+            historyList.adapter = HistoryAdapter(history, onClick = { query ->
                 searchInput.setText(query)
                 performSearch(query)
-            }
+            }, onDelete = { _, _ ->
+                saveHistory(launcherPrefs, history)
+                if (history.isEmpty()) historyList.visibility = View.GONE
+                resizeContainerIfNeeded()
+            })
         } else {
             historyList.visibility = View.GONE
+        }
+    }
+
+    private fun resizeContainerIfNeeded() {
+        if (maxContainerHeight <= 0) return
+        val lp = container.layoutParams
+        if (lp.height == ViewGroup.LayoutParams.WRAP_CONTENT) return
+        // Temporarily set wrap_content to measure height
+        lp.height = ViewGroup.LayoutParams.WRAP_CONTENT
+        container.requestLayout()
+        container.post {
+            // Re-cap if content still exceeds the limit
+            if (container.height > maxContainerHeight) {
+                container.layoutParams.height = maxContainerHeight
+                container.requestLayout()
+            }
         }
     }
 
@@ -129,6 +150,7 @@ class MurineSearchBoxView(context: Context, attrs: AttributeSet?) :
             val screenHeight = resources.displayMetrics.heightPixels
             val maxAllowedHeight = (screenHeight) / 2
 
+            maxContainerHeight = maxAllowedHeight
             if (container.height > maxAllowedHeight) {
                 container.layoutParams.height = maxAllowedHeight
                 container.requestLayout()
@@ -162,12 +184,14 @@ class MurineSearchBoxView(context: Context, attrs: AttributeSet?) :
     }
 
     private class HistoryAdapter(
-        private val items: List<String>,
-        private val onClick: (String) -> Unit
+        private val items: MutableList<String>,
+        private val onClick: (String) -> Unit,
+        private val onDelete: (String, Int) -> Unit
     ) : RecyclerView.Adapter<HistoryAdapter.ViewHolder>() {
 
         class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             val textView: TextView = view.findViewById(R.id.history_text)
+            val deleteButton: View = view.findViewById(R.id.history_delete)
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -180,6 +204,15 @@ class MurineSearchBoxView(context: Context, attrs: AttributeSet?) :
             val item = items[position]
             holder.textView.text = item
             holder.itemView.setOnClickListener { onClick(item) }
+            holder.deleteButton.setOnClickListener {
+                val pos = holder.bindingAdapterPosition
+                if (pos != RecyclerView.NO_POSITION) {
+                    val removed = items[pos]
+                    items.removeAt(pos)
+                    notifyItemRemoved(pos)
+                    onDelete(removed, pos)
+                }
+            }
         }
 
         override fun getItemCount() = items.size
@@ -204,11 +237,33 @@ class MurineSearchBoxView(context: Context, attrs: AttributeSet?) :
             return MutableList(jsonArray.length()) { jsonArray.getString(it) }
         }
 
+        private fun saveHistory(prefs: LauncherPrefs, history: List<String>) {
+            prefs.put(LauncherPrefs.QSB_SEARCH_HISTORY.to(JSONArray(history).toString()))
+        }
+
+        private fun trimHistory(prefs: LauncherPrefs): MutableList<String> {
+            val maxSize = prefs.get(LauncherPrefs.QSB_HISTORY_SIZE)
+            val history = getHistory(prefs)
+            if (history.size > maxSize) {
+                val trimmed = history.take(maxSize).toMutableList()
+                saveHistory(prefs, trimmed)
+                return trimmed
+            }
+            return history
+        }
+
+        @JvmStatic
+        fun clearHistory(context: Context) {
+            val prefs = LauncherPrefs.get(context)
+            prefs.put(LauncherPrefs.QSB_SEARCH_HISTORY.to("[]"))
+        }
+
         private fun saveToHistory(prefs: LauncherPrefs, query: String) {
+            val maxSize = prefs.get(LauncherPrefs.QSB_HISTORY_SIZE)
             val currentHistory = getHistory(prefs)
             currentHistory.remove(query)
             currentHistory.add(0, query)
-            val jsonArray = JSONArray(currentHistory.take(20))
+            val jsonArray = JSONArray(currentHistory.take(maxSize))
             prefs.put(LauncherPrefs.QSB_SEARCH_HISTORY.to(jsonArray.toString()))
         }
 

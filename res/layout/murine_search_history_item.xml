@@ -24,4 +24,15 @@
         android:textColor="?android:attr/textColorPrimary"
         android:textSize="16sp" />
 
+    <ImageView
+        android:id="@+id/history_delete"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="8dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/ic_murine_delete"
+        android:tint="?android:attr/textColorSecondary"/>
+
 </LinearLayout>

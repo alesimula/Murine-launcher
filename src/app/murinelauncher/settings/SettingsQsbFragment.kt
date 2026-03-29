@@ -1,5 +1,7 @@
 package app.murinelauncher.settings
 
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.preference.Preference
 import androidx.preference.PreferenceGroup
@@ -9,6 +11,7 @@ import app.murinelauncher.graphics.WorkspaceBlurUtils
 import app.murinelauncher.settings.common.AbstractSettingsFragment
 import app.murinelauncher.widget.CustomSeekBarPreference
 import app.murinelauncher.widget.radio.RadioGroupPreference
+import app.murinelauncher.widget.search.MurineSearchBoxView
 import app.murinelauncher.widget.search.SearchProvider
 import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.R
@@ -25,6 +28,8 @@ public final class SettingsQsbFragment: AbstractSettingsFragment() {
         const val SEARCH_BUBBLE_BLUR: String = "qsb_box_blur"
         const val SEARCH_BAR_ALPHA: String = "qsb_bar_alpha"
         const val SEARCH_BUBBLE_ALPHA: String = "qsb_box_alpha"
+        const val SEARCH_HISTORY_SIZE: String = "qsb_history_size"
+        const val CLEAR_HISTORY: String = "qsb_clear_history"
     }
 
     override fun getPreferenceScreenResId() = R.xml.murine_prefs_qsb
@@ -80,6 +85,26 @@ public final class SettingsQsbFragment: AbstractSettingsFragment() {
                 searchBubbleAlpha = preference as CustomSeekBarPreference
                 preference.setDefaultValue(LauncherPrefs.QSB_BUBBLE_ALPHA.defaultValue)
                 preference.isEnabled = !LauncherPrefs.QSB_BUBBLE_BLUR.get(requireContext())
+                return true
+            }
+            SEARCH_HISTORY_SIZE -> {
+                preference as CustomSeekBarPreference
+                preference.setDefaultValue(LauncherPrefs.QSB_HISTORY_SIZE.defaultValue)
+                return true
+            }
+            CLEAR_HISTORY -> {
+                preference.setOnPreferenceClickListener {
+                    AlertDialog.Builder(requireContext())
+                        .setTitle(R.string.pref_qsb_clear_history_confirm_title)
+                        .setMessage(R.string.pref_qsb_clear_history_confirm_message)
+                        .setPositiveButton(android.R.string.ok) { _, _ ->
+                            MurineSearchBoxView.clearHistory(requireContext())
+                            Toast.makeText(requireContext(), R.string.pref_qsb_clear_history_toast, Toast.LENGTH_SHORT).show()
+                        }
+                        .setNegativeButton(android.R.string.cancel, null)
+                        .show()
+                    true
+                }
                 return true
             }
             else -> return true

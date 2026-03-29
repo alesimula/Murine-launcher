@@ -75,4 +75,23 @@
             </app.murinelauncher.widget.CustomSeekBarPreference>
         </com.android.settingslib.widget.ExpandablePreference>
     </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_subcategory_persistency">
+        <app.murinelauncher.widget.CustomSeekBarPreference
+            android:key="qsb_history_size"
+            android:title="@string/pref_qsb_history_size_title"
+            android:summary="@string/pref_qsb_history_size_summary"
+            android:defaultValue="50"
+            android:min="0"
+            android:max="100"
+            app:tickInterval="10"
+            app:showIncrementButtons="true"
+            app:showTicks="true" />
+
+        <Preference
+            android:key="qsb_clear_history"
+            android:icon="@drawable/ic_murine_delete"
+            android:title="@string/pref_qsb_clear_history_title"
+            android:summary="@string/pref_qsb_clear_history_summary" />
+    </PreferenceCategory>
 </androidx.preference.PreferenceScreen>

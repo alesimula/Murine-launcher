@@ -395,6 +395,8 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
         @JvmField
         val QSB_SEARCH_HISTORY = backedUpItem("qsb_search_history", "[]", EncryptionType.ENCRYPTED)
         @JvmField
+        val QSB_HISTORY_SIZE = backedUpItem(SettingsQsbFragment.SEARCH_HISTORY_SIZE, 50)
+        @JvmField
         val QSB_BUBBLE_BLUR = backedUpItem(SettingsQsbFragment.SEARCH_BUBBLE_BLUR, WorkspaceBlurUtils.isBlurSupported)
         @JvmField
         val QSB_ALPHA = backedUpItem(SettingsQsbFragment.SEARCH_BAR_ALPHA, 100)

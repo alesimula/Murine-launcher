@@ -23,6 +23,7 @@
     <string name="pref_subcategory_day_night">UI theme</string>
     <string name="pref_subcategory_layout">Layout</string>
     <string name="pref_subcategory_appearance">Appearance</string>
+    <string name="pref_subcategory_persistency">Persistency</string>
     <string name="pref_subcategory_gestures">Gestures</string>
 
     <string name="pref_label_ui_mode_system">System</string>
@@ -72,6 +73,13 @@
     <string name="pref_qsb_box_blur_desc">Show MICA effect for search bubble</string>
     <string name="pref_qsb_bar_alpha">Search bar alpha</string>
     <string name="pref_qsb_box_alpha">Search bubble alpha</string>
+    <string name="pref_qsb_history_size_title">Search history size</string>
+    <string name="pref_qsb_history_size_summary">Maximum entries</string>
+    <string name="pref_qsb_clear_history_title">Clear search history</string>
+    <string name="pref_qsb_clear_history_summary">Remove all saved search queries</string>
+    <string name="pref_qsb_clear_history_confirm_title">Clear search history?</string>
+    <string name="pref_qsb_clear_history_confirm_message">This will permanently remove all saved search queries.</string>
+    <string name="pref_qsb_clear_history_toast">Search history cleared</string>
 
     <!-- Murine smartspace / clock widget -->
     <string name="smartspace_mode_clock">Clock</string>

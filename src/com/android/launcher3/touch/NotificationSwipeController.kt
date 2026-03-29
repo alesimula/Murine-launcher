@@ -56,7 +56,7 @@ class NotificationSwipeController(private val mLauncher: Launcher) : TouchContro
     private fun canInterceptTouch(ev: MotionEvent) = !MotionEventsUtils.isTrackpadScroll(ev) &&
             LauncherPrefs.GESTURE_SWIPE_DOWN_NOTIFICATIONS.get(mLauncher) &&
             mLauncher.isInState(LauncherState.NORMAL) &&
-            AbstractFloatingView.getTopOpenViewWithType(mLauncher, AbstractFloatingView.TYPE_STATUS_BAR_SWIPE_DOWN_DISALLOW) == null &&
+            AbstractFloatingView.getTopOpenView(mLauncher) == null &&
             // Ignore touches in the navbar region.
             ev.getY() <= (mLauncher.getDragLayer().getHeight() - mLauncher.deviceProfile.getInsets().bottom);
 
