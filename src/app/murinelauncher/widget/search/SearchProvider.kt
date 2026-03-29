@@ -3,7 +3,6 @@ package app.murinelauncher.widget.search
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import androidx.annotation.DrawableRes
 import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.R
 
@@ -17,6 +16,12 @@ enum class SearchProvider(
     val homepageUrl: String,
     val iconRes: Int
 ) {
+    CUSTOM(
+        displayName = "Custom",
+        searchUrlTemplate = "",
+        homepageUrl = "",
+        iconRes = R.drawable.ic_murine_search_provider_custom
+    ),
     GOOGLE(
         displayName = "Google",
         searchUrlTemplate = "https://www.google.com/search?q=%s",
@@ -60,20 +65,41 @@ enum class SearchProvider(
         iconRes = R.drawable.ic_murine_search_provider_bing
     );
 
-    fun buildSearchUrl(query: String): String {
-        return searchUrlTemplate.format(Uri.encode(query))
+    fun buildSearchUrl(context: Context, query: String): String {
+        var searchUrlTemplate = if (this.searchUrlTemplate.isBlank())
+            LauncherPrefs.QSB_SEARCH_PROVIDER_CUSTOM.get(context) else this.searchUrlTemplate
+        try {
+            searchUrlTemplate = searchUrlTemplate.format(Uri.encode(query))
+        } catch (_: Exception) {}
+        return searchUrlTemplate
     }
 
-    fun buildSearchIntent(query: String): Intent {
-        return Intent(Intent.ACTION_VIEW, Uri.parse(buildSearchUrl(query)))
+    fun buildSearchIntent(context: Context, query: String): Intent {
+        var uri: Uri
+        try {
+            uri = Uri.parse(buildSearchUrl(context, query))
+        } catch (_: Exception) {
+            uri = Uri.parse(BLANK_PAGE)
+        }
+        return Intent(Intent.ACTION_VIEW, uri)
     }
 
-    fun buildHomepageIntent(): Intent {
+    fun buildHomepageIntent(context: Context): Intent {
+        var homepageUrl: String = this.homepageUrl
+        if (homepageUrl.isBlank()) {
+            var searchUrl: String = searchUrlTemplate
+            if (searchUrl.isBlank()) searchUrl = LauncherPrefs.QSB_SEARCH_PROVIDER_CUSTOM.get(context)
+            try {
+                val uri = Uri.parse(LauncherPrefs.QSB_SEARCH_PROVIDER_CUSTOM.get(context))
+                homepageUrl = uri.getScheme() + "://" + uri.getEncodedAuthority()
+            } catch (_: Exception) {homepageUrl = BLANK_PAGE}
+        }
         return Intent(Intent.ACTION_VIEW, Uri.parse(homepageUrl))
     }
 
     companion object {
         @JvmStatic var current: SearchProvider = DUCKDUCKGO; private set
+        const val BLANK_PAGE = "about:blank"
 
         @JvmStatic
         fun load(context: Context) {

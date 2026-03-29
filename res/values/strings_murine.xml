@@ -60,6 +60,7 @@
     <!-- Murine search bar -->
     <string name="murine_search_hint">Search…</string>
     <string name="murine_search_hint_provider">Search with %1$s</string>
+    <string name="murine_search_hint_generic">Search on the web</string>
     <string name="murine_search_button_desc">Search</string>
     <string name="murine_voice_search_desc">Voice search</string>
     <string name="murine_voice_search_prompt">Speak now...</string>
@@ -73,6 +74,7 @@
     <string name="pref_qsb_box_blur_desc">Show MICA effect for search bubble</string>
     <string name="pref_qsb_bar_alpha">Search bar alpha</string>
     <string name="pref_qsb_box_alpha">Search bubble alpha</string>
+    <string name="pref_qsb_custom_provider_title">Custom search URL</string>
     <string name="pref_qsb_history_size_title">Search history size</string>
     <string name="pref_qsb_history_size_summary">Maximum entries</string>
     <string name="pref_qsb_clear_history_title">Clear search history</string>

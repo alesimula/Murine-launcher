@@ -3,6 +3,7 @@ package app.murinelauncher.settings
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceGroup
 import androidx.preference.PreferenceScreen
@@ -25,11 +26,14 @@ public final class SettingsQsbFragment: AbstractSettingsFragment() {
         const val SHOW_SEARCH_BAR: String = "qsb_show_search_bar" // Master switch
         const val SHOW_LENS: String = "qsb_enable_lens"
         const val SEARCH_PROVIDER: String = "qsb_search_provider"
+        const val SEARCH_PROVIDER_CUSTOM: String = "qsb_search_provider_custom"
         const val SEARCH_BUBBLE_BLUR: String = "qsb_box_blur"
         const val SEARCH_BAR_ALPHA: String = "qsb_bar_alpha"
         const val SEARCH_BUBBLE_ALPHA: String = "qsb_box_alpha"
         const val SEARCH_HISTORY_SIZE: String = "qsb_history_size"
         const val CLEAR_HISTORY: String = "qsb_clear_history"
+
+        const val CUSTOM_SEARCH_EXAMPLE = "https://test.com?q=%s"
     }
 
     override fun getPreferenceScreenResId() = R.xml.murine_prefs_qsb
@@ -41,6 +45,7 @@ public final class SettingsQsbFragment: AbstractSettingsFragment() {
     val MASTER_DISABLED_PREFS = ArrayDeque<Preference>()
 
     var searchBubbleAlpha: CustomSeekBarPreference? = null
+    var customProviderPref: EditTextPreference? = null
 
     fun initPreferenceImpl(preference: Preference, info: DisplayController.Info, masterSwitch: Boolean): Boolean {
         // The master switch switches off QSB and the rest of the preferences in this page
@@ -62,6 +67,28 @@ public final class SettingsQsbFragment: AbstractSettingsFragment() {
                     setDefaultValue(LauncherPrefs.QSB_SEARCH_PROVIDER.defaultValue)
                     setTextProvider { _, provider -> provider.displayName }
                     setIconProvider { ctx, provider -> AppCompatResources.getDrawable(ctx, provider.iconRes) }
+                    setOnSelected { provider ->
+                        customProviderPref?.isVisible = provider == SearchProvider.CUSTOM
+                    }
+                }
+                return true
+            }
+            SEARCH_PROVIDER_CUSTOM -> {
+                customProviderPref = preference as EditTextPreference
+                val isCustom = LauncherPrefs.QSB_SEARCH_PROVIDER.get(requireContext()) == SearchProvider.CUSTOM
+                preference.isVisible = isCustom
+                val currentValue = LauncherPrefs.QSB_SEARCH_PROVIDER_CUSTOM.get(requireContext())
+                preference.text = currentValue
+                preference.summary = currentValue.ifBlank { CUSTOM_SEARCH_EXAMPLE }
+                preference.setOnBindEditTextListener { editText ->
+                    editText.hint = CUSTOM_SEARCH_EXAMPLE
+                    editText.setSingleLine(true)
+                }
+                preference.setOnPreferenceChangeListener { _, newValue ->
+                    val url = newValue as String
+                    LauncherPrefs.get(requireContext()).put(LauncherPrefs.QSB_SEARCH_PROVIDER_CUSTOM.to(url))
+                    preference.summary = url.ifBlank { CUSTOM_SEARCH_EXAMPLE }
+                    true
                 }
                 return true
             }

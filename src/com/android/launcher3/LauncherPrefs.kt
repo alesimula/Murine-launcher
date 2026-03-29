@@ -393,6 +393,8 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
         @JvmField
         val QSB_SEARCH_PROVIDER = backedUpItem(SettingsQsbFragment.SEARCH_PROVIDER, SearchProvider.DUCKDUCKGO, EncryptionType.ENCRYPTED)
         @JvmField
+        val QSB_SEARCH_PROVIDER_CUSTOM = backedUpItem(SettingsQsbFragment.SEARCH_PROVIDER_CUSTOM, "", EncryptionType.ENCRYPTED)
+        @JvmField
         val QSB_SEARCH_HISTORY = backedUpItem("qsb_search_history", "[]", EncryptionType.ENCRYPTED)
         @JvmField
         val QSB_HISTORY_SIZE = backedUpItem(SettingsQsbFragment.SEARCH_HISTORY_SIZE, 50)

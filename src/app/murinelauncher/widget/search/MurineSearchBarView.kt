@@ -69,7 +69,9 @@ class MurineSearchBarView @JvmOverloads constructor(
     }
 
     private fun updateHint() {
-        searchHint.text = context.getString(
+        searchHint.text = if (SearchProvider.current == SearchProvider.CUSTOM)
+            context.getString(R.string.murine_search_hint_generic)
+        else context.getString(
             R.string.murine_search_hint_provider,
             SearchProvider.current.displayName
         )

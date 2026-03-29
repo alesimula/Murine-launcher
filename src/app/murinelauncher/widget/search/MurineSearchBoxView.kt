@@ -284,7 +284,7 @@ class MurineSearchBoxView(context: Context, attrs: AttributeSet?) :
             saveToHistory(historyPrefs, query)
 
             try {
-                val intent = SearchProvider.current.buildSearchIntent(query).apply {
+                val intent = SearchProvider.current.buildSearchIntent(context, query).apply {
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 }
                 context.startActivity(intent)

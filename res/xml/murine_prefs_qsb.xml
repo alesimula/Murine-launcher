@@ -32,6 +32,11 @@
         android:persistent="true"
         app:showPreviewIcon="false"/>
 
+    <EditTextPreference
+        android:key="qsb_search_provider_custom"
+        android:title="@string/pref_qsb_custom_provider_title"
+        android:persistent="false" />
+
     <PreferenceCategory android:title="@string/pref_subcategory_appearance">
         <SwitchPreferenceCompat
             android:key="qsb_enable_lens"
