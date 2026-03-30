@@ -1,3 +1,15 @@
+/* --- Forced Dark Mode Prevention --- */
+:root {
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="dark"]) { color-scheme: light; }
+}
+html, body, img, svg, picture, video {
+  forced-color-adjust: none;
+  -ms-high-contrast-adjust: none;
+}
+
 /* --- Color Tokens (Light) --- */
 :root,
 [data-theme="light"] {
