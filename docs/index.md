@@ -7,11 +7,11 @@ title: Home
 <section class="hero">
   <div class="hero-inner">
     <div class="hero-text">
-      <h1>Android launcher,<br><span class="accent">plain and simple.</span></h1>
+      <h1>Open launcher,<br><span class="accent">plain and simple.</span></h1>
       <p class="hero-desc">
         A modern, lightweight FOSS Launcher3 fork delivering an enhanced stock Android experience, 
          providing a familiar AOSP feel out of the box, with some sprinkles on top :3 <br/><br/>
-        Offers a minimalistic yet polished interface with essential customization options, with zero bloat.
+        Offers a minimalistic yet polished home screen interface with essential customization options, with zero bloat.
       </p>
       <div class="hero-actions">
         <a href="{{ '/download' | relative_url }}" class="btn-filled">
@@ -36,7 +36,7 @@ title: Home
 <section class="features-section">
   <div class="section-header">
     <h2>What it has to offer</h2>
-    <p>Built on AOSP Launcher3, Murine keeps things clean while adding a little touches here and there.</p>
+    <p>Built on AOSP Launcher3, Murine Launcher keeps things clean while adding a little touches here and there.</p>
   </div>
   <div class="features-grid">
     <div class="feature-card">
