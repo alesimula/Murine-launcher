@@ -32,8 +32,8 @@ Check [the website](https://www.murinelauncher.app/) or download it from:
       <source media="(prefers-color-scheme: dark)" srcset="image/github/badge-izzyondroid.webp" height="60">
       <img alt="Get it on IzzyOnDroid" src="image/github/badge-izzyondroid.webp" height="60">
     </picture>
-  </a><!--
-  --><a href="https://github.com/alesimula/Murine-launcher/releases">
+  </a>
+  <a href="https://github.com/alesimula/Murine-launcher/releases">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="image/github/badge-github.webp" height="60">
       <img alt="Get it on GitHub" src="image/github/badge-github.webp" height="60">
