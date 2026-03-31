@@ -22,6 +22,25 @@ Alternatively, try enabling <a href="https://github.com/Magisk-Modules-Alt-Repo/
 <img width="320" src="/fastlane/metadata/android/en-US/images/phoneScreenshots/5.png"/>    <img width="320" src="/fastlane/metadata/android/en-US/images/phoneScreenshots/6.png"/>
 <img width="320" src="/fastlane/metadata/android/en-US/images/phoneScreenshots/7.png"/>
 
+## Download
+
+Check [the website](https://www.murinelauncher.app/) or download it from:
+
+<p align="left">
+  <a href="https://apt.izzysoft.de/fdroid/index/apk/app.murinelauncher">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="image/github/badge-izzyondroid.webp" height="60">
+      <img alt="Get it on IzzyOnDroid" src="image/github/badge-izzyondroid.webp" height="60">
+    </picture>
+  </a>
+    <a href="https://github.com/alesimula/Murine-launcher/releases">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="image/github/badge-github.webp" height="60">
+      <img alt="Get it on GitHub" src="image/github/badge-github.webp" height="60">
+    </picture>
+  </a>
+</p>
+
 ## Building
 
 Last tested on:
