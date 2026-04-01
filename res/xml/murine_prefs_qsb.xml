@@ -52,7 +52,6 @@
                 android:title="@string/pref_qsb_box_blur"
                 android:summary="@string/pref_qsb_box_blur_desc"
                 android:persistent="true" />
-
             <app.murinelauncher.widget.CustomSeekBarPreference
                 android:title="@string/pref_qsb_bar_alpha"
                 android:summary="@string/pref_group_qsb_transparency"
@@ -79,6 +78,15 @@
                 app:showTicks="true">
             </app.murinelauncher.widget.CustomSeekBarPreference>
         </com.android.settingslib.widget.ExpandablePreference>
+
+        <app.murinelauncher.widget.WarningCardPreference
+            android:key="pref_blur_warning"
+            android:visible="false"
+            app:formatHtml="true"
+            app:cardIcon="@android:drawable/ic_dialog_alert"
+            app:cardText="@string/pref_blur_unsupported_warning"
+            app:cardBackgroundColor="@color/settingslib_colorBackgroundLevel_medium"
+            app:cardContentColor="@color/settingslib_materialColorOnSurface" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_subcategory_persistency">

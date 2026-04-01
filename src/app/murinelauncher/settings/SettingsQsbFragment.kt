@@ -32,6 +32,7 @@ public final class SettingsQsbFragment: AbstractSettingsFragment() {
         const val SEARCH_BUBBLE_ALPHA: String = "qsb_box_alpha"
         const val SEARCH_HISTORY_SIZE: String = "qsb_history_size"
         const val CLEAR_HISTORY: String = "qsb_clear_history"
+        const val BLUR_WARNING: String = "pref_blur_warning"
 
         const val CUSTOM_SEARCH_EXAMPLE = "https://test.com?q=%s"
     }
@@ -46,6 +47,11 @@ public final class SettingsQsbFragment: AbstractSettingsFragment() {
 
     var searchBubbleAlpha: CustomSeekBarPreference? = null
     var customProviderPref: EditTextPreference? = null
+
+    private fun updateBlurWarningVisibility(value: Boolean) {
+        findPreference<Preference>(BLUR_WARNING)?.isVisible =
+            value && !WorkspaceBlurUtils.isBlurSupported
+    }
 
     fun initPreferenceImpl(preference: Preference, info: DisplayController.Info, masterSwitch: Boolean): Boolean {
         // The master switch switches off QSB and the rest of the preferences in this page
@@ -95,10 +101,14 @@ public final class SettingsQsbFragment: AbstractSettingsFragment() {
             SEARCH_BUBBLE_BLUR -> {
                 preference as TwoStatePreference
                 preference.setDefaultValue(LauncherPrefs.QSB_BUBBLE_BLUR.defaultValue)
-                preference.isVisible = WorkspaceBlurUtils.isBlurSupportedSDK
+                val isVisible = WorkspaceBlurUtils.isBlurSupportedSDK
+                preference.isVisible = isVisible
+                updateBlurWarningVisibility(if (isVisible) preference.isChecked else false)
                 preference.setOnPreferenceChangeListener {
                     _, newValue ->
-                    searchBubbleAlpha?.isEnabled = !(newValue as Boolean)
+                    val enabled = newValue as Boolean
+                    searchBubbleAlpha?.isEnabled = !enabled
+                    updateBlurWarningVisibility(enabled)
                     true
                 }
                 return true
