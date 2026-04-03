@@ -4,6 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:paddingHorizontal="?android:attr/listPreferredItemPaddingStart">
 
     <EditText
@@ -16,6 +18,8 @@
         android:imeOptions="actionSearch"
         android:background="@drawable/bg_all_apps_searchbox"
         android:paddingHorizontal="24dp"
+        android:textColor="@color/all_apps_label_text_color"
+        android:textColorHint="@color/all_apps_label_text_color"
         android:textSize="14sp"
         android:layout_marginTop="8dp" />
 

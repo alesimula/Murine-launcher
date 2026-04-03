@@ -17,9 +17,11 @@ import app.murinelauncher.settings.hiddenapps.HiddenAppsRepository
 import app.murinelauncher.settings.common.AbstractSettingsFragment
 import com.android.launcher3.LauncherAppState
 import com.android.launcher3.R
-import com.android.launcher3.icons.BaseIconFactory
-import com.android.launcher3.icons.LauncherIcons
+import com.android.launcher3.icons.cache.CacheLookupFlag
+import com.android.launcher3.model.data.AppInfo
 import com.android.launcher3.util.DisplayController
+import com.android.launcher3.util.Executors
+import com.google.android.material.appbar.AppBarLayout
 
 class SettingsHiddenAppsFragment : AbstractSettingsFragment() {
 
@@ -86,6 +88,10 @@ class SettingsHiddenAppsFragment : AbstractSettingsFragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
 
+        view.findViewById<EditText>(R.id.search_bar)?.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) activity?.findViewById<AppBarLayout>(R.id.app_bar)?.setExpanded(false, true)
+        }
+
         tabAll?.setOnClickListener { selectTab(0) }
         tabHidden?.setOnClickListener { selectTab(1) }
     }
@@ -96,32 +102,38 @@ class SettingsHiddenAppsFragment : AbstractSettingsFragment() {
         val launcherApps = ctx.getSystemService(LauncherApps::class.java)
         val activities = launcherApps.getActivityList(null, Process.myUserHandle())
         val selfPackage = ctx.packageName
+        val iconCache = LauncherAppState.getInstance(ctx).iconCache
 
-        LauncherIcons.Companion.obtain(ctx).use { li -> activities
+        val filtered = activities
             .filter { !HIDE_SELF || it.componentName.packageName != selfPackage }
             .sortedBy { (it.label ?: it.componentName.shortClassName).toString().lowercase() }
-            .forEach { info ->
-                val name = info.componentName.flattenToString()
-                val iconDrawable = info.getIcon(li.fullResIconDpi)
-                val bitmapInfo = li.createBadgedIconBitmap(
-                    iconDrawable,
-                    BaseIconFactory.IconOptions().setUser(info.user)
-                )
-                val pref = HiddenAppPreference(ctx).apply {
-                    key = name
-                    title = info.label ?: info.componentName.shortClassName
-                    icon = bitmapInfo.newIcon(ctx)
-                    isAppHidden = hiddenComponents.contains(name)
-                    setOnPreferenceClickListener {
-                        val wasHidden = hiddenComponents.contains(name)
-                        if (wasHidden) hiddenComponents.remove(name) else hiddenComponents.add(name)
-                        isAppHidden = !wasHidden
-                        dirty = true
-                        applyFilter()
-                        true
+
+        Executors.MODEL_EXECUTOR.execute {
+            val results = filtered.map { info ->
+                val appInfo = AppInfo(ctx, info, info.user)
+                iconCache.getTitleAndIcon(appInfo, info, CacheLookupFlag.DEFAULT_LOOKUP_FLAG)
+                Triple(info.componentName.flattenToString(), appInfo.title ?: info.label ?: info.componentName.shortClassName, appInfo.bitmap.newIcon(ctx))
+            }
+            Executors.MAIN_EXECUTOR.execute {
+                if (!isAdded) return@execute
+                results.forEach { (name, title, icon) ->
+                    val pref = HiddenAppPreference(ctx).apply {
+                        key = name
+                        this.title = title
+                        this.icon = icon
+                        isAppHidden = hiddenComponents.contains(name)
+                        setOnPreferenceClickListener {
+                            val wasHidden = hiddenComponents.contains(name)
+                            if (wasHidden) hiddenComponents.remove(name) else hiddenComponents.add(name)
+                            isAppHidden = !wasHidden
+                            dirty = true
+                            applyFilter()
+                            true
+                        }
                     }
+                    screen.addPreference(pref)
                 }
-                screen.addPreference(pref)
+                applyFilter()
             }
         }
     }
@@ -149,7 +161,7 @@ class SettingsHiddenAppsFragment : AbstractSettingsFragment() {
         if (dirty) {
             val ctx = requireContext()
             HiddenAppsRepository.setHiddenComponents(ctx, hiddenComponents)
-            LauncherAppState.Companion.getInstance(ctx).model.forceReload()
+            LauncherAppState.getInstance(ctx).model.forceReload()
             dirty = false
         }
     }
