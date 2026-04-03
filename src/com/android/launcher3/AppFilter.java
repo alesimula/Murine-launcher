@@ -3,6 +3,9 @@ package com.android.launcher3;
 import android.content.ComponentName;
 import android.content.Context;
 
+import app.murinelauncher.settings.SettingsHiddenAppsFragment;
+import app.murinelauncher.settings.hiddenapps.HiddenAppsRepository;
+
 import com.android.launcher3.dagger.ApplicationContext;
 
 import java.util.Arrays;
@@ -16,10 +19,12 @@ import javax.inject.Inject;
  */
 public class AppFilter {
 
+    private final Context mContext;
     private final Set<ComponentName> mFilteredComponents;
 
     @Inject
     public AppFilter(@ApplicationContext Context context) {
+        mContext = context;
         mFilteredComponents = Arrays.stream(
                 context.getResources().getStringArray(R.array.filtered_components))
                 .map(ComponentName::unflattenFromString)
@@ -27,6 +32,8 @@ public class AppFilter {
     }
 
     public boolean shouldShowApp(ComponentName app) {
-        return !mFilteredComponents.contains(app);
+        if (mFilteredComponents.contains(app)) return false;
+        if (SettingsHiddenAppsFragment.HIDE_SELF && app.getPackageName().equals(mContext.getPackageName())) return false;
+        return !HiddenAppsRepository.isHidden(mContext, app);
     }
 }

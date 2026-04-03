@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="?android:attr/listPreferredItemPaddingStart">
+
+    <EditText
+        android:id="@+id/search_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/all_apps_header_pill_height"
+        android:hint="@string/hidden_apps_search_hint"
+        android:inputType="text"
+        android:maxLines="1"
+        android:imeOptions="actionSearch"
+        android:background="@drawable/bg_all_apps_searchbox"
+        android:paddingHorizontal="24dp"
+        android:textSize="14sp"
+        android:layout_marginTop="8dp" />
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="4dp"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:id="@+id/filter_group"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/all_apps_header_pill_height"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/filter_all"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginEnd="@dimen/all_apps_tabs_button_horizontal_padding"
+                android:background="@drawable/all_apps_tabs_background"
+                android:textColor="@color/murine_all_apps_tab_text"
+                android:textSize="14sp"
+                style="?android:attr/borderlessButtonStyle" />
+
+            <Button
+                android:id="@+id/filter_hidden"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/all_apps_tabs_button_horizontal_padding"
+                android:background="@drawable/all_apps_tabs_background"
+                android:textColor="@color/murine_all_apps_tab_text"
+                android:textSize="14sp"
+                style="?android:attr/borderlessButtonStyle" />
+        </LinearLayout>
+    </HorizontalScrollView>
+</LinearLayout>

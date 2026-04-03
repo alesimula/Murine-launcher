@@ -19,12 +19,11 @@
     xmlns:launcher="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <app.murinelauncher.widget.WarningCardPreference
-        android:key="pref_blur_warning"
-        app:formatHtml="false"
-        app:cardIcon="@android:drawable/ic_dialog_alert"
-        app:cardText="¯\\_(ツ)_/¯"
-        app:cardBackgroundColor="@color/settingslib_colorBackgroundLevel_medium"
-        app:cardContentColor="@color/settingslib_materialColorOnSurface" />
+    <Preference
+        android:key="pref_hidden_apps"
+        android:icon="@drawable/ic_hidden_apps"
+        android:title="@string/pref_category_hidden_apps_title"
+        android:summary="@string/pref_category_hidden_apps_summary"
+        android:fragment="app.murinelauncher.settings.SettingsHiddenAppsFragment" />
 
 </androidx.preference.PreferenceScreen>
