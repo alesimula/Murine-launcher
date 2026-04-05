@@ -42,7 +42,6 @@ class RadioGroupPreference @JvmOverloads constructor(
     internal var isVisibleProviderIdx: ((Context, Int) -> Boolean)? = null
     internal var isEnabledProviderIdx: ((Context, Int) -> Boolean)? = null
 
-    private var enumEntries: Array<out Enum<*>>? = null
     private var keyEntries: Array<String>? = null
     private var fragmentManager: FragmentManager? = null
     private var defaultValueRaw: String? = null
@@ -78,7 +77,7 @@ class RadioGroupPreference @JvmOverloads constructor(
     fun setShowPreviewIcon(show: Boolean) { showPreviewIcon = show }
     fun setIconTint(color: Int?) { iconTintColor = color }
     fun setTintSheetIcons(tint: Boolean) { tintSheetIcons = tint }
-    fun setEntryCount(count: Int) { entryCount = count; enumEntries = null; keyEntries = null }
+    fun setEntryCount(count: Int) { entryCount = count; keyEntries = null }
 
     fun setTextProvider(provider: (Context, Int) -> CharSequence) {
         textProviderIdx = provider
@@ -115,23 +114,16 @@ class RadioGroupPreference @JvmOverloads constructor(
     /**
      * Enable saving preference as Enum (internally saved with enum name rather than index)
      */
-    fun <E : Enum<E>> asEnum(enumClass: Class<E>): Typed<E> {
-        val entries = enumClass.enumConstants!!
-        entryCount = entries.size
-        enumEntries = entries
-        keyEntries = null
-        return Typed(this, entries)
-    }
+    fun <E : Enum<E>> asEnum(enumClass: Class<E>): Typed<E> = asList(enumClass.enumConstants!!.asList()) { it.name }
 
     /**
      * Create a Typed preference backed by a dynamic list with string-key persistence.
      * @param items the list of items to display
      * @param keyProvider maps each item to a unique persistence key
      */
-    fun <T> asList(items: List<T>, keyProvider: (T) -> String): Typed<T> {
+    fun <T> asList(items: Collection<T>, keyProvider: (T) -> String): Typed<T> {
         val arr = @Suppress("UNCHECKED_CAST") (items.toTypedArray<Any?>() as Array<T>)
         entryCount = items.size
-        enumEntries = null
         keyEntries = items.map(keyProvider).toTypedArray()
         return Typed(this, arr)
     }
@@ -139,7 +131,7 @@ class RadioGroupPreference @JvmOverloads constructor(
     private fun persistValue(index: Int) {
         if (!isPersistent) return
 
-        val stringKey = keyEntries?.getOrNull(index) ?: enumEntries?.getOrNull(index)?.name
+        val stringKey = keyEntries?.getOrNull(index)
 
         try {
             if (stringKey == null) persistInt(index)
@@ -172,17 +164,13 @@ class RadioGroupPreference @JvmOverloads constructor(
                 null
             }
         }
-        val ee = enumEntries
         val ke = keyEntries
         return when (value) {
-            is Int -> value.takeIf { it in if (ke != null) ke.indices else if (ee != null) ee.indices else 0 until entryCount }
+            is Int -> value.takeIf { it in if (ke != null) ke.indices else 0 until entryCount }
             is String -> {
-                if (ke != null) {
-                    val idx = ke.indexOf(value)
-                    if (idx >= 0) idx else null
-                } else if (ee == null) value.toIntOrNull()?.takeIf { it in 0 until entryCount }
+                if (ke == null) value.toIntOrNull()?.takeIf { it in 0 until entryCount }
                 else {
-                    val idx = ee.indexOfFirst { it.name == value }
+                    val idx = ke.indexOf(value)
                     if (idx >= 0) idx else null
                 }
             }
@@ -213,12 +201,8 @@ class RadioGroupPreference @JvmOverloads constructor(
         val raw = defaultValueRaw ?: return 0
         val asInt = raw.toIntOrNull()
         if (asInt != null) return asInt.coerceIn(0, (entryCount - 1).coerceAtLeast(0))
-        val ke = keyEntries; if (ke != null) {
-            val idx = ke.indexOf(raw)
-            return if (idx >= 0) idx else 0
-        }
-        val ee = enumEntries ?: return 0
-        val idx = ee.indexOfFirst { it.name == raw }
+        val ke = keyEntries ?: return 0
+        val idx = ke.indexOf(raw)
         return if (idx >= 0) idx else 0
     }
 
