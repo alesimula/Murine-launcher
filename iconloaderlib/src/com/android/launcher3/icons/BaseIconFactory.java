@@ -50,7 +50,6 @@ import com.android.launcher3.util.UserIconInfo;
 import java.lang.annotation.Retention;
 
 import app.lawnchair.icons.CustomAdaptiveIconDrawable;
-import app.lawnchair.icons.ExtendedBitmapDrawable;
 import app.lawnchair.icons.FixedScaleDrawable;
 import app.lawnchair.icons.IconPreferencesKt;
 
@@ -59,6 +58,18 @@ import app.lawnchair.icons.IconPreferencesKt;
  * this package.
  */
 public class BaseIconFactory implements AutoCloseable {
+
+    /**
+     * Flag set on a Drawable's changingConfigurations;
+     * Signals that normalizeAndWrapToAdaptiveIcon should not wrap it as adaptive (preserve pack shape).
+     */
+    public static final int CONFIG_HINT_NO_WRAP = 0x01000000;
+
+    /**
+     * Flag set on a Drawable's changingConfigurations;
+     * Signals that getShapePath should return the icon pack's shape instead of the launcher's.
+     */
+    public static final int CONFIG_HINT_PACK_SHAPE = 0x02000000;
 
     public static final int DEFAULT_WRAPPER_BACKGROUND = Color.WHITE;
     public static final float LEGACY_ICON_SCALE = .7f * (1f / (1 + 2 * getExtraInsetFraction()));
@@ -362,14 +373,20 @@ public class BaseIconFactory implements AutoCloseable {
             return null;
         }
 
-        boolean isFromIconPack = ExtendedBitmapDrawable.isFromIconPack(icon);
-        boolean shouldWrapAdaptive = !isFromIconPack && IconPreferencesKt.shouldWrapAdaptive(mContext);
-        boolean shrinkNonAdaptiveIcons = IconProvider.ATLEAST_OREO && shouldWrapAdaptive;
+        // Icon-pack icons with CONFIG_HINT_NO_WRAP have their shape baked in.
+        if ((icon.getChangingConfigurations() & CONFIG_HINT_NO_WRAP) != 0) {
+            outScale[0] = ICON_VISIBLE_AREA_FACTOR;
+            return icon;
+        }
 
-        float scale;
+        if (icon instanceof AdaptiveIconDrawable) {
+            outScale[0] = ICON_VISIBLE_AREA_FACTOR;
+            return icon;
+        }
 
-        if (shrinkNonAdaptiveIcons && !(icon instanceof AdaptiveIconDrawable)) {
-            scale = new IconNormalizer(mIconBitmapSize).getScale(icon);
+        boolean shouldWrapAdaptive = IconPreferencesKt.shouldWrapAdaptive(mContext);
+        if (IconProvider.ATLEAST_OREO && shouldWrapAdaptive) {
+            float scale = new IconNormalizer(mIconBitmapSize).getScale(icon);
 
             int wrapperBackgroundColor = IconPreferencesKt.getWrapperBackgroundColor(mContext,
                 icon);
@@ -385,23 +402,11 @@ public class BaseIconFactory implements AutoCloseable {
 
             scale = new IconNormalizer(mIconBitmapSize).getScale(wrapper);
             outScale[0] = scale;
-
             return wrapper;
-        } else {
-            if (icon instanceof AdaptiveIconDrawable) {
-                outScale[0] = ICON_VISIBLE_AREA_FACTOR;
-                return icon;
-            }
-
-            if (shouldWrapAdaptive) {
-                outScale[0] = ICON_VISIBLE_AREA_FACTOR;
-                return wrapToAdaptiveIcon(icon);
-            } else {
-                scale = new IconNormalizer(mIconBitmapSize).getScale(icon);
-                outScale[0] = scale;
-                return icon;
-            }
         }
+
+        outScale[0] = new IconNormalizer(mIconBitmapSize).getScale(icon);
+        return icon;
     }
 
     /**
