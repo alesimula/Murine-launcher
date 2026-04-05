@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <app.murinelauncher.widget.radio.RadioGroupPreference
+        android:key="pref_icon_pack"
+        android:title="@string/pref_category_icon_pack_title"
+        app:tintSheetIcons="false"
+        app:showPreviewIcon="true" />
+
+    <PreferenceCategory android:title="@string/pref_subcategory_options">
+        <SwitchPreferenceCompat
+            android:key="pref_icon_pack_system_only"
+            android:title="@string/pref_icon_pack_system_only_title"
+            android:summary="@string/pref_icon_pack_system_only_summary"
+            android:defaultValue="false" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_icon_pack_ignore_shape"
+            android:title="@string/pref_icon_pack_ignore_shape_title"
+            android:summary="@string/pref_icon_pack_ignore_shape_summary"
+            android:defaultValue="false" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_icon_readapt_frame"
+            android:title="@string/pref_icon_readapt_frame_title"
+            android:summary="@string/pref_icon_readapt_frame_summary"
+            android:defaultValue="false" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_icon_pack_themed_only"
+            android:title="@string/pref_icon_pack_themed_only_title"
+            android:summary="@string/pref_icon_pack_themed_only_summary"
+            android:defaultValue="false" />
+    </PreferenceCategory>
+
+</androidx.preference.PreferenceScreen>

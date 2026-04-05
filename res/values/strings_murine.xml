@@ -25,6 +25,7 @@
     <string name="pref_subcategory_appearance">Appearance</string>
     <string name="pref_subcategory_persistency">Persistency</string>
     <string name="pref_subcategory_gestures">Gestures</string>
+    <string name="pref_subcategory_options">Options</string>
 
     <string name="pref_label_ui_mode_system">System</string>
     <string name="pref_label_ui_mode_day">Light</string>
@@ -93,6 +94,18 @@
     <string name="pref_smartspace_summary_disabled">No widget on the first screen</string>
 
     <string name="pref_blur_unsupported_warning"><![CDATA[The wallpaper blur may or may not be fully supported or enabled by this OEM/ROM; If you encounter issues, try to check for an &quot;Allow window-level blurs&quot; option in Display Options or Developer Options.<br/>Alternatively, try enabling <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">this Magisk module</a> on rooted devices]]></string>
+
+    <!-- Icon packs -->
+    <string name="pref_category_icon_pack_title">Icon pack</string>
+    <string name="pref_category_icon_pack_summary">Change app icons using third-party icon packs</string>
+    <string name="pref_icon_pack_system_only_title">System apps only</string>
+    <string name="pref_icon_pack_system_only_summary">Apply the icon pack only to system apps</string>
+    <string name="pref_icon_pack_ignore_shape_title">Ignore pack shape</string>
+    <string name="pref_icon_pack_ignore_shape_summary">Use the launcher\'s icon shape instead of the pack\'s</string>
+    <string name="pref_icon_readapt_frame_title">Readapt to frame</string>
+    <string name="pref_icon_readapt_frame_summary">Tries to fit unthemed incons into the provided shape canvas</string>
+    <string name="pref_icon_pack_themed_only_title">Themed icons only</string>
+    <string name="pref_icon_pack_themed_only_summary">Leave icons not present in the icon pack unchanged</string>
 
     <!-- Hidden apps -->
     <string name="pref_category_hidden_apps_title">Hidden apps</string>

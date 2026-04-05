@@ -15,8 +15,10 @@
  */
 package com.android.launcher3.icons;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.ComponentInfo;
 import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
 import android.graphics.drawable.AdaptiveIconDrawable;
@@ -25,16 +27,15 @@ import android.text.TextUtils;
 import android.util.ArrayMap;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
+import app.murinelauncher.icons.IconPackManager;
+
 import androidx.annotation.Nullable;
 
 import com.android.launcher3.R;
 import com.android.launcher3.config.FeatureFlags;
 import com.android.launcher3.dagger.ApplicationContext;
 import com.android.launcher3.dagger.LauncherAppSingleton;
-import com.android.launcher3.graphics.ShapeDelegate;
 import com.android.launcher3.graphics.ThemeManager;
-import com.android.launcher3.util.ApiWrapper;
 
 import org.xmlpull.v1.XmlPullParser;
 
@@ -68,6 +69,59 @@ public class LauncherIconProvider extends IconProvider {
         super(context);
         mThemeManager = themeManager;
         mThemedIconMap = FeatureFlags.USE_LOCAL_ICON_OVERRIDES.get() ? null : DISABLED_MAP;
+    }
+
+    @Override
+    public Drawable getIcon(ComponentInfo info, int iconDpi) {
+        ComponentName cn = new ComponentName(info.packageName, info.name);
+
+        // Try pack-specific icon (from appfilter.xml entries)
+        Drawable packIcon = IconPackManager.INSTANCE.getIconForComponent(mContext, cn, iconDpi);
+        if (packIcon != null) {
+            // When "Ignore pack shape" is ON and the pack enforces a shape,
+            // let adaptive pack icons go through the normal pipeline (use icon shape chosen by user)
+            if (packIcon instanceof AdaptiveIconDrawable && IconPackManager.INSTANCE.isIgnoreShape(mContext)
+                    && IconPackManager.INSTANCE.enforcesShape(mContext)) {
+                return packIcon;
+            }
+            return markPackIcon(packIcon);
+        }
+
+        // Get default system icon
+        Drawable defaultIcon = super.getIcon(info, iconDpi);
+
+        // Apply global pack shape (iconback / iconmask / iconupon / scale) for unthemed icons.
+        // "Ignore pack shape" is handled inside applyGlobalTreatment and only takes effect when the pack actually enforces a shape.
+        if (!IconPackManager.INSTANCE.isThemedOnly(mContext)) {
+            Drawable shaped = IconPackManager.INSTANCE.applyGlobalTreatment(mContext, cn, defaultIcon, iconDpi);
+            if (shaped != null) return markPackIcon(shaped);
+        }
+
+        return defaultIcon;
+    }
+
+    /**
+     * Marks a drawable as coming from an icon pack by setting CONFIG_HINT_NO_WRAP;
+     * This prevents {@link BaseIconFactory} from wrapping it into an {@link AdaptiveIconDrawable}
+     * (which would double-wrap bitmap icons that already have their shape baked in).
+     *
+     * Adaptive pack icons still go through getShapePath normally and receive the user's chosen shape.
+     */
+    private static Drawable markPackIcon(Drawable icon) {
+        icon.setChangingConfigurations(icon.getChangingConfigurations() | BaseIconFactory.CONFIG_HINT_NO_WRAP);
+        return icon;
+    }
+
+    @Override
+    public String getStateForApp(@Nullable ApplicationInfo appInfo) {
+        String base = super.getStateForApp(appInfo);
+        String pack = IconPackManager.INSTANCE.getSelectedPack(mContext);
+        boolean systemOnly = IconPackManager.INSTANCE.isSystemOnly(mContext);
+        boolean ignoreShape = IconPackManager.INSTANCE.isIgnoreShape(mContext);
+        boolean readaptToFrame = IconPackManager.INSTANCE.isReadaptFrame(mContext);
+        boolean themedOnly = IconPackManager.INSTANCE.isThemedOnly(mContext);
+        return base + "," + pack + "," + systemOnly + "," + ignoreShape
+                + "," + readaptToFrame + "," + themedOnly;
     }
 
     @Override

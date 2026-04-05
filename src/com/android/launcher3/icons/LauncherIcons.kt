@@ -20,6 +20,7 @@ import android.graphics.Path
 import android.graphics.Rect
 import android.graphics.drawable.AdaptiveIconDrawable
 import android.os.UserHandle
+import app.murinelauncher.icons.IconPackManager
 import com.android.launcher3.Flags
 import com.android.launcher3.InvariantDeviceProfile
 import com.android.launcher3.dagger.ApplicationContext
@@ -64,6 +65,13 @@ internal constructor(
 
     override fun getShapePath(drawable: AdaptiveIconDrawable, iconBounds: Rect): Path {
         if (!Flags.enableLauncherIconShapes()) return super.getShapePath(drawable, iconBounds)
+
+        // If the icon is flagged to use the pack's shape, return it
+        if ((drawable.changingConfigurations and BaseIconFactory.CONFIG_HINT_PACK_SHAPE) != 0) {
+            val packPath = IconPackManager.getPackShapePath(mContext, iconBounds)
+            if (packPath != null) return packPath
+        }
+
         return themeManager.iconShape.getPath(iconBounds)
     }
 
