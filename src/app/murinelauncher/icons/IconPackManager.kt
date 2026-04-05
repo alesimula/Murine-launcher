@@ -192,7 +192,6 @@ object IconPackManager {
         // For iconmask -> enforcement guaranteed;
         // For iconback(s) -> calculate by comparing first back drawable against the system's adaptive mask;
         // Otherwise -> marked as not enforced (uses user declared shape for other icons).
-        // TODO calculation too permissive.
         data.enforcesShape = data.maskDrawable != null
         if (!data.enforcesShape && data.backDrawables.isNotEmpty()) {
             try {
@@ -232,39 +231,45 @@ object IconPackManager {
     /**
      * Compares the iconback shape against the system's adaptive icon mask;
      * If the iconback extends significantly beyond the system shape, the pack is enforcing a custom shape.
-     * TODO detection too permissive, to improve
      */
     private fun enforcesCustomShape(backDrawable: Drawable): Boolean {
-        val s = 48
+        // Adaptive drawables follow the system shape
+        if (backDrawable is AdaptiveIconDrawable) return false
 
-        // Render the system's adaptive icon shape (opaque white, system mask)
+        val s = SHAPE_SAMPLE_SIZE
+
+        // Render the system's adaptive icon shape
         val sysBmp = Bitmap.createBitmap(s, s, Bitmap.Config.ARGB_8888)
-        val sysCanvas = Canvas(sysBmp)
-        val sysIcon = AdaptiveIconDrawable(ColorDrawable(Color.WHITE), null)
-        sysIcon.setBounds(0, 0, s, s)
-        sysIcon.draw(sysCanvas)
+        Canvas(sysBmp).also {
+            val sysIcon = AdaptiveIconDrawable(ColorDrawable(Color.WHITE), null)
+            sysIcon.setBounds(0, 0, s, s)
+            sysIcon.draw(it)
+        }
 
         // Render the iconback
         val backBmp = Bitmap.createBitmap(s, s, Bitmap.Config.ARGB_8888)
-        val backCanvas = Canvas(backBmp)
-        backDrawable.setBounds(0, 0, s, s)
-        backDrawable.draw(backCanvas)
+        Canvas(backBmp).also {
+            backDrawable.setBounds(0, 0, s, s)
+            backDrawable.draw(it)
+        }
 
-        // Count pixels where back is opaque but system shape is transparent
-        var extendsBeyondSystem = 0
+        // Bidirectional comparison against the system shape.
+        var shapeDiff = 0
         for (y in 0 until s) {
             for (x in 0 until s) {
                 val sysAlpha = sysBmp.getPixel(x, y) ushr 24
                 val backAlpha = backBmp.getPixel(x, y) ushr 24
-                if (backAlpha > 128 && sysAlpha < 128) extendsBeyondSystem++
+                val sysOpaque = sysAlpha > 128
+                val backOpaque = backAlpha > 128
+                if (sysOpaque != backOpaque) shapeDiff++
             }
         }
 
         sysBmp.recycle()
         backBmp.recycle()
 
-        // If >2% of total area extends beyond the system shape, the pack enforces a custom shape.
-        return extendsBeyondSystem > s * s * 0.02
+        // If >0.5% of total area extends beyond the system shape, the pack enforces a custom shape.
+        return shapeDiff > s * s * 0.005
     }
 
     /**
