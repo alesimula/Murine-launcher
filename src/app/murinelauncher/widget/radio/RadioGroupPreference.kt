@@ -43,6 +43,7 @@ class RadioGroupPreference @JvmOverloads constructor(
     internal var isEnabledProviderIdx: ((Context, Int) -> Boolean)? = null
 
     private var enumEntries: Array<out Enum<*>>? = null
+    private var keyEntries: Array<String>? = null
     private var fragmentManager: FragmentManager? = null
     private var defaultValueRaw: String? = null
     private var needsViewUpdate = false
@@ -77,7 +78,7 @@ class RadioGroupPreference @JvmOverloads constructor(
     fun setShowPreviewIcon(show: Boolean) { showPreviewIcon = show }
     fun setIconTint(color: Int?) { iconTintColor = color }
     fun setTintSheetIcons(tint: Boolean) { tintSheetIcons = tint }
-    fun setEntryCount(count: Int) { entryCount = count; enumEntries = null }
+    fun setEntryCount(count: Int) { entryCount = count; enumEntries = null; keyEntries = null }
 
     fun setTextProvider(provider: (Context, Int) -> CharSequence) {
         textProviderIdx = provider
@@ -118,25 +119,39 @@ class RadioGroupPreference @JvmOverloads constructor(
         val entries = enumClass.enumConstants!!
         entryCount = entries.size
         enumEntries = entries
+        keyEntries = null
         return Typed(this, entries)
+    }
+
+    /**
+     * Create a Typed preference backed by a dynamic list with string-key persistence.
+     * @param items the list of items to display
+     * @param keyProvider maps each item to a unique persistence key
+     */
+    fun <T> asList(items: List<T>, keyProvider: (T) -> String): Typed<T> {
+        val arr = @Suppress("UNCHECKED_CAST") (items.toTypedArray<Any?>() as Array<T>)
+        entryCount = items.size
+        enumEntries = null
+        keyEntries = items.map(keyProvider).toTypedArray()
+        return Typed(this, arr)
     }
 
     private fun persistValue(index: Int) {
         if (!isPersistent) return
 
-        val enumVal = enumEntries?.getOrNull(index)?.name
+        val stringKey = keyEntries?.getOrNull(index) ?: enumEntries?.getOrNull(index)?.name
 
         try {
-            if (enumVal == null) persistInt(index)
-            else persistString(enumVal)
+            if (stringKey == null) persistInt(index)
+            else persistString(stringKey)
         } catch (_: ClassCastException) {
             val prefs = preferenceManager?.sharedPreferences ?: return
             val key = key ?: return
 
             prefs.edit().remove(key).apply()
 
-            if (enumVal == null) persistInt(index)
-            else persistString(enumVal)
+            if (stringKey == null) persistInt(index)
+            else persistString(stringKey)
         }
     }
 
@@ -158,10 +173,14 @@ class RadioGroupPreference @JvmOverloads constructor(
             }
         }
         val ee = enumEntries
+        val ke = keyEntries
         return when (value) {
-            is Int -> value.takeIf {it in if (ee != null) ee.indices else 0 until entryCount }
+            is Int -> value.takeIf { it in if (ke != null) ke.indices else if (ee != null) ee.indices else 0 until entryCount }
             is String -> {
-                if (ee == null) value.toIntOrNull()?.takeIf { it in 0 until entryCount }
+                if (ke != null) {
+                    val idx = ke.indexOf(value)
+                    if (idx >= 0) idx else null
+                } else if (ee == null) value.toIntOrNull()?.takeIf { it in 0 until entryCount }
                 else {
                     val idx = ee.indexOfFirst { it.name == value }
                     if (idx >= 0) idx else null
@@ -194,6 +213,10 @@ class RadioGroupPreference @JvmOverloads constructor(
         val raw = defaultValueRaw ?: return 0
         val asInt = raw.toIntOrNull()
         if (asInt != null) return asInt.coerceIn(0, (entryCount - 1).coerceAtLeast(0))
+        val ke = keyEntries; if (ke != null) {
+            val idx = ke.indexOf(raw)
+            return if (idx >= 0) idx else 0
+        }
         val ee = enumEntries ?: return 0
         val idx = ee.indexOfFirst { it.name == raw }
         return if (idx >= 0) idx else 0
