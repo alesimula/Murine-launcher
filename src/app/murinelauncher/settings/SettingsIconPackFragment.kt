@@ -5,6 +5,7 @@ import android.os.Looper
 import androidx.preference.Preference
 import androidx.preference.SwitchPreferenceCompat
 import app.murinelauncher.icons.IconPackManager
+import app.murinelauncher.icons.IconPackManager.SYSTEM_ICON_PACK_INFO
 import app.murinelauncher.settings.common.AbstractSettingsFragment
 import app.murinelauncher.widget.radio.RadioGroupPreference
 import com.android.launcher3.LauncherAppState
@@ -36,10 +37,7 @@ class SettingsIconPackFragment : AbstractSettingsFragment() {
                 preference.asList(packs) { it.packageName}.apply {
                     setTextProvider { _, pack -> pack.label }
                     setIconProvider { c, pack -> IconPackManager.getPackIcon(c, pack.packageName) }
-                    setCurrentValue {
-                        val selected = IconPackManager.getSelectedPack(ctx)
-                        packs.firstOrNull { it.packageName == selected } ?: packs[0]
-                    }
+                    setDefaultValue(SYSTEM_ICON_PACK_INFO)
                     setOnSelected { pack ->
                         IconPackManager.clearCache()
                         reloadLauncher()

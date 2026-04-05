@@ -47,6 +47,9 @@ object IconPackManager {
     /** Pseudo-value indicating the launcher to use system's default icons */
     const val SYSTEM_ICON_PACK = ""
 
+    @JvmField
+    val SYSTEM_ICON_PACK_INFO = IconPackInfo(SYSTEM_ICON_PACK, "System default")
+
     /** Resolution for sampling pack shape drawable into a Path */
     private const val SHAPE_SAMPLE_SIZE = 200
 
@@ -89,7 +92,7 @@ object IconPackManager {
         }
 
         packs.sortBy { it.label.toString().lowercase() }
-        packs.add(0, IconPackInfo(SYSTEM_ICON_PACK, "System default"))
+        packs.add(0, SYSTEM_ICON_PACK_INFO)
         return packs
     }
 
