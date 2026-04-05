@@ -62,8 +62,8 @@ object IconPackManager {
         "com.fede.launcher.THEME_ICONPACK",
         "com.anddoes.launcher.THEME",
         "com.teslacoilsw.launcher.THEME",
-        // TODO net.oneplus.launcher.icons.ACTION_PICK_ICON (would this work through appfilter.xml?)
-        // TODO ch.deletescape.lawnchair.ICONPACK (is this redundant?)
+        "ch.deletescape.lawnchair.ICONPACK"
+        // TODO net.oneplus.launcher.icons.ACTION_PICK_ICON (can't parse via appfilter.xml, needs custom handling)
     )
 
     // Icon pack discovery
