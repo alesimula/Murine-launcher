@@ -7,6 +7,7 @@
         android:key="pref_icon_pack"
         android:title="@string/pref_category_icon_pack_title"
         app:tintSheetIcons="false"
+        app:tintPreviewIcon="false"
         app:showPreviewIcon="true" />
 
     <PreferenceCategory android:title="@string/pref_subcategory_options">

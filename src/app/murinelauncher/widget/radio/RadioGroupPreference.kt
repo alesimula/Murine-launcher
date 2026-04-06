@@ -30,6 +30,7 @@ class RadioGroupPreference @JvmOverloads constructor(
     private var showPreviewIcon: Boolean = true
     private var iconTintColor: Int? = null
     private var tintSheetIcons: Boolean = true
+    private var tintPreviewIcon: Boolean = true
     private val defaultIconTint: Int
         get() = ContextCompat.getColor(context,
             com.android.settingslib.widget.theme.R.color.settingslib_materialColorPrimary)
@@ -62,6 +63,7 @@ class RadioGroupPreference @JvmOverloads constructor(
                 iconTintColor = if (a.hasValue(R.styleable.RadioGroupPreference_iconTint))
                     a.getColor(R.styleable.RadioGroupPreference_iconTint, 0) else null
                 tintSheetIcons = a.getBoolean(R.styleable.RadioGroupPreference_tintSheetIcons, true)
+                tintPreviewIcon = a.getBoolean(R.styleable.RadioGroupPreference_tintPreviewIcon, true)
             } finally {
                 a.recycle()
             }
@@ -77,6 +79,7 @@ class RadioGroupPreference @JvmOverloads constructor(
     fun setShowPreviewIcon(show: Boolean) { showPreviewIcon = show }
     fun setIconTint(color: Int?) { iconTintColor = color }
     fun setTintSheetIcons(tint: Boolean) { tintSheetIcons = tint }
+    fun setTintPreviewIcon(tint: Boolean) { tintPreviewIcon = tint }
     fun setEntryCount(count: Int) { entryCount = count; keyEntries = null }
 
     fun setTextProvider(provider: (Context, Int) -> CharSequence) {
@@ -246,7 +249,7 @@ class RadioGroupPreference @JvmOverloads constructor(
         val idx = resolveCurrentIndex()
         summary = summaryProviderIdx?.invoke(ctx, idx) ?: textProviderIdx?.invoke(ctx, idx)
         if (showPreviewIcon) {
-            icon = iconProviderIdx?.invoke(ctx, idx)?.also { applyTint(it) }
+            icon = iconProviderIdx?.invoke(ctx, idx)?.also { if (tintPreviewIcon) applyTint(it) }
         }
     }
 

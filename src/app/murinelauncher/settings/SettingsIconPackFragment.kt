@@ -34,7 +34,7 @@ class SettingsIconPackFragment : AbstractSettingsFragment() {
 
                 preference as RadioGroupPreference
                 preference.setTintSheetIcons(false)
-                preference.asList(packs) { it.packageName}.apply {
+                preference.asList(packs) { it.packageName }.apply {
                     setTextProvider { _, pack -> pack.label }
                     setIconProvider { c, pack -> IconPackManager.getPackIcon(c, pack.packageName) }
                     setDefaultValue(SYSTEM_ICON_PACK_INFO)

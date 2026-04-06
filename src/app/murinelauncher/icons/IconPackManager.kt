@@ -21,7 +21,11 @@ import android.graphics.drawable.AdaptiveIconDrawable
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
+import app.lawnchair.icons.CustomAdaptiveIconDrawable
 import com.android.launcher3.LauncherFiles
+import com.android.launcher3.R
 import com.android.launcher3.icons.BaseIconFactory
 import com.android.launcher3.icons.LauncherIconProvider
 import com.android.launcher3.icons.LauncherIcons
@@ -596,11 +600,12 @@ object IconPackManager {
 
     /**
      * Loads the icon pack's app icon to display it in the settings picker.
-     * TODO fix blank icons for selected packs + add pseudo-icon for system default
      */
     fun getPackIcon(context: Context, packageName: String): Drawable? {
-        if (packageName == SYSTEM_ICON_PACK) return null
-        return try {
+        return if (packageName == SYSTEM_ICON_PACK) AdaptiveIconDrawable(
+            ResourcesCompat.getDrawable(context.resources, R.drawable.ic_default_full, null),
+            null
+        ) else try {
             context.packageManager.getApplicationIcon(packageName)
         } catch (_: PackageManager.NameNotFoundException) {
             null

@@ -682,6 +682,7 @@
         <attr name="showPreviewIcon" format="boolean" />
         <attr name="iconTint" format="color|reference" />
         <attr name="tintSheetIcons" format="boolean" />
+        <attr name="tintPreviewIcon" format="boolean" />
     </declare-styleable>
 
     <declare-styleable name="WarningCardPreference">
