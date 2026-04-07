@@ -78,6 +78,7 @@ import androidx.core.graphics.ColorUtils;
 import com.android.launcher3.dragndrop.FolderAdaptiveIcon;
 import com.android.launcher3.graphics.ThemeManager;
 import com.android.launcher3.graphics.TintedDrawableSpan;
+import com.android.launcher3.icons.BaseIconFactory;
 import com.android.launcher3.icons.BitmapInfo;
 import com.android.launcher3.icons.CacheableShortcutInfo;
 import com.android.launcher3.icons.IconThemeController;
@@ -731,6 +732,9 @@ public final class Utilities {
         AdaptiveIconDrawable result;
         if (mainIcon instanceof AdaptiveIconDrawable aid) {
             result = aid;
+        } else if ((mainIcon.getChangingConfigurations() & BaseIconFactory.CONFIG_HINT_NO_WRAP) != 0) {
+            // Avoid re-wrapping icon pack icon with baked-in shape
+            return null;
         } else {
             // Wrap the main icon in AID
             try (LauncherIcons li = LauncherIcons.obtain(context)) {
