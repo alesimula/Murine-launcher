@@ -28,6 +28,7 @@
     <PreferenceCategory android:title="@string/pref_subcategory_appearance">
         <Preference
             android:key="pref_icon_pack_entry"
+            android:icon="@drawable/ic_settings_icon_pack"
             android:title="@string/pref_category_icon_pack_title"
             android:summary="@string/pref_category_icon_pack_summary"
             android:fragment="app.murinelauncher.settings.SettingsIconPackFragment" />

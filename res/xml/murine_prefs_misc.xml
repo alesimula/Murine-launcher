@@ -21,7 +21,7 @@
 
     <Preference
         android:key="pref_hidden_apps"
-        android:icon="@drawable/ic_hidden_apps"
+        android:icon="@drawable/ic_settings_hidden_apps"
         android:title="@string/pref_category_hidden_apps_title"
         android:summary="@string/pref_category_hidden_apps_summary"
         android:fragment="app.murinelauncher.settings.SettingsHiddenAppsFragment" />
