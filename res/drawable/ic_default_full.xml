@@ -5,7 +5,7 @@
     android:viewportWidth="32"
     android:viewportHeight="32">
     <path android:fillColor="#008476" android:pathData="M0,0h32v32H0" />
-    <path android:strokeColor="#66FFFFFF" android:strokeWidth="0.24" android:pathData="M4.9,8.05h22.2m0,3.2H4.9m0,3.1h22.2m0,3.2H4.9m0,3.1h22.2m0,3.2H4.9M8.05,4.9v22.2m3.2,0V4.9m3.1,0v22.2m3.2,0V4.9m3.1,0v22.2m3.2,0V4.9"/>
+    <path android:strokeColor="#66FFFFFF" android:strokeWidth="0.24" android:pathData="M4.97,8.12h22.2m0,3.2H4.97m0,3.1h22.2m0,3.2H4.97m0,3.1h22.2m0,3.2H4.97M8.12,4.97v22.2m3.2,0V4.97m3.1,0v22.2m3.2,0V4.97m3.1,0v22.2m3.2,0V4.97"/>
     <path android:pathData="M9.2,19l11.2,-4.2l11.3,11.3v15.4">
         <aapt:attr name="android:fillColor">
             <gradient android:startX="12" android:startY="15" android:endX="25" android:endY="27">
