@@ -34,7 +34,6 @@ public class LauncherRootView extends InsettableFrameLayout {
     private boolean mForceHideBackArrow;
 
     private final SysUiScrim mSysUiScrim;
-
     public LauncherRootView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mStatefulContainer = ActivityContext.lookupContext(context);
@@ -43,8 +42,23 @@ public class LauncherRootView extends InsettableFrameLayout {
 
     private void handleSystemWindowInsets(Rect insets) {
         // Update device profile before notifying the children.
-        mStatefulContainer.getDeviceProfile().updateInsets(insets);
+        DeviceProfile dp = mStatefulContainer.getDeviceProfile();
         boolean resetState = !insets.equals(mInsets);
+        dp.updateInsets(insets);
+
+        // On resetState, try to rebuild DeviceProfile to detect new hotseat insets.
+        if (resetState && !dp.isVerticalBarLayout()) {
+            boolean gestureMode = WindowManagerProxy.INSTANCE.get(getContext()).getNavigationMode(getContext()).hasGestures;
+            DeviceProfile ndp = dp.toBuilder(getContext()).setGestureMode(gestureMode).build();
+            if (dp.hotseatBarBottomSpacePx != ndp.hotseatBarBottomSpacePx) {
+                dp.hotseatBarBottomSpacePx = ndp.hotseatBarBottomSpacePx;
+                dp.hotseatQsbSpace = ndp.hotseatQsbSpace;
+                dp.hotseatBarSizePx = ndp.hotseatBarSizePx;
+                dp.workspacePadding.set(ndp.workspacePadding);
+                dp.cellLayoutPaddingPx.set(ndp.cellLayoutPaddingPx);
+            }
+        }
+
         setInsets(insets);
 
         if (resetState) {
