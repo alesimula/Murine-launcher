@@ -101,6 +101,7 @@ public final class SettingsQsbFragment: AbstractSettingsFragment() {
             SEARCH_BUBBLE_BLUR -> {
                 preference as TwoStatePreference
                 preference.setDefaultValue(LauncherPrefs.QSB_BUBBLE_BLUR.defaultValue)
+                preference.isChecked = LauncherPrefs.QSB_BUBBLE_BLUR.get(requireContext())
                 val isVisible = WorkspaceBlurUtils.isBlurSupportedSDK
                 preference.isVisible = isVisible
                 updateBlurWarningVisibility(if (isVisible) preference.isChecked else false)
