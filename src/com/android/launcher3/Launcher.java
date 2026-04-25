@@ -2369,6 +2369,9 @@ public class Launcher extends StatefulActivity<LauncherState>
                 if (!(item instanceof LauncherAppWidgetInfo lai && lai.isCustomWidget())) {
                     view = getAppWidgetHolder().attachViewToHostAndGetAttachedView(lv);
                 }
+                // Restore the tag to prevent the null-tag check below from deleting valid widgets from the DB.
+                if (view.getTag() == null && item instanceof LauncherAppWidgetInfo)
+                    mItemInflater.prepareAppWidget((AppWidgetHostView) view, (LauncherAppWidgetInfo) item);
             }
             if (view.getTag() == null) {
                 getModelWriter().deleteItemFromDatabase(item,
