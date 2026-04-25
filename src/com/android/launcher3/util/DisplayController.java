@@ -547,9 +547,14 @@ public class DisplayController implements DesktopVisibilityListener {
                 // Verify that the real bounds are a match
                 WindowBounds expectedBounds = cachedValue.get(displayInfo.rotation);
                 if (!realBounds.equals(expectedBounds)) {
-                    List<WindowBounds> clone = new ArrayList<>(cachedValue);
-                    clone.set(displayInfo.rotation, realBounds);
-                    mPerDisplayBounds.put(normalizedDisplayInfo, clone);
+                    // Skip overriding the stable estimate when realBounds looks like atransient immersive state.
+                    boolean transientNoNavBar = realBounds.insets.bottom == 0
+                            && expectedBounds.insets.bottom > 0;
+                    if (!transientNoNavBar) {
+                        List<WindowBounds> clone = new ArrayList<>(cachedValue);
+                        clone.set(displayInfo.rotation, realBounds);
+                        mPerDisplayBounds.put(normalizedDisplayInfo, clone);
+                    }
                 }
             }
             mPerDisplayBounds.values().forEach(supportedBounds::addAll);
