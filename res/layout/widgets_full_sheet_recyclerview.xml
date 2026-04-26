@@ -21,7 +21,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingHorizontal="@dimen/widget_list_horizontal_margin"
-        android:clipToPadding="false" />
+        android:clipToPadding="false"
+        android:scrollbars="none" />
 
     <!-- SearchAndRecommendationsView without the tab layout as well -->
     <com.android.launcher3.views.StickyHeaderLayout

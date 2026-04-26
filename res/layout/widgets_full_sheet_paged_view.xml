@@ -30,14 +30,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingHorizontal="@dimen/widget_list_horizontal_margin"
-            android:clipToPadding="false" />
+            android:clipToPadding="false"
+            android:scrollbars="none" />
 
         <com.android.launcher3.widget.picker.WidgetsRecyclerView
             android:id="@+id/work_widgets_list_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingHorizontal="@dimen/widget_list_horizontal_margin"
-            android:clipToPadding="false" />
+            android:clipToPadding="false"
+            android:scrollbars="none" />
 
     </com.android.launcher3.widget.picker.WidgetPagedView>
 

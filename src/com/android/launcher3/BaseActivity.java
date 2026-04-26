@@ -23,7 +23,7 @@ import static com.android.launcher3.util.SystemUiController.UI_STATE_FULLSCREEN_
 
 import static java.lang.annotation.RetentionPolicy.SOURCE;
 
-import android.app.Activity;
+import androidx.fragment.app.FragmentActivity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
@@ -38,9 +38,6 @@ import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleRegistry;
-import androidx.savedstate.SavedStateRegistry;
-import androidx.savedstate.SavedStateRegistryController;
 
 import com.android.launcher3.DeviceProfile.OnDeviceProfileChangeListener;
 import com.android.launcher3.logging.StatsLogManager;
@@ -51,7 +48,6 @@ import com.android.launcher3.util.ActivityOptionsWrapper;
 import com.android.launcher3.util.DisplayController;
 import com.android.launcher3.util.DisplayController.DisplayInfoChangeListener;
 import com.android.launcher3.util.DisplayController.Info;
-import com.android.launcher3.util.LifecycleHelper;
 import com.android.launcher3.util.RunnableList;
 import com.android.launcher3.util.SystemUiController;
 import com.android.launcher3.util.ViewCache;
@@ -69,7 +65,7 @@ import java.util.StringJoiner;
 /**
  * Launcher BaseActivity
  */
-public abstract class BaseActivity extends Activity implements ActivityContext,
+public abstract class BaseActivity extends FragmentActivity implements ActivityContext,
         DisplayInfoChangeListener {
 
     private static final String TAG = "BaseActivity";
@@ -102,14 +98,7 @@ public abstract class BaseActivity extends Activity implements ActivityContext,
     private final ArrayList<OnDeviceProfileChangeListener> mDPChangeListeners = new ArrayList<>();
     private final ArrayList<MultiWindowModeChangedListener> mMultiWindowModeChangedListeners =
             new ArrayList<>();
-
-    private final SavedStateRegistryController mSavedStateRegistryController =
-            SavedStateRegistryController.create(this);
-    private final LifecycleRegistry mLifecycleRegistry = new LifecycleRegistry(this);
     private final WeakCleanupSet mCleanupSet = new WeakCleanupSet(this);
-
-    // Keep a reference to the helper to manually dispatch events on older APIs
-    private final LifecycleHelper mLifecycleHelper;
 
     protected DeviceProfile mDeviceProfile;
     protected SystemUiController mSystemUiController;
@@ -196,14 +185,6 @@ public abstract class BaseActivity extends Activity implements ActivityContext,
         super.attachBaseContext(app.murinelauncher.theme.ThemeOverride.applyTheme(base));
     }
 
-    public BaseActivity() {
-        mSavedStateRegistryController.performAttach();
-        mLifecycleHelper = new LifecycleHelper(this, mSavedStateRegistryController, mLifecycleRegistry);
-        if (Utilities.ATLEAST_Q) {
-            registerActivityLifecycleCallbacks(mLifecycleHelper);
-        }
-    }
-
     @Override
     public ViewCache getViewCache() {
         return mViewCache;
@@ -249,9 +230,6 @@ public abstract class BaseActivity extends Activity implements ActivityContext,
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (Utilities.ATLEAST_Q) {
-            mLifecycleHelper.onActivityCreated(this, savedInstanceState);
-        }
         registerBackDispatcher();
         DisplayController.INSTANCE.get(this).addChangeListener(this);
     }
@@ -260,9 +238,6 @@ public abstract class BaseActivity extends Activity implements ActivityContext,
     protected void onStart() {
         addActivityFlags(ACTIVITY_STATE_STARTED);
         super.onStart();
-        if (Utilities.ATLEAST_Q) {
-            mLifecycleHelper.onActivityStarted(this);
-        }
         mEventCallbacks[EVENT_STARTED].executeAllAndClear();
         if (app.murinelauncher.theme.ThemeOverride.isThemeStale(this)) {
             getWindow().getDecorView().post(this::recreate);
@@ -273,9 +248,6 @@ public abstract class BaseActivity extends Activity implements ActivityContext,
     protected void onResume() {
         setResumed();
         super.onResume();
-        if (Utilities.ATLEAST_Q) {
-            mLifecycleHelper.onActivityResumed(this);
-        }
         mEventCallbacks[EVENT_RESUMED].executeAllAndClear();
     }
 
@@ -298,9 +270,6 @@ public abstract class BaseActivity extends Activity implements ActivityContext,
         removeActivityFlags(ACTIVITY_STATE_STARTED | ACTIVITY_STATE_USER_ACTIVE);
         mForceInvisible = 0;
         super.onStop();
-        if (Utilities.ATLEAST_Q) {
-            mLifecycleHelper.onActivityStopped(this);
-        }
         mEventCallbacks[EVENT_STOPPED].executeAllAndClear();
 
 
@@ -312,9 +281,6 @@ public abstract class BaseActivity extends Activity implements ActivityContext,
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (Utilities.ATLEAST_Q) {
-            mLifecycleHelper.onActivityDestroyed(this);
-        }
         mEventCallbacks[EVENT_DESTROYED].executeAllAndClear();
         DisplayController.INSTANCE.get(this).removeChangeListener(this);
     }
@@ -323,23 +289,12 @@ public abstract class BaseActivity extends Activity implements ActivityContext,
     protected void onPause() {
         setPaused();
         super.onPause();
-        if (Utilities.ATLEAST_Q) {
-            mLifecycleHelper.onActivityPaused(this);
-        }
 
         // Reset the overridden sysui flags used for the task-swipe launch animation, we do this
         // here instead of at the end of the animation because the start of the new activity does
         // not happen immediately, which would cause us to reset to launcher's sysui flags and then
         // back to the new app (causing a flash)
         getSystemUiController().updateUiState(UI_STATE_FULLSCREEN_TASK, 0);
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if (Utilities.ATLEAST_Q) {
-            mLifecycleHelper.onActivitySaveInstanceState(this, outState);
-        }
     }
 
     @Override
@@ -532,18 +487,6 @@ public abstract class BaseActivity extends Activity implements ActivityContext,
     }
 
     protected void reapplyUi() {}
-
-    @NonNull
-    @Override
-    public SavedStateRegistry getSavedStateRegistry() {
-        return mSavedStateRegistryController.getSavedStateRegistry();
-    }
-
-    @NonNull
-    @Override
-    public Lifecycle getLifecycle() {
-        return mLifecycleRegistry;
-    }
 
     @Override
     public WeakCleanupSet getOwnerCleanupSet() {

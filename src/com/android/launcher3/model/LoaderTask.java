@@ -463,12 +463,14 @@ public class LoaderTask implements Runnable {
 
             final HashMap<PackageUserKey, SessionInfo> installingPkgs =
                     mSessionHelper.getActiveSessions();
-            if (Flags.enableSupportForArchiving()) {
+            if (Utilities.ATLEAST_V && Flags.enableSupportForArchiving()) {
                 mInstallingPkgsCached = installingPkgs;
             }
             installingPkgs.forEach(mIconCache::updateSessionCache);
-            FileLog.d(TAG, "loadWorkspace: Packages with active install/update sessions: "
-                    + installingPkgs.keySet().stream().map(info -> info.mPackageName).collect(Collectors.toList()));
+            if (Utilities.ATLEAST_U) {
+                FileLog.d(TAG, "loadWorkspace: Packages with active install sessions: "
+                        + installingPkgs.keySet().stream().map(info -> info.mPackageName).toList());
+            }
 
             mFirstScreenBroadcast = new FirstScreenBroadcast(installingPkgs);
 
@@ -736,18 +738,20 @@ public class LoaderTask implements Runnable {
                 LauncherActivityInfo app = apps.get(i);
                 AppInfo appInfo = new AppInfo(app, mUserCache.getUserInfo(user),
                         ApiWrapper.INSTANCE.get(mContext), mPmHelper, quietMode);
-                if (Flags.enableSupportForArchiving() && app.getApplicationInfo().isArchived) {
-                    // For archived apps, include progress info in case there is a pending
-                    // install session post restart of device.
-                    String appPackageName = app.getApplicationInfo().packageName;
-                    SessionInfo si = mInstallingPkgsCached != null ? mInstallingPkgsCached.get(
-                            new PackageUserKey(appPackageName, user))
-                            : mSessionHelper.getActiveSessionInfo(user,
-                                    appPackageName);
-                    if (si != null) {
-                        appInfo.runtimeStatusFlags |= FLAG_INSTALL_SESSION_ACTIVE;
-                        appInfo.setProgressLevel((int) (si.getProgress() * 100),
-                                PackageInstallInfo.STATUS_INSTALLING);
+                if (Utilities.ATLEAST_V && Flags.enableSupportForArchiving()) {
+                    if (app.getApplicationInfo().isArchived) {
+                        // For archived apps, include progress info in case there is a pending
+                        // install session post restart of device.
+                        String appPackageName = app.getApplicationInfo().packageName;
+                        SessionInfo si = mInstallingPkgsCached != null ? mInstallingPkgsCached.get(
+                                new PackageUserKey(appPackageName, user))
+                                : mSessionHelper.getActiveSessionInfo(user,
+                                appPackageName);
+                        if (si != null) {
+                            appInfo.runtimeStatusFlags |= FLAG_INSTALL_SESSION_ACTIVE;
+                            appInfo.setProgressLevel((int) (si.getProgress() * 100),
+                                    PackageInstallInfo.STATUS_INSTALLING);
+                        }
                     }
                 }
 
@@ -825,7 +829,7 @@ public class LoaderTask implements Runnable {
             boolean isRestoreFromBackup
     ) {
         // TODO(gyc)
-        if (true/*Flags.restoreArchivedAppIconsFromDb()*/ && isRestoreFromBackup) {
+        if (Utilities.ATLEAST_V && true/*Flags.restoreArchivedAppIconsFromDb()*/ && isRestoreFromBackup) {
             Optional<IconRequestInfo<WorkspaceItemInfo>> workspaceIconRequest =
                     workspaceRequestInfos.stream()
                             .filter(request -> appInfo.getTargetComponent().equals(

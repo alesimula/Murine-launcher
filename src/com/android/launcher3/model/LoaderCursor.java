@@ -421,7 +421,7 @@ public class LoaderCursor extends CursorWrapper {
             WorkspaceItemInfo info
     ) {
         // TODO(gyc)
-        boolean isPreArchived = true/*Flags.enableSupportForArchiving()*/
+        boolean isPreArchived = Utilities.ATLEAST_V && true/*Flags.enableSupportForArchiving()*/
                 && true/*Flags.restoreArchivedAppIconsFromDb()*/
                 && info.isInactiveArchive()
                 && LauncherPrefs.get(mContext).get(LauncherPrefs.IS_FIRST_LOAD_AFTER_RESTORE);

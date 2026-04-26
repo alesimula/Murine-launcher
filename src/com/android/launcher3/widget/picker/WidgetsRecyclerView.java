@@ -53,6 +53,8 @@ public class WidgetsRecyclerView extends FastScrollRecyclerView implements OnIte
     public WidgetsRecyclerView(Context context, AttributeSet attrs, int defStyleAttr) {
         // API 21 and below only support 3 parameter ctor.
         super(context, attrs, defStyleAttr);
+        setVerticalScrollBarEnabled(false);
+        setHorizontalScrollBarEnabled(false);
         mScrollbarTop = getResources().getDimensionPixelSize(R.dimen.dynamic_grid_edge_margin);
         addOnItemTouchListener(this);
     }

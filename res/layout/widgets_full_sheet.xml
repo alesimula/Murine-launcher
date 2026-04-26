@@ -69,7 +69,8 @@
             android:layout_below="@id/collapse_handle"
             android:paddingHorizontal="@dimen/widget_list_horizontal_margin"
             android:visibility="gone"
-            android:clipToPadding="false" />
+            android:clipToPadding="false"
+            android:scrollbars="none" />
 
     </com.android.launcher3.views.SpringRelativeLayout>
 </com.android.launcher3.widget.picker.WidgetsFullSheet>

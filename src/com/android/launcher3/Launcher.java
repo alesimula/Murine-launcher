@@ -1401,7 +1401,7 @@ public class Launcher extends StatefulActivity<LauncherState>
         LauncherState[] stateValues = LauncherState.values();
         LauncherState state = stateValues[stateOrdinal];
 
-        NonConfigInstance lastInstance = (NonConfigInstance) getLastNonConfigurationInstance();
+        NonConfigInstance lastInstance = (NonConfigInstance) getLastCustomNonConfigurationInstance();
         boolean forceRestore = lastInstance != null
                 && ((lastInstance.config.diff(mOldConfig) & CONFIG_UI_MODE) != 0
                 || savedState.getBoolean(RUNTIME_STATE_RECREATE_TO_UPDATE_THEME));
@@ -1670,8 +1670,9 @@ public class Launcher extends StatefulActivity<LauncherState>
         closeContextMenu();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
-    public Object onRetainNonConfigurationInstance() {
+    public Object onRetainCustomNonConfigurationInstance() {
         NonConfigInstance instance = new NonConfigInstance();
         instance.config = new Configuration(mOldConfig);
         return instance;
