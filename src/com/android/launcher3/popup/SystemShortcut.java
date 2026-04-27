@@ -44,6 +44,8 @@ import com.android.launcher3.util.PackageUserKey;
 import com.android.launcher3.views.ActivityContext;
 import com.android.launcher3.views.Snackbar;
 import com.android.launcher3.widget.WidgetsBottomSheet;
+import app.murinelauncher.widget.appinfo.AppInfoBottomSheet;
+import com.android.launcher3.BaseActivity;
 import com.android.launcher3.widget.picker.model.data.WidgetPickerData;
 
 import java.util.Arrays;
@@ -186,12 +188,17 @@ public abstract class SystemShortcut<T extends ActivityContext> extends ItemInfo
 
         @Override
         public void onClick(View view) {
-            Rect sourceBounds = Utilities.getViewBounds(view);
-            ActivityOptionsWrapper options = mTarget.getActivityLaunchOptions(view, mItemInfo);
-            // Dismiss the taskMenu when the app launch animation is complete
-            options.onEndCallback.add(this::dismissTaskMenuView);
-            PackageManagerHelper.startDetailsActivityForInfo(view.getContext(), mItemInfo,
-                    sourceBounds, options.toBundle());
+            AbstractFloatingView.closeAllOpenViews(mTarget);
+            if (mTarget instanceof BaseActivity) {
+                AppInfoBottomSheet.show((BaseActivity) mTarget, mItemInfo);
+            } else {
+                Rect sourceBounds = Utilities.getViewBounds(view);
+                ActivityOptionsWrapper options = mTarget.getActivityLaunchOptions(view, mItemInfo);
+                // Dismiss the taskMenu when the app launch animation is complete
+                options.onEndCallback.add(this::dismissTaskMenuView);
+                PackageManagerHelper.startDetailsActivityForInfo(view.getContext(), mItemInfo,
+                        sourceBounds, options.toBundle());
+            }
             mTarget.getStatsLogManager().logger().withItemInfo(mItemInfo)
                     .log(LAUNCHER_SYSTEM_SHORTCUT_APP_INFO_TAP);
         }

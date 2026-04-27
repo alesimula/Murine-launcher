@@ -92,7 +92,10 @@ public class LauncherIconProvider extends IconProvider {
 
         // Apply global pack shape (iconback / iconmask / iconupon / scale) for unthemed icons.
         // "Ignore pack shape" is handled inside applyGlobalTreatment and only takes effect when the pack actually enforces a shape.
-        if (!IconPackManager.INSTANCE.isThemedOnly(mContext)) {
+        // Per-app icon overrides bypass the themedOnly filter (they always get global treatment).
+        boolean hasOverride = IconPackManager.INSTANCE.getComponentOverride(
+                mContext, cn.flattenToString()) != null;
+        if (hasOverride || !IconPackManager.INSTANCE.isThemedOnly(mContext)) {
             Drawable shaped = IconPackManager.INSTANCE.applyGlobalTreatment(mContext, cn, defaultIcon, iconDpi);
             if (shaped != null) return markPackIcon(shaped);
         }

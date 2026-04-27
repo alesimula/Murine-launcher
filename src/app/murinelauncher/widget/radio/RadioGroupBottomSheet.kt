@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
 import androidx.preference.PreferenceViewHolder
 import com.android.launcher3.R
@@ -186,6 +187,17 @@ class RadioGroupBottomSheet : BottomSheetDialogFragment() {
 
         override fun onBindViewHolder(holder: PreferenceViewHolder) {
             super.onBindViewHolder(holder)
+
+            // Force the radio dot to use settingslib accent
+            (holder.findViewById(android.R.id.checkbox) as? android.widget.CompoundButton)?.let { btn ->
+                val accent = ContextCompat.getColor(context, com.android.settingslib.widget.theme.R.color.settingslib_materialColorPrimary)
+                val outline = ContextCompat.getColor(context, com.android.settingslib.widget.theme.R.color.settingslib_materialColorOnSurfaceVariant)
+                val disabled = ContextCompat.getColor(context, com.android.settingslib.widget.theme.R.color.settingslib_materialColorOnSurface)
+                btn.buttonTintList = ColorStateList(
+                    arrayOf(intArrayOf(-android.R.attr.state_enabled), intArrayOf(android.R.attr.state_checked), intArrayOf()),
+                    intArrayOf(ColorUtils.setAlphaComponent(disabled, 97), accent, outline)
+                )
+            }
 
             val titleView = holder.findViewById(android.R.id.title) as? TextView
             val iconView = holder.findViewById(android.R.id.icon)

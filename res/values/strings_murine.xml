@@ -112,4 +112,22 @@
     <string name="pref_category_hidden_apps_summary">Hide apps from the app drawer</string>
     <string name="hidden_apps_label">Hidden</string>
     <string name="hidden_apps_search_hint">Search apps...</string>
+
+    <!-- App info sheet -->
+    <string name="app_info_package">Package</string>
+    <string name="app_info_version">Version</string>
+    <string name="app_info_version_value">%1$s (%2$d)</string>
+    <string name="app_info_last_update">Last update</string>
+    <string name="app_info_source">Source</string>
+    <string name="app_info_source_system">System</string>
+    <string name="app_info_icon_pack_default">Default (global)</string>
+    <string name="app_info_copied_toast">Copied to clipboard</string>
+
+    <!-- Clear custom icons -->
+    <string name="pref_clear_custom_icons_title">Clear custom icons</string>
+    <string name="pref_clear_custom_icons_summary">Remove all per-app icon pack overrides</string>
+    <string name="pref_clear_custom_icons_summary_none">No custom icons set</string>
+    <string name="pref_clear_custom_icons_confirm_title">Clear custom icons?</string>
+    <string name="pref_clear_custom_icons_confirm_message">This will reset all per-app icon pack overrides to the global setting.</string>
+    <string name="pref_clear_custom_icons_toast">Custom icons cleared</string>
 </resources>

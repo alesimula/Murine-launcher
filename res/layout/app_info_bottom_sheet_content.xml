@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout
+        android:id="@+id/app_info_bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/bottom_sheet_handle_margin"
+        android:orientation="vertical">
+
+        <View
+            android:id="@+id/collapse_handle"
+            android:layout_width="@dimen/bottom_sheet_handle_width"
+            android:layout_height="@dimen/bottom_sheet_handle_height"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/bg_rounded_corner_bottom_sheet_handle"/>
+
+        <!-- Title bar: app name + settings cog -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="24dp"
+            android:paddingEnd="8dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@+id/settings_button"
+                android:layout_centerVertical="true"
+                android:gravity="start"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="24sp"
+                android:singleLine="true"
+                android:ellipsize="end"/>
+
+            <ImageButton
+                android:id="@+id/settings_button"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_setting"
+                android:tint="?android:attr/textColorPrimary"
+                android:background="@drawable/murine_search_btn_ripple"
+                android:contentDescription="@string/app_info_drop_target_label"
+                android:scaleType="centerInside"
+                android:padding="12dp"/>
+        </RelativeLayout>
+
+        <ScrollView
+            android:id="@+id/app_info_scroll_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="24dp"
+            android:clipChildren="false"
+            android:clipToPadding="false">
+
+            <LinearLayout
+                android:id="@+id/app_info_entries"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="0dp"
+                android:clipChildren="false"
+                android:clipToPadding="false"/>
+        </ScrollView>
+    </LinearLayout>
+</merge>

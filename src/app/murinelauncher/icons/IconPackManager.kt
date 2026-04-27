@@ -21,9 +21,8 @@ import android.graphics.drawable.AdaptiveIconDrawable
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
-import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
-import app.lawnchair.icons.CustomAdaptiveIconDrawable
+import app.murinelauncher.widget.radio.RadioGroupPreference
 import com.android.launcher3.LauncherFiles
 import com.android.launcher3.R
 import com.android.launcher3.icons.BaseIconFactory
@@ -37,11 +36,11 @@ import org.xmlpull.v1.XmlPullParser
  * Icon packs are discovered via standard launcher theme intents.
  * The selected pack and its settings are persisted in SharedPreferences.
  *
- * TODO NOTE: per-app icon overrides (picking an icon from any pack for a specific app)
  * can be layered on top by adding a Map<ComponentName, String> (component -> pack+drawable) lookup,
  * checked before the global pack in [getIconForComponent].
  */
 object IconPackManager {
+    const val PREFS_DB_ICON_OVERRIDE = "app.murinelauncher.ICON_OVERRIDE_DATABASE"
     const val PREF_ICON_PACK = "pref_icon_pack"
     const val PREF_ICON_PACK_SYSTEM_ONLY = "pref_icon_pack_system_only"
     const val PREF_ICON_PACK_IGNORE_SHAPE = "pref_icon_pack_ignore_shape"
@@ -50,6 +49,9 @@ object IconPackManager {
 
     /** Pseudo-value indicating the launcher to use system's default icons */
     const val SYSTEM_ICON_PACK = ""
+
+    /** Pseudo-value for the "Default (use global setting)" entry in per-app icon overrides */
+    const val ICON_PACK_DEFAULT_GLOBAL = "\u001F\u001E§__default_global__§\u001E\u001F"
 
     @JvmField
     val SYSTEM_ICON_PACK_INFO = IconPackInfo(SYSTEM_ICON_PACK, "System default")
@@ -120,6 +122,59 @@ object IconPackManager {
     fun isThemedOnly(context: Context): Boolean =
         prefs(context).getBoolean(PREF_ICON_PACK_THEMED_ONLY, false)
 
+    // Per-component icon pack overrides
+
+    private fun componentPrefs(context: Context) = context.getSharedPreferences(PREFS_DB_ICON_OVERRIDE, Context.MODE_PRIVATE)
+
+    /**
+     * Returns the icon pack override for a specific component, or null if using global.
+     */
+    fun getComponentOverride(context: Context, componentKey: String): String? = componentPrefs(context).getString(componentKey, null)
+
+    /**
+     * Sets the icon pack override for a specific component;
+     * Pass [SYSTEM_ICON_PACK] to force system icons regardless of global pack.
+     */
+    fun setComponentOverride(context: Context, componentKey: String, packPackage: String) {
+        componentPrefs(context).edit().putString(componentKey, packPackage).apply()
+    }
+
+    /**
+     * Removes the per-app icon override, falling back to global.
+     */
+    fun resetComponentOverride(context: Context, componentKey: String) {
+        componentPrefs(context).edit().remove(componentKey).apply()
+    }
+
+    /**
+     * Returns true if any per-app icon overrides exist.
+     */
+    fun hasAnyComponentOverrides(context: Context): Boolean = componentPrefs(context).all.isNotEmpty()
+
+    /**
+     * Clears all per-app icon pack overrides.
+     */
+    fun clearAllComponentOverrides(context: Context) {
+        componentPrefs(context).edit().clear().apply()
+    }
+
+    /**
+     * Returns the set of package names that have per-app icon overrides;
+     * Useful for triggering icon cache refresh before/after clearing.
+     */
+    fun getOverriddenPackageNames(context: Context): Set<String> =
+        componentPrefs(context).all.keys.mapNotNull { key ->
+            // key is ComponentName.flattenToString() ("package/class")
+            key.substringBefore('/').takeIf { it.isNotEmpty() }
+        }.toSet()
+
+    /**
+     * Returns the effective pack for a given component: per-app icon override if set, else global.
+     */
+    fun getEffectivePack(context: Context, componentKey: String): String {
+        return getComponentOverride(context, componentKey) ?: getSelectedPack(context)
+    }
+
     /**
      * Returns true when the selected pack enforces a custom shape.
      */
@@ -148,6 +203,7 @@ object IconPackManager {
      */
     private class AppFilterData {
         val componentMap = mutableMapOf<String, String>() // item.component -> item.drawable
+        val queriedMisses = mutableSetOf<String>() // components confirmed not in pack (override cache only)
         val backDrawables = mutableListOf<String>() // iconback
         var maskDrawable: String? = null // iconmask
         var uponDrawable: String? = null // iconupon
@@ -160,20 +216,65 @@ object IconPackManager {
 
     private var cachedPackPackage: String? = null
     private var cachedData: AppFilterData = AppFilterData()
+    private val overrideCache = mutableMapOf<String, AppFilterData>()
 
-    fun clearCache() {
+    /** Clears the primary (global pack) cache. Override cache is kept. */
+    fun clearMainCache() {
         cachedPackPackage = null
         cachedData = AppFilterData()
+    }
+
+    /** Clears both the primary and override caches. */
+    fun clearCaches() {
+        cachedPackPackage = null
+        cachedData = AppFilterData()
+        overrideCache.clear()
     }
 
     /**
      * Ensures the appfilter.xml for [packPackage] is loaded and cached.
      * Parses both per-component icon mappings AND global shape declarations.
+     *
+     * @param overrideForComponent non-null for per-app overrides, uses the lightweight mapped cache
+     *        (only stores queried component entries, but does not re-do icon shape computation).
      */
-    private fun ensureDataLoaded(context: Context, packPackage: String): AppFilterData {
+    private fun ensureDataLoaded(context: Context, packPackage: String, overrideForComponent: String? = null): AppFilterData {
         if (packPackage == SYSTEM_ICON_PACK) return AppFilterData()
-        if (packPackage == cachedPackPackage) return cachedData
 
+        if (overrideForComponent != null) {
+            val cached = overrideCache[packPackage]
+            if (cached != null) {
+                // If component already found or confirmed missing: return cached entry
+                if (overrideForComponent in cached.componentMap || overrideForComponent in cached.queriedMisses) return cached
+                // If new component for an already-cached pack: cheap XML-only re-parse (no shape computation)
+                val drawableName = parseComponentOnly(context, packPackage, overrideForComponent)
+                if (drawableName != null) cached.componentMap[overrideForComponent] = drawableName
+                else cached.queriedMisses.add(overrideForComponent)
+                return cached
+            }
+            // First access for this override pack: full parse + shape computation
+            val fullData = fullParseAndCompute(context, packPackage)
+            val drawableName = fullData.componentMap[overrideForComponent]
+            fullData.componentMap.clear()
+            if (drawableName != null) fullData.componentMap[overrideForComponent] = drawableName
+            else fullData.queriedMisses.add(overrideForComponent)
+            overrideCache[packPackage] = fullData
+            return fullData
+        }
+
+        // Primary cache path (global pack)
+        if (packPackage == cachedPackPackage) return cachedData
+        val data = fullParseAndCompute(context, packPackage)
+        cachedPackPackage = packPackage
+        cachedData = data
+        return data
+    }
+
+    /**
+     * Full parse of appfilter.xml + expensive shape computation (enforcesCustomShape / computeShapePath).
+     * Used for both primary cache and first-time override cache population.
+     */
+    private fun fullParseAndCompute(context: Context, packPackage: String): AppFilterData {
         val data = AppFilterData()
         try {
             val pm = context.packageManager
@@ -226,10 +327,48 @@ object IconPackManager {
                 }
             } catch (_: Exception) {}
         }
-
-        cachedPackPackage = packPackage
-        cachedData = data
         return data
+    }
+
+    /**
+     * XML-only re-parse to find a single component's drawable;
+     * Does not populate the full componentMap or compute shape data;
+     * Used when the override cache already has the pack's global treatment / shape data
+     *  but a new component needs to be looked up.
+     */
+    private fun parseComponentOnly(context: Context, packPackage: String, componentKey: String): String? {
+        try {
+            val pm = context.packageManager
+            val packRes = pm.getResourcesForApplication(packPackage)
+            val xmlId = packRes.getIdentifier("appfilter", "xml", packPackage)
+            if (xmlId != 0) {
+                packRes.getXml(xmlId).use { parser -> return findComponentInXml(parser, componentKey) }
+            } else {
+                packRes.assets.open("appfilter.xml").use { stream ->
+                    val parser = android.util.Xml.newPullParser()
+                    parser.setInput(stream, "UTF-8")
+                    return findComponentInXml(parser, componentKey)
+                }
+            }
+        } catch (_: Exception) {}
+        return null
+    }
+
+    /** Scans appfilter.xml item entries for a specific component, returns early on match. */
+    private fun findComponentInXml(parser: XmlPullParser, targetComponent: String): String? {
+        var eventType = parser.eventType
+        while (eventType != XmlPullParser.END_DOCUMENT) {
+            if (eventType == XmlPullParser.START_TAG && parser.name == "item") {
+                val component = parser.getAttributeValue(null, "component")
+                val drawable = parser.getAttributeValue(null, "drawable")
+                if (component != null && drawable != null) {
+                    val cn = extractComponentName(component)
+                    if (cn == targetComponent) return drawable
+                }
+            }
+            eventType = parser.next()
+        }
+        return null
     }
 
     /**
@@ -406,6 +545,14 @@ object IconPackManager {
      * for setting CONFIG_HINT_NO_WRAP if the pack's shape should be preserved.
      */
     fun getIconForComponent(context: Context, componentName: ComponentName, iconDpi: Int): Drawable? {
+        // Check per-component override first
+        val componentKey = componentName.flattenToString()
+        val override = getComponentOverride(context, componentKey)
+        if (override != null) {
+            if (override == SYSTEM_ICON_PACK) return null // forced system icon
+            return loadIconFromPack(context, componentName, override, iconDpi)
+        }
+
         val pack = getSelectedPack(context)
         if (pack == SYSTEM_ICON_PACK) return null
 
@@ -426,8 +573,14 @@ object IconPackManager {
     }
 
     /**
-     * Loads the icon pack drawable for the given component.
+     * Loads an icon from a specific pack for a specific component (used by per-component overrides).
      */
+    private fun loadIconFromPack(context: Context, componentName: ComponentName, packPackage: String, iconDpi: Int): Drawable? {
+        val data = ensureDataLoaded(context, packPackage, overrideForComponent = componentName.flattenToString())
+        val drawableName = data.componentMap[componentName.flattenToString()] ?: return null
+        return loadDrawableFromPack(context, packPackage, drawableName, iconDpi)
+    }
+
     private fun loadDrawableFromPack(context: Context, packPackage: String, drawableName: String, iconDpi: Int, ): Drawable? {
         return try {
             val pm = context.packageManager
@@ -450,11 +603,24 @@ object IconPackManager {
      *         or null, when the component should be skipped.
      */
     fun applyGlobalTreatment(context: Context, componentName: ComponentName, defaultIcon: Drawable, iconDpi: Int): Drawable? {
-        val pack = getSelectedPack(context)
-        if (pack == SYSTEM_ICON_PACK) return null
+        val componentKey = componentName.flattenToString()
+        val override = getComponentOverride(context, componentKey)
+
+        // Determine effective pack: per-app icon override takes precedence over global.
+        val pack: String
+        val isOverride: Boolean
+        if (override != null) {
+            if (override == SYSTEM_ICON_PACK) return null // forced system icon
+            pack = override
+            isOverride = true
+        } else {
+            pack = getSelectedPack(context)
+            if (pack == SYSTEM_ICON_PACK) return null
+            isOverride = false
+        }
 
         // System-only flag check
-        if (isSystemOnly(context)) {
+        if (!isOverride && isSystemOnly(context)) {
             try {
                 val ai = context.packageManager.getApplicationInfo(componentName.packageName, 0)
                 if ((ai.flags and ApplicationInfo.FLAG_SYSTEM) == 0) return null
@@ -463,7 +629,7 @@ object IconPackManager {
             }
         }
 
-        val data = ensureDataLoaded(context, pack)
+        val data = ensureDataLoaded(context, pack, overrideForComponent = if (isOverride) componentKey else null)
         if (!data.hasGlobalTreatment()) return null
 
         // Check "Ignore pack shape" flag: when ON, disable applyGlobalTreatment when shape is enforced (TODO is there a better way?).
@@ -596,6 +762,32 @@ object IconPackManager {
         canvas.setBitmap(bitmap)
         canvas.drawBitmap(uponBmp, 0f, 0f, paint)
         uponBmp.recycle()
+    }
+
+    // ---- Shared preference builder ----
+
+    /**
+     * Configures a [RadioGroupPreference] for icon pack selection.
+     * @param includeDefaultOption for per-app icon overrides (reset to global)
+     */
+    @JvmStatic
+    @JvmOverloads
+    fun configureIconPackPreference(pref: RadioGroupPreference, includeDefaultOption: Boolean = false): RadioGroupPreference.Typed<IconPackInfo> {
+        val ctx = pref.context
+        val packs = getInstalledPacks(ctx)
+        val entries: List<IconPackInfo> = if (includeDefaultOption) {
+            val defaultLabel = ctx.getString(R.string.app_info_icon_pack_default)
+            listOf(IconPackInfo(ICON_PACK_DEFAULT_GLOBAL, defaultLabel)) + packs
+        } else packs
+        pref.setTintSheetIcons(false)
+        pref.setTintPreviewIcon(false)
+        return pref.asList(entries) { it.packageName }.apply {
+            setTextProvider { _, pack -> pack.label }
+            setIconProvider { c, pack ->
+                if (pack.packageName == ICON_PACK_DEFAULT_GLOBAL) null
+                else getPackIcon(c, pack.packageName)
+            }
+        }
     }
 
     /**

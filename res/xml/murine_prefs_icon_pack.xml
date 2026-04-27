@@ -9,6 +9,11 @@
         app:tintSheetIcons="false"
         app:tintPreviewIcon="false"
         app:showPreviewIcon="true" />
+    <Preference
+        android:key="pref_clear_custom_icons"
+        android:icon="@drawable/ic_murine_delete"
+        android:title="@string/pref_clear_custom_icons_title"
+        android:summary="@string/pref_clear_custom_icons_summary" />
 
     <PreferenceCategory android:title="@string/pref_subcategory_options">
         <SwitchPreferenceCompat

@@ -8,6 +8,7 @@ import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.preference.Preference
@@ -99,6 +100,10 @@ class RadioGroupPreference @JvmOverloads constructor(
 
     fun setOnSelected(listener: (Int) -> Unit) {
         onSelectedIdx = listener
+    }
+
+    fun setOnItemSelectedListener(listener: RadioGroupBottomSheet.OnItemSelectedListener) {
+        onSelectedIdx = { listener.onItemSelected(it) }
     }
 
     fun setSummaryProvider(provider: ((Context, Int) -> CharSequence?)?) {
@@ -253,13 +258,28 @@ class RadioGroupPreference @JvmOverloads constructor(
         }
     }
 
+    /**
+     * Shows the selection bottom sheet programmatically.
+     * Requires the context chain to contain a [FragmentActivity].
+     */
+    fun showSheet() {
+        onClick()
+    }
+
     override fun onClick() {
         val fm = resolveFragmentManager() ?: return
         val ctx = context
         val tp = textProviderIdx ?: { _: Context, i: Int -> i.toString() }
         val currentIdx = resolveCurrentIndex()
 
+        // Remove any stale/restored fragment with the same tag before showing a new one
+        fm.findFragmentByTag(RadioGroupBottomSheet.TAG)?.let {
+            fm.beginTransaction().remove(it).commitAllowingStateLoss()
+            fm.executePendingTransactions()
+        }
+
         val sheet = RadioGroupBottomSheet()
+        sheet.setStyle(DialogFragment.STYLE_NORMAL, com.android.settingslib.widget.theme.R.style.Theme_SettingsLib_BottomSheetDialog)
         sheet.configure(
             title = getSheetTitle(),
             entryCount = entryCount,
