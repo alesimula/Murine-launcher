@@ -62,6 +62,7 @@ import com.android.launcher3.dagger.LauncherAppSingleton;
 import com.android.launcher3.logging.FileLog;
 import com.android.launcher3.util.window.CachedDisplayInfo;
 import com.android.launcher3.util.window.WindowManagerProxy;
+import com.android.launcher3.util.NavigationMode;
 import com.android.launcher3.util.window.WindowManagerProxy.DesktopVisibilityListener;
 
 import java.io.PrintWriter;
@@ -548,9 +549,12 @@ public class DisplayController implements DesktopVisibilityListener {
                 WindowBounds expectedBounds = cachedValue.get(displayInfo.rotation);
                 if (!realBounds.equals(expectedBounds)) {
                     // Skip overriding the stable estimate when realBounds looks like atransient immersive state.
-                    boolean transientNoNavBar = realBounds.insets.bottom == 0
-                            && expectedBounds.insets.bottom > 0;
-                    if (!transientNoNavBar) {
+                    boolean transientNoNavBar = (navigationMode == NavigationMode.THREE_BUTTONS ||
+                            navigationMode == NavigationMode.TWO_BUTTONS) &&
+                            realBounds.insets.bottom == 0 && expectedBounds.insets.bottom > 0;
+                    boolean staleButtonNavInsets = navigationMode.hasGestures &&
+                            realBounds.insets.bottom > expectedBounds.insets.bottom;
+                    if (!transientNoNavBar && !staleButtonNavInsets) {
                         List<WindowBounds> clone = new ArrayList<>(cachedValue);
                         clone.set(displayInfo.rotation, realBounds);
                         mPerDisplayBounds.put(normalizedDisplayInfo, clone);
