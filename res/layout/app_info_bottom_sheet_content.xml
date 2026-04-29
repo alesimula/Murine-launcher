@@ -49,23 +49,11 @@
                 android:padding="12dp"/>
         </RelativeLayout>
 
-        <ScrollView
-            android:id="@+id/app_info_scroll_view"
+        <FrameLayout
+            android:id="@+id/app_info_prefs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:layout_marginBottom="24dp"
-            android:clipChildren="false"
-            android:clipToPadding="false">
-
-            <LinearLayout
-                android:id="@+id/app_info_entries"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingHorizontal="0dp"
-                android:clipChildren="false"
-                android:clipToPadding="false"/>
-        </ScrollView>
+            android:layout_marginBottom="16dp" />
     </LinearLayout>
 </merge>

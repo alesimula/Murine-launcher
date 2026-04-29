@@ -1,0 +1,255 @@
+package app.murinelauncher.widget.appinfo
+
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.view.ContextThemeWrapper
+import android.content.pm.ApplicationInfo
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
+import android.os.Bundle
+import android.os.Process
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.content.pm.PackageInfoCompat
+import androidx.preference.Preference
+import androidx.preference.PreferenceGroupAdapter
+import androidx.preference.PreferenceScreen
+import androidx.recyclerview.widget.RecyclerView
+import app.murinelauncher.icons.IconPackManager
+import app.murinelauncher.icons.IconPackManager.IconPackInfo
+import app.murinelauncher.widget.radio.RadioGroupBottomSheet
+import com.android.launcher3.LauncherAppState
+import com.android.launcher3.R
+import com.android.settingslib.widget.SettingsBasePreferenceFragment
+import java.text.DateFormat
+import java.util.Date
+
+/**
+ * PreferenceFragment displayed inside [AppInfoBottomSheet];
+ * Loads entries from [R.xml.app_info_prefs] and populates summaries at runtime.
+ */
+class AppInfoPreferenceFragment : SettingsBasePreferenceFragment() {
+
+    private var componentKey: String? = null
+    private var packageName: String? = null
+    private var themedContext: Context? = null
+
+    override fun getContext(): Context? {
+        val base = super.getContext() ?: return null
+        return themedContext ?: ContextThemeWrapper(base, R.style.HomeSettings_Theme).also {
+            themedContext = it
+        }
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        themedContext = null
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        requireActivity().theme.applyStyle(R.style.HomeSettings_Theme, true)
+        super.onCreate(savedInstanceState)
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val view = super.onCreateView(inflater, container, savedInstanceState)
+        listView?.overScrollMode = View.OVER_SCROLL_NEVER
+        setupLongClickCopy()
+        return view
+    }
+
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        setPreferencesFromResource(R.xml.app_info_prefs, rootKey)
+
+        val args = arguments ?: return
+        componentKey = args.getString(ARG_COMPONENT_KEY)
+        packageName = args.getString(ARG_PACKAGE_NAME)
+        val pkg = packageName ?: return
+        val ctx = requireContext()
+        val pm = ctx.packageManager
+
+        var packageInfo: PackageInfo? = null
+        try { packageInfo = pm.getPackageInfo(pkg, 0) } catch (_: PackageManager.NameNotFoundException) {}
+        val screen = preferenceScreen
+
+        // Package
+        screen.findPreference<Preference>(KEY_PACKAGE)?.summary = pkg
+
+        // Version
+        val versionPref = screen.findPreference<Preference>(KEY_VERSION)
+        if (packageInfo?.versionName != null) {
+            versionPref?.summary = ctx.getString(R.string.app_info_version_value,
+                    packageInfo.versionName, PackageInfoCompat.getLongVersionCode(packageInfo))
+        } else removePref(screen, KEY_VERSION)
+
+        // Last update
+        val updatePref = screen.findPreference<Preference>(KEY_LAST_UPDATE)
+        if (packageInfo != null && packageInfo.lastUpdateTime > 0) {
+            val dateStr = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT)
+                .format(Date(packageInfo.lastUpdateTime))
+            updatePref?.summary = dateStr
+        } else removePref(screen, KEY_LAST_UPDATE)
+
+        // Source
+        val sourceLabel = resolveSourceLabel(ctx, pm, packageInfo, pkg)
+        val sourcePref = screen.findPreference<Preference>(KEY_SOURCE)
+        if (sourceLabel != null) sourcePref?.summary = sourceLabel
+        else removePref(screen, KEY_SOURCE)
+
+        // Icon pack
+        setupIconPackPreference(ctx, screen)
+    }
+
+    private lateinit var entries: List<IconPackInfo>
+    private var iconPackPref: Preference? = null
+
+    private fun setupIconPackPreference(ctx: Context, screen: PreferenceScreen) {
+        val compKey = componentKey ?: return
+        val pkg = packageName ?: return
+        val pref = screen.findPreference<Preference>(KEY_ICON_PACK) ?: return
+        iconPackPref = pref
+
+        entries = IconPackManager.buildIconPackEntries(ctx, compKey)
+        updateIconPackSummary(ctx, compKey)
+
+        pref.setOnPreferenceClickListener {
+            showFilterableIconPackSheet(ctx, compKey, pkg)
+            true
+        }
+    }
+
+    private fun updateIconPackSummary(ctx: Context, compKey: String) {
+        val override = IconPackManager.getComponentOverride(ctx, compKey)
+        iconPackPref?.summary = when {
+            override == null -> ctx.getString(R.string.app_info_icon_pack_default)
+            override == IconPackManager.SYSTEM_ICON_PACK -> IconPackManager.SYSTEM_ICON_PACK_INFO.label
+            else -> entries.firstOrNull { it.packageName == override }?.label ?: override
+        }
+    }
+
+    private fun showFilterableIconPackSheet(ctx: Context, compKey: String, pkg: String) {
+        val fm = parentFragmentManager
+
+        fm.findFragmentByTag(RadioGroupBottomSheet.TAG)?.let {
+            fm.beginTransaction().remove(it).commitAllowingStateLoss()
+            fm.executePendingTransactions()
+        }
+
+        val currentOverride = IconPackManager.getComponentOverride(ctx, compKey)
+        val currentIdx = if (currentOverride == null) 0 else {
+            val idx = entries.indexOfFirst { it.packageName == currentOverride }
+            if (idx >= 0) idx else 0
+        }
+
+        val hasIcon = BooleanArray(entries.size) { i ->
+            IconPackManager.isPackVisibleForComponent(ctx, entries[i], compKey)
+        }
+
+        val sheet = FilterableIconPackSheet()
+        sheet.configure(
+            title = ctx.getString(R.string.pref_category_icon_pack_title),
+            entryCount = entries.size,
+            iconPosition = RadioGroupBottomSheet.IconPosition.START,
+            currentIndex = currentIdx,
+            textProvider = { i -> entries[i].label },
+            iconProvider = { i ->
+                val p = entries[i].packageName
+                if (p == IconPackManager.ICON_PACK_DEFAULT_GLOBAL) null
+                else IconPackManager.getPackIcon(ctx, p)
+            },
+            iconTint = null,
+            isVisibleProvider = { i -> sheet.showAll || hasIcon[i] },
+            listener = RadioGroupBottomSheet.OnItemSelectedListener { index ->
+                val selected = entries[index]
+                if (selected.packageName == IconPackManager.ICON_PACK_DEFAULT_GLOBAL) {
+                    IconPackManager.resetComponentOverride(ctx, compKey)
+                } else {
+                    IconPackManager.setComponentOverride(ctx, compKey, selected.packageName)
+                }
+                updateIconPackSummary(ctx, compKey)
+                refreshIconForPackage(ctx, pkg)
+            }
+        )
+        sheet.show(fm, RadioGroupBottomSheet.TAG)
+    }
+
+    private fun refreshIconForPackage(context: Context, packageName: String) {
+        //IconPackManager.clearMainCache()
+        val appState = LauncherAppState.getInstance(context)
+        appState.model.onAppIconChanged(packageName, Process.myUserHandle())
+    }
+
+    private fun resolveSourceLabel(
+        context: Context, pm: PackageManager,
+        packageInfo: PackageInfo?, packageName: String
+    ): String? {
+        if (packageInfo == null) return null
+        return try {
+            val installer = pm.getInstallerPackageName(packageName)
+            if (installer != null) {
+                try { pm.getApplicationInfo(installer, 0).let { pm.getApplicationLabel(it).toString() } }
+                catch (_: PackageManager.NameNotFoundException) { installer }
+            } else {
+                val isSystem = (packageInfo.applicationInfo!!.flags and ApplicationInfo.FLAG_SYSTEM) != 0
+                if (isSystem) context.getString(R.string.app_info_source_system) else null
+            }
+        } catch (_: Exception) { null }
+    }
+
+    private fun removePref(screen: PreferenceScreen, key: String) {
+        screen.findPreference<Preference>(key)?.let { screen.removePreference(it) }
+    }
+
+    private fun copyToClipboard(ctx: Context, label: CharSequence?, text: CharSequence?) {
+        val clipboard = ctx.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        clipboard.setPrimaryClip(ClipData.newPlainText(label, text))
+        Toast.makeText(ctx, R.string.app_info_copied_toast, Toast.LENGTH_SHORT).show()
+    }
+
+    @Suppress("RestrictedApi")
+    private fun setupLongClickCopy() {
+        val rv = listView ?: return
+        rv.addOnChildAttachStateChangeListener(object : RecyclerView.OnChildAttachStateChangeListener {
+            override fun onChildViewAttachedToWindow(child: View) {
+                val holder = rv.getChildViewHolder(child) ?: return
+                val position = holder.bindingAdapterPosition
+                if (position == RecyclerView.NO_POSITION) return
+                val adapter = rv.adapter as? PreferenceGroupAdapter ?: return
+                val pref = adapter.getItem(position) ?: return
+                if (pref.key in COPYABLE_KEYS) {
+                    child.isLongClickable = true
+                    child.setOnLongClickListener {
+                        copyToClipboard(requireContext(), pref.title, pref.summary)
+                        true
+                    }
+                }
+            }
+            override fun onChildViewDetachedFromWindow(child: View) {}
+        })
+    }
+
+    companion object {
+        const val TAG = "AppInfoPrefs"
+        private const val ARG_COMPONENT_KEY = "component_key"
+        private const val ARG_PACKAGE_NAME = "package_name"
+        private const val KEY_PACKAGE = "pref_app_info_package"
+        private const val KEY_VERSION = "pref_app_info_version"
+        private const val KEY_LAST_UPDATE = "pref_app_info_last_update"
+        private const val KEY_SOURCE = "pref_app_info_source"
+        private const val KEY_ICON_PACK = "pref_app_info_icon_pack"
+
+        private val COPYABLE_KEYS = setOf(KEY_PACKAGE, KEY_VERSION, KEY_LAST_UPDATE, KEY_SOURCE)
+
+        fun newInstance(componentKey: String, packageName: String): AppInfoPreferenceFragment {
+            return AppInfoPreferenceFragment().apply {
+                arguments = Bundle().apply {
+                    putString(ARG_COMPONENT_KEY, componentKey)
+                    putString(ARG_PACKAGE_NAME, packageName)
+                }
+            }
+        }
+    }
+}

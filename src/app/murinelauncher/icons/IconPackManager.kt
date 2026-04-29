@@ -210,6 +210,7 @@ object IconPackManager {
         var scaleFactor: Float = 1.0f // scale.factor
         var enforcesShape: Boolean = false
         var packShapePath: Path? = null
+        var shapeComputed: Boolean = false // true after fullParseAndCompute; false for lightweight entries
 
         fun hasGlobalTreatment() = backDrawables.isNotEmpty() || maskDrawable != null
     }
@@ -244,6 +245,14 @@ object IconPackManager {
         if (overrideForComponent != null) {
             val cached = overrideCache[packPackage]
             if (cached != null) {
+                // Upgrade lightweight entry (from hasIconForComponent) if shape data is needed
+                if (!cached.shapeComputed) {
+                    val fullData = filteredParseAndCompute(context, packPackage, overrideForComponent)
+                    overrideCache[packPackage] = fullData
+                    fullData.backDrawables.addAll(cached.backDrawables)
+                    fullData.queriedMisses.addAll(cached.queriedMisses)
+                    return fullData
+                }
                 // If component already found or confirmed missing: return cached entry
                 if (overrideForComponent in cached.componentMap || overrideForComponent in cached.queriedMisses) return cached
                 // If new component for an already-cached pack: cheap XML-only re-parse (no shape computation)
@@ -253,11 +262,7 @@ object IconPackManager {
                 return cached
             }
             // First access for this override pack: full parse + shape computation
-            val fullData = fullParseAndCompute(context, packPackage)
-            val drawableName = fullData.componentMap[overrideForComponent]
-            fullData.componentMap.clear()
-            if (drawableName != null) fullData.componentMap[overrideForComponent] = drawableName
-            else fullData.queriedMisses.add(overrideForComponent)
+            val fullData = filteredParseAndCompute(context, packPackage, overrideForComponent)
             overrideCache[packPackage] = fullData
             return fullData
         }
@@ -268,6 +273,20 @@ object IconPackManager {
         cachedPackPackage = packPackage
         cachedData = data
         return data
+    }
+
+    /**
+     * Filtered parse of appfilter.xml + expensive shape computation;
+     * re-filters the returned data, returning only the overridden icon
+     * @see fullParseAndCompute
+     */
+    private fun filteredParseAndCompute(context: Context, packPackage: String, overrideForComponent: String): AppFilterData {
+        val fullData = fullParseAndCompute(context, packPackage)
+        val drawableName = fullData.componentMap[overrideForComponent]
+        fullData.componentMap.clear()
+        if (drawableName != null) fullData.componentMap[overrideForComponent] = drawableName
+        else fullData.queriedMisses.add(overrideForComponent)
+        return fullData
     }
 
     /**
@@ -327,6 +346,7 @@ object IconPackManager {
                 }
             } catch (_: Exception) {}
         }
+        data.shapeComputed = true
         return data
     }
 
@@ -764,21 +784,73 @@ object IconPackManager {
         uponBmp.recycle()
     }
 
+    // ---- Per-app icon check ----
+
+    /**
+     * Returns true if [packPackage] has an explicit icon declared for [componentKey].
+     * Checks all caches first; on miss, does a targeted XML scan via [parseComponentOnly]
+     * and stores the result in the override cache.
+     */
+    fun hasIconForComponent(context: Context, packPackage: String, componentKey: String): Boolean {
+        if (packPackage == SYSTEM_ICON_PACK) return false
+        // Check primary (global) cache
+        if (packPackage == cachedPackPackage && componentKey in cachedData.componentMap) return true
+        // Check per-app override cache
+        val cached = overrideCache[packPackage]
+        if (cached != null) {
+            if (componentKey in cached.componentMap) return true
+            if (componentKey in cached.queriedMisses) return false
+        }
+
+        // Targeted XML scan: only scans <item> tags, no shape computation
+        val drawable = parseComponentOnly(context, packPackage, componentKey)
+        // Cache result in override cache, or create lightweight entry (shapeComputed = false) if needed
+        if (cached != null) {
+            if (drawable != null) cached.componentMap[componentKey] = drawable
+            else cached.queriedMisses.add(componentKey)
+        } else {
+            val entry = AppFilterData()
+            if (drawable != null) entry.componentMap[componentKey] = drawable
+            else entry.queriedMisses.add(componentKey)
+            overrideCache[packPackage] = entry
+        }
+        return drawable != null
+    }
+
     // ---- Shared preference builder ----
 
     /**
+     * Builds the icon pack entry list for a picker.
+     * @param perAppComponent non-null for per-app overrides; prepends "Default (global)" entry.
+     */
+    @JvmStatic
+    fun buildIconPackEntries(context: Context, perAppComponent: String? = null): List<IconPackInfo> {
+        val packs = getInstalledPacks(context)
+        return if (perAppComponent != null) {
+            val defaultLabel = context.getString(R.string.app_info_icon_pack_default)
+            listOf(IconPackInfo(ICON_PACK_DEFAULT_GLOBAL, defaultLabel)) + packs
+        } else packs
+    }
+
+    /**
+     * Returns whether [pack] should be visible for a per-app picker for [componentKey].
+     * The default entry and system pack are always visible.
+     */
+    @JvmStatic
+    fun isPackVisibleForComponent(context: Context, pack: IconPackInfo, componentKey: String): Boolean =
+        pack.packageName == ICON_PACK_DEFAULT_GLOBAL || pack.packageName == SYSTEM_ICON_PACK ||
+                hasIconForComponent(context, pack.packageName, componentKey)
+
+    /**
      * Configures a [RadioGroupPreference] for icon pack selection.
-     * @param includeDefaultOption for per-app icon overrides (reset to global)
+     * @param perAppComponent non-null for per-app overrides (component key);
+     *        EDIT: discontinued for per-app overrides in favor of FilterableIconPackSheet
      */
     @JvmStatic
     @JvmOverloads
-    fun configureIconPackPreference(pref: RadioGroupPreference, includeDefaultOption: Boolean = false): RadioGroupPreference.Typed<IconPackInfo> {
+    fun configureIconPackPreference(pref: RadioGroupPreference, perAppComponent: String? = null): RadioGroupPreference.Typed<IconPackInfo> {
         val ctx = pref.context
-        val packs = getInstalledPacks(ctx)
-        val entries: List<IconPackInfo> = if (includeDefaultOption) {
-            val defaultLabel = ctx.getString(R.string.app_info_icon_pack_default)
-            listOf(IconPackInfo(ICON_PACK_DEFAULT_GLOBAL, defaultLabel)) + packs
-        } else packs
+        val entries = buildIconPackEntries(ctx, perAppComponent)
         pref.setTintSheetIcons(false)
         pref.setTintPreviewIcon(false)
         return pref.asList(entries) { it.packageName }.apply {
@@ -786,6 +858,9 @@ object IconPackManager {
             setIconProvider { c, pack ->
                 if (pack.packageName == ICON_PACK_DEFAULT_GLOBAL) null
                 else getPackIcon(c, pack.packageName)
+            }
+            if (perAppComponent != null) setVisibleProvider { c, pack ->
+                isPackVisibleForComponent(c, pack, perAppComponent)
             }
         }
     }

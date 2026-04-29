@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <Preference
+        android:key="pref_app_info_package"
+        android:icon="@drawable/ic_app_info_package"
+        android:persistent="false"
+        android:title="@string/app_info_package" />
+    <Preference
+        android:key="pref_app_info_version"
+        android:icon="@drawable/ic_app_info_version"
+        android:persistent="false"
+        android:title="@string/app_info_version" />
+    <Preference
+        android:key="pref_app_info_last_update"
+        android:icon="@drawable/ic_app_info_update"
+        android:persistent="false"
+        android:title="@string/app_info_last_update" />
+    <Preference
+        android:key="pref_app_info_source"
+        android:icon="@drawable/ic_app_info_source"
+        android:persistent="false"
+        android:title="@string/app_info_source" />
+    <Preference
+        android:key="pref_app_info_icon_pack"
+        android:icon="@drawable/ic_app_info_icon_pack"
+        android:persistent="false"
+        android:title="@string/pref_category_icon_pack_title" />
+
+</androidx.preference.PreferenceScreen>

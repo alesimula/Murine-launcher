@@ -20,7 +20,7 @@ import com.android.settingslib.widget.SettingsBasePreferenceFragment
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.shape.MaterialShapeDrawable
 
-class RadioGroupBottomSheet : BottomSheetDialogFragment() {
+open class RadioGroupBottomSheet : BottomSheetDialogFragment() {
 
     fun interface OnItemSelectedListener {
         fun onItemSelected(index: Int)
