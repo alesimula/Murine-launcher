@@ -14,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.pm.PackageInfoCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.preference.Preference
 import androidx.preference.PreferenceGroupAdapter
 import androidx.preference.PreferenceScreen
@@ -157,7 +158,8 @@ class AppInfoPreferenceFragment : SettingsBasePreferenceFragment() {
             textProvider = { i -> entries[i].label },
             iconProvider = { i ->
                 val p = entries[i].packageName
-                if (p == IconPackManager.ICON_PACK_DEFAULT_GLOBAL) null
+                if (p == IconPackManager.ICON_PACK_DEFAULT_GLOBAL)
+                    ResourcesCompat.getDrawable(resources, R.drawable.ic_app_info_icon_pack, ctx.theme)
                 else IconPackManager.getPackIcon(ctx, p)
             },
             iconTint = null,
