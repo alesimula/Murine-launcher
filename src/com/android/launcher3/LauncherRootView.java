@@ -49,13 +49,16 @@ public class LauncherRootView extends InsettableFrameLayout {
         // On resetState, try to rebuild DeviceProfile to detect new hotseat insets.
         if (resetState && !dp.isVerticalBarLayout()) {
             boolean gestureMode = WindowManagerProxy.INSTANCE.get(getContext()).getNavigationMode(getContext()).hasGestures;
-            DeviceProfile ndp = dp.toBuilder(getContext()).setGestureMode(gestureMode).build();
-            if (dp.hotseatBarBottomSpacePx != ndp.hotseatBarBottomSpacePx) {
-                dp.hotseatBarBottomSpacePx = ndp.hotseatBarBottomSpacePx;
-                dp.hotseatQsbSpace = ndp.hotseatQsbSpace;
-                dp.hotseatBarSizePx = ndp.hotseatBarSizePx;
-                dp.workspacePadding.set(ndp.workspacePadding);
-                dp.cellLayoutPaddingPx.set(ndp.cellLayoutPaddingPx);
+            // Avoid "dirty" updates by skipping hotseat recalculation when the system navigation mode and window insets are out of sync during a transition
+            if (gestureMode == dp.isGestureMode) {
+                DeviceProfile ndp = dp.toBuilder(getContext()).setGestureMode(gestureMode).build();
+                if (dp.hotseatBarBottomSpacePx != ndp.hotseatBarBottomSpacePx) {
+                    dp.hotseatBarBottomSpacePx = ndp.hotseatBarBottomSpacePx;
+                    dp.hotseatQsbSpace = ndp.hotseatQsbSpace;
+                    dp.hotseatBarSizePx = ndp.hotseatBarSizePx;
+                    dp.workspacePadding.set(ndp.workspacePadding);
+                    dp.cellLayoutPaddingPx.set(ndp.cellLayoutPaddingPx);
+                }
             }
         }
 

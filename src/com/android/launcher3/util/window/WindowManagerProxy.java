@@ -332,7 +332,8 @@ public class WindowManagerProxy {
         }
 
         boolean isTablet = swDp >= MIN_TABLET_WIDTH;
-        boolean isTabletOrGesture = isTablet || isGestureNav(context);
+        boolean isGesture = isGestureNav(context);
+        boolean isTabletOrGesture = isTablet || isGesture;
 
         // Use the status bar height resources because current system API to get the status bar
         // height doesn't allow to do this for an arbitrary display, it returns value only
@@ -347,7 +348,7 @@ public class WindowManagerProxy {
         navBarHeightPortrait = isTablet
                 ? (mTaskbarDrawnInProcess
                 ? 0 : context.getResources().getDimensionPixelSize(R.dimen.taskbar_size))
-                : getDimenByName(systemRes, NAVBAR_HEIGHT);
+                : (isGesture ? 0 : getDimenByName(systemRes, NAVBAR_HEIGHT));
 
         navBarHeightLandscape = isTablet
                 ? (mTaskbarDrawnInProcess
