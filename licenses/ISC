@@ -1,7 +1,7 @@
 This project includes the following assets:
 
 - eye-off: res/drawable/ic_settings_hidden_apps.xml
-- paintbrush-vertical: res/drawable/ic_settings_icon_pack
+- paintbrush-vertical: res/drawable/ic_settings_icon_pack & res/drawable/ic_app_info_icon_pack
 
 The assets are licensed under the ISC License.
 See full license below.
