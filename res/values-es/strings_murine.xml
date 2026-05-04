@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
     <string name="pref_group_grid_size_title">Tamaño de la cuadrícula</string>
     <string name="pref_group_grid_size_desc">Cambiar el número de filas y columnas</string>
     <string name="pref_group_icon_scale_title">Escala de iconos</string>
     <string name="pref_group_icon_scale_desc">Cambiar el tamaño de los iconos y etiquetas</string>
+    <string name="pref_group_qsb_transparency">Transparencia</string>
+    <string name="pref_group_qsb_transparency_desc">Establecer efectos de transparencia para la barra de búsqueda rápida</string>
 
     <string name="pref_category_general_title">General</string>
     <string name="pref_category_general_desc">Preferencias globales</string>
@@ -11,7 +14,7 @@
     <string name="pref_category_icons_desc">Configurar el tamaño y la apariencia de los iconos</string>
     <string name="pref_category_home_title">Pantalla de inicio</string>
     <string name="pref_category_home_desc">Personaliza tu pantalla de inicio</string>
-    <string name="pref_category_drawer_title">Cajón de apps</string>
+    <string name="pref_category_drawer_title">Cajón de aplicaciones</string>
     <string name="pref_category_drawer_desc">Personaliza tu cajón de aplicaciones</string>
     <string name="pref_category_qsb_title">Búsqueda</string>
     <string name="pref_category_qsb_desc">Personaliza la barra de búsqueda rápida</string>
@@ -21,7 +24,9 @@
     <string name="pref_subcategory_day_night">Tema de la interfaz</string>
     <string name="pref_subcategory_layout">Diseño</string>
     <string name="pref_subcategory_appearance">Apariencia</string>
+    <string name="pref_subcategory_persistency">Persistencia</string>
     <string name="pref_subcategory_gestures">Gestos</string>
+    <string name="pref_subcategory_options">Opciones</string>
 
     <string name="pref_label_ui_mode_system">Sistema</string>
     <string name="pref_label_ui_mode_day">Claro</string>
@@ -57,15 +62,29 @@
     <!-- Murine search bar -->
     <string name="murine_search_hint">Buscar…</string>
     <string name="murine_search_hint_provider">Buscar con %1$s</string>
+    <string name="murine_search_hint_generic">Buscar en la web</string>
     <string name="murine_search_button_desc">Buscar</string>
     <string name="murine_voice_search_desc">Búsqueda por voz</string>
     <string name="murine_voice_search_prompt">Habla ahora...</string>
     <string name="murine_lens_desc">Búsqueda visual</string>
+
     <!-- Murine search bar preferences -->
     <string name="pref_qsb_show_search_bar_title">Mostrar barra de búsqueda</string>
     <string name="pref_qsb_search_provider_title">Proveedor de búsqueda</string>
     <string name="pref_qsb_enable_lens_title">Activar Lens</string>
     <string name="pref_qsb_enable_lens_summary">Mostrar el botón de Google Lens en la búsqueda rápida</string>
+    <string name="pref_qsb_box_blur">Desenfoque de la burbuja de búsqueda</string>
+    <string name="pref_qsb_box_blur_desc">Mostrar efecto MICA en la burbuja de búsqueda</string>
+    <string name="pref_qsb_bar_alpha">Transparencia de la barra de búsqueda</string>
+    <string name="pref_qsb_box_alpha">Transparencia de la burbuja de búsqueda</string>
+    <string name="pref_qsb_custom_provider_title">URL de búsqueda personalizada</string>
+    <string name="pref_qsb_history_size_title">Tamaño del historial de búsqueda</string>
+    <string name="pref_qsb_history_size_summary">Número máximo de entradas</string>
+    <string name="pref_qsb_clear_history_title">Borrar historial de búsqueda</string>
+    <string name="pref_qsb_clear_history_summary">Eliminar todas las búsquedas guardadas</string>
+    <string name="pref_qsb_clear_history_confirm_title">¿Borrar historial de búsqueda?</string>
+    <string name="pref_qsb_clear_history_confirm_message">Esto eliminará permanentemente todas las búsquedas guardadas.</string>
+    <string name="pref_qsb_clear_history_toast">Historial de búsqueda borrado</string>
 
     <!-- Murine smartspace / clock widget -->
     <string name="smartspace_mode_clock">Reloj</string>
@@ -77,4 +96,23 @@
     <string name="pref_smartspace_summary_disabled">Sin widget en pantalla principal</string>
 
     <string name="pref_blur_unsupported_warning"><![CDATA[El desenfoque del fondo puede no estar completamente soportado o habilitado por este OEM/ROM; si encuentras problemas, intenta buscar una opción de &quot;Permitir desenfoques a nivel de ventana&quot; en las opciones de pantalla o en las opciones de desarrollador.<br/>Alternativamente, prueba a activar <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">este módulo de Magisk</a> en dispositivos con root]]></string>
+
+    <!-- Icon packs -->
+    <string name="pref_category_icon_pack_title">Paquete de iconos</string>
+    <string name="pref_category_icon_pack_summary">Cambiar los iconos de las aplicaciones usando paquetes de iconos de terceros</string>
+    <string name="pref_icon_pack_system_only_title">Solo aplicaciones del sistema</string>
+    <string name="pref_icon_pack_system_only_summary">Aplicar el paquete de iconos solo a las aplicaciones del sistema</string>
+    <string name="pref_icon_pack_ignore_shape_title">Ignorar forma del paquete</string>
+    <string name="pref_icon_pack_ignore_shape_summary">Usar la forma de icono del launcher en lugar de la del paquete</string>
+    <string name="pref_icon_readapt_frame_title">Reajustar al marco</string>
+    <string name="pref_icon_readapt_frame_summary">Intenta encajar los iconos sin tema en la forma proporcionada</string>
+    <string name="pref_icon_pack_themed_only_title">Solo iconos tematizados</string>
+    <string name="pref_icon_pack_themed_only_summary">Dejar sin cambios los iconos que no estén en el paquete</string>
+
+    <!-- Hidden apps -->
+    <string name="pref_category_hidden_apps_title">Aplicaciones ocultas</string>
+    <string name="pref_category_hidden_apps_summary">Ocultar aplicaciones del cajón</string>
+    <string name="hidden_apps_label">Ocultas</string>
+    <string name="hidden_apps_search_hint">Buscar aplicaciones...</string>
+
 </resources>
