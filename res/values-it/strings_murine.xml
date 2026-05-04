@@ -93,7 +93,7 @@
     <string name="pref_smartspace_summary_google">Mostra il widget Google Smartspace</string>
     <string name="pref_smartspace_summary_disabled">Nessun widget nella prima schermata</string>
 
-    <string name="pref_blur_unsupported_warning"><![CDATA[La sfocatura dello sfondo potrebbe non essere completamente supportata o abilitata da questo OEM/ROM; se riscontri problemi, prova a cercare un'opzione &quot;Consenti sfocature a livello di finestra&quot; nelle opzioni di visualizzazione o nelle opzioni sviluppatore.<br/>In alternativa, prova ad abilitare <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">questo modulo Magisk</a> su dispositivi con root]]></string>
+    <string name="pref_blur_unsupported_warning"><![CDATA[La sfocatura dello sfondo potrebbe non essere completamente supportata o abilitata da questo OEM/ROM; se riscontri problemi, prova a cercare un\'opzione &quot;Consenti sfocature a livello di finestra&quot; nelle opzioni di visualizzazione o nelle opzioni sviluppatore.<br/>In alternativa, prova ad abilitare <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">questo modulo Magisk</a> su dispositivi con root]]></string>
 
     <!-- Icon packs -->
     <string name="pref_category_icon_pack_title">Pacchetto icone</string>
