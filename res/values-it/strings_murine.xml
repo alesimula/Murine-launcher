@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="pref_group_grid_size_title">Dimensione griglia</string>
+    <string name="pref_group_grid_size_desc">Modifica il numero di righe e colonne</string>
+    <string name="pref_group_icon_scale_title">Scala icone</string>
+    <string name="pref_group_icon_scale_desc">Modifica la scala delle icone e delle etichette</string>
+    <string name="pref_group_qsb_transparency">Trasparenza</string>
+    <string name="pref_group_qsb_transparency_desc">Imposta gli effetti di trasparenza per la barra di ricerca rapida</string>
+
+    <string name="pref_category_general_title">Generale</string>
+    <string name="pref_category_general_desc">Preferenze globali</string>
+    <string name="pref_category_icons_title">Icone</string>
+    <string name="pref_category_icons_desc">Dimensione e aspetto delle icone</string>
+    <string name="pref_category_home_title">Schermata home</string>
+    <string name="pref_category_home_desc">Personalizza la home</string>
+    <string name="pref_category_drawer_title">Cassetto app</string>
+    <string name="pref_category_drawer_desc">Personalizza il cassetto delle app</string>
+    <string name="pref_category_qsb_title">Ricerca</string>
+    <string name="pref_category_qsb_desc">Personalizza la barra di ricerca rapida</string>
+    <string name="pref_category_misc_title">Varie</string>
+    <string name="pref_category_misc_desc">Altre opzioni</string>
+
+    <string name="pref_subcategory_day_night">Tema interfaccia</string>
+    <string name="pref_subcategory_layout">Disposizione</string>
+    <string name="pref_subcategory_appearance">Aspetto</string>
+    <string name="pref_subcategory_persistency">Persistenza</string>
+    <string name="pref_subcategory_gestures">Gesti</string>
+    <string name="pref_subcategory_options">Opzioni</string>
+
+    <string name="pref_label_ui_mode_system">Sistema</string>
+    <string name="pref_label_ui_mode_day">Chiaro</string>
+    <string name="pref_label_ui_mode_night">Scuro</string>
+    <string name="pref_label_grid_width">Larghezza griglia</string>
+    <string name="pref_label_grid_height">Altezza griglia</string>
+    <string name="pref_label_icon_size">Dimensione icone (%)</string>
+    <string name="pref_label_icon_label_size">Dimensione etichette (%)</string>
+
+    <string name="pref_icon_shape_title">Forma icone</string>
+    <string name="icon_shape_system">Sistema</string>
+    <string name="icon_shape_circle">Cerchio</string>
+    <string name="icon_shape_tofu">Tofu</string>
+    <string name="icon_shape_ios">iOS</string>
+    <string name="icon_shape_squircle">Supercerchio</string>
+    <string name="icon_shape_xperia">Xperia</string>
+    <string name="icon_shape_riceballs">RiceBalls</string>
+
+    <string name="pref_drawer_type_title">Tipo cassetto</string>
+    <string name="drawer_type_frosted">Smerigliato</string>
+    <string name="drawer_type_mica">MICA</string>
+    <string name="drawer_type_translucent">Traslucido</string>
+
+    <string name="pref_blur_preview_title">Sfocatura modalità anteprima</string>
+    <string name="pref_blur_preview_desc">Sfoca lo sfondo durante il trascinamento di icone e widget</string>
+
+    <string name="pref_accessibility_request_toast">Consenti a Murine Launcher di utilizzare i servizi di accessibilità</string>
+    <string name="pref_double_tap_to_sleep_title">Doppio tocco per bloccare</string>
+    <string name="pref_double_tap_to_sleep_summary">Tocca due volte su uno spazio vuoto per bloccare lo schermo</string>
+    <string name="pref_swipe_down_notifications_title">Scorrimento per pannello notifiche</string>
+    <string name="pref_swipe_down_notifications_summary">Scorri verso il basso nella home per espandere il pannello delle notifiche</string>
+
+    <!-- Murine search bar -->
+    <string name="murine_search_hint">Cerca…</string>
+    <string name="murine_search_hint_provider">Cerca con %1$s</string>
+    <string name="murine_search_hint_generic">Cerca sul web</string>
+    <string name="murine_search_button_desc">Cerca</string>
+    <string name="murine_voice_search_desc">Ricerca vocale</string>
+    <string name="murine_voice_search_prompt">Parla ora...</string>
+    <string name="murine_lens_desc">Ricerca visuale</string>
+    <!-- Murine search bar preferences -->
+    <string name="pref_qsb_show_search_bar_title">Mostra barra di ricerca</string>
+    <string name="pref_qsb_search_provider_title">Motore di ricerca</string>
+    <string name="pref_qsb_enable_lens_title">Attiva Lens</string>
+    <string name="pref_qsb_enable_lens_summary">Mostra il pulsante Google Lens nella ricerca rapida</string>
+    <string name="pref_qsb_box_blur">Sfocatura pannello di ricerca</string>
+    <string name="pref_qsb_box_blur_desc">Mostra effetto MICA nel pannello di ricerca</string>
+    <string name="pref_qsb_bar_alpha">Opacità barra di ricerca</string>
+    <string name="pref_qsb_box_alpha">Opacità pannello di ricerca</string>
+    <string name="pref_qsb_custom_provider_title">URL di ricerca personalizzato</string>
+    <string name="pref_qsb_history_size_title">Dimensione cronologia ricerche</string>
+    <string name="pref_qsb_history_size_summary">Voci massime</string>
+    <string name="pref_qsb_clear_history_title">Cancella cronologia ricerche</string>
+    <string name="pref_qsb_clear_history_summary">Elimina tutte le ricerche salvate</string>
+    <string name="pref_qsb_clear_history_confirm_title">Cancellare la cronologia?</string>
+    <string name="pref_qsb_clear_history_confirm_message">Verranno eliminate definitivamente tutte le ricerche salvate.</string>
+    <string name="pref_qsb_clear_history_toast">Cronologia cancellata</string>
+
+    <!-- Murine smartspace / clock widget -->
+    <string name="smartspace_mode_clock">Orologio</string>
+    <string name="smartspace_mode_google">Google Smartspace</string>
+    <string name="smartspace_mode_disabled">Disattivato</string>
+    <string name="pref_smartspace_title">Widget prima schermata</string>
+    <string name="pref_smartspace_summary_clock">Mostra un orologio con la data di oggi</string>
+    <string name="pref_smartspace_summary_google">Mostra il widget Google Smartspace</string>
+    <string name="pref_smartspace_summary_disabled">Nessun widget nella prima schermata</string>
+
+    <string name="pref_blur_unsupported_warning"><![CDATA[La sfocatura dello sfondo potrebbe non essere completamente supportata o abilitata da questo OEM/ROM; se riscontri problemi, prova a cercare un'opzione &quot;Consenti sfocature a livello di finestra&quot; nelle opzioni di visualizzazione o nelle opzioni sviluppatore.<br/>In alternativa, prova ad abilitare <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">questo modulo Magisk</a> su dispositivi con root]]></string>
+
+    <!-- Icon packs -->
+    <string name="pref_category_icon_pack_title">Pacchetto icone</string>
+    <string name="pref_category_icon_pack_summary">Cambia icone app usando pacchetti di terze parti</string>
+    <string name="pref_icon_pack_system_only_title">Solo app di sistema</string>
+    <string name="pref_icon_pack_system_only_summary">Applica il pacchetto solo alle app di sistema</string>
+    <string name="pref_icon_pack_ignore_shape_title">Ignora forma icone</string>
+    <string name="pref_icon_pack_ignore_shape_summary">Usa la forma delle icone del launcher invece di quella del pacchetto</string>
+    <string name="pref_icon_readapt_frame_title">Riadatta alla cornice</string>
+    <string name="pref_icon_readapt_frame_summary">Prova a riadattare le icone senza tema nella forma applicata dal pacchetto</string>
+    <string name="pref_icon_pack_themed_only_title">Solo icone tematizzate</string>
+    <string name="pref_icon_pack_themed_only_summary">Mantieni invariate le icone non presenti nel pacchetto</string>
+
+    <!-- Hidden apps -->
+    <string name="pref_category_hidden_apps_title">App nascoste</string>
+    <string name="pref_category_hidden_apps_summary">Nascondi app dal cassetto</string>
+    <string name="hidden_apps_label">Nascoste</string>
+    <string name="hidden_apps_search_hint">Cerca app...</string>
+
+    <!-- App info sheet -->
+    <string name="app_info_package">Pacchetto</string>
+    <string name="app_info_version">Versione</string>
+    <string name="app_info_version_value">%1$s (%2$d)</string>
+    <string name="app_info_last_update">Ultimo aggiornamento</string>
+    <string name="app_info_source">Origine</string>
+    <string name="app_info_source_system">Sistema</string>
+    <string name="app_info_icon_pack_default">Predefinito (globale)</string>
+    <string name="app_info_copied_toast">Copiato negli appunti</string>
+    <string name="app_info_icon_pack_show_all">Mostra tutti</string>
+
+    <!-- Clear custom icons -->
+    <string name="pref_clear_custom_icons_title">Cancella icone personalizzate</string>
+    <string name="pref_clear_custom_icons_summary">Rimuovi le icone personalizzate per singole app</string>
+    <string name="pref_clear_custom_icons_summary_none">Nessuna icona personalizzata</string>
+    <string name="pref_clear_custom_icons_confirm_title">Cancellare icone personalizzate?</string>
+    <string name="pref_clear_custom_icons_confirm_message">Verranno ripristinate le impostazioni globali per tutte le icone personalizzate.</string>
+    <string name="pref_clear_custom_icons_toast">Icone personalizzate cancellate</string>
+</resources>
