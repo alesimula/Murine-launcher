@@ -29,7 +29,7 @@ Check [the website](https://www.murinelauncher.app/) or download it from:
 <p align="left">
   <a href="https://f-droid.org/en/packages/app.murinelauncher">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="image/github/badge-izzyondroid.webp" height="60">
+      <source media="(prefers-color-scheme: dark)" srcset="image/github/badge-fdroid.webp" height="60">
       <img alt="Get it on F-Droid" src="image/github/badge-fdroid.webp" height="60">
     </picture>
   </a>
