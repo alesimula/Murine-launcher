@@ -48,6 +48,7 @@ import com.android.launcher3.pm.PackageInstallInfo
 import com.android.launcher3.pm.UserCache
 import com.android.launcher3.shortcuts.ShortcutKey
 import com.android.launcher3.shortcuts.ShortcutRequest
+import app.lawnchair.icons.getCustomInstanceLabelForId
 import com.android.launcher3.util.ApiWrapper
 import com.android.launcher3.util.ApplicationInfoWrapper
 import com.android.launcher3.util.ComponentKey
@@ -358,6 +359,8 @@ class WorkspaceItemProcessor(
                 iconRequestInfos.add(c.createIconRequestInfo(info, useLowResIcon))
             }
             c.applyCommonProperties(info)
+            if (info is WorkspaceItemInfo && info.itemType == Favorites.ITEM_TYPE_DEEP_SHORTCUT && info.id >= 0)
+                getCustomInstanceLabelForId(info.id)?.let { customLabel -> info.title = customLabel }
             info.intent = intent
             info.rank = c.rank
             info.spanX = 1

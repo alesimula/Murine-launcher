@@ -1,6 +1,9 @@
 package app.murinelauncher.widget.appinfo
 
+import android.content.ComponentName
 import android.content.Context
+import android.content.pm.LauncherApps
+import android.os.UserHandle
 import android.util.AttributeSet
 import android.util.Pair
 import android.view.MotionEvent
@@ -12,10 +15,12 @@ import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.RecyclerView
 import com.android.launcher3.BaseActivity
+import com.android.launcher3.LauncherSettings
 import com.android.launcher3.R
 import com.android.launcher3.Utilities
 import com.android.launcher3.anim.PendingAnimation
 import com.android.launcher3.model.data.ItemInfo
+import com.android.launcher3.model.data.WorkspaceItemInfo
 import com.android.launcher3.util.PackageManagerHelper
 import com.android.launcher3.views.AbstractSlideInView
 
@@ -53,7 +58,14 @@ class AppInfoBottomSheet @JvmOverloads constructor(context: Context?, attrs: Att
         val context = context
         val componentName = itemInfo.targetComponent
 
-        (findViewById<View>(R.id.title) as TextView).text = itemInfo.title ?: ""
+        val titleView = findViewById<View>(R.id.title) as TextView
+        titleView.text = itemInfo.title ?: ""
+
+        findViewById<ImageButton>(R.id.edit_label_button).setOnClickListener {
+            val activity = BaseActivity.fromContext<BaseActivity>(context)
+            val frag = activity.supportFragmentManager.findFragmentByTag(AppInfoPreferenceFragment.TAG) as? AppInfoPreferenceFragment
+            frag?.showEditLabel()
+        }
         findViewById<ImageButton>(R.id.settings_button).setOnClickListener { v ->
             PackageManagerHelper.startDetailsActivityForInfo(
                 context, mItemInfo, Utilities.getViewBounds(v), null
@@ -62,9 +74,12 @@ class AppInfoBottomSheet @JvmOverloads constructor(context: Context?, attrs: Att
 
         if (componentName != null) {
             val activity = BaseActivity.fromContext<BaseActivity>(context)
+            val (labelKey, originalLabel, instanceId) = resolveLabelInfo(context, itemInfo, componentName)
             val fragment = AppInfoPreferenceFragment.newInstance(
-                componentName.flattenToString(), componentName.packageName
+                componentName.flattenToString(), componentName.packageName,
+                labelKey, originalLabel, instanceId
             )
+            fragment.onLabelEdited = { newLabel -> titleView.text = newLabel }
             activity.supportFragmentManager.beginTransaction()
                 .replace(R.id.app_info_prefs, fragment, AppInfoPreferenceFragment.TAG)
                 .commitAllowingStateLoss()
@@ -122,6 +137,44 @@ class AppInfoBottomSheet @JvmOverloads constructor(context: Context?, attrs: Att
 
     override fun addHintCloseAnim(distanceToMove: Float, interpolator: Interpolator?, target: PendingAnimation) {
         target.addAnimatedFloat(mSwipeToDismissProgress, 0f, 1f, interpolator)
+    }
+
+    private fun resolveLabelInfo(context: Context, itemInfo: ItemInfo, componentName: ComponentName): Triple<String, String, Int> {
+        val userHash = itemInfo.user.hashCode()
+        val shortcutId = (itemInfo as? WorkspaceItemInfo)?.getDeepShortcutId()
+        if (shortcutId != null) {
+            // Deep shortcut: per-instance label via itemInfo.id; original from LauncherApps
+            val key = ComponentName(componentName.packageName, shortcutId).flattenToString() + "#" + userHash
+            val original = getOriginalShortcutLabel(context, componentName.packageName, shortcutId, itemInfo.user)
+                ?: itemInfo.title?.toString() ?: shortcutId
+            return Triple(key, original, itemInfo.id)
+        }
+        // Regular app: shared label via component key
+        val key = componentName.flattenToString() + "#" + userHash
+        val original = try {
+            val pm = context.packageManager
+            pm.getActivityInfo(componentName, 0).loadLabel(pm).toString()
+        } catch (_: Exception) {
+            itemInfo.title?.toString() ?: componentName.flattenToString()
+        }
+        return Triple(key, original, -1)
+    }
+
+    private fun getOriginalShortcutLabel(context: Context, packageName: String, shortcutId: String, user: UserHandle): String? {
+        val launcherApps = context.getSystemService(Context.LAUNCHER_APPS_SERVICE) as? LauncherApps ?: return null
+        val query = LauncherApps.ShortcutQuery()
+        query.setQueryFlags(
+            LauncherApps.ShortcutQuery.FLAG_MATCH_DYNAMIC or
+            LauncherApps.ShortcutQuery.FLAG_MATCH_PINNED or
+            LauncherApps.ShortcutQuery.FLAG_MATCH_MANIFEST
+        )
+        query.setPackage(packageName)
+        query.setShortcutIds(listOf(shortcutId))
+        return try {
+            launcherApps.getShortcuts(query, user)?.firstOrNull()?.shortLabel?.toString()
+        } catch (_: Exception) {
+            null
+        }
     }
 
     companion object {

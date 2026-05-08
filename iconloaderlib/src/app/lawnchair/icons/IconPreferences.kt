@@ -13,6 +13,7 @@ import androidx.palette.graphics.Palette
 import com.android.launcher3.icons.BaseIconFactory.DEFAULT_WRAPPER_BACKGROUND
 import com.android.launcher3.util.ComponentKey
 import org.json.JSONObject
+import java.util.concurrent.ConcurrentHashMap
 
 private const val SHARED_PREFERENCES_KEY: String = "com.android.launcher3.prefs"
 
@@ -34,32 +35,70 @@ fun shouldForceMonochrome(): Boolean {
     return prefs.getBoolean("pref_forceIconMonochrome", false)
 }
 
-private fun getCustomAppNameMap(): Map<ComponentKey, String> {
-    val prefs = prefsNoContext
+fun getCustomAppNameForComponent(info: LauncherActivityInfo): CharSequence? {
+    val key = ComponentKey(info.componentName, info.user).toString()
+    val customLabel = getCustomLabelForKey(key)
+    return if (customLabel.isNullOrEmpty()) info.label else customLabel
+}
 
-    val customLabel = prefs.getString("pref_appNameMap", "{}")
-    if (customLabel.isNullOrEmpty()) return emptyMap()
+private class LabelMapCache(private val prefKey: String) {
+    @Volatile private var cache: ConcurrentHashMap<String, String>? = null
 
-    val map = mutableMapOf<ComponentKey, String>()
-    val obj = JSONObject(customLabel)
-    obj.keys().forEach {
-        val componentKey = ComponentKey.fromString(it)
-        if (componentKey != null) {
-            map[componentKey] = obj.getString(it)
+    fun get(prefs: SharedPreferences): ConcurrentHashMap<String, String> {
+        var cache = this.cache
+        if (cache != null) return cache
+        synchronized(this) {
+            cache = this.cache
+            if (cache != null) return cache
+            val newCache = ConcurrentHashMap<String, String>()
+            val mapJson = prefs.getString(prefKey, "{}") ?: "{}"
+            if (mapJson != "{}") {
+                val obj = JSONObject(mapJson)
+                obj.keys().forEach { newCache[it] = obj.getString(it) }
+            }
+            cache = newCache
+            return newCache
         }
     }
-    return map
-}
 
-fun getCustomAppNameForComponent(info: LauncherActivityInfo): CharSequence? {
-    val key = ComponentKey(info.componentName, info.user)
-    val customLabel = getCustomAppNameMap()[key]
-    if (!customLabel.isNullOrEmpty()) {
-        return customLabel
+    fun set(prefs: SharedPreferences, key: String, label: String?) {
+        val isRemoval = label.isNullOrEmpty()
+
+        val obj = JSONObject(prefs.getString(prefKey, "{}") ?: "{}")
+        if (isRemoval) obj.remove(key)
+        else obj.put(key, label)
+        prefs.edit().putString(prefKey, obj.toString()).apply()
+
+        val cache = get(prefs)
+        if (isRemoval) cache.remove(key)
+        else cache[key] = label
     }
-    return info.label
 }
 
+private val appNameMap = LabelMapCache("pref_appNameMap")
+private val instanceLabelMap = LabelMapCache("pref_instanceLabelMap")
+
+fun getCustomLabelForKey(componentKeyStr: String): String? {
+    val prefs = prefsNoContext
+    return appNameMap.get(prefs)[componentKeyStr]
+}
+
+fun setCustomLabelForKey(componentKeyStr: String, label: String?) {
+    val prefs = prefsNoContext
+    appNameMap.set(prefs, componentKeyStr, label)
+}
+
+fun getCustomInstanceLabelForId(itemId: Int): String? {
+    if (itemId < 0) return null
+    val prefs = prefsNoContext
+    return instanceLabelMap.get(prefs)[itemId.toString()]
+}
+
+fun setCustomInstanceLabelForId(itemId: Int, label: String?) {
+    if (itemId < 0) return
+    val prefs = prefsNoContext
+    instanceLabelMap.set(prefs, itemId.toString(), label)
+}
 
 fun getWrapperBackgroundColor(context: Context, icon: Drawable): Int {
     val lightness = context.prefs.getFloat("pref_coloredBackgroundLightness", 1f)

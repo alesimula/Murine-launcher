@@ -38,6 +38,8 @@ import com.android.launcher3.util.ApiWrapper;
 import com.android.launcher3.util.ContentWriter;
 import com.android.wm.shell.shared.bubbles.BubbleAnythingFlagHelper;
 
+import app.lawnchair.icons.IconPreferencesKt;
+
 import java.util.Arrays;
 
 /**
@@ -184,7 +186,15 @@ public class WorkspaceItemInfo extends ItemInfoWithIcon {
         }
         // {@link ShortcutInfo#getActivity} can change during an update. Recreate the intent
         intent = ShortcutKey.makeIntent(shortcutInfo);
-        title = shortcutInfo.getShortLabel();
+        String resolvedLabel = null;
+        if (id != NO_ID) {
+            resolvedLabel = IconPreferencesKt.getCustomInstanceLabelForId(id);
+        }
+        if (resolvedLabel == null || resolvedLabel.isEmpty()) {
+            ShortcutKey sk = ShortcutKey.fromInfo(shortcutInfo);
+            resolvedLabel = IconPreferencesKt.getCustomLabelForKey(sk.toString());
+        }
+        title = (resolvedLabel != null && !resolvedLabel.isEmpty()) ? resolvedLabel : shortcutInfo.getShortLabel();
 
         CharSequence label = shortcutInfo.getLongLabel();
         if (TextUtils.isEmpty(label)) {

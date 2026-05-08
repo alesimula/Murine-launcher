@@ -15,10 +15,15 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.pm.PackageInfoCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceGroupAdapter
 import androidx.preference.PreferenceScreen
 import androidx.recyclerview.widget.RecyclerView
+import app.lawnchair.icons.getCustomInstanceLabelForId
+import app.lawnchair.icons.getCustomLabelForKey
+import app.lawnchair.icons.setCustomInstanceLabelForId
+import app.lawnchair.icons.setCustomLabelForKey
 import app.murinelauncher.icons.IconPackManager
 import app.murinelauncher.icons.IconPackManager.IconPackInfo
 import app.murinelauncher.widget.radio.RadioGroupBottomSheet
@@ -36,7 +41,13 @@ class AppInfoPreferenceFragment : SettingsBasePreferenceFragment() {
 
     private var componentKey: String? = null
     private var packageName: String? = null
+    private var labelKey: String? = null
+    private var instanceId: Int = -1
     private var themedContext: Context? = null
+    private var editLabelPref: EditTextPreference? = null
+    private var originalLabel: CharSequence = ""
+
+    var onLabelEdited: ((CharSequence) -> Unit)? = null
 
     override fun getContext(): Context? {
         val base = super.getContext() ?: return null
@@ -68,6 +79,9 @@ class AppInfoPreferenceFragment : SettingsBasePreferenceFragment() {
         val args = arguments ?: return
         componentKey = args.getString(ARG_COMPONENT_KEY)
         packageName = args.getString(ARG_PACKAGE_NAME)
+        labelKey = args.getString(ARG_LABEL_KEY)
+        instanceId = args.getInt(ARG_INSTANCE_ID, -1)
+        originalLabel = args.getString(ARG_ORIGINAL_LABEL) ?: ""
         val pkg = packageName ?: return
         val ctx = requireContext()
         val pm = ctx.packageManager
@@ -102,6 +116,40 @@ class AppInfoPreferenceFragment : SettingsBasePreferenceFragment() {
 
         // Icon pack
         setupIconPackPreference(ctx, screen)
+        // Edit label
+        setupEditLabelPreference(ctx, screen)
+    }
+
+    private fun setupEditLabelPreference(ctx: Context, screen: PreferenceScreen) {
+        val pref = screen.findPreference<EditTextPreference>(KEY_EDIT_LABEL) ?: return
+        editLabelPref = pref
+        val lk = labelKey ?: return
+
+        pref.setOnBindEditTextListener { editText -> editText.hint = originalLabel.toString() }
+        pref.setOnPreferenceChangeListener { _, newValue ->
+            val newLabel = (newValue as? String)?.trim() ?: ""
+            if (newLabel.isEmpty() || newLabel == originalLabel.toString()) {
+                if (instanceId >= 0) setCustomInstanceLabelForId(instanceId, null)
+                else setCustomLabelForKey(lk, null)
+                onLabelEdited?.invoke(originalLabel)
+            } else {
+                if (instanceId >= 0) setCustomInstanceLabelForId(instanceId, newLabel)
+                else setCustomLabelForKey(lk, newLabel)
+                onLabelEdited?.invoke(newLabel)
+            }
+            val pkg = packageName ?: return@setOnPreferenceChangeListener true
+            val appState = LauncherAppState.getInstance(ctx)
+            appState.model.onAppIconChanged(pkg, Process.myUserHandle())
+            true
+        }
+    }
+
+    fun showEditLabel() {
+        val pref = editLabelPref ?: return
+        val lk = labelKey ?: return
+        val customLabel = if (instanceId >= 0) getCustomInstanceLabelForId(instanceId) else getCustomLabelForKey(lk)
+        pref.text = customLabel ?: ""
+        pref.performClick()
     }
 
     private lateinit var entries: List<IconPackInfo>
@@ -237,19 +285,26 @@ class AppInfoPreferenceFragment : SettingsBasePreferenceFragment() {
         const val TAG = "AppInfoPrefs"
         private const val ARG_COMPONENT_KEY = "component_key"
         private const val ARG_PACKAGE_NAME = "package_name"
+        private const val ARG_LABEL_KEY = "label_key"
+        private const val ARG_INSTANCE_ID = "instance_id"
+        private const val ARG_ORIGINAL_LABEL = "original_label"
         private const val KEY_PACKAGE = "pref_app_info_package"
         private const val KEY_VERSION = "pref_app_info_version"
         private const val KEY_LAST_UPDATE = "pref_app_info_last_update"
         private const val KEY_SOURCE = "pref_app_info_source"
         private const val KEY_ICON_PACK = "pref_app_info_icon_pack"
+        private const val KEY_EDIT_LABEL = "pref_app_info_edit_label"
 
         private val COPYABLE_KEYS = setOf(KEY_PACKAGE, KEY_VERSION, KEY_LAST_UPDATE, KEY_SOURCE)
 
-        fun newInstance(componentKey: String, packageName: String): AppInfoPreferenceFragment {
+        fun newInstance(componentKey: String, packageName: String, labelKey: String, originalLabel: String, instanceId: Int = -1): AppInfoPreferenceFragment {
             return AppInfoPreferenceFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_COMPONENT_KEY, componentKey)
                     putString(ARG_PACKAGE_NAME, packageName)
+                    putString(ARG_LABEL_KEY, labelKey)
+                    putString(ARG_ORIGINAL_LABEL, originalLabel)
+                    putInt(ARG_INSTANCE_ID, instanceId)
                 }
             }
         }

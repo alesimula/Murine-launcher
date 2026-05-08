@@ -27,13 +27,26 @@
                 android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_toStartOf="@+id/settings_button"
+                android:layout_toStartOf="@+id/edit_label_button"
                 android:layout_centerVertical="true"
                 android:gravity="start"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textSize="24sp"
                 android:singleLine="true"
                 android:ellipsize="end"/>
+
+            <ImageButton
+                android:id="@+id/edit_label_button"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_toStartOf="@+id/settings_button"
+                android:layout_centerVertical="true"
+                android:src="@drawable/gm_edit_24"
+                android:tint="?android:attr/textColorPrimary"
+                android:background="@drawable/murine_search_btn_ripple"
+                android:contentDescription="@string/app_info_edit_label"
+                android:scaleType="centerInside"
+                android:padding="12dp"/>
 
             <ImageButton
                 android:id="@+id/settings_button"

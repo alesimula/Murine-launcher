@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.preference.PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <EditTextPreference
+        app:isPreferenceVisible="false"
+        android:key="pref_app_info_edit_label"
+        android:persistent="false"
+        android:title="@string/app_info_edit_label"
+        android:dialogTitle="@string/app_info_edit_label" />
     <Preference
         android:key="pref_app_info_package"
         android:icon="@drawable/ic_app_info_package"
