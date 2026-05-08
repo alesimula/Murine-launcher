@@ -125,6 +125,7 @@
     <string name="app_info_icon_pack_default">Predeterminado (global)</string>
     <string name="app_info_copied_toast">Copiado al portapapeles</string>
     <string name="app_info_icon_pack_show_all">Mostrar todos los paquetes</string>
+    <string name="app_info_edit_label">Editar etiqueta</string>
 
     <!-- Clear custom icons -->
     <string name="pref_clear_custom_icons_title">Borrar iconos personalizados</string>
