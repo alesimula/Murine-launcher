@@ -26,4 +26,8 @@
         android:summary="@string/pref_category_hidden_apps_summary"
         android:fragment="app.murinelauncher.settings.SettingsHiddenAppsFragment" />
 
+    <Preference
+        android:key="pref_default_launcher"
+        android:title="@string/pref_default_launcher_title" />
+
 </androidx.preference.PreferenceScreen>
