@@ -291,6 +291,104 @@ h1, h2, h3, h4, h5, h6 {
   margin-top: 8px;
 }
 
+/* --- Page Body (Prose) --- */
+.page-body {
+  max-width: 780px;
+  padding-bottom: 64px;
+  color: var(--md-on-surface);
+  line-height: 1.75;
+}
+
+.page-body h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-top: 40px;
+  margin-bottom: 16px;
+  color: var(--md-on-surface);
+}
+
+.page-body h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-top: 32px;
+  margin-bottom: 12px;
+  color: var(--md-on-surface);
+}
+
+.page-body p {
+  margin-bottom: 16px;
+  color: var(--md-on-surface-variant);
+}
+
+.page-body ul, .page-body ol {
+  margin-bottom: 16px;
+  padding-left: 24px;
+}
+
+.page-body li {
+  margin-bottom: 8px;
+  color: var(--md-on-surface-variant);
+}
+
+.page-body li strong {
+  color: var(--md-on-surface);
+}
+
+.page-body a {
+  color: var(--md-primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color var(--md-motion-duration-short) var(--md-motion-standard);
+}
+
+.page-body a:hover {
+  text-decoration: underline;
+}
+
+.page-body strong {
+  font-weight: 600;
+  color: var(--md-on-surface);
+}
+
+.page-body hr {
+  border: none;
+  border-top: 1px solid var(--md-outline-variant);
+  margin: 32px 0;
+}
+
+.page-body blockquote {
+  border-left: 3px solid var(--md-primary);
+  padding: 8px 16px;
+  margin: 16px 0;
+  background: var(--md-surface-container-low);
+  border-radius: 0 var(--md-shape-sm) var(--md-shape-sm) 0;
+  color: var(--md-on-surface-variant);
+}
+
+.page-body code {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 0.875em;
+  background: var(--md-surface-container);
+  padding: 2px 6px;
+  border-radius: var(--md-shape-xs);
+  color: var(--md-primary);
+}
+
+.page-body pre {
+  background: var(--md-surface-container);
+  border-radius: var(--md-shape-md);
+  padding: 16px 20px;
+  overflow-x: auto;
+  margin-bottom: 16px;
+}
+
+.page-body pre code {
+  background: none;
+  padding: 0;
+  color: var(--md-on-surface);
+}
+
 /* --- Hero Section --- */
 .hero {
   position: relative;
@@ -1143,4 +1241,145 @@ h1, h2, h3, h4, h5, h6 {
 .error-state p {
   font-size: 1rem;
   margin-bottom: 8px;
+}
+
+/* --- Contact Modal --- */
+.contact-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 24px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--md-motion-duration-medium) var(--md-motion-standard),
+              visibility 0s linear var(--md-motion-duration-medium);
+}
+
+.contact-modal-overlay[aria-hidden="false"] {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity var(--md-motion-duration-medium) var(--md-motion-standard),
+              visibility 0s linear 0s;
+}
+
+.contact-modal {
+  background: var(--md-surface-container-low);
+  border-radius: var(--md-shape-xxl);
+  padding: 32px;
+  max-width: 480px;
+  width: 100%;
+  box-shadow: var(--md-shadow-xl);
+  transform: translateY(16px) scale(0.97);
+  transition: transform var(--md-motion-duration-medium) var(--md-motion-emphasized);
+}
+
+.contact-modal-overlay[aria-hidden="false"] .contact-modal {
+  transform: translateY(0) scale(1);
+}
+
+.contact-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.contact-modal-header h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--md-on-surface);
+}
+
+.contact-modal-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  border-radius: var(--md-shape-full);
+  color: var(--md-on-surface-variant);
+  cursor: pointer;
+  transition: background var(--md-motion-duration-short) var(--md-motion-standard);
+}
+
+.contact-modal-close:hover {
+  background: var(--md-surface-container-highest);
+}
+
+.contact-modal-desc {
+  font-size: 0.9375rem;
+  color: var(--md-on-surface-variant);
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+.contact-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.contact-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: var(--md-surface-container);
+  border-radius: var(--md-shape-lg);
+  text-decoration: none;
+  color: var(--md-on-surface);
+  transition: background var(--md-motion-duration-short) var(--md-motion-standard),
+              box-shadow var(--md-motion-duration-short) var(--md-motion-standard);
+}
+
+.contact-card:hover {
+  background: var(--md-surface-container-high);
+  box-shadow: var(--md-shadow);
+  text-decoration: none;
+}
+
+.contact-card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--md-shape-md);
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container);
+  flex-shrink: 0;
+}
+
+.contact-card:nth-child(2) .contact-card-icon {
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
+}
+
+.contact-card:nth-child(3) .contact-card-icon {
+  background: var(--md-tertiary-container);
+  color: var(--md-on-tertiary-container);
+}
+
+.contact-card-info h3 {
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.contact-card-info p {
+  font-size: 0.8125rem;
+  color: var(--md-on-surface-variant);
+}
+
+@media (max-width: 480px) {
+  .contact-modal {
+    padding: 24px;
+    border-radius: var(--md-shape-xl);
+  }
 }

@@ -16,6 +16,14 @@
         <span class="material-symbols-outlined" style="font-size:20px">favorite</span>
         Donate
       </a>
+      <a href="#contact" class="footer-link" onclick="openContactModal(); return false;">
+        <span class="material-symbols-outlined" style="font-size:20px">chat</span>
+        Contact
+      </a>
+      <a href="{{ '/privacy' | relative_url }}" class="footer-link">
+        <span class="material-symbols-outlined" style="font-size:20px">policy</span>
+        Privacy Policy
+      </a>
     </div>
     <div class="footer-copy">
       &copy; {{ 'now' | date: "%Y" }} Murine Launcher &middot; Licensed under Apache 2.0

@@ -1,0 +1,65 @@
+<div class="contact-modal-overlay" id="contactModal" aria-hidden="true">
+  <div class="contact-modal" role="dialog" aria-labelledby="contactTitle">
+    <div class="contact-modal-header">
+      <h2 id="contactTitle">Get in Touch</h2>
+      <button class="contact-modal-close" aria-label="Close" onclick="closeContactModal()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <p class="contact-modal-desc">Have a question, suggestion, or found a bug? Reach out to me through any of the channels below.</p>
+    <div class="contact-cards">
+      <a href="mailto:alesimula@murinelauncher.app" class="contact-card" target="_blank" rel="noopener">
+        <div class="contact-card-icon">
+          <span class="material-symbols-outlined">mail</span>
+        </div>
+        <div class="contact-card-info">
+          <h3>Email</h3>
+          <p>alesimula@murinelauncher.app</p>
+        </div>
+      </a>
+      <a href="https://t.me/Gr33nAppl3" class="contact-card" target="_blank" rel="noopener">
+        <div class="contact-card-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.479.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+        </div>
+        <div class="contact-card-info">
+          <h3>Telegram</h3>
+          <p>@Gr33nAppl3</p>
+        </div>
+      </a>
+      <a href="https://github.com/alesimula/Murine-launcher/issues" class="contact-card" target="_blank" rel="noopener">
+        <div class="contact-card-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"/></svg>
+        </div>
+        <div class="contact-card-info">
+          <h3>GitHub Issues</h3>
+          <p>Report bugs or request features</p>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+function openContactModal() {
+  var modal = document.getElementById('contactModal');
+  modal.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+}
+function closeContactModal() {
+  var modal = document.getElementById('contactModal');
+  modal.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+}
+document.addEventListener('DOMContentLoaded', function() {
+  var overlay = document.getElementById('contactModal');
+  overlay.addEventListener('click', function(e) {
+    if (e.target === overlay) closeContactModal();
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && overlay.getAttribute('aria-hidden') === 'false') {
+      closeContactModal();
+    }
+  });
+  if (window.location.hash === '#contact') openContactModal();
+});
+</script>
