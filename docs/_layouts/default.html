@@ -17,7 +17,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap">
 
   <link rel="icon" type="image/svg+xml" href="{{ site.icon_url }}">
-  <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}?v={{ site.version }}">
 
   {% seo %}
 </head>
@@ -31,7 +31,7 @@
   {% include footer.html %}
   {% include contact-modal.html %}
 
-  <script src="{{ '/assets/js/theme.js' | relative_url }}"></script>
-  <script src="{{ '/assets/js/github-api.js' | relative_url }}"></script>
+  <script src="{{ '/assets/js/theme.js' | relative_url }}?v={{ site.version }}"></script>
+  <script src="{{ '/assets/js/github-api.js' | relative_url }}?v={{ site.version }}"></script>
 </body>
 </html>
