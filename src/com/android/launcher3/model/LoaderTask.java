@@ -718,7 +718,8 @@ public class LoaderTask implements Runnable {
         boolean isWorkProfileQuiet = false;
         boolean isPrivateProfileQuiet = false;
         for (UserHandle user : profiles) {
-            boolean quietMode = mUserManagerState.isUserQuiet(user);
+            boolean quietMode = mUserManager.isQuietModeEnabled(user);
+            mUserManagerState.updateUserQuietMode(mUserCache, user, quietMode);
 
             if (Flags.enablePrivateSpace()) {
                 if (mUserCache.getUserInfo(user).isWork()) {
