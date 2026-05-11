@@ -46,6 +46,7 @@ import android.content.pm.PackageInstaller.SessionInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ShortcutInfo;
 import android.os.Bundle;
+import android.os.Process;
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.provider.Settings;
@@ -717,20 +718,24 @@ public class LoaderTask implements Runnable {
         boolean isWorkProfileQuiet = false;
         boolean isPrivateProfileQuiet = false;
         for (UserHandle user : profiles) {
-            // Query for the set of apps
-            final List<LauncherActivityInfo> apps = mLauncherApps.getActivityList(null, user);
-            // Fail if we don't have any apps
-            // TODO: Fix this. Only fail for the current user.
-            if (apps == null || apps.isEmpty()) {
-                return allActivityList;
-            }
             boolean quietMode = mUserManagerState.isUserQuiet(user);
 
             if (Flags.enablePrivateSpace()) {
                 if (mUserCache.getUserInfo(user).isWork()) {
-                    isWorkProfileQuiet = quietMode;
+                    isWorkProfileQuiet |= quietMode;
                 } else if (mUserCache.getUserInfo(user).isPrivate()) {
-                    isPrivateProfileQuiet = quietMode;
+                    isPrivateProfileQuiet |= quietMode;
+                }
+            }
+
+            // Query for the set of apps
+            final List<LauncherActivityInfo> apps = mLauncherApps.getActivityList(null, user);
+            // Fail if we don't have any apps
+            if (apps == null || apps.isEmpty()) {
+                if (Process.myUserHandle().equals(user)) {
+                    return allActivityList;
+                } else {
+                    continue;
                 }
             }
             // Create the ApplicationInfos
