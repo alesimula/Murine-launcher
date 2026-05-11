@@ -1120,14 +1120,16 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
                 .anyMatch(mWorkManager.getItemInfoMatcher());
         mHasPrivateApps = Stream.of(mAllAppsStore.getApps())
                 .anyMatch(mPrivateProfileManager.getItemInfoMatcher());
+        boolean privateProfileExists = mHasPrivateApps || mPrivateProfileManager.getProfileUser() != null;
         if (!isSearching()) {
             rebindAdapters();
         }
         if (mHasWorkApps) {
             mWorkManager.reset();
         }
-        if (mHasPrivateApps) {
+        if (privateProfileExists) {
             mPrivateProfileManager.reset();
+            post(() -> mAH.get(AdapterHolder.MAIN).applyPadding());
         }
 
         mActivityContext.getStatsLogManager().logger()

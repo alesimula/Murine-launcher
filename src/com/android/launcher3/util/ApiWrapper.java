@@ -25,6 +25,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.LauncherActivityInfo;
+import android.content.pm.LauncherApps;
+import android.content.pm.LauncherUserInfo;
 import android.content.pm.ShortcutInfo;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -93,22 +95,35 @@ public class ApiWrapper {
         UserManager um = mContext.getSystemService(UserManager.class);
         Map<UserHandle, UserIconInfo> users = new ArrayMap<>();
         List<UserHandle> usersActual = um.getUserProfiles();
-        if (usersActual != null) {
-            for (UserHandle user : usersActual) {
-                long serial = um.getSerialNumberForUser(user);
-
-                // Simple check to check if the provided user is work profile
-                // TODO: Migrate to a better platform API
-                NoopDrawable d = new NoopDrawable();
-                boolean isWork = (d != mContext.getPackageManager().getUserBadgedIcon(d, user));
-                UserIconInfo info = new UserIconInfo(
-                        user,
-                        isWork ? UserIconInfo.TYPE_WORK : UserIconInfo.TYPE_MAIN,
-                        serial);
-                users.put(user, info);
-            }
+        if (usersActual != null) for (UserHandle user : usersActual) {
+            long serial = um.getSerialNumberForUser(user);
+            users.put(user, new UserIconInfo(user, getUserType(user), serial));
         }
         return users;
+    }
+
+    /**
+     * Determines the user profile type
+     */
+    private int getUserType(UserHandle user) {
+        if (Utilities.ATLEAST_V) {
+            LauncherApps launcherApps = mContext.getSystemService(LauncherApps.class);
+            if (launcherApps != null) try {
+                LauncherUserInfo userInfo = launcherApps.getLauncherUserInfo(user);
+                if (userInfo != null) switch (userInfo.getUserType()) {
+                    case UserManager.USER_TYPE_PROFILE_MANAGED: return UserIconInfo.TYPE_WORK;
+                    case UserManager.USER_TYPE_PROFILE_CLONE: return UserIconInfo.TYPE_CLONED;
+                    case UserManager.USER_TYPE_PROFILE_PRIVATE : return UserIconInfo.TYPE_PRIVATE;
+                    default: return UserIconInfo.TYPE_MAIN;
+                }
+            } catch (Throwable e) {
+                // Not the default home app; fall through to legacy detection
+            }
+        }
+        // Legacy fallback: badge-based work profile detection
+        NoopDrawable d = new NoopDrawable();
+        boolean isWork = (d != mContext.getPackageManager().getUserBadgedIcon(d, user));
+        return isWork ? UserIconInfo.TYPE_WORK : UserIconInfo.TYPE_MAIN;
     }
 
     /**
