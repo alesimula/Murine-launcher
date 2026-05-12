@@ -713,6 +713,8 @@ public class PrivateProfileManager extends UserProfileManager {
                     getMainRecyclerView().getAdapter().notifyDataSetChanged();
                 }
             }
+            // Fixes private space not being re-unlockable after first lock on Android 15
+            updateView();
         }));
         if (expand) {
             animatorSet.playTogether(updateSettingsGearAlpha(true),
