@@ -210,8 +210,17 @@ public class PrivateProfileManager extends UserProfileManager {
 
     /** Whether private profile should be hidden on Launcher. */
     public boolean isPrivateSpaceHidden() {
-        return getCurrentState() == STATE_DISABLED && SettingsCache.INSTANCE
+        return getCurrentState() == STATE_DISABLED && isPrivateSpaceHiddenWhenLocked();
+    }
+
+    public boolean isPrivateSpaceHiddenWhenLocked() {
+        try {
+            return SettingsCache.INSTANCE
                     .get(mAllApps.getContext()).getValue(PRIVATE_SPACE_HIDE_WHEN_LOCKED_URI, 0);
+        } catch (Throwable t) {
+            Log.e("PrivateSpaceManager", "Cannot access setting: hide_privatespace_entry_point", t);
+            return false;
+        }
     }
 
     BitmapInfo preparePSBitmapInfo() {
