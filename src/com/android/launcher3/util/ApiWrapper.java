@@ -116,14 +116,19 @@ public class ApiWrapper {
                     case UserManager.USER_TYPE_PROFILE_PRIVATE : return UserIconInfo.TYPE_PRIVATE;
                     default: return UserIconInfo.TYPE_MAIN;
                 }
+                // If it returned null without throwing SecurityException, it may be a private space unlocked by a previously-set default launcher
+                else return isBadged(user) ? UserIconInfo.TYPE_PRIVATE : UserIconInfo.TYPE_MAIN;
             } catch (Throwable e) {
                 // Not the default home app; fall through to legacy detection
             }
         }
         // Legacy fallback: badge-based work profile detection
+        return isBadged(user) ? UserIconInfo.TYPE_WORK : UserIconInfo.TYPE_MAIN;
+    }
+
+    boolean isBadged(UserHandle user) {
         NoopDrawable d = new NoopDrawable();
-        boolean isWork = (d != mContext.getPackageManager().getUserBadgedIcon(d, user));
-        return isWork ? UserIconInfo.TYPE_WORK : UserIconInfo.TYPE_MAIN;
+        return (d != mContext.getPackageManager().getUserBadgedIcon(d, user));
     }
 
     /**
