@@ -286,7 +286,7 @@ public class PrivateProfileManager extends UserProfileManager {
             mAppInstallerIntent = apiWrapper
                     .getAppMarketActivityIntent(BuildConfig.APPLICATION_ID, profileUser);
         }
-        setPrivateSpaceSettingsAvailable(apiWrapper.getPrivateSpaceSettingsIntent() != null);
+        setPrivateSpaceSettingsAvailable(apiWrapper.getPrivateSpaceSettingsIntentSender() != null);
     }
 
     /** Adds a private space decorator only when STATE_ENABLED. */

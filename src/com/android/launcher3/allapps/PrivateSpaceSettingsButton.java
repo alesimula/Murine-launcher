@@ -34,7 +34,6 @@ public class PrivateSpaceSettingsButton extends ImageButton implements View.OnCl
 
     private final ActivityContext mActivityContext;
     private final StatsLogManager mStatsLogManager;
-    private final Intent mPrivateSpaceSettingsIntent;
 
     public PrivateSpaceSettingsButton(Context context) {
         this(context, null, 0);
@@ -48,8 +47,6 @@ public class PrivateSpaceSettingsButton extends ImageButton implements View.OnCl
         super(context, attrs, defStyleAttr);
         mActivityContext = ActivityContext.lookupContext(context);
         mStatsLogManager = mActivityContext.getStatsLogManager();
-        mPrivateSpaceSettingsIntent =
-                ApiWrapper.INSTANCE.get(context).getPrivateSpaceSettingsIntent();
     }
 
     @Override
@@ -63,18 +60,13 @@ public class PrivateSpaceSettingsButton extends ImageButton implements View.OnCl
         mStatsLogManager.logger().log(LAUNCHER_PRIVATE_SPACE_SETTINGS_TAP);
         AppInfo privateSpaceSettingsItemInfo = createPrivateSpaceSettingsAppInfo();
         view.setTag(privateSpaceSettingsItemInfo);
-        mActivityContext.startActivitySafely(
-                view,
-                mPrivateSpaceSettingsIntent,
-                privateSpaceSettingsItemInfo);
+        // Launch via system-authorized IntentSender
+        ApiWrapper.INSTANCE.get(getContext()).launchPrivateSpaceSettings(getContext());
     }
 
     AppInfo createPrivateSpaceSettingsAppInfo() {
         AppInfo itemInfo = new AppInfo();
         itemInfo.id = CONTAINER_PRIVATESPACE;
-        if (mPrivateSpaceSettingsIntent != null) {
-            itemInfo.componentName = mPrivateSpaceSettingsIntent.getComponent();
-        }
         itemInfo.container = CONTAINER_PRIVATESPACE;
         return itemInfo;
     }

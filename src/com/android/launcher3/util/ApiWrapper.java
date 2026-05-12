@@ -18,11 +18,13 @@ package com.android.launcher3.util;
 
 import static com.android.launcher3.LauncherConstants.ActivityCodes.REQUEST_HOME_ROLE;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
 import android.app.Person;
 import android.app.role.RoleManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.LauncherActivityInfo;
 import android.content.pm.LauncherApps;
@@ -34,6 +36,7 @@ import android.os.Process;
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.util.ArrayMap;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -171,10 +174,35 @@ public class ApiWrapper {
 
     /**
      * Returns an intent which can be used to open Private Space Settings.
+     * Kept for backward compat; actual button uses {@link #launchPrivateSpaceSettings(Context)}.
      */
     @Nullable
     public Intent getPrivateSpaceSettingsIntent() {
         return null;
+    }
+
+    @Nullable @SuppressLint("NewApi")
+    public IntentSender getPrivateSpaceSettingsIntentSender() {
+        if (!Utilities.ATLEAST_V) return null;
+        else try {
+            LauncherApps launcherApps = mContext.getSystemService(LauncherApps.class);
+            return launcherApps == null ? null : launcherApps.getPrivateSpaceSettingsIntent();
+        } catch (Exception e) {
+            Log.w("ApiWrapper", "Failed to check private space settings availability", e);
+            return null;
+        }
+    }
+
+    /**
+     * Launches Private Space Settings using the system's pre-authorized IntentSender.
+     */
+    public void launchPrivateSpaceSettings(Context context) {
+        if (!Utilities.ATLEAST_V) return;
+        else try {
+            getPrivateSpaceSettingsIntentSender().sendIntent(context, 0, null, null, null);
+        } catch (Exception e) {
+            Log.w("ApiWrapper", "Failed to launch private space settings", e);
+        }
     }
 
     /**
