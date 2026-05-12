@@ -61,7 +61,6 @@
                 android:layout_marginBottom="@dimen/ps_lock_icon_margin_bottom"
                 android:importantForAccessibility="no"
                 android:src="@drawable/ic_lock"
-                app:tint="@color/materialColorPrimaryFixedDim"
                 android:scaleType="center"/>
             <TextView
                 android:id="@+id/lock_text"
@@ -69,7 +68,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/ps_lock_icon_text_margin_start_expanded"
                 android:layout_marginEnd="@dimen/ps_lock_icon_text_margin_end_expanded"
-                android:textColor="@color/materialColorOnPrimaryFixed"
+                android:textColor="@color/all_apps_label_text_color_inverse"
                 android:textSize="14sp"
                 android:text="@string/ps_container_lock_title"
                 android:maxLines="1"

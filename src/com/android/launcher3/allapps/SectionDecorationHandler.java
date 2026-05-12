@@ -19,6 +19,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Color;
 import android.graphics.RectF;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.InsetDrawable;
@@ -60,7 +61,7 @@ public class SectionDecorationHandler {
         mContext = context;
         mFillAlpha = fillAlpha;
         mFocusColor = context.getColor(R.color.materialColorSurfaceBright); // UX recommended
-        mFillColor = context.getColor(R.color.materialColorSurfaceContainerHigh); // UX recommended
+        mFillColor = context.getColor(R.color.all_apps_tabs_bg_color);
 
         mIsTopLeftRound = isTopLeftRound;
         mIsTopRightRound = isTopRightRound;
@@ -94,7 +95,7 @@ public class SectionDecorationHandler {
 
     protected void setFillAlpha(int fillAlpha) {
         mFillAlpha = fillAlpha;
-        mPaint.setAlpha(mFillAlpha);
+        mPaint.setAlpha((Color.alpha(mFillColor) * mFillAlpha) / 255);
     }
 
     protected void onFocusDraw(Canvas canvas, @Nullable View view) {
@@ -102,7 +103,7 @@ public class SectionDecorationHandler {
             return;
         }
         mPaint.setColor(mFillColor);
-        mPaint.setAlpha(mFillAlpha);
+        mPaint.setAlpha((Color.alpha(mFillColor) * mFillAlpha) / 255);
         int scaledHeight = (int) (view.getHeight() * view.getScaleY());
         mBounds.set(view.getLeft(), view.getY(), view.getRight(), view.getY() + scaledHeight);
         onDraw(canvas);
@@ -192,7 +193,7 @@ public class SectionDecorationHandler {
             mBounds.left = mPaddingLeft;
             mBounds.right = canvas.getWidth() - mPaddingRight;
             mPaint.setColor(mFillColor);
-            mPaint.setAlpha(mFillAlpha);
+            mPaint.setAlpha((Color.alpha(mFillColor) * mFillAlpha) / 255);
             onDraw(canvas);
         }
     }

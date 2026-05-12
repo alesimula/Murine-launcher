@@ -601,7 +601,7 @@
 
     <style name="PrivateSpaceHeaderTextStyle">
         <item name="android:textSize">16sp</item>
-        <item name="android:textColor">@color/materialColorOnSurface</item>
+        <item name="android:textColor">@color/all_apps_label_text_color</item>
         <item name="android:fontFamily" android:featureFlag="com.android.launcher3.gsf_res">
             variable-title-medium
         </item>

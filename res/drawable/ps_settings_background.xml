@@ -14,10 +14,14 @@
   ~ limitations under the License.
   -->
 
-<inset xmlns:android="http://schemas.android.com/apk/res/android"
-    android:inset="4dp">
-    <shape android:shape="rectangle">
-        <corners android:radius="@dimen/ps_lock_corner_radius" />
-        <solid android:color="@color/materialColorSurfaceBright" />
-    </shape>
-</inset>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="?android:attr/colorControlHighlight">
+    <item>
+        <inset android:inset="4dp">
+            <shape android:shape="rectangle">
+                <corners android:radius="@dimen/ps_lock_corner_radius" />
+                <solid android:color="@color/all_apps_tabs_bg_color" />
+            </shape>
+        </inset>
+    </item>
+</ripple>
