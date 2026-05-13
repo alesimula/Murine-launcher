@@ -57,6 +57,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
@@ -225,9 +226,8 @@ public class PrivateProfileManager extends UserProfileManager {
 
     BitmapInfo preparePSBitmapInfo() {
         Context context = mAllApps.getContext();
-        Intent.ShortcutIconResource shortcut = Intent.ShortcutIconResource.fromContext(
-                context, com.android.launcher3.R.drawable.private_space_install_app_icon);
-        return LauncherIcons.obtain(context).createIconBitmap(shortcut);
+        return LauncherIcons.obtain(context).createBadgedIconBitmap(
+                AppCompatResources.getDrawable(context, R.drawable.private_space_install_app_icon));
     }
 
     /**
