@@ -20,12 +20,14 @@ import static com.android.launcher3.util.Executors.MAIN_EXECUTOR;
 
 import android.content.Context;
 import android.os.Handler;
+import android.os.UserManager;
 
 import androidx.annotation.AnyThread;
 
 import com.android.launcher3.LauncherAppState;
 import com.android.launcher3.allapps.BaseAllAppsAdapter.AdapterItem;
 import com.android.launcher3.model.data.AppInfo;
+import com.android.launcher3.pm.UserCache;
 import com.android.launcher3.search.SearchAlgorithm;
 import com.android.launcher3.search.SearchCallback;
 import com.android.launcher3.search.StringMatcherUtility;
@@ -61,7 +63,7 @@ public class DefaultAppSearchAlgorithm implements SearchAlgorithm<AdapterItem> {
     @Override
     public void doSearch(String query, SearchCallback<AdapterItem> callback) {
         mAppState.getModel().enqueueModelUpdateTask((taskController, dataModel, apps) ->  {
-            ArrayList<AdapterItem> result = getTitleMatchResult(apps.data, query);
+            ArrayList<AdapterItem> result = getTitleMatchResult(mAppState.getContext(), apps.data, query);
             if (mAddNoResultsMessage && result.isEmpty()) {
                 result.add(getEmptyMessageAdapterItem(query));
             }
@@ -82,17 +84,20 @@ public class DefaultAppSearchAlgorithm implements SearchAlgorithm<AdapterItem> {
      * Filters {@link AppInfo}s matching specified query
      */
     @AnyThread
-    public static ArrayList<AdapterItem> getTitleMatchResult(List<AppInfo> apps, String query) {
+    public static ArrayList<AdapterItem> getTitleMatchResult(Context context, List<AppInfo> apps, String query) {
         // Do an intersection of the words in the query and each title, and filter out all the
         // apps that don't match all of the words in the query.
         final String queryTextLower = query.toLowerCase();
         final ArrayList<AdapterItem> result = new ArrayList<>();
         StringMatcherUtility.StringMatcher matcher =
                 StringMatcherUtility.StringMatcher.getInstance();
+        UserManager userManager = context.getSystemService(UserManager.class);
+        UserCache userCache = UserCache.INSTANCE.get(context);
 
         int total = apps.size();
         for (int i = 0; i < total; i++) {
             AppInfo info = apps.get(i);
+            if (userCache.getUserInfo(info.user).isPrivate() && userManager.isQuietModeEnabled(info.user)) continue;
             if (StringMatcherUtility.matches(queryTextLower, info.title.toString(), matcher)) {
                 result.add(AdapterItem.asApp(info));
             }
