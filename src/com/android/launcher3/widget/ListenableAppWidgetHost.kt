@@ -19,6 +19,7 @@ package com.android.launcher3.widget
 import android.appwidget.AppWidgetHost
 import android.appwidget.AppWidgetProviderInfo
 import android.content.Context
+import android.os.Looper
 import com.android.launcher3.InvariantDeviceProfile
 import com.android.launcher3.util.Executors
 import com.android.launcher3.util.Executors.MAIN_EXECUTOR
@@ -52,12 +53,18 @@ open class ListenableAppWidgetHost(private val ctx: Context, hostId: Int) :
     }
 
     override fun onProviderChanged(appWidgetId: Int, appWidget: AppWidgetProviderInfo) {
-        // Fix stray call to onProviderChanged from background thread
-        MAIN_EXECUTOR.execute {
-            val info = LauncherAppWidgetProviderInfo.fromProviderInfo(ctx, appWidget)
+        val info = LauncherAppWidgetProviderInfo.fromProviderInfo(ctx, appWidget)
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            // Framework callback on main thread: safe to update views.
             super.onProviderChanged(appWidgetId, info)
             // The super method updates the dimensions of the providerInfo. Update the
             // launcher spans accordingly.
+            info.initSpans(ctx, InvariantDeviceProfile.INSTANCE.get(ctx))
+            return
+        }
+        // Fix BG thread stry calls: skip super.onProviderChanged (would updateAppWidget(null) and overwrite real content with default); just update provider info on view
+        else MAIN_EXECUTOR.execute {
+            holders.toList().forEach { holder -> holder.mViews[appWidgetId]?.setAppWidget(appWidgetId, info) }
             info.initSpans(ctx, InvariantDeviceProfile.INSTANCE.get(ctx))
         }
     }
