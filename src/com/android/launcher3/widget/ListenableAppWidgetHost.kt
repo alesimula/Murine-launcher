@@ -52,11 +52,14 @@ open class ListenableAppWidgetHost(private val ctx: Context, hostId: Int) :
     }
 
     override fun onProviderChanged(appWidgetId: Int, appWidget: AppWidgetProviderInfo) {
-        val info = LauncherAppWidgetProviderInfo.fromProviderInfo(ctx, appWidget)
-        super.onProviderChanged(appWidgetId, info)
-        // The super method updates the dimensions of the providerInfo. Update the
-        // launcher spans accordingly.
-        info.initSpans(ctx, InvariantDeviceProfile.INSTANCE.get(ctx))
+        // Fix stray call to onProviderChanged from background thread
+        MAIN_EXECUTOR.execute {
+            val info = LauncherAppWidgetProviderInfo.fromProviderInfo(ctx, appWidget)
+            super.onProviderChanged(appWidgetId, info)
+            // The super method updates the dimensions of the providerInfo. Update the
+            // launcher spans accordingly.
+            info.initSpans(ctx, InvariantDeviceProfile.INSTANCE.get(ctx))
+        }
     }
 
     /** Listener for getting notifications on provider changes. */
