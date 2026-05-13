@@ -484,10 +484,13 @@ public class ItemClickHandler {
         } */
         else {
             // Show native launcher-style options popup with store icons
-            android.graphics.RectF target = new android.graphics.RectF();
-            int[] loc = new int[2];
-            v.getLocationOnScreen(loc);
-            target.set(loc[0], loc[1], loc[0] + v.getWidth(), loc[1] + v.getHeight());
+            android.graphics.Rect pos = new android.graphics.Rect();
+            launcher.getDragLayer().getDescendantRectRelativeToSelf(v, pos);
+            pos.top += v.getPaddingTop();
+            pos.left += v.getPaddingLeft();
+            pos.right -= v.getPaddingRight();
+            pos.bottom -= v.getPaddingBottom();
+            android.graphics.RectF target = new android.graphics.RectF(pos);
             List<com.android.launcher3.views.OptionsPopupView.OptionItem> options = new java.util.ArrayList<>();
             for (LauncherActivityInfo lai : marketApps.values()) {
                 options.add(new com.android.launcher3.views.OptionsPopupView.OptionItem(
