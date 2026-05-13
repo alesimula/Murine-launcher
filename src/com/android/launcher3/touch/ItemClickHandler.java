@@ -17,6 +17,7 @@ package com.android.launcher3.touch;
 
 import static com.android.launcher3.LauncherConstants.ActivityCodes.REQUEST_BIND_PENDING_APPWIDGET;
 import static com.android.launcher3.LauncherConstants.ActivityCodes.REQUEST_RECONFIGURE_APPWIDGET;
+import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.IGNORE;
 import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_FOLDER_OPEN;
 import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_PRIVATE_SPACE_INSTALL_APP_BUTTON_TAP;
 import static com.android.launcher3.model.data.ItemInfoWithIcon.FLAG_DISABLED_BY_PUBLISHER;
@@ -30,9 +31,12 @@ import static com.android.launcher3.util.Executors.UI_HELPER_EXECUTOR;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.content.pm.LauncherApps;
+import android.content.pm.LauncherActivityInfo;
 import android.content.pm.PackageInstaller.SessionInfo;
 import android.os.Process;
+import android.os.UserHandle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -40,7 +44,6 @@ import android.view.View.OnClickListener;
 import android.widget.Toast;
 
 import com.android.launcher3.BubbleTextView;
-import com.android.launcher3.BuildConfig;
 import com.android.launcher3.Flags;
 import com.android.launcher3.InvariantDeviceProfile;
 import com.android.launcher3.Launcher;
@@ -74,9 +77,12 @@ import com.android.launcher3.widget.WidgetAddFlowHandler;
 import com.android.launcher3.widget.WidgetManagerHelper;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+
+import app.murinelauncher.util.Constants;
 
 /**
  * Class for handling clicks on workspace and all-apps items
@@ -388,11 +394,14 @@ public class ItemClickHandler {
                         Process.myUserHandle());
             } else if (itemInfoWithIcon.itemType
                     == LauncherSettings.Favorites.ITEM_TYPE_PRIVATE_SPACE_INSTALL_APP_BUTTON) {
-                intent = ApiWrapper.INSTANCE.get(launcher).getAppMarketActivityIntent(
-                        BuildConfig.APPLICATION_ID,
-                        launcher.getAppsView().getPrivateProfileManager().getProfileUser());
-                launcher.getStatsLogManager().logger().log(
-                        LAUNCHER_PRIVATE_SPACE_INSTALL_APP_BUTTON_TAP);
+                UserHandle privateUser = launcher.getAppsView().getPrivateProfileManager().getProfileUser();
+                if (privateUser != null) try {
+                    if (listPrivateSpaceMarketApps(launcher, privateUser, v, item)) return;
+                } catch (Exception e) {
+                    Log.w(TAG, "Failed to launch market in private user", e);
+                }
+                android.widget.Toast.makeText(launcher, R.string.activity_not_found, android.widget.Toast.LENGTH_SHORT).show();
+                return;
             }
         }
 
@@ -444,6 +453,58 @@ public class ItemClickHandler {
             FloatingIconView.fetchIcon(launcher, v, item, true /* isOpening */);
         }
         launcher.startActivitySafely(v, intent, item);
+    }
+
+    /**
+     * Show a selection popup view with all markets installed for private space
+     */
+    private static boolean listPrivateSpaceMarketApps(Launcher launcher, UserHandle privateUser, View v, ItemInfo item) {
+        LauncherApps launcherApps = launcher.getSystemService(LauncherApps.class);
+        Intent marketIntent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse("market://search?c=apps"));
+        java.util.LinkedHashMap<String, LauncherActivityInfo> marketApps = new java.util.LinkedHashMap<>();
+        // Find market handlers on main user that also exist in private profile
+        for (var ri : launcher.getPackageManager().queryIntentActivities(marketIntent, 0)) {
+            marketApps.computeIfAbsent(ri.activityInfo.packageName, pkg -> {
+                List<LauncherActivityInfo> a = launcherApps.getActivityList(pkg, privateUser);
+                return a.isEmpty() ? null : a.get(0);
+            });
+        }
+        // Fallback: check known store packages directly in private profile
+        for (String pkg : Constants.KNOWN_STORES) marketApps.computeIfAbsent(pkg, p -> {
+            List<LauncherActivityInfo> a = launcherApps.getActivityList(p, privateUser);
+            return a.isEmpty() ? null : a.get(0);
+        });
+        if (marketApps.isEmpty()) return false;
+        /* else if (marketApps.size() == 1) {
+            // Only one market; open directly (COMMENTED: prefer always asking)
+            var only = marketApps.values().stream().findFirst().get();
+            launcherApps.startMainActivity(only.getComponentName(), privateUser, null, launcher.getActivityLaunchOptions(v, item).toBundle());
+            launcher.getStatsLogManager().logger().log(LAUNCHER_PRIVATE_SPACE_INSTALL_APP_BUTTON_TAP);
+            return true;
+        } */
+        else {
+            // Show native launcher-style options popup with store icons
+            android.graphics.RectF target = new android.graphics.RectF();
+            int[] loc = new int[2];
+            v.getLocationOnScreen(loc);
+            target.set(loc[0], loc[1], loc[0] + v.getWidth(), loc[1] + v.getHeight());
+            List<com.android.launcher3.views.OptionsPopupView.OptionItem> options = new java.util.ArrayList<>();
+            for (LauncherActivityInfo lai : marketApps.values()) {
+                options.add(new com.android.launcher3.views.OptionsPopupView.OptionItem(
+                        lai.getLabel(),
+                        lai.getBadgedIcon(0),
+                        IGNORE,
+                        view -> {
+                            launcherApps.startMainActivity(lai.getComponentName(), privateUser, null, launcher.getActivityLaunchOptions(v, item).toBundle());
+                            launcher.getStatsLogManager().logger().log(LAUNCHER_PRIVATE_SPACE_INSTALL_APP_BUTTON_TAP);
+                            return true;
+                        },
+                        true /* useRawIcon */)
+                );
+            }
+            com.android.launcher3.views.OptionsPopupView.show(launcher, target, options, true);
+            return true;
+        }
     }
 
     /**

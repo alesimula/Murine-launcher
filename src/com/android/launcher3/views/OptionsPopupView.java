@@ -184,7 +184,10 @@ public class OptionsPopupView<T extends Context & ActivityContext> extends Arrow
             if (width > 0) {
                 view.getLayoutParams().width = width;
             }
-            view.getIconView().setBackgroundDrawable(item.icon);
+            if (item.icon != null) {
+                if (item.useRawIcon) view.getIconView().setBackgroundTintList(null);
+                view.getIconView().setBackgroundDrawable(item.icon);
+            }
             view.getBubbleText().setText(item.label);
             view.setOnClickListener(popup);
             view.setOnLongClickListener(popup);
@@ -323,23 +326,36 @@ public class OptionsPopupView<T extends Context & ActivityContext> extends Arrow
         public final Drawable icon;
         public final EventEnum eventId;
         public final OnLongClickListener clickListener;
+        public final boolean useRawIcon;
 
         public OptionItem(Context context, int labelRes, int iconRes, EventEnum eventId,
                 OnLongClickListener clickListener) {
+            this(context, labelRes, iconRes, eventId, clickListener, false);
+        }
+
+        public OptionItem(Context context, int labelRes, int iconRes, EventEnum eventId,
+                OnLongClickListener clickListener, boolean useRawIcon) {
             this.labelRes = labelRes;
             this.label = context.getText(labelRes);
             this.icon = ContextCompat.getDrawable(context, iconRes);
             this.eventId = eventId;
             this.clickListener = clickListener;
+            this.useRawIcon = useRawIcon;
         }
 
         public OptionItem(CharSequence label, Drawable icon, EventEnum eventId,
                 OnLongClickListener clickListener) {
+            this(label, icon, eventId, clickListener, false);
+        }
+
+        public OptionItem(CharSequence label, Drawable icon, EventEnum eventId,
+                OnLongClickListener clickListener, boolean useRawIcon) {
             this.labelRes = 0;
             this.label = label;
             this.icon = icon;
             this.eventId = eventId;
             this.clickListener = clickListener;
+            this.useRawIcon = useRawIcon;
         }
     }
 }
