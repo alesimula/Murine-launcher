@@ -254,6 +254,9 @@ public class PrivateProfileManager extends UserProfileManager {
             postUnlock();
         } else if (previousState == STATE_ENABLED && updatedState == STATE_DISABLED){
             executeLock();
+        } else {
+            // No state transition = no animation will run; clear the flag to avoid it getting stuck.
+            mReadyToAnimate = false;
         }
         addPrivateSpaceDecorator(updatedState);
         Trace.endSection();
