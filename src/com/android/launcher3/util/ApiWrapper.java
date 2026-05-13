@@ -139,6 +139,12 @@ public class ApiWrapper {
      * An empty list denotes that all system packages are installed for that user at creation.
      */
     public List<String> getPreInstalledSystemPackages(UserHandle user) {
+        if (Utilities.ATLEAST_V) try {
+            LauncherApps launcherApps = mContext.getSystemService(LauncherApps.class);
+            if (launcherApps != null) return launcherApps.getPreInstalledSystemPackages(user);
+        } catch (Exception e) {
+            Log.w("ApiWrapper", "Failed to get pre-installed system packages", e);
+        }
         return Collections.emptyList();
     }
 
