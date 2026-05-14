@@ -48,7 +48,6 @@ import com.android.launcher3.views.ActivityContext;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Layout to contain the All-apps search UI.
@@ -180,11 +179,7 @@ public class AppsSearchContainerLayout extends ExtendedEditText
                 unlockInfo.bitmap = ppm.preparePSUnlockBitmapInfo();
                 unlockInfo.intent = new Intent(PrivateProfileManager.ACTION_PRIVATE_SPACE_UNLOCK);
                 unlockInfo.contentDescription = privateSpaceLabel;
-                ArrayList<AdapterItem> psResult = new ArrayList<>();
-                psResult.add(AdapterItem.asApp(unlockInfo));
-                mAppsView.setSearchResults(Stream.concat(psResult.stream(), items.stream())
-                        .collect(Collectors.toCollection(ArrayList::new)));
-                return;
+                items.add(0, AdapterItem.asApp(unlockInfo));
             }
             mAppsView.setSearchResults(items);
         }
