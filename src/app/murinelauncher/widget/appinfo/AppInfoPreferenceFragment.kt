@@ -5,10 +5,12 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.view.ContextThemeWrapper
 import android.content.pm.ApplicationInfo
+import android.content.pm.LauncherApps
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Process
+import android.os.UserHandle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,7 +31,9 @@ import app.murinelauncher.icons.IconPackManager.IconPackInfo
 import app.murinelauncher.widget.radio.RadioGroupBottomSheet
 import com.android.launcher3.LauncherAppState
 import com.android.launcher3.R
+import com.android.launcher3.Utilities
 import com.android.settingslib.widget.SettingsBasePreferenceFragment
+import java.io.File
 import java.text.DateFormat
 import java.util.Date
 
@@ -85,9 +89,21 @@ class AppInfoPreferenceFragment : SettingsBasePreferenceFragment() {
         val pkg = packageName ?: return
         val ctx = requireContext()
         val pm = ctx.packageManager
+        val userHandle: UserHandle = args.getParcelable(ARG_USER_HANDLE) ?: Process.myUserHandle()
+        val isCrossProfile = userHandle != Process.myUserHandle()
 
         var packageInfo: PackageInfo? = null
-        try { packageInfo = pm.getPackageInfo(pkg, 0) } catch (_: PackageManager.NameNotFoundException) {}
+        var crossProfileAppInfo: ApplicationInfo? = null
+        if (isCrossProfile) {
+            val launcherApps = ctx.getSystemService(Context.LAUNCHER_APPS_SERVICE) as? LauncherApps
+            crossProfileAppInfo = try { launcherApps?.getApplicationInfo(pkg, 0, userHandle) } catch (_: Exception) { null }
+            // Too expensive, better to only show versionCode
+            /*if (crossProfileAppInfo?.sourceDir != null) packageInfo = try {
+                    pm.getPackageArchiveInfo(crossProfileAppInfo.sourceDir!!, 0)
+            } catch (_: Exception) { null }*/
+        }
+        else try { packageInfo = pm.getPackageInfo(pkg, 0) } catch (_: PackageManager.NameNotFoundException) {}
+
         val screen = preferenceScreen
 
         // Package
@@ -98,18 +114,25 @@ class AppInfoPreferenceFragment : SettingsBasePreferenceFragment() {
         if (packageInfo?.versionName != null) {
             versionPref?.summary = ctx.getString(R.string.app_info_version_value,
                     packageInfo.versionName, PackageInfoCompat.getLongVersionCode(packageInfo))
+        } else if (isCrossProfile && crossProfileAppInfo != null) {
+            versionPref?.title = "${versionPref.title} (#)"
+            versionPref?.summary = try {
+                if (Utilities.ATLEAST_P) { crossProfileAppInfo.longVersionCode.toString() } else
+                    crossProfileAppInfo.versionCode.toString()
+            } catch (_: Throwable) {
+                removePref(screen, KEY_VERSION); null
+            }
         } else removePref(screen, KEY_VERSION)
 
         // Last update
         val updatePref = screen.findPreference<Preference>(KEY_LAST_UPDATE)
-        if (packageInfo != null && packageInfo.lastUpdateTime > 0) {
-            val dateStr = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT)
-                .format(Date(packageInfo.lastUpdateTime))
-            updatePref?.summary = dateStr
-        } else removePref(screen, KEY_LAST_UPDATE)
+        val lastUpdateTime = if (!isCrossProfile) packageInfo?.lastUpdateTime ?: 0 else
+            crossProfileAppInfo?.sourceDir?.let { File(it) }?.lastModified() ?: 0
+        if (lastUpdateTime > 0) updatePref?.summary = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT)
+            .format(Date(lastUpdateTime))
 
         // Source
-        val sourceLabel = resolveSourceLabel(ctx, pm, packageInfo, pkg)
+        val sourceLabel = resolveSourceLabel(ctx, pm, isCrossProfile, crossProfileAppInfo, packageInfo, pkg)
         val sourcePref = screen.findPreference<Preference>(KEY_SOURCE)
         if (sourceLabel != null) sourcePref?.summary = sourceLabel
         else removePref(screen, KEY_SOURCE)
@@ -234,16 +257,22 @@ class AppInfoPreferenceFragment : SettingsBasePreferenceFragment() {
 
     private fun resolveSourceLabel(
         context: Context, pm: PackageManager,
+        isCrossProfile: Boolean, crossProfileAppInfo: ApplicationInfo?,
         packageInfo: PackageInfo?, packageName: String
     ): String? {
-        if (packageInfo == null) return null
-        return try {
+        if (isCrossProfile) {
+            val appInfo = crossProfileAppInfo ?: return null
+            val isSystem = (appInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0
+            // Could also use context.getString(R.string.package_state_unknown) as fallback
+            return if (isSystem) context.getString(R.string.app_info_source_system) else null
+        }
+        else return try {
             val installer = pm.getInstallerPackageName(packageName)
             if (installer != null) {
                 try { pm.getApplicationInfo(installer, 0).let { pm.getApplicationLabel(it).toString() } }
                 catch (_: PackageManager.NameNotFoundException) { installer }
             } else {
-                val isSystem = (packageInfo.applicationInfo!!.flags and ApplicationInfo.FLAG_SYSTEM) != 0
+                val isSystem = (packageInfo!!.applicationInfo!!.flags and ApplicationInfo.FLAG_SYSTEM) != 0
                 if (isSystem) context.getString(R.string.app_info_source_system) else null
             }
         } catch (_: Exception) { null }
@@ -288,6 +317,7 @@ class AppInfoPreferenceFragment : SettingsBasePreferenceFragment() {
         private const val ARG_LABEL_KEY = "label_key"
         private const val ARG_INSTANCE_ID = "instance_id"
         private const val ARG_ORIGINAL_LABEL = "original_label"
+        private const val ARG_USER_HANDLE = "user_handle"
         private const val KEY_PACKAGE = "pref_app_info_package"
         private const val KEY_VERSION = "pref_app_info_version"
         private const val KEY_LAST_UPDATE = "pref_app_info_last_update"
@@ -297,7 +327,7 @@ class AppInfoPreferenceFragment : SettingsBasePreferenceFragment() {
 
         private val COPYABLE_KEYS = setOf(KEY_PACKAGE, KEY_VERSION, KEY_LAST_UPDATE, KEY_SOURCE)
 
-        fun newInstance(componentKey: String, packageName: String, labelKey: String, originalLabel: String, instanceId: Int = -1): AppInfoPreferenceFragment {
+        fun newInstance(componentKey: String, packageName: String, labelKey: String, originalLabel: String, instanceId: Int = -1, userHandle: UserHandle = Process.myUserHandle()): AppInfoPreferenceFragment {
             return AppInfoPreferenceFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_COMPONENT_KEY, componentKey)
@@ -305,6 +335,7 @@ class AppInfoPreferenceFragment : SettingsBasePreferenceFragment() {
                     putString(ARG_LABEL_KEY, labelKey)
                     putString(ARG_ORIGINAL_LABEL, originalLabel)
                     putInt(ARG_INSTANCE_ID, instanceId)
+                    putParcelable(ARG_USER_HANDLE, userHandle)
                 }
             }
         }

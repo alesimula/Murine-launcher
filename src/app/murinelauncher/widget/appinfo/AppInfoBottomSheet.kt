@@ -77,7 +77,7 @@ class AppInfoBottomSheet @JvmOverloads constructor(context: Context?, attrs: Att
             val (labelKey, originalLabel, instanceId) = resolveLabelInfo(context, itemInfo, componentName)
             val fragment = AppInfoPreferenceFragment.newInstance(
                 componentName.flattenToString(), componentName.packageName,
-                labelKey, originalLabel, instanceId
+                labelKey, originalLabel, instanceId, itemInfo.user
             )
             fragment.onLabelEdited = { newLabel -> titleView.text = newLabel }
             activity.supportFragmentManager.beginTransaction()
