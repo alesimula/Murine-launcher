@@ -132,5 +132,9 @@
     <string name="pref_clear_custom_icons_confirm_title">Clear custom icons?</string>
     <string name="pref_clear_custom_icons_confirm_message">This will reset all per-app icon pack overrides to the global setting.</string>
     <string name="pref_clear_custom_icons_toast">Custom icons cleared</string>
+
+    <!-- Misc -->
     <string name="pref_default_launcher_title">Default launcher</string>
+    <string name="pref_restart_title">Restart</string>
+    <string name="pref_restart_summary">Restart the launcher</string>
 </resources>

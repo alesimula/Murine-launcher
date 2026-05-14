@@ -134,5 +134,9 @@
     <string name="pref_clear_custom_icons_confirm_title">¿Borrar iconos personalizados?</string>
     <string name="pref_clear_custom_icons_confirm_message">Esto restablecerá todas las asignaciones de iconos personalizados por aplicación a la configuración global.</string>
     <string name="pref_clear_custom_icons_toast">Iconos personalizados borrados</string>
+
+    <!-- Misc -->
     <string name="pref_default_launcher_title">Lanzador predeterminado</string>
+    <string name="pref_restart_title">Reiniciar</string>
+    <string name="pref_restart_summary">Reiniciar el launcher</string>
 </resources>

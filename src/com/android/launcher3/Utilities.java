@@ -90,6 +90,7 @@ import com.android.launcher3.pm.UserCache;
 import com.android.launcher3.shortcuts.ShortcutKey;
 import com.android.launcher3.shortcuts.ShortcutRequest;
 import com.android.launcher3.testing.shared.ResourceUtils;
+import com.android.launcher3.util.Executors;
 import com.android.launcher3.util.FlagOp;
 import com.android.launcher3.util.IntArray;
 import com.android.launcher3.util.SplitConfigurationOptions.SplitPositionOption;
@@ -112,6 +113,9 @@ public final class Utilities {
     private static final String TAG = "Launcher.Utilities";
 
     private static final String TRIM_PATTERN = "(^\\h+|\\h+$)";
+
+    private static final Object RESTART_LOCK = new Object();
+    private static volatile boolean RESTART_UNDERWAY = false;
 
     private static final Matrix sMatrix = new Matrix();
     private static final Matrix sInverseMatrix = new Matrix();
@@ -1019,6 +1023,14 @@ public final class Utilities {
     public static void debugLog(String tag, String message) {
         if (BuildConfig.IS_DEBUG_DEVICE) {
             Log.d(tag, message);
+        }
+    }
+
+    public static void restart() {
+        if (!RESTART_UNDERWAY) synchronized (RESTART_LOCK) {
+            if (RESTART_UNDERWAY) return;
+            RESTART_UNDERWAY = true;
+            Executors.MAIN_EXECUTOR.getHandler().postDelayed(() -> System.exit(0), 250);
         }
     }
 }

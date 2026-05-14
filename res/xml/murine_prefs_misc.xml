@@ -30,4 +30,9 @@
         android:key="pref_default_launcher"
         android:title="@string/pref_default_launcher_title" />
 
+    <app.murinelauncher.widget.RestartPreference
+        android:key="pref_restart"
+        android:title="@string/pref_restart_title"
+        android:summary="@string/pref_restart_summary" />
+
 </androidx.preference.PreferenceScreen>

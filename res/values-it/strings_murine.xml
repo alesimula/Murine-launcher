@@ -132,5 +132,9 @@
     <string name="pref_clear_custom_icons_confirm_title">Cancellare icone personalizzate?</string>
     <string name="pref_clear_custom_icons_confirm_message">Verranno ripristinate le impostazioni globali per tutte le icone personalizzate.</string>
     <string name="pref_clear_custom_icons_toast">Icone personalizzate cancellate</string>
+
+    <!-- Misc -->
     <string name="pref_default_launcher_title">Launcher predefinito</string>
+    <string name="pref_restart_title">Riavvia</string>
+    <string name="pref_restart_summary">Riavvia il launcher</string>
 </resources>
