@@ -253,7 +253,9 @@ class AppInfoPreferenceFragment : SettingsBasePreferenceFragment() {
     private fun refreshIconForPackage(context: Context, packageName: String) {
         //IconPackManager.clearMainCache()
         val appState = LauncherAppState.getInstance(context)
-        appState.model.onAppIconChanged(packageName, Process.myUserHandle())
+        // Refresh icon for all users
+        for (user in com.android.launcher3.pm.UserCache.INSTANCE.get(context).userProfiles)
+            appState.model.onAppIconChanged(packageName, user)
     }
 
     private fun resolveSourceLabel(
