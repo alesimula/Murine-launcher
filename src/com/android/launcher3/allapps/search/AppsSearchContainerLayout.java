@@ -23,6 +23,7 @@ import static com.android.launcher3.Utilities.prefixTextWithIcon;
 import static com.android.launcher3.icons.IconNormalizer.ICON_VISIBLE_AREA_FACTOR;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Rect;
 import android.text.Selection;
 import android.text.SpannableStringBuilder;
@@ -39,11 +40,15 @@ import com.android.launcher3.R;
 import com.android.launcher3.allapps.ActivityAllAppsContainerView;
 import com.android.launcher3.allapps.AllAppsStore;
 import com.android.launcher3.allapps.BaseAllAppsAdapter.AdapterItem;
+import com.android.launcher3.allapps.PrivateProfileManager;
 import com.android.launcher3.allapps.SearchUiManager;
+import com.android.launcher3.model.data.AppInfo;
 import com.android.launcher3.search.SearchCallback;
 import com.android.launcher3.views.ActivityContext;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Layout to contain the All-apps search UI.
@@ -51,7 +56,6 @@ import java.util.ArrayList;
 public class AppsSearchContainerLayout extends ExtendedEditText
         implements SearchUiManager, SearchCallback<AdapterItem>,
         AllAppsStore.OnUpdateListener, Insettable {
-
     private final ActivityContext mLauncher;
     private final AllAppsSearchBarController mSearchBarController;
     private final SpannableStringBuilder mSearchQueryBuilder;
@@ -168,6 +172,20 @@ public class AppsSearchContainerLayout extends ExtendedEditText
     @Override
     public void onSearchResult(String query, ArrayList<AdapterItem> items) {
         if (items != null) {
+            PrivateProfileManager ppm = mAppsView.getPrivateProfileManager();
+            String privateSpaceLabel = getContext().getString(R.string.private_space_label);
+            if (ppm != null && ppm.isPrivateSpaceHidden() && query.equalsIgnoreCase(privateSpaceLabel)) {
+                AppInfo unlockInfo = new AppInfo();
+                unlockInfo.title = privateSpaceLabel;
+                unlockInfo.bitmap = ppm.preparePSUnlockBitmapInfo();
+                unlockInfo.intent = new Intent(PrivateProfileManager.ACTION_PRIVATE_SPACE_UNLOCK);
+                unlockInfo.contentDescription = privateSpaceLabel;
+                ArrayList<AdapterItem> psResult = new ArrayList<>();
+                psResult.add(AdapterItem.asApp(unlockInfo));
+                mAppsView.setSearchResults(Stream.concat(psResult.stream(), items.stream())
+                        .collect(Collectors.toCollection(ArrayList::new)));
+                return;
+            }
             mAppsView.setSearchResults(items);
         }
     }

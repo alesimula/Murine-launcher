@@ -94,6 +94,7 @@ import java.util.function.Predicate;
 public class PrivateProfileManager extends UserProfileManager {
 
     private static final String TAG = "PrivateProfileManager";
+    public static final String ACTION_PRIVATE_SPACE_UNLOCK = "com.android.launcher3.PRIVATE_SPACE_UNLOCK";
     private static final int EXPAND_COLLAPSE_DURATION = 400;
     private static final int SETTINGS_OPACITY_DURATION = 400;
     private static final int TEXT_UNLOCK_OPACITY_DURATION = 300;
@@ -228,6 +229,12 @@ public class PrivateProfileManager extends UserProfileManager {
         Context context = mAllApps.getContext();
         return LauncherIcons.obtain(context).createBadgedIconBitmap(
                 AppCompatResources.getDrawable(context, R.drawable.private_space_install_app_icon));
+    }
+
+    public BitmapInfo preparePSUnlockBitmapInfo() {
+        Context context = mAllApps.getContext();
+        return LauncherIcons.obtain(context).createBadgedIconBitmap(
+                AppCompatResources.getDrawable(context, R.drawable.ic_private_space));
     }
 
     /**

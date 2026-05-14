@@ -51,6 +51,8 @@ import com.android.launcher3.LauncherSettings;
 import com.android.launcher3.R;
 import com.android.launcher3.Utilities;
 import com.android.launcher3.allapps.AlphabeticalAppsList;
+import com.android.launcher3.allapps.PrivateProfileManager;
+import com.android.launcher3.allapps.search.AppsSearchContainerLayout;
 import com.android.launcher3.apppairs.AppPairIcon;
 import com.android.launcher3.folder.Folder;
 import com.android.launcher3.folder.FolderIcon;
@@ -425,6 +427,11 @@ public class ItemClickHandler {
                 btv.startLongPressAction();
                 return;
             }
+        }
+        if (intent != null && PrivateProfileManager.ACTION_PRIVATE_SPACE_UNLOCK.equals(intent.getAction())) {
+            PrivateProfileManager ppm = launcher.getAppsView().getPrivateProfileManager();
+            if (ppm != null) ppm.setQuietMode(false);
+            return;
         }
         if (intent == null) {
             throw new IllegalArgumentException("Input must have a valid intent");

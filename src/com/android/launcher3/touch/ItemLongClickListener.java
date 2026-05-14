@@ -39,6 +39,8 @@ import com.android.launcher3.dragndrop.DragController;
 import com.android.launcher3.dragndrop.DragOptions;
 import com.android.launcher3.folder.Folder;
 import com.android.launcher3.logging.StatsLogManager.StatsLogger;
+import com.android.launcher3.allapps.PrivateProfileManager;
+import com.android.launcher3.model.data.AppInfo;
 import com.android.launcher3.model.data.ItemInfo;
 import com.android.launcher3.model.data.PrivateSpaceInstallAppButtonInfo;
 import com.android.launcher3.testing.TestLogging;
@@ -165,6 +167,10 @@ public class ItemLongClickListener {
         StatsLogger logger = launcher.getStatsLogManager().logger();
         if (v.getTag() instanceof ItemInfo itemInfo) {
             if (itemInfo instanceof PrivateSpaceInstallAppButtonInfo) {
+                return false;
+            }
+            if (itemInfo instanceof AppInfo appInfo && appInfo.intent != null
+                    && PrivateProfileManager.ACTION_PRIVATE_SPACE_UNLOCK.equals(appInfo.intent.getAction())) {
                 return false;
             }
             logger.withItemInfo((ItemInfo) v.getTag());
