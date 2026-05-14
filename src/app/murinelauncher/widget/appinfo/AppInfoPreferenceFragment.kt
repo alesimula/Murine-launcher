@@ -47,6 +47,7 @@ class AppInfoPreferenceFragment : SettingsBasePreferenceFragment() {
     private var packageName: String? = null
     private var labelKey: String? = null
     private var instanceId: Int = -1
+    private var userHandle: UserHandle = Process.myUserHandle()
     private var themedContext: Context? = null
     private var editLabelPref: EditTextPreference? = null
     private var originalLabel: CharSequence = ""
@@ -89,7 +90,7 @@ class AppInfoPreferenceFragment : SettingsBasePreferenceFragment() {
         val pkg = packageName ?: return
         val ctx = requireContext()
         val pm = ctx.packageManager
-        val userHandle: UserHandle = args.getParcelable(ARG_USER_HANDLE) ?: Process.myUserHandle()
+        userHandle = args.getParcelable(ARG_USER_HANDLE) ?: Process.myUserHandle()
         val isCrossProfile = userHandle != Process.myUserHandle()
 
         var packageInfo: PackageInfo? = null
@@ -162,7 +163,7 @@ class AppInfoPreferenceFragment : SettingsBasePreferenceFragment() {
             }
             val pkg = packageName ?: return@setOnPreferenceChangeListener true
             val appState = LauncherAppState.getInstance(ctx)
-            appState.model.onAppIconChanged(pkg, Process.myUserHandle())
+            appState.model.onAppIconChanged(pkg, userHandle)
             true
         }
     }
