@@ -579,6 +579,9 @@
     <dimen name="app_title_pill_horizontal_padding">4dp</dimen>
     <dimen name="app_title_pill_round_rect_padding">2dp</dimen>
 
+    <!-- Murine drawer paddings -->
+    <dimen name="murine_drawer_padding_phone">@dimen/_18sdp</dimen>
+
     <!-- Murine search bar dimensions -->
     <dimen name="murine_search_widget_height">@dimen/_42sdp</dimen> <!-- referenced by qsb_widget_height -->
     <dimen name="murine_search_plate_height">@dimen/_34sdp</dimen>

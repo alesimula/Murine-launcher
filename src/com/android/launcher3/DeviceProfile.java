@@ -1384,7 +1384,7 @@ public class DeviceProfile {
             // FIX: always use user-selected scaling for drawable icon size
             updateAllAppsIconSize(1f, context.getResources());
         }
-        updateAllAppsContainerWidth();
+        updateAllAppsContainerWidth(context.getResources());
         if (isVerticalLayout && !mIsResponsiveGrid) {
             hideWorkspaceLabelsIfNotEnoughSpace();
         }
@@ -1539,18 +1539,23 @@ public class DeviceProfile {
                 + textHeight + (topBottomPadding * 2);
     }
 
-    private void updateAllAppsContainerWidth() {
-        int cellLayoutHorizontalPadding =
-                (cellLayoutPaddingPx.left + cellLayoutPaddingPx.right) / 2;
+    private void updateAllAppsContainerWidth(Resources res) {
         if (isTablet) {
             int usedWidth = (allAppsCellWidthPx * numShownAllAppsColumns)
                     + (allAppsBorderSpacePx.x * (numShownAllAppsColumns - 1))
                     + allAppsPadding.left + allAppsPadding.right;
             allAppsLeftRightMargin = Math.max(1, (availableWidthPx - usedWidth) / 2);
         } else if (!mIsResponsiveGrid) {
+            // New logic - uses sdp library and returns
+            int sdpBasePadding = res.getDimensionPixelSize(R.dimen.murine_drawer_padding_phone);
+            allAppsPadding.left = allAppsPadding.right = sdpBasePadding;
+            return;
+            // Old logic - does not return and continues below
+            /*int cellLayoutHorizontalPadding =
+                    (cellLayoutPaddingPx.left + cellLayoutPaddingPx.right) / 2;
             allAppsPadding.left = allAppsPadding.right =
                     Math.max(0, desiredWorkspaceHorizontalMarginPx + cellLayoutHorizontalPadding
-                            - (allAppsBorderSpacePx.x / 2));
+                            - (allAppsBorderSpacePx.x / 2));*/
         }
         var allAppLeftRightMarginMultiplier = 0.7f;
         var marginMultiplier = allAppLeftRightMarginMultiplier * (!isTablet ? 100 : 2);
