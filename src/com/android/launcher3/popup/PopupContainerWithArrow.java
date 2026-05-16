@@ -317,7 +317,8 @@ public class PopupContainerWithArrow<T extends Context & ActivityContext>
      */
     private void addAllShortcuts(int deepShortcutCount,
             List<SystemShortcut> systemShortcuts) {
-        if (deepShortcutCount + systemShortcuts.size() <= SHORTCUT_COLLAPSE_THRESHOLD) {
+        int displayedDeepShortcutCount = Math.min(deepShortcutCount, MAX_SHORTCUTS);
+        if (displayedDeepShortcutCount + systemShortcuts.size() <= SHORTCUT_COLLAPSE_THRESHOLD) {
             // add all system shortcuts including widgets shortcut to same container
             addSystemShortcuts(systemShortcuts,
                     R.layout.system_shortcut_rows_container,
