@@ -87,6 +87,8 @@
         <item name="android:colorBackground">@color/settingslib_materialColorSurfaceContainer</item>
         <item name="android:textColorPrimary">@color/settingslib_materialColorOnSurface</item>
         <item name="android:textColorSecondary">@color/settingslib_text_color_secondary</item>
+        <item name="android:colorAccent">@color/settingslib_materialColorPrimary</item>
+        <item name="colorAccent">@color/settingslib_materialColorPrimary</item>
         <item name="bottomSheetStyle">@style/Widget.SettingsLib.BottomSheet</item>
         <item name="bottomSheetDragHandleStyle">@style/Widget.SettingsLib.DragHandle</item>
     </style>
