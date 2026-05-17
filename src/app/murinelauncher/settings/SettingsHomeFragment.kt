@@ -15,6 +15,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.preference.Preference
 import androidx.preference.SwitchPreferenceCompat
 import app.murinelauncher.receiver.ScreenOffAdminReceiver
+import app.murinelauncher.widget.accessibility.AlertDialogSheet
 import app.murinelauncher.widget.radio.RadioGroupPreference
 import app.murinelauncher.widget.smartspace.SmartspaceMode
 import app.murinelauncher.service.MurineAccessibilityService
@@ -111,6 +112,13 @@ public final class SettingsHomeFragment: AbstractSettingsFragment() {
             DOUBLE_TAP_TO_SLEEP -> {
                 preference.setOnPreferenceChangeListener { _, newValue ->
                     if (newValue as Boolean && Utilities.ATLEAST_P) {
+                        if (!LauncherPrefs.ACCESSIBILITY_DISCLOSURE_ACCEPTED.get(requireContext())) {
+                            AlertDialogSheet.show(requireActivity(), getString(R.string.pref_accessibility_disclosure_title), getString(R.string.pref_accessibility_disclosure_desc)) {
+                                LauncherPrefs.get(requireContext()).put(LauncherPrefs.ACCESSIBILITY_DISCLOSURE_ACCEPTED, true)
+                                requestAccessibilityPermission(requireContext())
+                            }
+                            return@setOnPreferenceChangeListener false
+                        }
                         // Check if our specific Accessibility Service is active
                         return@setOnPreferenceChangeListener requestAccessibilityPermission(requireContext())
                     }

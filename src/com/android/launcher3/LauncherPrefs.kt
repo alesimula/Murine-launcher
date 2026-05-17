@@ -335,6 +335,9 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
         @JvmField
         val GESTURE_SWIPE_DOWN_NOTIFICATIONS =
             backedUpItem(SettingsHomeFragment.SWIPE_DOWN_NOTIFICATIONS, true)
+        @JvmField
+        val ACCESSIBILITY_DISCLOSURE_ACCEPTED =
+            backedUpItem("pref_accessibility_disclosure_accepted", false)
 
         @JvmField
         val DEVICE_TYPE =
