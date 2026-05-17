@@ -1,9 +1,6 @@
 /* --- Forced Dark Mode Prevention --- */
 :root {
-  color-scheme: light dark;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="dark"]) { color-scheme: light; }
+  color-scheme: dark;
 }
 html, body, img, svg, picture, video {
   forced-color-adjust: none;
