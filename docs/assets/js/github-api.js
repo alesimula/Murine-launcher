@@ -78,7 +78,7 @@
         console.error('Failed to load release:', err);
         container.innerHTML =
           '<div class="error-state">' +
-          '<span class="material-symbols-outlined">cloud_off</span>' +
+          '<span class="material-symbols-outlined">&#xE2C1;</span>' /* cloud_off */ +
           '<p>Could not load release info.</p>' +
           '<p style="font-size:0.8125rem">Check the <a href="https://github.com/' + REPO + '/releases" target="_blank">releases page</a> directly.</p>' +
           '</div>';
@@ -100,7 +100,7 @@
       apkAssets.forEach(function (asset) {
         assetsHtml +=
           '<a href="' + asset.browser_download_url + '" class="asset-item">' +
-          '<div class="asset-info"><span class="material-symbols-outlined">android</span>' +
+          '<div class="asset-info"><span class="material-symbols-outlined">&#xE859;</span>' /* android */ +
           '<span class="asset-name">' + asset.name + '</span></div>' +
           '<span class="asset-size">' + formatBytes(asset.size) + '</span></a>';
       });
@@ -108,7 +108,7 @@
       otherAssets.forEach(function (asset) {
         assetsHtml +=
           '<a href="' + asset.browser_download_url + '" class="asset-item">' +
-          '<div class="asset-info"><span class="material-symbols-outlined">description</span>' +
+          '<div class="asset-info"><span class="material-symbols-outlined">&#xE873;</span>' /* description */ +
           '<span class="asset-name">' + asset.name + '</span></div>' +
           '<span class="asset-size">' + formatBytes(asset.size) + '</span></a>';
       });
@@ -119,16 +119,16 @@
     container.innerHTML =
       '<div class="release-card">' +
       '<div class="release-card-header">' +
-      '<h2><span class="material-symbols-outlined">new_releases</span>' + (release.name || release.tag_name) + '</h2>' +
+      '<h2><span class="material-symbols-outlined">&#xE031;</span>' /* new_releases */ + (release.name || release.tag_name) + '</h2>' +
       '<div class="release-meta">' +
-      '<span><span class="material-symbols-outlined">calendar_today</span>' + formatDate(release.published_at) + '</span>' +
-      '<span><span class="material-symbols-outlined">sell</span>' + release.tag_name + '</span>' +
+      '<span><span class="material-symbols-outlined">&#xE935;</span>' /* calendar_today */ + formatDate(release.published_at) + '</span>' +
+      '<span><span class="material-symbols-outlined">&#xF05B;</span>' /* sell */ + release.tag_name + '</span>' +
       '</div></div>' +
       '<div class="release-body"><div class="release-notes">' + mdToHtml(release.body) + '</div></div>' +
       assetsHtml +
       '<div class="release-footer">' +
       '<a href="https://github.com/' + REPO + '/releases" class="btn-text" target="_blank" rel="noopener">' +
-      '<span class="material-symbols-outlined">history</span>View all releases</a>' +
+      '<span class="material-symbols-outlined">&#xE889;</span>View all releases</a>' /* history */ +
       '</div></div>';
 
     // Also update download button href

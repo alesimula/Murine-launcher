@@ -15,11 +15,11 @@ title: Home
       </p>
       <div class="hero-actions">
         <a href="{{ '/download' | relative_url }}" class="btn-filled">
-          <span class="material-symbols-outlined">download</span>
+          <span class="material-symbols-outlined">&#xF090;</span> <!-- download -->
           Download
         </a>
         <a href="https://github.com/alesimula/Murine-launcher" class="btn-outlined" target="_blank" rel="noopener">
-          <span class="material-symbols-outlined">code</span>
+          <span class="material-symbols-outlined">&#xE86F;</span> <!-- code -->
           Source Code
         </a>
       </div>
@@ -41,42 +41,42 @@ title: Home
   <div class="features-grid">
     <div class="feature-card">
       <div class="feature-icon">
-        <span class="material-symbols-outlined">palette</span>
+        <span class="material-symbols-outlined">&#xE40A;</span> <!-- palette -->
       </div>
       <h3>Modern UI</h3>
       <p>Built on the foundations of modern Launcher3, and enhanced with AOSP Material Expressive settings ported from LineageOS</p>
     </div>
     <div class="feature-card">
       <div class="feature-icon">
-        <span class="material-symbols-outlined">blur_on</span>
+        <span class="material-symbols-outlined">&#xE3A5;</span> <!-- blur_on -->
       </div>
       <h3>Blur Effects</h3>
       <p>Frosted glass and MICA-style translucency effects on the app drawer and search bar. Supported on Android 12+ with compatible OEM/ROMs.</p>
     </div>
     <div class="feature-card">
       <div class="feature-icon">
-        <span class="material-symbols-outlined">search</span>
+        <span class="material-symbols-outlined">&#xE8B6;</span> <!-- search -->
       </div>
       <h3>Customised QuickSearchBox</h3>
       <p>Can look great without needing Google; disable the Lens button, choose your preferred search engine, or disable it alltogether if it's not your thing.</p>
     </div>
     <div class="feature-card">
       <div class="feature-icon">
-        <span class="material-symbols-outlined">speed</span>
+        <span class="material-symbols-outlined">&#xE9E4;</span> <!-- speed -->
       </div>
       <h3>Lightweight</h3>
       <p>Very close to its AOSP source, with some enhancements but no bloat. Very tiny, very light, very demure.</p>
     </div>
     <div class="feature-card">
       <div class="feature-icon">
-        <span class="custom-icon" style="--icon-url: url('{{ '/assets/img/ic_bestfeature.svg' | relative_url }}')"></span>
+        <span class="custom-icon icon-bestfeature"></span>
       </div>
       <h3>Designed by a mouse</h3>
       <p>Are you tired of apps designed by humans? This one was built by a mouse, no (excessive) desire for money, will not sell out or sell you out, mice only deal in cheese and crumbs.</p>
     </div>
     <div class="feature-card">
       <div class="feature-icon">
-        <span class="custom-icon" style="--icon-url: url('{{ '/assets/img/ic_clippy.svg' | relative_url }}')"></span>
+        <span class="custom-icon icon-clippy"></span>
       </div>
       <h3>Free &amp; Open Source</h3>
       <p>Fully open source, licensed under the Apache 2.0 license. No tracking, no ads, no data collection, no internet access.</p>
@@ -92,7 +92,7 @@ title: Home
   </div>
   <div id="screenshotGallery">
     <div class="screenshot-loading">
-      <span class="material-symbols-outlined">hourglass_top</span>
+      <span class="material-symbols-outlined">&#xEA5B;</span> <!-- hourglass_top -->
       Loading screenshots&hellip;
     </div>
   </div>
@@ -102,7 +102,7 @@ title: Home
 <section class="compat-section">
   <div class="compat-card">
     <div class="compat-icon">
-      <span class="material-symbols-outlined">smartphone</span>
+      <span class="material-symbols-outlined">&#xE32C;</span> <!-- smartphone -->
     </div>
     <div class="compat-details">
       <h3>Compatibility</h3>

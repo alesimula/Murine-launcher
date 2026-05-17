@@ -14,7 +14,7 @@
   function applyTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
     const icon = document.getElementById('themeIcon');
-    if (icon) icon.textContent = theme === 'dark' ? 'light_mode' : 'dark_mode';
+    if (icon) icon.textContent = theme === 'dark' ? '\uE518' /*light_mode*/ : '\uE51C' /*dark_mode*/;
   }
 
   applyTheme(getPreferred());

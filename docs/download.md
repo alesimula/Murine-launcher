@@ -11,11 +11,11 @@ title: Download
   <p class="download-desc" id="releaseDate">Checking for latest release…</p>
   <div class="download-actions">
     <a href="https://github.com/alesimula/Murine-launcher/releases/latest" id="downloadBtn" class="btn-filled" target="_blank" rel="noopener">
-      <span class="material-symbols-outlined">download</span>
+      <span class="material-symbols-outlined">&#xF090;</span> <!-- download -->
       Download APK
     </a>
     <a href="https://github.com/alesimula/Murine-launcher/releases" class="btn-outlined" target="_blank" rel="noopener">
-      <span class="material-symbols-outlined">history</span>
+      <span class="material-symbols-outlined">&#xE889;</span> <!-- history -->
       All Releases
     </a>
   </div>
