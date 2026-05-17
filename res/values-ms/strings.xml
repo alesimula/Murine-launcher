@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"Pasang"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"Pasang apl pada Ruang Peribadi"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"Tambahkan fail dan banyak lagi pada Ruang Persendirian"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">Sila benarkan launcher ini menggunakan perkhidmatan kebolehcapaian</string>
+    <string name="pref_accessibility_disclosure_title">Akses kebolehcapaian</string>
+    <string name="pref_accessibility_disclosure_desc">Untuk mengunci skrin dengan isyarat, launcher ini memerlukan akses kebolehcapaian.\n\nWalaupun keizinan ini memberikan visibiliti luas kepada perkhidmatan kebolehcapaian, launcher ini hanya menggunakan fungsi penguncian skrin dan mengabaikan yang lain.\n\nTiada data dikumpulkan, dikongsi atau dihantar.</string>
 </resources>

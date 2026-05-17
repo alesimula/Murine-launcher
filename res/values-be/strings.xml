@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"Усталяваць"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"Усталяваць праграмы ў прыватнай прасторы"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"Дадавайце файлы і іншае змесціва ў прыватную прастору"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">Калі ласка, дазвольце гэтаму запускальніку выкарыстоўваць службы даступнасці</string>
+    <string name="pref_accessibility_disclosure_title">Доступ да даступнасці</string>
+    <string name="pref_accessibility_disclosure_desc">Каб блакіраваць экран жэстамі, гэтаму запускальніку патрабуецца доступ да даступнасці.\n\nХоць гэтыя дазволы даюць шырокую бачнасць службам даступнасці, гэты запускальнік выкарыстоўвае толькі функцыю блакіроўкі экрана і ігнаруе ўсё астатняе.\n\nДадзеныя не збіраюцца, не перадаюцца і не распаўсюджваюцца.</string>
 </resources>

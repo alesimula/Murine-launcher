@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"Instalēt"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"Instalējiet lietotnes privātajā telpā."</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"Pievienojiet failus un citu saturu privātajai telpai"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">Lūdzu, atļaujiet šim palaidējam izmantot pieejamības pakalpojumus</string>
+    <string name="pref_accessibility_disclosure_title">Pieejamības piekļuve</string>
+    <string name="pref_accessibility_disclosure_desc">Lai bloķētu ekrānu ar žestiem, šim palaidējam ir nepieciešama pieejamības piekļuve.\n\nLai gan šīs atļaujas nodrošina plašu redzamību pieejamības pakalpojumiem, šis palaidējs izmanto tikai ekrāna bloķēšanas funkciju un ignorē visu pārējo.\n\nNetiek vākti, kopīgoti vai pārsūtīti nekādi dati.</string>
 </resources>

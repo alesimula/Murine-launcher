@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"Zainstaluj"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"Zainstaluj aplikacje w przestrzeni prywatnej"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"Dodawanie plików i innych elementów do przestrzeni prywatnej"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">Zezwól temu launcherowi na korzystanie z usług ułatwień dostępu</string>
+    <string name="pref_accessibility_disclosure_title">Dostęp do ułatwień dostępu</string>
+    <string name="pref_accessibility_disclosure_desc">Aby blokować ekran gestami, ten launcher potrzebuje dostępu do ułatwień dostępu.\n\nChociaż te uprawnienia zapewniają szeroką widoczność usługom ułatwień dostępu, ten launcher używa wyłącznie funkcji blokady ekranu, ignorując wszystko inne.\n\nŻadne dane nie są zbierane, udostępniane ani przesyłane.</string>
 </resources>

@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"Installieren"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"Apps im vertraulichen Profil installieren"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"Dateien und mehr zum vertraulichen Profil hinzufügen"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">Bitte erlaube dem Launcher, Bedienungshilfen zu verwenden</string>
+    <string name="pref_accessibility_disclosure_title">Bedienungshilfen-Zugriff</string>
+    <string name="pref_accessibility_disclosure_desc">Um den Bildschirm mit Gesten zu sperren, benötigt der Launcher Zugriff auf Bedienungshilfen.\n\nDiese Berechtigungen gewähren zwar umfassende Sichtbarkeit für Bedienungshilfen, der Launcher verwendet jedoch ausschließlich die Bildschirmsperrfunktion und ignoriert alles andere.\n\nEs werden keine Daten gesammelt, geteilt oder übertragen.</string>
 </resources>

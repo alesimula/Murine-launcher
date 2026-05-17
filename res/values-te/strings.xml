@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"ఇన్‌స్టాల్ చేయండి"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"ప్రైవేట్ స్పేస్‌కు యాప్‌లను ఇన్‌స్టాల్ చేయండి"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"ప్రైవేట్ స్పేస్‌కు ఫైళ్లను, మరిన్నింటిని జోడించండి"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">దయచేసి ఈ లాంచర్‌కు యాక్సెసిబిలిటీ సేవలను ఉపయోగించనివ్వండి</string>
+    <string name="pref_accessibility_disclosure_title">యాక్సెసిబిలిటీ యాక్సెస్</string>
+    <string name="pref_accessibility_disclosure_desc">సైగలతో స్క్రీన్ లాక్ చేయడానికి, ఈ లాంచర్‌కు యాక్సెసిబిలిటీ యాక్సెస్ అవసరం.\n\nఈ అనుమతులు యాక్సెసిబిలిటీ సేవలకు విస్తృత దృశ్యమానతను అందించినా, ఈ లాంచర్ కేవలం స్క్రీన్ లాకింగ్ ఫంక్షన్‌ను మాత్రమే ఉపయోగిస్తుంది మరియు మిగిలినవన్నీ పట్టించుకోదు.\n\nఎలాంటి డేటా సేకరించబడదు, భాగస్వామ్యం చేయబడదు లేదా ట్రాన్స్‌మిట్ చేయబడదు.</string>
 </resources>

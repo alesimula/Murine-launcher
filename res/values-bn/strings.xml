@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"ইনস্টল করুন"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"প্রাইভেট স্পেসে অ্যাপ ইনস্টল করুন"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"প্রাইভেট স্পেসে ফাইল ও আরও অনেক কিছু যোগ করুন"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">অনুগ্রহ করে এই লঞ্চারটিকে অ্যাক্সেসিবিলিটি সার্ভিস ব্যবহার করার অনুমতি দিন</string>
+    <string name="pref_accessibility_disclosure_title">অ্যাক্সেসিবিলিটি অ্যাক্সেস</string>
+    <string name="pref_accessibility_disclosure_desc">অঙ্গভঙ্গির মাধ্যমে স্ক্রিন লক করতে, এই লঞ্চারটির অ্যাক্সেসিবিলিটি অ্যাক্সেস প্রয়োজন।\n\nযদিও এই অনুমতিগুলি অ্যাক্সেসিবিলিটি সার্ভিসগুলিকে বিস্তৃত দৃশ্যমানতা প্রদান করে, এই লঞ্চারটি শুধুমাত্র স্ক্রিন লকিং ফাংশন ব্যবহার করে এবং বাকি সবকিছু উপেক্ষা করে।\n\nকোনো ডেটা সংগ্রহ, শেয়ার বা ট্রান্সমিট করা হয় না।</string>
 </resources>

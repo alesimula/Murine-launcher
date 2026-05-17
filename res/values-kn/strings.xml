@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"ಇನ್‌ಸ್ಟಾಲ್"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"ಆ್ಯಪ್‌ಗಳನ್ನು ಪ್ರೈವೇಟ್ ಸ್ಪೇಸ್‌ನಲ್ಲಿ ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿ"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"ಪ್ರೈವೆಟ್ ಸ್ಪೇಸ್‌ಗೆ ಫೈಲ್‌ಗಳು ಮತ್ತು ಹೆಚ್ಚಿನದನ್ನು ಸೇರಿಸಿ"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">ದಯವಿಟ್ಟು ಈ ಲಾಂಚರ್‌ಗೆ ಅಭಿಗಮ್ಯತೆ ಸೇವೆಗಳನ್ನು ಬಳಸಲು ಅನುಮತಿಸಿ</string>
+    <string name="pref_accessibility_disclosure_title">ಅಭಿಗಮ್ಯತೆ ಪ್ರವೇಶ</string>
+    <string name="pref_accessibility_disclosure_desc">ಇಶಾರೆಗಳಿಂದ ಪರದೆಯನ್ನು ಲಾಕ್ ಮಾಡಲು, ಈ ಲಾಂಚರ್‌ಗೆ ಅಭಿಗಮ್ಯತೆ ಪ್ರವೇಶದ ಅಗತ್ಯವಿದೆ.\n\nಈ ಅನುಮತಿಗಳು ಅಭಿಗಮ್ಯತೆ ಸೇವೆಗಳಿಗೆ ವ್ಯಾಪಕ ದೃಶ್ಯತೆಯನ್ನು ನೀಡಿದರೂ, ಈ ಲಾಂಚರ್ ಕೇವಲ ಪರದೆ ಲಾಕಿಂಗ್ ಕಾರ್ಯವನ್ನು ಬಳಸುತ್ತದೆ ಮತ್ತು ಉಳಿದವುಗಳನ್ನು ನಿರ್ಲಕ್ಷಿಸುತ್ತದೆ.\n\nಯಾವುದೇ ಡೇಟಾವನ್ನು ಸಂಗ್ರಹಿಸಲಾಗುವುದಿಲ್ಲ, ಹಂಚಿಕೊಳ್ಳಲಾಗುವುದಿಲ್ಲ ಅಥವಾ ರವಾನಿಸಲಾಗುವುದಿಲ್ಲ.</string>
 </resources>

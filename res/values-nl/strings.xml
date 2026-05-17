@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"Installeren"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"Apps installeren in privégedeelte"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"Bestanden en meer toevoegen aan privégedeelte"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">Sta deze launcher toe om toegankelijkheidsdiensten te gebruiken</string>
+    <string name="pref_accessibility_disclosure_title">Toegankelijkheidstoegang</string>
+    <string name="pref_accessibility_disclosure_desc">Om het scherm met gebaren te vergrendelen, heeft deze launcher toegang tot toegankelijkheid nodig.\n\nHoewel deze machtigingen brede zichtbaarheid verlenen aan toegankelijkheidsdiensten, gebruikt deze launcher alleen de schermvergrendelingsfunctie en negeert al het andere.\n\nEr worden geen gegevens verzameld, gedeeld of verzonden.</string>
 </resources>

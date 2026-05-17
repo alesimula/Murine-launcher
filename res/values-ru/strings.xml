@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"Установить"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"Установить приложения в личном пространстве"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"Добавляйте в частное пространство файлы и многое другое"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">Пожалуйста, разрешите этому лаунчеру использовать службы специальных возможностей</string>
+    <string name="pref_accessibility_disclosure_title">Доступ к специальным возможностям</string>
+    <string name="pref_accessibility_disclosure_desc">Для блокировки экрана жестами этому лаунчеру требуется доступ к специальным возможностям.\n\nХотя эти разрешения предоставляют широкую видимость службам специальных возможностей, этот лаунчер использует только функцию блокировки экрана, игнорируя всё остальное.\n\nДанные не собираются, не передаются и не распространяются.</string>
 </resources>

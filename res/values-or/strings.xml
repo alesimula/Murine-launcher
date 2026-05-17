@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"ଇନଷ୍ଟଲ କରନ୍ତୁ"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"ଆପ୍ସକୁ ପ୍ରାଇଭେଟ ସ୍ପେସରେ ଇନଷ୍ଟଲ କରନ୍ତୁ"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"ପ୍ରାଇଭେଟ ସ୍ପେସରେ ଫାଇଲ ଏବଂ ଅଧିକ ଯୋଗ କରନ୍ତୁ"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">ଦୟାକରି ଏହି ଲଞ୍ଚର୍‌କୁ ପ୍ରବେଶଯୋଗ୍ୟତା ସେବା ବ୍ୟବହାର କରିବାକୁ ଅନୁମତି ଦିଅନ୍ତୁ</string>
+    <string name="pref_accessibility_disclosure_title">ପ୍ରବେଶଯୋଗ୍ୟତା ପ୍ରବେଶ</string>
+    <string name="pref_accessibility_disclosure_desc">ଇଶାରା ଦ୍ଵାରା ସ୍କ୍ରୀନ୍ ଲକ୍ କରିବା ପାଇଁ, ଏହି ଲଞ୍ଚର୍‌କୁ ପ୍ରବେଶଯୋଗ୍ୟତା ପ୍ରବେଶ ଆବଶ୍ୟକ।\n\nଯଦିଓ ଏହି ଅନୁମତିଗୁଡ଼ିକ ପ୍ରବେଶଯୋଗ୍ୟତା ସେବାଗୁଡ଼ିକୁ ବିସ୍ତୃତ ଦୃଶ୍ୟମାନତା ପ୍ରଦାନ କରେ, ଏହି ଲଞ୍ଚର୍ କେବଳ ସ୍କ୍ରୀନ୍ ଲକିଂ ଫଂସନ୍ ବ୍ୟବହାର କରେ ଏବଂ ବାକି ସବୁକୁ ଅଣଦେଖା କରେ।\n\nକୌଣସି ଡାଟା ସଂଗ୍ରହ, ଅଂଶୀଦାର କିମ୍ବା ପ୍ରେରଣ କରାଯାଉ ନାହିଁ।</string>
 </resources>

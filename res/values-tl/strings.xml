@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"I-install"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"Mag-install ng mga app sa Pribadong Space"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"Magdagdag ng mga file at higit pa sa Pribadong Space"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">Paki-payagan ang launcher na ito na gumamit ng mga serbisyo sa accessibility</string>
+    <string name="pref_accessibility_disclosure_title">Access sa accessibility</string>
+    <string name="pref_accessibility_disclosure_desc">Upang i-lock ang screen sa pamamagitan ng mga gesture, ang launcher na ito ay nangangailangan ng access sa accessibility.\n\nBagama\'t ang mga pahintulot na ito ay nagbibigay ng malawak na visibility sa mga serbisyo sa accessibility, ang launcher na ito ay gumagamit lamang ng screen-locking function at hindi pinapansin ang lahat ng iba pa.\n\nWalang data na nakolekta, ibinahagi, o na-transmit.</string>
 </resources>

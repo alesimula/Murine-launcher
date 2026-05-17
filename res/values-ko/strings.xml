@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"설치"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"비공개 스페이스에 앱 설치"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"비공개 스페이스에 파일 등 추가"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">이 런처가 접근성 서비스를 사용할 수 있도록 허용해 주세요</string>
+    <string name="pref_accessibility_disclosure_title">접근성 권한</string>
+    <string name="pref_accessibility_disclosure_desc">제스처로 화면을 잠그려면 이 런처에 접근성 권한이 필요합니다.\n\n이 권한은 접근성 서비스에 광범위한 가시성을 부여하지만, 이 런처는 화면 잠금 기능만 사용하고 나머지는 모두 무시합니다.\n\n데이터는 수집, 공유 또는 전송되지 않습니다.</string>
 </resources>

@@ -53,7 +53,6 @@
     <string name="pref_blur_preview_title">Vista previa del modo desenfoque</string>
     <string name="pref_blur_preview_desc">Desenfocar el fondo mientras se arrastran iconos y widgets</string>
 
-    <string name="pref_accessibility_request_toast">Por favor, permite que Murine Launcher use los servicios de accesibilidad</string>
     <string name="pref_double_tap_to_sleep_title">Doble toque para bloquear</string>
     <string name="pref_double_tap_to_sleep_summary">Toca dos veces en un espacio vacío para bloquear la pantalla</string>
     <string name="pref_swipe_down_notifications_title">Deslizar hacia abajo para notificaciones</string>

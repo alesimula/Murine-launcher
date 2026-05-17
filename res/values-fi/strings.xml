@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"Asenna"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"Asenna sovelluksia yksityiseen tilaan"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"Lisää tiedostoja ja muuta yksityiseen tilaan"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">Salli tämän launcherin käyttää esteettömyyspalveluja</string>
+    <string name="pref_accessibility_disclosure_title">Esteettömyyksen käyttöoikeus</string>
+    <string name="pref_accessibility_disclosure_desc">Jotta näyttö voidaan lukita eleillä, tälle launcherille tarvitaan esteettömyyksen käyttöoikeus.\n\nVaikka nämä oikeudet antavat laajan näkyvyyden esteettömyyspalveluille, tämä launcher käyttää vain näytön lukitustoimintoa ja ohittaa kaiken muun.\n\nTietoja ei kerätä, jaeta tai lähetetä.</string>
 </resources>

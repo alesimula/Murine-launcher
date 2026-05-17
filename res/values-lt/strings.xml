@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"Įdiegti"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"Įdiegti programas privačioje erdvėje"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"Pridėkite failų ir kt. prie privačios erdvės"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">Leiskite šiam paleidėjui naudoti prieinamumo paslaugas</string>
+    <string name="pref_accessibility_disclosure_title">Prieinamumo prieiga</string>
+    <string name="pref_accessibility_disclosure_desc">Norėdami užrakinti ekraną gestais, šiam paleidėjui reikia prieinamumo prieigos.\n\nNors šie leidimai suteikia plačią matomumą prieinamumo paslaugoms, šis paleidėjas naudoja tik ekrano užrakinimo funkciją ir ignoruoja viską kitą.\n\nNerenkami, nesidalijami ir neperduodami jokie duomenys.</string>
 </resources>

@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"Installer"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"Installer apper i privat område"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"Legg til filer og annet i det private området"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">Tillat denne launcher-en å bruke tilgjengelighetstjenester</string>
+    <string name="pref_accessibility_disclosure_title">Tilgjengelighets tilgang</string>
+    <string name="pref_accessibility_disclosure_desc">For å låse skjermen med bevegelser trenger denne launcher-en tilgang til tilgjengelighet.\n\nSelv om disse tillatelsene gir bred synlighet for tilgjengelighetstjenester, bruker denne launcher-en bare skjermlåsfunksjonen og ignorerer alt annet.\n\nIngen data samles inn, deles eller overføres.</string>
 </resources>

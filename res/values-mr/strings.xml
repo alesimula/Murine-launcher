@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"इंस्टॉल करा"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"अ‍ॅप्स खाजगी स्पेस मध्ये इंस्टॉल करा"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"खाजगी स्पेस मध्ये फाइल आणि आणखी बऱ्याच गोष्टी जोडा"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">कृपया या लाँचरला अ‍ॅक्सेसिबिलिटी सेवा वापरण्याची परवानगी द्या</string>
+    <string name="pref_accessibility_disclosure_title">अ‍ॅक्सेसिबिलिटी अ‍ॅक्सेस</string>
+    <string name="pref_accessibility_disclosure_desc">हावभावांनी स्क्रीन लॉक करण्यासाठी, या लाँचरला अ‍ॅक्सेसिबिलिटी अ‍ॅक्सेसची आवश्यकता आहे.\n\nजरी या परवानग्या अ‍ॅक्सेसिबिलिटी सेवांना व्यापक दृश्यता देतात, तरी हा लाँचर फक्त स्क्रीन लॉकिंग फंक्शन वापरतो आणि उरलेल्या सर्व गोष्टींकडे दुर्लक्ष करतो.\n\nकोणताही डेटा संकलित, सामायिक किंवा संचारित केला जात नाही.</string>
 </resources>

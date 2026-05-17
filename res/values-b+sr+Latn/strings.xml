@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"Instalirajte"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"Instaliraj aplikacije u privatan prostor"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"Dodajte fajlove i drugo u privatan prostor"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">Dozvolite ovom launcheru da koristi usluge pristupačnosti</string>
+    <string name="pref_accessibility_disclosure_title">Pristup pristupačnosti</string>
+    <string name="pref_accessibility_disclosure_desc">Da biste zaključali ekran pokretima, ovom launcheru je potreban pristup pristupačnosti.\n\nIako ove dozvole pružaju široku vidljivost uslugama pristupačnosti, ovaj launcher koristi samo funkciju zaključavanja ekrana i zanemaruje sve ostalo.\n\nNijedni podaci se ne prikupljaju, ne dele ili ne prenose.</string>
 </resources>

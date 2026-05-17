@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"Instalar"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"Instalar as aplicacións no espazo privado"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"Engade ficheiros e máis elementos ao espazo privado"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">Permite que este lanzador utilice os servizos de accesibilidade</string>
+    <string name="pref_accessibility_disclosure_title">Acceso á accesibilidade</string>
+    <string name="pref_accessibility_disclosure_desc">Para bloquear a pantalla con xestos, este lanzador necesita acceso á accesibilidade.\n\nAínda que estes permisos outorgan unha amplia visibilidade aos servizos de accesibilidade, este lanzador só utiliza a función de bloqueo de pantalla e ignora todo o demais.\n\nNon se recopilan, comparten nin transmiten datos.</string>
 </resources>

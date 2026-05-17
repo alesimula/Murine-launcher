@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"انسٹال کریں"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"پرائیویٹ اسپیس میں ایپس انسٹال کریں"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"پرائیویٹ اسپیس میں فائلز وغیرہ شامل کریں"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">براہ کرم اس لانچر کو رسائی کی خدمات استعمال کرنے کی اجازت دیں</string>
+    <string name="pref_accessibility_disclosure_title">رسائی کی رسائی</string>
+    <string name="pref_accessibility_disclosure_desc">اشاروں سے اسکرین لاک کرنے کے لیے، اس لانچر کو رسائی کی رسائی درکار ہے۔\n\nاگرچہ یہ اجازتیں رسائی کی خدمات کو وسیع نمائندگی دیتی ہیں، یہ لانچر صرف اسکرین لاکنگ فنکشن استعمال کرتا ہے اور باقی سب کچھ نظرانداز کرتا ہے۔\n\nکوئی ڈیٹا جمع، شیئر یا منتقل نہیں کیا جاتا۔</string>
 </resources>

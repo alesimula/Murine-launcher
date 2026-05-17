@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"Установити"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"Установити додатки в особистому просторі"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"Додавайте файли й інші об’єкти в приватний простір"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">Будь ласка, дозвольте цьому запускачу використовувати служби доступності</string>
+    <string name="pref_accessibility_disclosure_title">Доступ до доступності</string>
+    <string name="pref_accessibility_disclosure_desc">Щоб блокувати екран жестами, цьому запускачу потрібен доступ до доступності.\n\nХоча ці дозволи надають широку видимість службам доступності, цей запускач використовує лише функцію блокування екрана та ігнорує все інше.\n\nДані не збираються, не передаються та не поширюються.</string>
 </resources>

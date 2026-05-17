@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"Εγκατάσταση"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"Εγκατάσταση εφαρμογών στον ιδιωτικό χώρο"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"Προσθέστε αρχεία και άλλα στοιχεία στον Ιδιωτικό χώρο"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">Επιτρέψτε σε αυτόν τον εκκινητή να χρησιμοποιεί υπηρεσίες προσβασιμότητας</string>
+    <string name="pref_accessibility_disclosure_title">Πρόσβαση προσβασιμότητας</string>
+    <string name="pref_accessibility_disclosure_desc">Για να κλειδώνετε την οθόνη με χειρονομίες, αυτός ο εκκινητής χρειάζεται πρόσβαση προσβασιμότητας.\n\nΑν και αυτά τα δικαιώματα παρέχουν ευρεία ορατότητα στις υπηρεσίες προσβασιμότητας, αυτός ο εκκινητής χρησιμοποιεί μόνο τη λειτουργία κλειδώματος οθόνης και αγνοεί τα υπόλοιπα.\n\nΔεν συλλέγονται, κοινοποιούνται ή μεταδίδονται δεδομένα.</string>
 </resources>

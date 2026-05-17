@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"நிறுவுக"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"தனிப்பட்ட சேமிப்பிடத்தில் ஆப்ஸை நிறுவும்"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"ரகசிய இடத்தில் ஃபைல்கள் மற்றும் பலவற்றைச் சேர்க்கலாம்"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">தயவுசெய்து இந்த லாஞ்சருக்கு அணுகல்தன்மை சேவைகளைப் பயன்படுத்த அனுமதிக்கவும்</string>
+    <string name="pref_accessibility_disclosure_title">அணுகல்தன்மை அணுகல்</string>
+    <string name="pref_accessibility_disclosure_desc">சைகைகளால் திரையைப் பூட்ட, இந்த லாஞ்சருக்கு அணுகல்தன்மை அணுகல் தேவை.\n\nஇந்த அனுமதிகள் அணுகல்தன்மை சேவைகளுக்கு பரந்த தெரிவிப்பை அளித்தாலும், இந்த லாஞ்சர் திரைப் பூட்டும் செயல்பாட்டை மட்டுமே பயன்படுத்தி மற்ற அனைத்தையும் புறக்கணிக்கிறது.\n\nஎந்த தரவும் சேகரிக்கப்படுவதில்லை, பகிரப்படுவதில்லை அல்லது அனுப்பப்படுவதில்லை.</string>
 </resources>

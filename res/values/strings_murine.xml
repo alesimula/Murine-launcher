@@ -52,7 +52,6 @@
     <string name="pref_blur_preview_title">Blur preview mode</string>
     <string name="pref_blur_preview_desc">Blur wallpaper while dragging icons and widgets</string>
 
-    <string name="pref_accessibility_request_toast">Please allow Murine Launcher to use accessibility services</string>
     <string name="pref_double_tap_to_sleep_title">Double tap to sleep</string>
     <string name="pref_double_tap_to_sleep_summary">Double tap on empty space to lock the screen</string>
     <string name="pref_swipe_down_notifications_title">Swipe down for notifications</string>

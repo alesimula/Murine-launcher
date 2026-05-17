@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"Տեղադրել"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"Հավելվածների տեղադրում անձնական տարածքում"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"Ձեր մասնավոր տարածքում ավելացրեք ֆայլեր և ավելին"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">Խնդրում ենք թույլատրել այս մեկնարկիչին օգտագործել մատչելիության ծառայությունները</string>
+    <string name="pref_accessibility_disclosure_title">Մատչելիության հասանելիություն</string>
+    <string name="pref_accessibility_disclosure_desc">Էկրանը ժեստերով կողպելու համար այս մեկնարկիչին անհրաժեշտ է մատչելիության հասանելիություն։\n\nՉնայած այս թույլտվությունները լայն տեսանելիություն են տալիս մատչելիության ծառայություններին, այս մեկնարկիչը օգտագործում է միայն էկրանը կողպելու գործառույթը և անտեսում է ամեն ինչ։\n\nՏվյալներ չեն հավաքվում, չեն կիսվում և չեն փոխանցվում։</string>
 </resources>

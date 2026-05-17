@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"Installeer"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"Installeer apps in privaat ruimte"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"Voeg lêers en meer by privaat ruimte"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">Laat asseblief die launcher toe om toeganklikheidsdienste te gebruik</string>
+    <string name="pref_accessibility_disclosure_title">Toeganklikheidstoegang</string>
+    <string name="pref_accessibility_disclosure_desc">Om die skerm met gebare te sluit, het die launcher toeganklikheidstoegang nodig.\n\nHoewel hierdie toestemmings breed sigbaarheid aan toeganklikheidsdienste verleen, gebruik die launcher slegs die skermsluitfunksie en ignoreer alles anders.\n\nGeen data word ingesamel, gedeel of oorgedra nie.</string>
 </resources>

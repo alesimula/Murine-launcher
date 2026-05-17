@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"Суулгах"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"Хувийн орон зайд аппууд суулгана уу"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"Хаалттай орон зайд файл болон бусад зүйлийг нэмэх"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">Эхлүүлэгчид хүртээмжийн үйлчилгээг ашиглахыг зөвшөөрнө үү</string>
+    <string name="pref_accessibility_disclosure_title">Хүртээмжийн нэвтрэлт</string>
+    <string name="pref_accessibility_disclosure_desc">Дэлгэцийг дохиогоор түгжихийн тулд эхлүүлэгчид хүртээмжийн нэвтрэлт хэрэгтэй.\n\nЭдгээр зөвшөөрлүүд хүртээмжийн үйлчилгээг өргөн харагдах боломж олгодог ч, эхлүүлэгч зөвхөн дэлгэц түгжих функцийг ашиглаж, бусад бүгдийг тоохгүй.\n\nЯмар ч мэдээлэл цуглуулахгүй, хуваалцахгүй, дамжуулахгүй.</string>
 </resources>

@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"ይጫኑ"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"መተግበሪያዎችን ወደ የግል ቦታ ይጫኑ"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"ወደ የግል ቦታ ፋይሎች እና ሌሎችንም ያክሉ"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">ይህን ላንቸር የተደራሽነት አገልግሎቶችን እንዲጠቀም እባኮትን ይፍቀዱለት</string>
+    <string name="pref_accessibility_disclosure_title">የተደራሽነት ገብ</string>
+    <string name="pref_accessibility_disclosure_desc">በጉልህ እርምጃዎች ስክሪኑን ለመቆለፍ፣ ይህ ላንቸር የተደራሽነት ገብ ያስፈልገዋል።\n\nእነዚህ ፈቃዶች ለተደራሽነት አገልግሎቶች ሰፊ ትይይዮችን ሲሰጡም፣ ይህ ላንቸር የስክሪን መቆለፊያ ተግባርን ብቻ ይጠቀማል እና የቀረውን ሁሉ ይተዋል።\n\nምንም ውሂብ አይሰበሰብም፣ አይደራረስም ወይም አይተላለፍም።</string>
 </resources>

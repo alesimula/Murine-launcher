@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"Орнотуу"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"Колдонмолорду Жеке мейкиндикке орнотуe"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"Жеке мейкиндикке файлдарды жана башкаларды кошуу"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">Бул launcherге кол жеткиликтүүлүк кызматтарын колдонууга уруксат бериңиз</string>
+    <string name="pref_accessibility_disclosure_title">Кол жеткиликтүүлүккө кирүү</string>
+    <string name="pref_accessibility_disclosure_desc">Экранды жесттер менен кулпулоо үчүн бул launcherge кол жеткиликтүүлүккө кирүү керек.\n\nУшул уруксатномалар кол жеткиликтүүлүк кызматтарына кең көрүнүштү бергени менен, бул launcher экранды кулпулоо функциясын гана колдонот жана калгандарына көңүл бурбайт.\n\nЭч кандай маалыматтар жыйналбайт, бөлүшүлбөйт же жөнөтүлбөйт.</string>
 </resources>

@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"इन्स्टल गर्नुहोस्"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"निजी स्पेसमा एपहरू इन्स्टल गर्नुहोस्"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"निजी स्पेसमा फाइल र अन्य कुरा हाल्नुहोस्"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">कृपया यस लन्चरलाई पहुँचयोग्यता सेवाहरू प्रयोग गर्न अनुमति दिनुहोस्</string>
+    <string name="pref_accessibility_disclosure_title">पहुँचयोग्यता पहुँच</string>
+    <string name="pref_accessibility_disclosure_desc">इशाराहरूले स्क्रिन लक गर्न, यस लन्चरलाई पहुँचयोग्यता पहुँच चाहिन्छ।\n\nयद्यपि यस अनुमतिले पहुँचयोग्यता सेवाहरूलाई व्यापक दृश्यता प्रदान गर्छ, यस लन्चरले केवल स्क्रिन लकिङ फङ्सन मात्र प्रयोग गर्छ र बाँकी सबैलाई बेवास्ता गर्छ।\n\nकुनै पनि डाटा सङ्कलन, साझा वा प्रसारण गरिँदैन।</string>
 </resources>

@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"ინსტალაცია"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"კერძო სივრცეში აპების ინსტალაცია"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"კერძო სივრცეში დაამატეთ ფაილები და სხვა"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">გთხოვთ, ნება დართოთ ამ ლაუნჩერმა გამოიყენოს ხელმისაწვდომობის სერვისები</string>
+    <string name="pref_accessibility_disclosure_title">ხელმისაწვდომობის წვდომა</string>
+    <string name="pref_accessibility_disclosure_desc">ეკრანის ჟესტებით დაბლოკვისთვის, ამ ლაუნჩერს ხელმისაწვდომობის წვდომა სჭირდება.\n\nმიუხედავად იმისა, რომ ეს ნებართვები ხელმისაწვდომობის სერვისებს ფართო ხილვადობას აძლევს, ეს ლაუნჩერი მხოლოდ ეკრანის დაბლოკვის ფუნქციას იყენებს და დანარჩენს უგულებელყოფს.\n\nმონაცემები არ შეიცავს, არ იზიარება და არ გადაიცემა.</string>
 </resources>

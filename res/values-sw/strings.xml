@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"Weka"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"Sakinisha programu kwenye Sehemu ya Faragha"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"Weka faili na mengineyo kwenye Sehemu ya Faragha"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">Tafadhali ruhusu kizinduzi hiki kutumia huduma za uwezo wa kufikia</string>
+    <string name="pref_accessibility_disclosure_title">Ufikiaji wa uwezo wa kufikia</string>
+    <string name="pref_accessibility_disclosure_desc">Ili kufunga skrini kwa ishara, kizinduzi hiki kinahitaji ufikiaji wa uwezo wa kufikia.\n\nIngawa ruhusa hizi zinatoa mwonekano mpana kwa huduma za uwezo wa kufikia, kizinduzi hiki kinatumia tu kazi ya kufunga skrini na kinapuuza yote mengine.\n\nHakuna data inayokusanywa, kushirikiwa au kuhamishwa.</string>
 </resources>

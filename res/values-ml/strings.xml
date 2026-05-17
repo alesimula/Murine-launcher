@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"ഇൻസ്റ്റാൾ ചെയ്യുക"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"സ്വകാര്യ സ്പേസിലേക്ക് ആപ്പുകൾ ഇൻസ്റ്റാൾ ചെയ്യുക"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"സ്വകാര്യ സ്‌പേസിലേക്ക് ഫയലുകളും മറ്റും ചേർക്കുക"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">ഈ ലോഞ്ചറിന് പ്രവേശനയോഗ്യത സേവനങ്ങൾ ഉപയോഗിക്കാൻ അനുവദിക്കുക</string>
+    <string name="pref_accessibility_disclosure_title">പ്രവേശനയോഗ്യത ആക്സസ്</string>
+    <string name="pref_accessibility_disclosure_desc">ഹാവഭാവങ്ങളിലൂടെ സ്ക്രീൻ ലോക്ക് ചെയ്യാൻ, ഈ ലോഞ്ചറിന് പ്രവേശനയോഗ്യത ആക്സസ് ആവശ്യമാണ്.\n\nഈ അനുമതികൾ പ്രവേശനയോഗ്യത സേവനങ്ങൾക്ക് വിശാലമായ ദൃശ്യമാനത നൽകുന്നുണ്ടെങ്കിലും, ഈ ലോഞ്ചർ സ്ക്രീൻ ലോക്കിംഗ് ഫംഗ്ഷൻ മാത്രമാണ് ഉപയോഗിക്കുന്നത്, ബാക്കിയെല്ലാം അവഗണിക്കുന്നു.\n\nഎந்த ഡാറ്റയും ശേഖരിക്കുകയോ, പങ്കുവെക്കുകയോ, കൈമാറുകയോ ചെയ്യുന്നില്ല.</string>
 </resources>

@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"Namestitev"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"Nameščanje aplikacij v zasebni prostor"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"Dodajte datoteke in drugo v zasebni prostor"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">Dovolite temu zaganjalniku, da uporablja storitve dostopnosti</string>
+    <string name="pref_accessibility_disclosure_title">Dostop do dostopnosti</string>
+    <string name="pref_accessibility_disclosure_desc">Za zaklepanje zaslona s kretnjami ta zaganjalnik potrebuje dostop do dostopnosti.\n\nČeprav ta dovoljenja storitvam dostopnosti zagotavljajo široko vidnost, ta zaganjalnik uporablja samo funkcijo zaklepanja zaslona in prezre vse ostalo.\n\nNobeni podatki se ne zbirajo, ne delijo ali ne prenašajo.</string>
 </resources>

@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"ઇન્સ્ટૉલ કરો"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"ખાનગી સ્પેસમાં ઍપ ઇન્સ્ટૉલ કરો"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"ખાનગી સ્પેસમાં ફાઇલો વગેરે ઉમેરો"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">કૃપા કરીને આ લોન્ચરને ઍક્સેસિબિલિટી સેવાઓનો ઉપયોગ કરવાની મંજૂરી આપો</string>
+    <string name="pref_accessibility_disclosure_title">ઍક્સેસિબિલિટી ઍક્સેસ</string>
+    <string name="pref_accessibility_disclosure_desc">હાવભાવથી સ્ક્રીન લોક કરવા માટે, આ લોન્ચરને ઍક્સેસિબિલિટી ઍક્સેસની જરૂર છે.\n\nજોકે આ પરવાનગીઓ ઍક્સેસિબિલિટી સેવાઓને વિશાળ દૃશ્યમાનતા આપે છે, આ લોન્ચર ફક્ત સ્ક્રીન લોકિંગ ફંક્શનનો ઉપયોગ કરે છે અને બાકીની બધી વસ્તુઓ અવગણે છે.\n\nકોઈ ડેટાવો એકત્રિત, શેર અથવા ટ્રાન્સમિટ કરવામાં આવતો નથી.</string>
 </resources>

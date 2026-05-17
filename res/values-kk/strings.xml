@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"Орнату"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"Қолданбаларды \"Құпия кеңістікке\" орнатыңыз."</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"Құпия кеңістікке файлдар мен басқа да элементтерді қосыңыз"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">Осы лаунчерге қолжетімділік қызметтерін пайдалануға рұқсат беріңіз</string>
+    <string name="pref_accessibility_disclosure_title">Қолжетімділікке қол жеткізу</string>
+    <string name="pref_accessibility_disclosure_desc">Экранды ымдармен блоктау үшін осы лаунчерге қолжетімділікке қол жеткізу қажет.\n\nБұл рұқсаттар қолжетімділік қызметтеріне кең көріністі бергенімен, бұл лаунчер тек экранды блоктау функциясын пайдаланады және қалғанын елемейді.\n\nЕшқандай деректер жиналмайды, ортақтасылмайды немесе берілмейді.</string>
 </resources>

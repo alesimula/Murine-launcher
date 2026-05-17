@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"इंस्टॉल करें"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"प्राइवेट स्पेस में ऐप्लिकेशन इंस्टॉल करें"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"प्राइवेट स्पेस में फ़ाइलें और अन्य चीज़ें जोड़ें"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">कृपया इस लॉन्चर को एक्सेसिबिलिटी सेवाओं का उपयोग करने की अनुमति दें</string>
+    <string name="pref_accessibility_disclosure_title">एक्सेसिबिलिटी एक्सेस</string>
+    <string name="pref_accessibility_disclosure_desc">जेस्चर से स्क्रीन लॉक करने के लिए, इस लॉन्चर को एक्सेसिबिलिटी एक्सेस की आवश्यकता है।\n\nहालांकि ये अनुमतियाँ एक्सेसिबिलिटी सेवाओं को व्यापक दृश्यता प्रदान करती हैं, यह लॉन्चर केवल स्क्रीन लॉकिंग फ़ंक्शन का उपयोग करता है और बाकी सब कुछ अनदेखा कर देता है।\n\nकोई डेटा एकत्र, साझा या प्रसारित नहीं किया जाता है।</string>
 </resources>

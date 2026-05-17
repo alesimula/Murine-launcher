@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"Instalar"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"Instale apps no espaço privado"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"Adicione ficheiros e muito mais ao espaço privado"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">Permita que este launcher use os serviços de acessibilidade</string>
+    <string name="pref_accessibility_disclosure_title">Acesso à acessibilidade</string>
+    <string name="pref_accessibility_disclosure_desc">Para bloquear o ecrã com gestos, este launcher precisa de acesso à acessibilidade.\n\nEmbora estas permissões concedam ampla visibilidade aos serviços de acessibilidade, este launcher usa apenas a função de bloqueio de ecrã, ignorando todo o resto.\n\nNenhum dado é recolhido, partilhado ou transmitido.</string>
 </resources>

@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"安装"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"将应用安装到私密空间"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"将文件等内容添加到私密空间"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">请允许此启动器使用无障碍服务</string>
+    <string name="pref_accessibility_disclosure_title">无障碍访问</string>
+    <string name="pref_accessibility_disclosure_desc">要通过手势锁定屏幕，此启动器需要无障碍访问权限。\n\n虽然这些权限会向无障碍服务授予广泛的可见性，但此启动器仅使用屏幕锁定功能，忽略其他所有内容。\n\n不会收集、共享或传输任何数据。</string>
 </resources>

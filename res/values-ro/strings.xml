@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"Instalează"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"Instalează aplicații în Spațiul privat"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"Adaugă fișiere și altele în Spațiul privat"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">Vă rugăm să permiteți acestui lansator să utilizeze serviciile de accesibilitate</string>
+    <string name="pref_accessibility_disclosure_title">Acces la accesibilitate</string>
+    <string name="pref_accessibility_disclosure_desc">Pentru a bloca ecranul cu gesturi, acestui lansator îi este necesar accesul la accesibilitate.\n\nDeși aceste permisiuni oferă o vizibilitate largă serviciilor de accesibilitate, acest lansator utilizează doar funcția de blocare a ecranului și ignoră restul.\n\nNu sunt colectate, partajate sau transmise date.</string>
 </resources>

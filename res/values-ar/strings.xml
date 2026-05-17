@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"تثبيت"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"تثبيت التطبيقات في المساحة الخاصّة"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"إضافة ملفات والمزيد إلى \"المساحة الخاصّة\""</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">يرجى السماح لهذا اللانشر باستخدام خدمات إمكانية الوصول</string>
+    <string name="pref_accessibility_disclosure_title">وصول إمكانية الوصول</string>
+    <string name="pref_accessibility_disclosure_desc">لقفل الشاشة بالإيماءات، يحتاج هذا اللانشر إلى وصول إمكانية الوصول.\n\nعلى الرغم من أن هذه الأذونات تمنح خدمات إمكانية الوصول رؤية واسعة، إلا أن هذا اللانشر يستخدم فقط وظيفة قفل الشاشة ويتجاهل كل شيء آخر.\n\nلا يتم جمع أو مشاركة أو نقل أي بيانات.</string>
 </resources>

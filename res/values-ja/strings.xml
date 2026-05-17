@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"インストール"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"プライベート スペースにアプリをインストールします"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"プライベート スペースにファイルなどを追加する"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">このランチャーがアクセシビリティサービスを使用できるようにしてください</string>
+    <string name="pref_accessibility_disclosure_title">アクセシビリティアクセス</string>
+    <string name="pref_accessibility_disclosure_desc">ジェスチャーで画面をロックするには、このランチャーにアクセシビリティアクセスが必要です。\n\nこれらの権限はアクセシビリティサービスに広範な可視性を与えますが、このランチャーは画面ロック機能のみを使用し、それ以外はすべて無視します。\n\nデータは収集、共有、送信されません。</string>
 </resources>

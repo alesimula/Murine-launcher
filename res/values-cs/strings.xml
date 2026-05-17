@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"Nainstalovat"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"Instalovat aplikace do soukromého prostoru"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"Přidejte do soukromého prostoru soubory a další položky"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">Povolte tomuto launcheru používat služby přístupnosti</string>
+    <string name="pref_accessibility_disclosure_title">Přístup k přístupnosti</string>
+    <string name="pref_accessibility_disclosure_desc">Pro uzamčení obrazovky pomocí gest potřebuje tento launcher přístup k přístupnosti.\n\nI když tato oprávnění poskytují službám přístupnosti širokou viditelnost, tento launcher používá pouze funkci uzamčení obrazovky a vše ostatní ignoruje.\n\nNejsou shromažďovány, sdíleny ani přenášeny žádné údaje.</string>
 </resources>

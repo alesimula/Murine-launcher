@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"התקנה"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"התקנת אפליקציות במרחב הפרטי"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"הוספת קבצים ופריטים נוספים למרחב הפרטי"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">אנא אפשר ללונצ\'ר הזה להשתמש בשירותי נגישות</string>
+    <string name="pref_accessibility_disclosure_title">גישה לנגישות</string>
+    <string name="pref_accessibility_disclosure_desc">כדי לנעול את המסך עם מחוות, הלונצ\'ר הזה זקוק לגישה לנגישות.\n\nלמרות שההרשאות האלה מעניקות נראות רחבה לשירותי נגישות, הלונצ\'ר הזה משתמש רק בפונקציית נעילת המסך ומתעלם מכל השאר.\n\nלא נאספים, משותפים או מועברים נתונים.</string>
 </resources>

@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"ติดตั้ง"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"ติดตั้งแอปไปยังพื้นที่ส่วนตัว"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"เพิ่มไฟล์และอื่นๆ ไปยังพื้นที่ส่วนตัว"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">โปรดอนุญาตให้ลันเชอร์นี้ใช้บริการช่วยการเข้าถึง</string>
+    <string name="pref_accessibility_disclosure_title">การเข้าถึงความช่วยเหลือ</string>
+    <string name="pref_accessibility_disclosure_desc">เพื่อล็อคหน้าจอด้วยท่าทาง ลันเชอร์นี้ต้องการการเข้าถึงความช่วยเหลือ\n\nแม้ว่าสิทธิ์เหล่านี้จะมอบความมองเห็นที่กว้างขวางให้กับบริการช่วยการเข้าถึง แต่ลันเชอร์นี้ใช้เฉพาะฟังก์ชันล็อคหน้าจอเท่านั้น และละเว้นสิ่งอื่นๆ ทั้งหมด\n\nไม่มีการเก็บรวบรวม แบ่งปัน หรือส่งข้อมูลใดๆ</string>
 </resources>

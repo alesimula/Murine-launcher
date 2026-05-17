@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"Инсталирајте"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"Инсталирање апликации во „Приватен простор“"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"Додавање датотеки и друго во „Приватен простор“"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">Ве молиме дозволете му на овој покренувач да ги користи услугите за пристапност</string>
+    <string name="pref_accessibility_disclosure_title">Пристап до пристапност</string>
+    <string name="pref_accessibility_disclosure_desc">За да го заклучите екранот со движења, овој покренувач треба да има пристап до пристапност.\n\nИако овие дозволи обезбедуваат широка видливост на услугите за пристапност, овој покренувач ја користи само функцијата за заклучување на екранот и го игнорира сè останато.\n\nНе се собираат, споделуваат или пренесуваат податоци.</string>
 </resources>

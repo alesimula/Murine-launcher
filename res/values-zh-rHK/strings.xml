@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"安裝"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"將應用程式安裝在「私人空間」中"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"新增檔案和其他內容到「私人空間」"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">請允許此啟動器使用無障礙服務</string>
+    <string name="pref_accessibility_disclosure_title">無障礙存取</string>
+    <string name="pref_accessibility_disclosure_desc">要透過手勢鎖定螢幕，此啟動器需要無障礙存取權限。\n\n雖然這些權限會向無障礙服務授予廣泛的可見性，但此啟動器僅使用螢幕鎖定功能，忽略其他所有內容。\n\n不會收集、分享或傳輸任何資料。</string>
 </resources>

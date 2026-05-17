@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"Инсталиране"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"Инсталиране на приложения в частно пространство"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"Добавяне на файлове и др. в частно пространство"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">Моля, позволете на този лаунчър да използва услуги за достъпност</string>
+    <string name="pref_accessibility_disclosure_title">Достъп до достъпност</string>
+    <string name="pref_accessibility_disclosure_desc">За да заключвате екрана с жестове, този лаунчър се нуждае от достъп до достъпност.\n\nВъпреки че тези разрешения предоставят широка видимост на услугите за достъпност, този лаунчър използва само функцията за заключване на екрана и игнорира всичко останало.\n\nНе се събират, споделят или предават данни.</string>
 </resources>

@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"ස්ථාපන කරන්න"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"පෞද්ගලික අවකාශයට යෙදුම් ස්ථාපනය කරන්න"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"රහසිගත අවකාශයට ගොනු සහ තවත් දේ එක් කරන්න"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">කරුණාකර මෙම ලෝන්චර්ට ප්‍රවේශ්‍යතා සේවා භාවිතා කිරීමට අවසර දෙන්න</string>
+    <string name="pref_accessibility_disclosure_title">ප්‍රවේශ්‍යතා ප්‍රවේශය</string>
+    <string name="pref_accessibility_disclosure_desc">හැඟීම් වලින් තිරය අගුළු දැමීමට, මෙම ලෝන්චර්ට ප්‍රවේශ්‍යතා ප්‍රවේශය අවශ්‍ය වේ.\n\nමෙම අවසර ප්‍රවේශ්‍යතා සේවා වලට පුළුල් දෘශ්‍යතාවක් ලබා දුනද, මෙම ලෝන්චර් තිරය අගුළු දැමීමේ ක්‍රියාකාරකම පමණක් භාවිතා කර අනෙකුත් සියලු දේ නොසලකා හරිනු ලැබේ.\n\nකිසිදු දත්තයක් එකතු නොකර, බෙදා නොගන්නා අතර, передача නොකරනු ලැබේ.</string>
 </resources>

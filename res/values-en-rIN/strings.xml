@@ -218,4 +218,9 @@
     <string name="ps_add_button_label" msgid="8127988716897128773">"Install"</string>
     <string name="ps_add_button_content_description" msgid="3254274107740952556">"Install apps to private space"</string>
     <string name="ps_app_content_description" msgid="1129133475892816226">"Add files and more to private space"</string>
+
+    <!-- Accessibility -->
+    <string name="pref_accessibility_request_toast">Please allow the launcher to use accessibility services</string>
+    <string name="pref_accessibility_disclosure_title">Accessibility access</string>
+    <string name="pref_accessibility_disclosure_desc">To lock the screen with gestures, the launcher needs accessibility access.\n\nWhile these are sensible permissions, granting broad visibility to accessibility services, the launcher only uses the screen-locking function, ignoring everything else.\n\nNo data is collected, shared, or transmitted.</string>
 </resources>
