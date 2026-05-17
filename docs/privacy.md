@@ -29,6 +29,7 @@ Murine Launcher requests only the minimal permissions strictly necessary to func
 - **App list access** - required to display your installed applications.
 - **Widget support** - required to host home screen widgets.
 - **Notification badge access** - used to display unread notification counts on app icons, if supported by your device.
+- **Private Space access** - required to show and manage your Private Space inside the launcher.
 
 No permission is requested for internet access, location, camera, microphone, contacts, storage of personal files, or any other sensitive data.
 
