@@ -10,7 +10,7 @@ title: Download
   <div class="version-badge" id="versionBadge">Loading…</div>
   <p class="download-desc" id="releaseDate">Checking for latest release…</p>
   <div class="download-actions">
-    <a href="https://github.com/alesimula/Murine-launcher/releases/latest" id="downloadBtn" class="btn-filled" target="_blank" rel="noopener">
+    <a href="https://github.com/alesimula/Murine-launcher/releases/latest" id="downloadBtn" class="btn-filled">
       <span class="material-symbols-outlined">&#xF090;</span> <!-- download -->
       Download APK
     </a>
