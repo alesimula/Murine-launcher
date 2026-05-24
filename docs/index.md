@@ -62,7 +62,7 @@ title: Home
     </div>
     <div class="feature-card">
       <div class="feature-icon">
-        <span class="material-symbols-outlined">&#xE9E4;</span> <!-- speed -->
+        <span class="custom-icon icon-feather"></span>
       </div>
       <h3>Lightweight</h3>
       <p>Very close to its AOSP source, with some enhancements but no bloat. Very tiny, very light, very demure.</p>

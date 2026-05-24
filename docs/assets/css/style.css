@@ -95,6 +95,7 @@ html, body, img, svg, picture, video {
 /* --- Custom SVG Icons --- */
 .icon-bestfeature { --icon-url: url('../img/ic_bestfeature.svg'); }
 .icon-clippy { --icon-url: url('../img/ic_clippy.svg'); }
+.icon-feather { --icon-url: url('../img/ic_feather.svg'); }
 
 /* --- Reset & Base --- */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
