@@ -5,7 +5,7 @@ description: >-
 url: "https://alesimula.github.io"
 baseurl: ""
 
-version: "1.0.3" #Website version - increase to invalidate cached resources
+version: "1.0.4" #Website version - increase to invalidate cached resources
 github_repo: "alesimula/Murine-launcher"
 icon_url: "https://raw.githubusercontent.com/alesimula/Murine-launcher/refs/heads/main/image/app_icon/icon_browser_fullsize.svg"
 screenshots_api: "https://api.github.com/repos/alesimula/Murine-launcher/contents/fastlane/metadata/android/en-US/images/phoneScreenshots"

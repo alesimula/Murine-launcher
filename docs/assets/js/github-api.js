@@ -89,6 +89,11 @@
     var apkAssets = release.assets.filter(function (a) {
       return a.name.endsWith('.apk');
     });
+    apkAssets.sort(function (a, b) {
+      var aDebug = /debug/i.test(a.name) ? 1 : 0;
+      var bDebug = /debug/i.test(b.name) ? 1 : 0;
+      return aDebug - bDebug;
+    });
     var otherAssets = release.assets.filter(function (a) {
       return !a.name.endsWith('.apk');
     });
