@@ -31,6 +31,21 @@ public class LauncherApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        // Stripped by R8 - therefore library is added as releaseCompileOnly
+        if (BuildConfig.DEBUG) {
+            com.zxy.recovery.core.Recovery.getInstance()
+                    .debug(true)
+                    .recoverInBackground(false)
+                    .recoverStack(true)
+                    .mainPage(Launcher.class)
+                    .recoverEnabled(true)
+                    //.callback(new MyCrashCallbacy())
+                    .silent(false, com.zxy.recovery.core.Recovery.SilentMode.RECOVER_ACTIVITY_STACK)
+                    //.skip(TestActivity.class)
+                    .init(this);
+        }
+
         app.murinelauncher.theme.ThemeOverride.syncNightMode(this);
         MainProcessInitializer.initialize(this);
     }
