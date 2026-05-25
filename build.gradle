@@ -318,8 +318,8 @@ dependencies {
      *          stripping the recovery library lib in LauncherApplication.java;
      *          should that happen, try using releaseImplementation instead of releaseCompileOnly
      */
-    debugImplementation 'com.github.alesimula.Recovery:recovery:1.0.3' // injected in LauncherApplication.java
-    releaseCompileOnly 'com.github.alesimula.Recovery:recovery-no-op:1.0.3' // stripped by R8, hence compileOnly
+    debugImplementation 'com.github.alesimula.Recovery:recovery:1.0.4' // injected in LauncherApplication.java
+    releaseCompileOnly 'com.github.alesimula.Recovery:recovery-no-op:1.0.4' // stripped by R8, hence compileOnly
 
     api libs.lottie
     implementation libs.dagger
