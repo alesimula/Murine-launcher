@@ -32,10 +32,11 @@ public class LauncherApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        // Stripped by R8 - therefore library is added as releaseCompileOnly
+        // Stripped by R8 - therefore implemented as releaseCompileOnly
         if (BuildConfig.DEBUG) {
             com.zxy.recovery.core.Recovery.getInstance()
                     .debug(true)
+                    .showDevEmail("alesimula@murinelauncher.app", true)
                     .recoverInBackground(false)
                     .recoverStack(true)
                     .mainPage(Launcher.class)
