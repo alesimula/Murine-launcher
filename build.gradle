@@ -313,13 +313,8 @@ dependencies {
     implementation libs.rikka.refine.runtime
     implementation libs.intuit.sdp
 
-    /**
-     * WARNING: if debug app works but release app crashes, it is probably caused by R8 not properly
-     *          stripping the recovery library lib in LauncherApplication.java;
-     *          should that happen, try using releaseImplementation instead of releaseCompileOnly
-     */
-    debugImplementation 'com.github.alesimula.Recovery:recovery:1.0.5' // injected in LauncherApplication.java
-    releaseCompileOnly 'com.github.alesimula.Recovery:recovery-no-op:1.0.5' // stripped by R8, hence compileOnly
+    // Use the crash recovery library even for release (it's negligibly light)
+    implementation 'com.github.alesimula.Recovery:recovery:1.0.6' // injected in LauncherApplication.java
 
     api libs.lottie
     implementation libs.dagger
