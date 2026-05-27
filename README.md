@@ -60,6 +60,11 @@ Last tested on:
   <img src="https://raw.githubusercontent.com/stefan-niedermann/paypal-donate-button/master/paypal-donate-button.png" alt="Donate with PayPal" />
 </a>
 
+## Credits
+
+- [Preview art by Miikrowelle](https://miikrowelle.straw.page)
+- [Contains some icons from Lets Icons by sadik sajid](https://www.figma.com/community/plugin/1551156216287797438)
+
 ## Extra resources
 
  - [Recovery: User-initiated, offline crash log sharing with zero permissions](https://github.com/alesimula/Recovery)
