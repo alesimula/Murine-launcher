@@ -314,7 +314,7 @@ dependencies {
     implementation libs.intuit.sdp
 
     // Use the crash recovery library even for release (it's negligibly light)
-    implementation 'com.github.alesimula.Recovery:recovery:1.0.6' // injected in LauncherApplication.java
+    implementation 'com.github.alesimula.Recovery:recovery:1.0.7' // injected in LauncherApplication.java
 
     api libs.lottie
     implementation libs.dagger
