@@ -68,9 +68,11 @@ public class SettingsCache extends ContentObserver {
     /** Hidden field Settings.Secure.SWIPE_BOTTOM_TO_NOTIFICATION_ENABLED */
     public static final String ONE_HANDED_SWIPE_BOTTOM_TO_NOTIFICATION_ENABLED =
             "swipe_bottom_to_notification_enabled";
+    public static final String STR_OPRIVATE_SPACE_HIDE_WHEN_LOCKED =
+            "hide_privatespace_entry_point";
     /** Hidden field Settings.Secure.HIDE_PRIVATESPACE_ENTRY_POINT */
     public static final Uri PRIVATE_SPACE_HIDE_WHEN_LOCKED_URI =
-            Settings.Secure.getUriFor("hide_privatespace_entry_point");
+            Settings.Secure.getUriFor(STR_OPRIVATE_SPACE_HIDE_WHEN_LOCKED);
     public static final Uri ROTATION_SETTING_URI =
             Settings.System.getUriFor(ACCELEROMETER_ROTATION);
     /** Hidden field {@link Settings.System#TOUCHPAD_NATURAL_SCROLLING}. */

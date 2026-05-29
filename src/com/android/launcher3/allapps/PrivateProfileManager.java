@@ -67,6 +67,7 @@ import com.android.app.animation.Interpolators;
 import com.android.launcher3.BuildConfig;
 import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.Flags;
+import com.android.launcher3.LauncherPrefs;
 import com.android.launcher3.R;
 import com.android.launcher3.Utilities;
 import com.android.launcher3.anim.AnimatedPropertySetter;
@@ -82,6 +83,8 @@ import com.android.launcher3.util.Preconditions;
 import com.android.launcher3.util.SettingsCache;
 import com.android.launcher3.views.ActivityContext;
 import com.android.launcher3.views.RecyclerViewFastScroller;
+
+import android.widget.ImageButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -142,6 +145,9 @@ public class PrivateProfileManager extends UserProfileManager {
     private TextView mLockText;
     @Nullable
     private PrivateSpaceSettingsButton mPrivateSpaceSettingsButton;
+    @Nullable
+    private ImageButton mVisibilityButton;
+    private Boolean mIsHideSettingReadable = null;
     @Nullable
     private ConstraintLayout mFloatingMaskView;
     private final String mPrivateSpaceAppContentDesc;
@@ -216,13 +222,47 @@ public class PrivateProfileManager extends UserProfileManager {
     }
 
     public boolean isPrivateSpaceHiddenWhenLocked() {
-        try {
-            return SettingsCache.INSTANCE
-                    .get(mAllApps.getContext()).getValue(PRIVATE_SPACE_HIDE_WHEN_LOCKED_URI, 0);
-        } catch (Throwable t) {
-            Log.e("PrivateSpaceManager", "Cannot access setting: hide_privatespace_entry_point", t);
-            return false;
+        if (isHideSettingReadable()) try {
+            return SettingsCache.INSTANCE.get(mAllApps.getContext()).getValue(PRIVATE_SPACE_HIDE_WHEN_LOCKED_URI, 0);
+        } catch (Throwable t) {}
+        // System setting is not readable on this ROM; use launcher preference
+        return LauncherPrefs.get(mAllApps.getContext()).get(LauncherPrefs.PRIVATE_SPACE_HIDE_WHEN_LOCKED);
+    }
+
+    /**
+     * Checks whether the system setting hide_privatespace_entry_point is readable.
+     * Result is cached for the lifetime of this instance (app session).
+     */
+    boolean isHideSettingReadable() {
+        if (mIsHideSettingReadable == null) try {
+            android.provider.Settings.Secure.getInt(
+                    mAllApps.getContext().getContentResolver(),
+                    SettingsCache.STR_OPRIVATE_SPACE_HIDE_WHEN_LOCKED, 0);
+                mIsHideSettingReadable = true;
+        } catch (SecurityException e) {
+            mIsHideSettingReadable = false;
         }
+        return mIsHideSettingReadable;
+    }
+
+    /**
+     * Toggles the launcher-level hide-when-locked preference and updates the button icon.
+     */
+    private void toggleHideWhenLocked() {
+        LauncherPrefs prefs = LauncherPrefs.get(mAllApps.getContext());
+        boolean current = prefs.get(LauncherPrefs.PRIVATE_SPACE_HIDE_WHEN_LOCKED);
+        prefs.put(LauncherPrefs.PRIVATE_SPACE_HIDE_WHEN_LOCKED, !current);
+        updateVisibilityButtonIcon();
+    }
+
+    /**
+     * Updates the eye icon to reflect the current hide-when-locked state.
+     */
+    private void updateVisibilityButtonIcon() {
+        if (mVisibilityButton == null) return;
+        boolean hideWhenLocked = LauncherPrefs.get(mAllApps.getContext()).get(LauncherPrefs.PRIVATE_SPACE_HIDE_WHEN_LOCKED);
+        mVisibilityButton.setImageResource(hideWhenLocked ? R.drawable.ic_eye_hidden : R.drawable.ic_eye_visible);
+        mVisibilityButton.setColorFilter(mPrivateSpaceSettingsButton.getContext().getColor(R.color.all_apps_label_text_color));
     }
 
     BitmapInfo preparePSBitmapInfo() {
@@ -399,6 +439,8 @@ public class PrivateProfileManager extends UserProfileManager {
         assert mLockText != null;
         mPrivateSpaceSettingsButton = mPSHeader.findViewById(R.id.ps_settings_button);
         assert mPrivateSpaceSettingsButton != null;
+        mVisibilityButton = mPSHeader.findViewById(R.id.ps_visibility_button);
+        assert mVisibilityButton != null;
         //Add image for private space transitioning view
         ImageView transitionView = mPSHeader.findViewById(R.id.ps_transition_image);
         assert transitionView != null;
@@ -417,6 +459,14 @@ public class PrivateProfileManager extends UserProfileManager {
                     mPrivateSpaceSettingsButton.setVisibility(
                             isPrivateSpaceSettingsAvailable() ? VISIBLE : GONE);
                     mPrivateSpaceSettingsButton.setClickable(isPrivateSpaceSettingsAvailable());
+                    // Show visibility toggle only when system setting is not readable
+                    boolean showVisToggle = !isHideSettingReadable();
+                    mVisibilityButton.setVisibility(showVisToggle ? VISIBLE : GONE);
+                    mVisibilityButton.setClickable(showVisToggle);
+                    if (showVisToggle) {
+                        updateVisibilityButtonIcon();
+                        mVisibilityButton.setOnClickListener(v -> toggleHideWhenLocked());
+                    }
                 }
                 lockPill.setVisibility(VISIBLE);
                 lockPill.setOnClickListener(view -> lockingAction(/* lock */ true));
@@ -440,11 +490,14 @@ public class PrivateProfileManager extends UserProfileManager {
 
                 mPrivateSpaceSettingsButton.setVisibility(GONE);
                 mPrivateSpaceSettingsButton.setClickable(false);
+                mVisibilityButton.setVisibility(GONE);
+                mVisibilityButton.setClickable(false);
                 transitionView.setVisibility(GONE);
             }
             case STATE_TRANSITION -> {
                 transitionView.setVisibility(VISIBLE);
                 lockPill.setVisibility(GONE);
+                mVisibilityButton.setVisibility(GONE);
             }
         }
         mPSHeader.invalidate();
@@ -727,14 +780,16 @@ public class PrivateProfileManager extends UserProfileManager {
             updateView();
         }));
         if (expand) {
-            animatorSet.playTogether(updateSettingsGearAlpha(true),
+            animatorSet.playTogether(updateButtonAlpha(mPrivateSpaceSettingsButton, isPrivateSpaceSettingsAvailable(), true),
+                    updateButtonAlpha(mVisibilityButton, !isHideSettingReadable(), true),
                     updateLockTextAlpha(true),
                     animateAlphaOfIcons(true),
                     animatePillTransition(true),
                     translateFloatingMaskView(false));
         } else {
             AnimatorSet parallelSet = new AnimatorSet();
-            parallelSet.playTogether(updateSettingsGearAlpha(false),
+            parallelSet.playTogether(updateButtonAlpha(mPrivateSpaceSettingsButton, isPrivateSpaceSettingsAvailable(), false),
+                    updateButtonAlpha(mVisibilityButton, !isHideSettingReadable(), false),
                     updateLockTextAlpha(false),
                     animateAlphaOfIcons(false),
                     animatePillTransition(false));
@@ -796,38 +851,31 @@ public class PrivateProfileManager extends UserProfileManager {
         return alphaAnim;
     }
 
-    /** Change the settings gear alpha when expanded or collapsed. */
-    private ValueAnimator updateSettingsGearAlpha(boolean expand) {
-        if (mPrivateSpaceSettingsButton == null || !isPrivateSpaceSettingsAvailable()) {
-            return new ValueAnimator().setDuration(0);
-        }
-        float from = expand ? 0 : 1;
-        float to = expand ? 1 : 0;
-        ValueAnimator settingsAlphaAnim = ObjectAnimator.ofFloat(from, to);
-        settingsAlphaAnim.setDuration(SETTINGS_OPACITY_DURATION);
-        settingsAlphaAnim.setStartDelay(expand ? SETTINGS_OPACITY_DELAY : NO_DELAY);
-        settingsAlphaAnim.setInterpolator(Interpolators.LINEAR);
-        settingsAlphaAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                mPrivateSpaceSettingsButton.setAlpha((float) valueAnimator.getAnimatedValue());
-            }
-        });
-        settingsAlphaAnim.addListener(new AnimatorListenerAdapter() {
+    /** Change a heading button's alpha when expanded or collapsed. */
+    private ValueAnimator updateButtonAlpha(View button, boolean isVisible, boolean expand) {
+        if (button == null || !isVisible) return new ValueAnimator().setDuration(0);
+        float from = expand ? 0f : 1f;
+        float to = expand ? 1f : 0f;
+        ValueAnimator alphaAnim = ValueAnimator.ofFloat(from, to);
+        alphaAnim.setDuration(SETTINGS_OPACITY_DURATION);
+        alphaAnim.setStartDelay(expand ? SETTINGS_OPACITY_DELAY : NO_DELAY);
+        alphaAnim.setInterpolator(Interpolators.LINEAR);
+        alphaAnim.addUpdateListener(animation -> button.setAlpha((float) animation.getAnimatedValue()));
+        alphaAnim.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animator) {
-                mPrivateSpaceSettingsButton.setVisibility(VISIBLE);
-                mPrivateSpaceSettingsButton.setClickable(false);
+                button.setVisibility(VISIBLE);
+                button.setClickable(false);
             }
 
             @Override
             public void onAnimationEnd(Animator animator) {
                 if (expand) {
-                    mPrivateSpaceSettingsButton.setClickable(true);
+                    button.setClickable(true);
                 }
             }
         });
-        return settingsAlphaAnim;
+        return alphaAnim;
     }
 
     private ValueAnimator updateLockTextAlpha(boolean expand) {

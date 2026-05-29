@@ -173,7 +173,8 @@ public class AppsSearchContainerLayout extends ExtendedEditText
         if (items != null) {
             PrivateProfileManager ppm = mAppsView.getPrivateProfileManager();
             String privateSpaceLabel = getContext().getString(R.string.private_space_label);
-            if (ppm != null && ppm.isPrivateSpaceHidden() && query.equalsIgnoreCase(privateSpaceLabel)) {
+            String privateSpaceLabelEn = "private space";
+            if (ppm != null && ppm.isPrivateSpaceHidden() && (query.equalsIgnoreCase(privateSpaceLabelEn) || query.equalsIgnoreCase(privateSpaceLabelEn))) {
                 AppInfo unlockInfo = new AppInfo();
                 unlockInfo.title = privateSpaceLabel;
                 unlockInfo.bitmap = ppm.preparePSUnlockBitmapInfo();

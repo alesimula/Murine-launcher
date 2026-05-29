@@ -436,6 +436,10 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
 
         // Preferences for widget configurations
         @JvmField
+        val PRIVATE_SPACE_HIDE_WHEN_LOCKED =
+            backedUpItem("pref_private_space_hide_when_locked", false)
+
+        @JvmField
         val RECONFIGURABLE_WIDGET_EDUCATION_TIP_SEEN =
             backedUpItem("launcher.reconfigurable_widget_education_tip_seen", false)
 
