@@ -93,6 +93,7 @@ html, body, img, svg, picture, video {
 }
 
 /* --- Custom SVG Icons --- */
+.icon-private-space { --icon-url: url('../img/ic_private_space.svg'); }
 .icon-bestfeature { --icon-url: url('../img/ic_bestfeature.svg'); }
 .icon-clippy { --icon-url: url('../img/ic_clippy.svg'); }
 .icon-feather { --icon-url: url('../img/ic_feather.svg'); }

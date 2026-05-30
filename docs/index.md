@@ -43,15 +43,15 @@ title: Home
       <div class="feature-icon">
         <span class="material-symbols-outlined">&#xE40A;</span> <!-- palette -->
       </div>
-      <h3>Modern UI</h3>
-      <p>Built on the foundations of modern Launcher3, and enhanced with AOSP Material Expressive settings ported from LineageOS</p>
+      <h3>Modern UI & Blur Effects</h3>
+      <p>Built on the foundations of modern Launcher3, enhanced with AOSP Material Expressive settings and Frosted glass and MICA-style translucency effects (for supported ROMs)</p>
     </div>
     <div class="feature-card">
       <div class="feature-icon">
-        <span class="material-symbols-outlined">&#xE3A5;</span> <!-- blur_on -->
+        <span class="custom-icon icon-private-space"></span>
       </div>
-      <h3>Blur Effects</h3>
-      <p>Frosted glass and MICA-style translucency effects on the app drawer and search bar. Supported on Android 12+ with compatible OEM/ROMs.</p>
+      <h3>Private Space Integration</h3>
+      <p>Native support for Android 15's Private Space: every mouse needs a burrow; hide your sensitive apps and data from prying eyes.</p>
     </div>
     <div class="feature-card">
       <div class="feature-icon">
