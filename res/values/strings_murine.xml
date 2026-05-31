@@ -49,6 +49,9 @@
     <string name="drawer_type_mica">MICA</string>
     <string name="drawer_type_translucent">Translucent</string>
 
+    <string name="pref_drawer_grid_width_override_title">Override grid width</string>
+    <string name="pref_drawer_grid_width_override_summary">Use a custom number of columns in the app drawer</string>
+
     <string name="pref_blur_preview_title">Blur preview mode</string>
     <string name="pref_blur_preview_desc">Blur wallpaper while dragging icons and widgets</string>
 

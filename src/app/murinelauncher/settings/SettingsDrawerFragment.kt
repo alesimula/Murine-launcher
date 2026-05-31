@@ -2,8 +2,11 @@ package app.murinelauncher.settings
 
 import android.util.Log
 import androidx.preference.Preference
+import androidx.preference.SwitchPreferenceCompat
 import app.murinelauncher.graphics.WorkspaceBlurUtils
 import app.murinelauncher.settings.common.AbstractSettingsFragment
+import app.murinelauncher.widget.CustomSeekBarPreference
+import com.android.launcher3.InvariantDeviceProfile
 import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.R
 import com.android.launcher3.util.DisplayController
@@ -15,6 +18,8 @@ public final class SettingsDrawerFragment: AbstractSettingsFragment() {
     companion object {
         const val DRAWER_TYPE: String = "pref_drawer_type"
         const val BLUR_WARNING: String = "pref_blur_warning"
+        const val GRID_SIZE_WIDTH_DRAWER_OVERRIDE_SWITCH: String = "pref_grid_size_width_drawer_override_switch"
+        const val GRID_SIZE_WIDTH_DRAWER_OVERRIDE: String = "pref_grid_size_width_drawer_override"
     }
 
     override fun getPreferenceScreenResId() = R.xml.murine_prefs_drawer
@@ -24,6 +29,14 @@ public final class SettingsDrawerFragment: AbstractSettingsFragment() {
     private fun updateBlurWarningVisibility(selectedType: WorkspaceBlurUtils.DrawerBlurType) {
         findPreference<Preference>(BLUR_WARNING)?.isVisible =
             selectedType.radius > 0 && !WorkspaceBlurUtils.isBlurSupported
+    }
+
+    private fun updateDrawerGridWidthOverrideVisibility(enabled: Boolean) {
+        findPreference<CustomSeekBarPreference>(GRID_SIZE_WIDTH_DRAWER_OVERRIDE)?.apply {
+            isEnabled = enabled
+            isVisible = enabled
+            min = if (enabled) 3 else 0
+        }
     }
 
     override fun initPreference(preference: Preference, info: DisplayController.Info): Boolean {
@@ -57,6 +70,34 @@ public final class SettingsDrawerFragment: AbstractSettingsFragment() {
                         Log.d("Settings.Theme", "Selected drawer type: $selected")
                     }
                 }
+                return true
+            }
+            GRID_SIZE_WIDTH_DRAWER_OVERRIDE_SWITCH -> {
+                val isTablet = InvariantDeviceProfile.INSTANCE.get(requireContext()).deviceType == InvariantDeviceProfile.TYPE_TABLET
+                val launcherPrefs = LauncherPrefs.get(preference.context)
+                val currentValue = launcherPrefs.get(LauncherPrefs.DRAWER_GRID_WIDTH_OVERRIDE)
+                preference as SwitchPreferenceCompat
+                preference.isChecked = currentValue != 0
+                updateDrawerGridWidthOverrideVisibility(currentValue != 0)
+                preference.setOnPreferenceChangeListener { _, newValue ->
+                    val enabled = newValue as Boolean
+                    if (enabled) {
+                        val defaultValue = LauncherPrefs.defaultGridWidth(isTablet)
+                        launcherPrefs.put(LauncherPrefs.DRAWER_GRID_WIDTH_OVERRIDE, defaultValue)
+                        findPreference<CustomSeekBarPreference>(GRID_SIZE_WIDTH_DRAWER_OVERRIDE)?.setValue(defaultValue)
+                    } else {
+                        launcherPrefs.put(LauncherPrefs.DRAWER_GRID_WIDTH_OVERRIDE, 0)
+                    }
+                    updateDrawerGridWidthOverrideVisibility(enabled)
+                    true
+                }
+                return true
+            }
+            GRID_SIZE_WIDTH_DRAWER_OVERRIDE -> {
+                preference as CustomSeekBarPreference
+                val isTablet = InvariantDeviceProfile.INSTANCE.get(requireContext()).deviceType == InvariantDeviceProfile.TYPE_TABLET
+                preference.setDefaultValue(LauncherPrefs.defaultGridWidth(isTablet))
+                preference.min = if (LauncherPrefs.DRAWER_GRID_WIDTH_OVERRIDE.get(requireContext()) == 0) 0 else 3
                 return true
             }
             BLUR_WARNING -> return true

@@ -36,4 +36,21 @@
             app:cardContentColor="@color/settingslib_materialColorOnSurface" />
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/pref_subcategory_layout">
+        <SwitchPreferenceCompat
+            android:key="pref_grid_size_width_drawer_override_switch"
+            android:title="@string/pref_drawer_grid_width_override_title"
+            android:summary="@string/pref_drawer_grid_width_override_summary"
+            android:persistent="false" />
+
+        <!-- Min value set to 3 in code to prevent 0 (diabled) being recalcualted -->
+        <app.murinelauncher.widget.CustomSeekBarPreference
+            android:key="pref_grid_size_width_drawer_override"
+            android:title="@string/pref_label_grid_width"
+            android:min="0"
+            android:max="10"
+            app:showIncrementButtons="false"
+            app:showTicks="true" />
+    </PreferenceCategory>
+
 </androidx.preference.PreferenceScreen>

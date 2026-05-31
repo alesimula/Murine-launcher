@@ -49,6 +49,9 @@
     <string name="drawer_type_mica">MICA</string>
     <string name="drawer_type_translucent">Traslucido</string>
 
+    <string name="pref_drawer_grid_width_override_title">Larghezza griglia personalizzata</string>
+    <string name="pref_drawer_grid_width_override_summary">Usa un numero personalizzato di colonne nel cassetto app</string>
+
     <string name="pref_blur_preview_title">Sfocatura modalità anteprima</string>
     <string name="pref_blur_preview_desc">Sfoca lo sfondo durante il trascinamento di icone e widget</string>
 

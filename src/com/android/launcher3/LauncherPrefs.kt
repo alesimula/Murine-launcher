@@ -299,15 +299,17 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
         fun defaultGridHeight(isTablet: Boolean) = if (isTablet) 6 else 5
 
         @JvmField
-        val GRID_WIDTH = backedUpItem("pref_grid_size_width", Int::class.java) { c ->
+        val GRID_WIDTH = backedUpItem(SettingsHomeFragment.GRID_SIZE_WIDTH, Int::class.java) { c ->
             val isTablet = c.resources.configuration.smallestScreenWidthDp >= WindowManagerProxy.MIN_TABLET_WIDTH
             defaultGridWidth(isTablet)
         }
         @JvmField
-        val GRID_HEIGHT = backedUpItem("pref_grid_size_height", Int::class.java) { c ->
+        val GRID_HEIGHT = backedUpItem(SettingsHomeFragment.GRID_SIZE_HEIGHT, Int::class.java) { c ->
             val isTablet = c.resources.configuration.smallestScreenWidthDp >= WindowManagerProxy.MIN_TABLET_WIDTH
             defaultGridHeight(isTablet)
         }
+        @JvmField
+        val DRAWER_GRID_WIDTH_OVERRIDE = backedUpItem(SettingsDrawerFragment.GRID_SIZE_WIDTH_DRAWER_OVERRIDE, 0)
         @JvmField
         val ICON_SIZE = backedUpItem(SettingsIconsFragment.ICON_SIZE_KEY, 100)
         @JvmField

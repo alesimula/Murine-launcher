@@ -24,6 +24,7 @@ import static com.android.launcher3.LauncherPrefs.FIXED_LANDSCAPE_MODE;
 import static com.android.launcher3.LauncherPrefs.GRID_HEIGHT;
 import static com.android.launcher3.LauncherPrefs.GRID_NAME;
 import static com.android.launcher3.LauncherPrefs.GRID_WIDTH;
+import static com.android.launcher3.LauncherPrefs.DRAWER_GRID_WIDTH_OVERRIDE;
 import static com.android.launcher3.LauncherPrefs.ICON_LABEL_SIZE;
 import static com.android.launcher3.LauncherPrefs.ICON_SIZE;
 import static com.android.launcher3.LauncherPrefs.NON_FIXED_LANDSCAPE_GRID_NAME;
@@ -305,6 +306,7 @@ public class InvariantDeviceProfile {
                 onConfigChanged(context);
             } else if (GRID_WIDTH.getSharedPrefKey().equals(key) ||
                     GRID_HEIGHT.getSharedPrefKey().equals(key) ||
+                    DRAWER_GRID_WIDTH_OVERRIDE.getSharedPrefKey().equals(key) ||
                     ICON_SIZE.getSharedPrefKey().equals(key) ||
                     ICON_LABEL_SIZE.getSharedPrefKey().equals(key) ||
                     QSB_SHOW_SEARCH_BAR.getSharedPrefKey().equals(key)) {
@@ -312,10 +314,10 @@ public class InvariantDeviceProfile {
             }
         };
         prefs.addListener(prefListener, FIXED_LANDSCAPE_MODE, ENABLE_TWOLINE_ALLAPPS_TOGGLE,
-                GRID_WIDTH, GRID_HEIGHT, ICON_SIZE, ICON_LABEL_SIZE);
+                GRID_WIDTH, GRID_HEIGHT, DRAWER_GRID_WIDTH_OVERRIDE, ICON_SIZE, ICON_LABEL_SIZE);
         lifeCycle.addCloseable(() -> prefs.removeListener(prefListener,
                 FIXED_LANDSCAPE_MODE, ENABLE_TWOLINE_ALLAPPS_TOGGLE, GRID_WIDTH, GRID_HEIGHT,
-                ICON_SIZE, ICON_LABEL_SIZE));
+                DRAWER_GRID_WIDTH_OVERRIDE, ICON_SIZE, ICON_LABEL_SIZE));
 
         SimpleBroadcastReceiver localeReceiver = new SimpleBroadcastReceiver(context,
                 MAIN_EXECUTOR, i -> onConfigChanged(context));
@@ -471,9 +473,10 @@ public class InvariantDeviceProfile {
         // Dynamic hotseat and all apps columns based on width
         numShownHotseatIcons = numColumns;
         numDatabaseHotseatIcons = numColumns;
-        numAllAppsColumns = numColumns;
-        numDatabaseAllAppsColumns = numColumns;
-        numSearchContainerColumns = numColumns;
+        numAllAppsColumns = mPrefs.get(DRAWER_GRID_WIDTH_OVERRIDE);
+        if (numAllAppsColumns == 0) numAllAppsColumns = numColumns;
+        numDatabaseAllAppsColumns = numAllAppsColumns;
+        numSearchContainerColumns = numAllAppsColumns;
         defaultLayoutId = getDefaultWorkspaceForWidth(numColumns);
 
         inlineNavButtonsEndSpacing = closestProfile.inlineNavButtonsEndSpacing;
