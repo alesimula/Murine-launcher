@@ -24,6 +24,7 @@ import androidx.annotation.NonNull;
 import com.android.launcher3.LauncherSettings.Favorites;
 import com.android.launcher3.model.data.FolderInfo;
 import com.android.launcher3.model.data.ItemInfo;
+import com.android.launcher3.pm.UserCache;
 import com.android.launcher3.shortcuts.ShortcutKey;
 
 import java.util.Collection;
@@ -43,6 +44,11 @@ public abstract class ItemInfoMatcher {
 
     public static Predicate<ItemInfo> ofUser(UserHandle user) {
         return info -> info != null && info.user.equals(user);
+    }
+
+    public static Predicate<ItemInfo> ofCurrentOrDualUser(UserCache userCache, UserHandle user) {
+        final var ofUser = ofUser(user);
+        return info -> ofUser.test(info) || userCache.getUserInfo(info.user).isCloned();
     }
 
     public static Predicate<ItemInfo> ofComponents(
