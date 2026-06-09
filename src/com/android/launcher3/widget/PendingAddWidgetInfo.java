@@ -16,6 +16,7 @@
 package com.android.launcher3.widget;
 
 import android.appwidget.AppWidgetHostView;
+import android.appwidget.AppWidgetProviderInfo;
 import android.content.Context;
 import android.os.Bundle;
 
@@ -65,8 +66,15 @@ public class PendingAddWidgetInfo extends PendingAddItemInfo {
         previewImage = i.previewImage;
         icon = i.icon;
 
-        spanX = i.spanX;
-        spanY = i.spanY;
+        if (i.spanX <= 0 || i.spanY <= 0) {
+            setNonResizeable(false);
+            i.forceResizableX = i.spanX <= 0;
+            i.forceResizableY = i.spanY <= 0;
+            if (i.forceResizableX) i.resizeMode |= AppWidgetProviderInfo.RESIZE_HORIZONTAL;
+            if (i.forceResizableY) i.resizeMode |= AppWidgetProviderInfo.RESIZE_VERTICAL;
+        }
+        spanX = Math.max(1, i.spanX);
+        spanY = Math.max(1, i.spanY);
         minSpanX = i.minSpanX;
         minSpanY = i.minSpanY;
         this.sourceContainer = this.container = container;

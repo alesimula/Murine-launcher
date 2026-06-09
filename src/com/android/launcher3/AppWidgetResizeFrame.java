@@ -42,6 +42,7 @@ import com.android.launcher3.keyboard.ViewGroupFocusHelper;
 import com.android.launcher3.logging.InstanceId;
 import com.android.launcher3.logging.InstanceIdSequence;
 import com.android.launcher3.model.data.ItemInfo;
+import com.android.launcher3.model.data.LauncherAppWidgetInfo;
 import com.android.launcher3.util.PendingRequestArgs;
 import com.android.launcher3.views.ArrowTipView;
 import com.android.launcher3.widget.LauncherAppWidgetHostView;
@@ -257,22 +258,33 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
         LauncherAppWidgetProviderInfo info = (LauncherAppWidgetProviderInfo)
                 widgetView.getAppWidgetInfo();
         mDragLayer = dragLayer;
+        ItemInfo widgetInfo = (ItemInfo) widgetView.getTag();
 
-        mMinHSpan = info.minSpanX;
-        mMinVSpan = info.minSpanY;
+        // Fallback: apply forceResizableX/Y or re-check persisted LauncherAppWidgetInfo.
+        boolean forceResizableX = info.forceResizableX;
+        boolean forceResizableY = info.forceResizableY;
+        if (widgetInfo instanceof LauncherAppWidgetInfo && (!forceResizableX && !forceResizableY)) {
+            forceResizableX = widgetInfo.minSpanX <= 0 || widgetInfo.minSpanY <= 0;
+            forceResizableY = widgetInfo.minSpanX <= 0 || widgetInfo.minSpanY <= 0;
+        }
+
+        mMinHSpan = Math.max(1, info.minSpanX);
+        mMinVSpan = Math.max(1, info.minSpanY);
         mMaxHSpan = info.maxSpanX;
         mMaxVSpan = info.maxSpanY;
 
         // Only show resize handles for the directions in which resizing is possible.
         InvariantDeviceProfile idp = LauncherAppState.getIDP(cellLayout.getContext());
-        mVerticalResizeActive = (info.resizeMode & AppWidgetProviderInfo.RESIZE_VERTICAL) != 0
+        if (forceResizableX) mMaxHSpan = Math.max(mMaxHSpan, idp.numColumns);
+        if (forceResizableY) mMaxVSpan = Math.max(mMaxVSpan, idp.numRows);
+        mVerticalResizeActive = (forceResizableY || (info.resizeMode & AppWidgetProviderInfo.RESIZE_VERTICAL) != 0)
                 && mMinVSpan < idp.numRows && mMaxVSpan > 1
                 && mMinVSpan < mMaxVSpan;
         if (!mVerticalResizeActive) {
             mDragHandles[INDEX_TOP].setVisibility(GONE);
             mDragHandles[INDEX_BOTTOM].setVisibility(GONE);
         }
-        mHorizontalResizeActive = (info.resizeMode & AppWidgetProviderInfo.RESIZE_HORIZONTAL) != 0
+        mHorizontalResizeActive = (forceResizableX || (info.resizeMode & AppWidgetProviderInfo.RESIZE_HORIZONTAL) != 0)
                 && mMinHSpan < idp.numColumns && mMaxHSpan > 1
                 && mMinHSpan < mMaxHSpan;
         if (!mHorizontalResizeActive) {
@@ -317,7 +329,6 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
         }
 
         CellLayoutLayoutParams lp = (CellLayoutLayoutParams) mWidgetView.getLayoutParams();
-        ItemInfo widgetInfo = (ItemInfo) mWidgetView.getTag();
         CellPos presenterPos = mLauncher.getCellPosMapper().mapModelToPresenter(widgetInfo);
         lp.setCellX(presenterPos.cellX);
         lp.setTmpCellX(presenterPos.cellX);
