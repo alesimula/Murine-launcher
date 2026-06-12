@@ -397,6 +397,16 @@ public class LauncherAccessibilityDelegate extends BaseAccessibilityDelegate<Lau
         }
 
         if (found) {
+            // If space was found on an extra empty screen (placeholder), commit it first so).
+            if (Workspace.EXTRA_EMPTY_SCREEN_IDS.contains(screenId)) {
+                workspace.addExtraEmptyScreens();
+                IntSet emptyScreenIds = workspace.commitExtraEmptyScreens();
+                if (emptyScreenIds.isEmpty()) return -1;
+                screenId = emptyScreenIds.getArray().get(0);
+                layout = workspace.getScreenWithId(screenId);
+                found = layout.findCellForSpan(outCoordinates, info.spanX, info.spanY);
+                if (!found) Log.wtf(TAG, "Not enough space on an empty screen");
+            }
             return screenId;
         }
 

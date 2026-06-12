@@ -1088,7 +1088,7 @@ public class Launcher extends StatefulActivity<LauncherState>
      */
     private int ensurePendingDropLayoutExists(int screenId) {
         CellLayout dropLayout = mWorkspace.getScreenWithId(screenId);
-        if (dropLayout == null) {
+        if (dropLayout == null || Workspace.EXTRA_EMPTY_SCREEN_IDS.contains(screenId)) {
             // it's possible that the add screen was removed because it was
             // empty and a re-bind occurred
             mWorkspace.addExtraEmptyScreens();
