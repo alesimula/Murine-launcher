@@ -1562,11 +1562,20 @@ public class Launcher extends StatefulActivity<LauncherState>
         if (appWidgetInfo == null) {
             appWidgetInfo = mAppWidgetManager.getLauncherAppWidgetInfo(appWidgetId,
                     itemInfo.getTargetComponent());
+            if (appWidgetInfo == null){
+                mAppWidgetHolder.deleteAppWidgetId(appWidgetId);
+                return;
+            }
         }
 
         if (hostView == null && !showPendingWidget) {
             // Perform actual inflation because we're live
             hostView = mAppWidgetHolder.createView(appWidgetId, appWidgetInfo);
+        }
+        if (appWidgetInfo.provider == null) {
+            appWidgetInfo.provider = itemInfo.getTargetComponent();
+            if (appWidgetInfo.provider == null)
+                return;
         }
 
         LauncherAppWidgetInfo launcherInfo;
