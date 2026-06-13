@@ -1,18 +1,19 @@
 package app.murinelauncher.widget.accessibility
 
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import com.android.launcher3.R
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class AlertDialogSheet : BottomSheetDialogFragment() {
+
+    override fun getTheme(): Int =
+        com.android.settingslib.widget.theme.R.style.Theme_SettingsLib_BottomSheetDialog
 
     private var onAcceptListener: (() -> Unit)? = null
 
