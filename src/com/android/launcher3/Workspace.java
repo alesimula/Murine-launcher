@@ -123,6 +123,7 @@ import com.android.launcher3.util.RunnableList;
 import com.android.launcher3.util.Thunk;
 import com.android.launcher3.util.WallpaperOffsetInterpolator;
 import com.android.launcher3.widget.LauncherAppWidgetHostView;
+import com.android.launcher3.widget.LauncherAppWidgetProviderInfo;
 import com.android.launcher3.widget.NavigableAppWidgetHostView;
 import com.android.launcher3.widget.PendingAddShortcutInfo;
 import com.android.launcher3.widget.PendingAddWidgetInfo;
@@ -2271,7 +2272,15 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
     private Runnable getWidgetResizeFrameRunnable(DragOptions options,
             LauncherAppWidgetHostView hostView, CellLayout cellLayout) {
         AppWidgetProviderInfo pInfo = hostView.getAppWidgetInfo();
-        if (pInfo != null && pInfo.resizeMode != AppWidgetProviderInfo.RESIZE_NONE) {
+        boolean forceResize = pInfo instanceof LauncherAppWidgetProviderInfo
+                && (((LauncherAppWidgetProviderInfo) pInfo).forceResizableX ||
+                ((LauncherAppWidgetProviderInfo) pInfo).forceResizableY);
+        if (!forceResize) {
+            ItemInfo itemInfo = (ItemInfo) hostView.getTag();
+            forceResize = itemInfo instanceof LauncherAppWidgetInfo
+                    && itemInfo.minSpanX <= 0 || itemInfo.minSpanY <= 0;
+        }
+        if (pInfo != null && (pInfo.resizeMode != AppWidgetProviderInfo.RESIZE_NONE || forceResize)) {
             return () -> {
                 if (!isPageInTransition()) {
                     AppWidgetResizeFrame.showForWidget(hostView, cellLayout);

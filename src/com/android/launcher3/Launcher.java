@@ -1088,7 +1088,7 @@ public class Launcher extends StatefulActivity<LauncherState>
      */
     private int ensurePendingDropLayoutExists(int screenId) {
         CellLayout dropLayout = mWorkspace.getScreenWithId(screenId);
-        if (dropLayout == null) {
+        if (dropLayout == null || Workspace.EXTRA_EMPTY_SCREEN_IDS.contains(screenId)) {
             // it's possible that the add screen was removed because it was
             // empty and a re-bind occurred
             mWorkspace.addExtraEmptyScreens();
@@ -1562,11 +1562,20 @@ public class Launcher extends StatefulActivity<LauncherState>
         if (appWidgetInfo == null) {
             appWidgetInfo = mAppWidgetManager.getLauncherAppWidgetInfo(appWidgetId,
                     itemInfo.getTargetComponent());
+            if (appWidgetInfo == null){
+                mAppWidgetHolder.deleteAppWidgetId(appWidgetId);
+                return;
+            }
         }
 
         if (hostView == null && !showPendingWidget) {
             // Perform actual inflation because we're live
             hostView = mAppWidgetHolder.createView(appWidgetId, appWidgetInfo);
+        }
+        if (appWidgetInfo.provider == null) {
+            appWidgetInfo.provider = itemInfo.getTargetComponent();
+            if (appWidgetInfo.provider == null)
+                return;
         }
 
         LauncherAppWidgetInfo launcherInfo;

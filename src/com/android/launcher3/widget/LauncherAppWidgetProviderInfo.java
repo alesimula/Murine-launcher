@@ -72,6 +72,18 @@ public class LauncherAppWidgetProviderInfo extends AppWidgetProviderInfo impleme
 
     protected boolean mIsMinSizeFulfilled;
 
+    /**
+     * Set to true when initSpans detects broken spans (would be 0).
+     * Forces horizontal resize handles independent of the framework's resizeMode field.
+     */
+    public boolean forceResizableX;
+
+    /**
+     * Set to true when initSpans detects broken spans (would be 0).
+     * Forces vertical resize handles independent of the framework's resizeMode field.
+     */
+    public boolean forceResizableY;
+
     private PackageManager mPM;
 
     public static LauncherAppWidgetProviderInfo fromProviderInfo(Context context,

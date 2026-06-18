@@ -561,10 +561,12 @@ public class ReorderAlgorithm {
         mCellLayout.cellToRect(dropRegionRect.left, dropRegionRect.top, dropRegionRect.width(),
                 dropRegionRect.height(), dropRegionRect);
 
-        int deltaX = (dropRegionRect.centerX() - reorderParameters.getPixelX())
-                / reorderParameters.getSpanX();
-        int deltaY = (dropRegionRect.centerY() - reorderParameters.getPixelY())
-                / reorderParameters.getSpanY();
+        int deltaX = reorderParameters.getSpanX() == 0 ? 0
+                : (dropRegionRect.centerX() - reorderParameters.getPixelX())
+                        / reorderParameters.getSpanX();
+        int deltaY = reorderParameters.getSpanY() == 0 ? 0
+                : (dropRegionRect.centerY() - reorderParameters.getPixelY())
+                        / reorderParameters.getSpanY();
 
         if (dropRegionSpanX == mCellLayout.getCountX()
                 || reorderParameters.getSpanX() == mCellLayout.getCountX()) {

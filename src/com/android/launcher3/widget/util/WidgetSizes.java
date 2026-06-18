@@ -39,6 +39,7 @@ import java.util.List;
 
 /** A utility class for widget sizes related calculations. */
 public final class WidgetSizes {
+    private static final String TAG = "WidgetSizes";
 
     /**
      * Returns the list of all possible sizes, in dp, for a widget of given spans on this device.
@@ -113,13 +114,15 @@ public final class WidgetSizes {
         UI_HELPER_EXECUTOR.execute(() -> {
             AppWidgetManager widgetManager = AppWidgetManager.getInstance(context);
             Bundle sizeOptions = getWidgetSizeOptions(context, info.provider, spanX, spanY);
-            if (sizeOptions.<SizeF>getParcelableArrayList(
-                    AppWidgetManager.OPTION_APPWIDGET_SIZES).equals(
-                    widgetManager.getAppWidgetOptions(widgetId).<SizeF>getParcelableArrayList(
-                            AppWidgetManager.OPTION_APPWIDGET_SIZES))) {
-                return;
+            Bundle currentOptions = widgetManager.getAppWidgetOptions(widgetId);
+            final ArrayList<SizeF> newSizes;
+            if (currentOptions != null && (newSizes = sizeOptions.getParcelableArrayList(AppWidgetManager.OPTION_APPWIDGET_SIZES)) != null
+                    && !newSizes.equals(currentOptions.<SizeF>getParcelableArrayList(AppWidgetManager.OPTION_APPWIDGET_SIZES)
+            )) try {
+                widgetManager.updateAppWidgetOptions(widgetId, sizeOptions);
+            } catch (Exception e) {
+                Log.w(TAG, "Failed to update widget size options for widgetId=" + widgetId, e);
             }
-            widgetManager.updateAppWidgetOptions(widgetId, sizeOptions);
         });
     }
 

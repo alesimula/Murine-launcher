@@ -108,8 +108,30 @@ html {
   -moz-osx-font-smoothing: grayscale;
 }
 
+@font-face {
+  font-family: 'MurineGantari';
+  src: url('/assets/fonts/murine_gantari.woff2') format('woff2-variations'),
+         url('/assets/fonts/murine_gantari.woff2') format('woff2'),
+         url('/assets/fonts/murine_gantari.woff') format('woff-variations'),
+         url('/assets/fonts/murine_gantari.woff') format('woff');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'MurineGantari';
+  src: url('/assets/fonts/murine_gantari_italic.woff2') format('woff2-variations'),
+         url('/assets/fonts/murine_gantari_italic.woff2') format('woff2'),
+         url('/assets/fonts/murine_gantari_italic.woff') format('woff-variations'),
+         url('/assets/fonts/murine_gantari_italic.woff') format('woff');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
 body {
-  font-family: 'Inter', 'Noto Sans', system-ui, -apple-system, sans-serif;
+  font-family: 'MurineGantari', 'Inter', 'Noto Sans', system-ui, -apple-system, sans-serif;
   background: var(--md-surface);
   color: var(--md-on-surface);
   line-height: 1.6;
@@ -126,7 +148,7 @@ a:hover { text-decoration: underline; }
 img { max-width: 100%; height: auto; }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Inter', 'Noto Sans', system-ui, sans-serif;
+  font-family: 'MurineGantari', 'Inter', 'Noto Sans', system-ui, sans-serif;
   color: var(--md-on-surface);
   line-height: 1.25;
 }
@@ -174,7 +196,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .nav-title {
-  font-family: 'Inter', 'Noto Sans', sans-serif;
+  font-family: 'MurineGantari', 'Inter', 'Noto Sans', sans-serif;
   font-size: 1.15rem;
   font-weight: 500;
   letter-spacing: -0.01em;
@@ -448,7 +470,7 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: var(--md-shape-full);
   background: var(--md-primary);
   color: var(--md-on-primary);
-  font-family: 'Inter', 'Noto Sans', sans-serif;
+  font-family: 'MurineGantari', 'Inter', 'Noto Sans', sans-serif;
   font-size: 0.9375rem;
   font-weight: 500;
   text-decoration: none;
@@ -475,7 +497,7 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: var(--md-shape-full);
   background: transparent;
   color: var(--md-primary);
-  font-family: 'Inter', 'Noto Sans', sans-serif;
+  font-family: 'MurineGantari', 'Inter', 'Noto Sans', sans-serif;
   font-size: 0.9375rem;
   font-weight: 500;
   text-decoration: none;
@@ -947,7 +969,7 @@ h1, h2, h3, h4, h5, h6 {
   padding: 10px 20px;
   border-radius: var(--md-shape-full);
   color: var(--md-primary);
-  font-family: 'Inter', 'Noto Sans', sans-serif;
+  font-family: 'MurineGantari', 'Inter', 'Noto Sans', sans-serif;
   font-size: 0.875rem;
   font-weight: 500;
   text-decoration: none;
@@ -1010,7 +1032,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .footer-name {
-  font-family: 'Inter', 'Noto Sans', sans-serif;
+  font-family: 'MurineGantari', 'Inter', 'Noto Sans', sans-serif;
   font-size: 1rem;
   font-weight: 500;
 }
