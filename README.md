@@ -39,6 +39,12 @@ Check [the website](https://www.murinelauncher.app/) or download it from:
       <img alt="Get it on IzzyOnDroid" src="image/github/badge-izzyondroid.webp" height="60">
     </picture>
   </a>
+  <a href="https://play.google.com/store/apps/details?id=app.murinelauncher">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="image/github/badge-google-play.webp" height="60">
+      <img alt="Get it on Google Play" src="image/github/badge-google-play.webp" height="60">
+    </picture>
+  </a>
   <a href="https://github.com/alesimula/Murine-launcher/releases">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="image/github/badge-github.webp" height="60">
