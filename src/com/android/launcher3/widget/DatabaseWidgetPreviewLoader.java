@@ -206,6 +206,10 @@ public class DatabaseWidgetPreviewLoader {
             previewHeight = Math.max((int) (scale * previewHeight), 1);
         }
 
+        // Guard against zero/negative dimensions
+        previewWidth = Math.max(previewWidth, 1);
+        previewHeight = Math.max(previewHeight, 1);
+
         final int previewWidthF = previewWidth;
         final int previewHeightF = previewHeight;
         final Drawable drawableF = drawable;
