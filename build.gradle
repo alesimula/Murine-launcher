@@ -59,6 +59,7 @@ android {
         buildConfigField "boolean", "WIDGET_ON_FIRST_SCREEN", "true"
         buildConfigField "boolean", "WIDGETS_ENABLED", "true"
         buildConfigField "boolean", "NOTIFICATION_DOTS_ENABLED", "true"
+        buildConfigField "boolean", "ANIMATE_ALL_APPS_SEARCH", "false"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true

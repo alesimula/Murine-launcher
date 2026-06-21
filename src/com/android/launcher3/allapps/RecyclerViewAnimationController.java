@@ -71,6 +71,7 @@ public class RecyclerViewAnimationController {
     protected final ActivityAllAppsContainerView<?> mAllAppsContainerView;
     protected ObjectAnimator mAnimator = null;
     private float mAnimatorProgress = 1f;
+    private boolean mExpanding;
 
     public RecyclerViewAnimationController(ActivityAllAppsContainerView<?> allAppsContainerView) {
         mAllAppsContainerView = allAppsContainerView;
@@ -178,6 +179,7 @@ public class RecyclerViewAnimationController {
     }
 
     protected void animateToState(boolean expand, long duration, Runnable onEndRunnable) {
+        mExpanding = expand;
         float targetProgress = expand ? 0 : 1;
         if (mAnimator != null) {
             mAnimator.cancel();
@@ -256,6 +258,15 @@ public class RecyclerViewAnimationController {
     /** Returns true if a transition animation is currently in progress. */
     protected boolean isRunning() {
         return mAnimator != null;
+    }
+
+    /**
+     * Returns true while a transition into the expanded (search) state is in progress. During this
+     * window the A-Z list is still visible underneath the search results, so callers should
+     * suppress touch input to avoid acting on the stale list (Issue #43).
+     */
+    public boolean isTransitioningToSearch() {
+        return isRunning() && mExpanding;
     }
 
     /** Should only animate if the view is an app icon and if it has a decoration info. */

@@ -68,6 +68,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.graphics.ColorUtils;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.launcher3.BuildConfig;
 import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.DeviceProfile.OnDeviceProfileChangeListener;
 import com.android.launcher3.DragSource;
@@ -440,6 +441,8 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
     }
 
     void animateToSearchState(boolean goingToSearch, long durationMs) {
+        // If animation disabled via build flag, snap instantly in both directions
+        if (!BuildConfig.ANIMATE_ALL_APPS_SEARCH) durationMs = 0;
         if (!mSearchTransitionController.isRunning() && goingToSearch == isSearching()) {
             return;
         }
@@ -1147,6 +1150,12 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
             return false;
         }
 
+        // Intercept while animating into search so the stale A-Z list underneath can't be acted on (Issue #43).
+        if (mSearchTransitionController.isTransitioningToSearch()) {
+            mTouchHandler = null;
+            return true;
+        }
+
         if (ev.getAction() == MotionEvent.ACTION_DOWN) {
             AllAppsRecyclerView rv = getActiveRecyclerView();
             if (rv != null && rv.getScrollbar() != null
@@ -1167,6 +1176,9 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         if (!isInAllApps()) {
             return false;
         }
+
+        // Consume touches while animating into search so the stale A-Z list underneath can't be acted on (Issue #43).
+        if (mSearchTransitionController.isTransitioningToSearch()) return true;
 
         if (ev.getAction() == MotionEvent.ACTION_DOWN) {
             AllAppsRecyclerView rv = getActiveRecyclerView();
