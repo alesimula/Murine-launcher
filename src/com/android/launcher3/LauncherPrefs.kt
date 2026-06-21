@@ -314,6 +314,8 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
         val ICON_SIZE = backedUpItem(SettingsIconsFragment.ICON_SIZE_KEY, 100)
         @JvmField
         val ICON_LABEL_SIZE = backedUpItem(SettingsIconsFragment.ICON_LABEL_SIZE_KEY, 100)
+        @JvmField
+        val NOTIFICATION_BADGE_COUNT = backedUpItem(SettingsIconsFragment.NOTIFICATION_BADGE_COUNT_KEY, true)
 
         @JvmField
         val ENABLE_TWOLINE_ALLAPPS_TOGGLE = backedUpItem("pref_enable_two_line_toggle", false)

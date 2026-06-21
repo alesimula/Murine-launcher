@@ -97,6 +97,10 @@
 
     <string name="pref_blur_unsupported_warning"><![CDATA[The wallpaper blur may or may not be fully supported or enabled by this OEM/ROM; If you encounter issues, try to check for an &quot;Allow window-level blurs&quot; option in Display Options or Developer Options.<br/>Alternatively, try enabling <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">this Magisk module</a> on rooted devices]]></string>
 
+    <!-- Notification badges -->
+    <string name="pref_notification_badge_count_title">Notification count</string>
+    <string name="pref_notification_badge_count_desc">Show count on notification dots</string>
+
     <!-- Icon packs -->
     <string name="pref_category_icon_pack_title">Icon pack</string>
     <string name="pref_category_icon_pack_summary">Change app icons using third-party icon packs</string>

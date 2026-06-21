@@ -22,10 +22,8 @@ import static android.text.Layout.Alignment.ALIGN_NORMAL;
 
 import static com.android.app.animation.Interpolators.EMPHASIZED;
 import static com.android.launcher3.BubbleTextView.RunningAppState.RUNNING;
-import static com.android.launcher3.BubbleTextView.RunningAppState.NOT_RUNNING;
 import static com.android.launcher3.BubbleTextView.RunningAppState.MINIMIZED;
 import static com.android.launcher3.Flags.enableContrastTiles;
-import static com.android.launcher3.Flags.enableCursorHoverStates;
 import static com.android.launcher3.allapps.AlphabeticalAppsList.PRIVATE_SPACE_PACKAGE;
 import static com.android.launcher3.graphics.PreloadIconDrawable.newPendingIcon;
 import static com.android.launcher3.icons.BitmapInfo.FLAG_NO_BADGE;
@@ -76,6 +74,8 @@ import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.annotation.VisibleForTesting;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
+
+import app.murinelauncher.icons.NotificationBadgeCounter;
 
 import com.android.launcher3.accessibility.BaseAccessibilityDelegate;
 import com.android.launcher3.dot.DotInfo;
@@ -232,6 +232,7 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
     @ViewDebug.ExportedProperty(category = "launcher")
     private DotInfo mDotInfo;
     private DotRenderer mDotRenderer;
+    private final NotificationBadgeCounter mNotificationBadgeCounter = new NotificationBadgeCounter();
     @ViewDebug.ExportedProperty(category = "launcher", deepExport = true)
     protected DotRenderer.DrawParams mDotParams;
     private Animator mDotScaleAnim;
@@ -838,9 +839,20 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
             final int scrollX = getScrollX();
             final int scrollY = getScrollY();
             canvas.translate(scrollX, scrollY);
-            mDotRenderer.draw(canvas, mDotParams);
+            if (shouldShowNotificationCount()) {
+                mNotificationBadgeCounter.draw(canvas, mDotRenderer, mDotParams,
+                        mDotParams.dotColor,
+                        mDotInfo == null ? 0 : mDotInfo.getNotificationCount());
+            } else {
+                mDotRenderer.draw(canvas, mDotParams);
+            }
             canvas.translate(-scrollX, -scrollY);
         }
+    }
+
+    private boolean shouldShowNotificationCount() {
+        return mDotInfo != null
+                && LauncherPrefs.NOTIFICATION_BADGE_COUNT.get(getContext());
     }
 
     /** Draws a background behind the App Title label when required. **/

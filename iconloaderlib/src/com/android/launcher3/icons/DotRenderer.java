@@ -46,6 +46,7 @@ public class DotRenderer {
     
     // Lawnchair
     private static final float SIZE_PERCENTAGE_WITH_COUNT = 0.348f;
+    public static final int AMBIENT_SHADOW_ALPHA = 88;
     private static final int MAX_COUNT = 99; // The max number to draw on dots
 
     private final float mCircleRadius;
@@ -88,7 +89,7 @@ public class DotRenderer {
             size = MIN_DOT_SIZE;
         }
         ShadowGenerator.Builder builder = new ShadowGenerator.Builder(Color.TRANSPARENT);
-        builder.ambientShadowAlpha = 88;
+        builder.ambientShadowAlpha = AMBIENT_SHADOW_ALPHA;
         mBackgroundWithShadow = builder.setupBlurForSize(size).createPill(size, size);
         mCircleRadius = builder.radius;
 
@@ -117,7 +118,7 @@ public class DotRenderer {
             size = MIN_DOT_SIZE;
         }
         ShadowGenerator.Builder builder = new ShadowGenerator.Builder(Color.TRANSPARENT);
-        builder.ambientShadowAlpha = 88;
+        builder.ambientShadowAlpha = AMBIENT_SHADOW_ALPHA;
         mBackgroundWithShadow = builder.setupBlurForSize(size).createPill(size, size);
         mCircleRadius = builder.radius;
 

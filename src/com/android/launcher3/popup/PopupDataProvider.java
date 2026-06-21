@@ -16,6 +16,8 @@
 
 package com.android.launcher3.popup;
 
+import static com.android.launcher3.util.Executors.MAIN_EXECUTOR;
+
 import android.content.ComponentName;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
@@ -24,6 +26,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.android.launcher3.BubbleTextView;
+import com.android.launcher3.LauncherPrefChangeListener;
+import com.android.launcher3.LauncherPrefs;
 import com.android.launcher3.allapps.ActivityAllAppsContainerView;
 import com.android.launcher3.dot.DotInfo;
 import com.android.launcher3.folder.Folder;
@@ -61,8 +65,15 @@ public class PopupDataProvider implements NotificationListener.NotificationsChan
     /** Maps launcher activity components to a count of how many shortcuts they have. */
     private HashMap<ComponentKey, Integer> mDeepShortcutMap = new HashMap<>();
 
+    /** Refreshes all notification dots when the notification badge count preference is toggled. */
+    private final LauncherPrefChangeListener mNotificationBadgeCountListener = key -> {
+        if (LauncherPrefs.NOTIFICATION_BADGE_COUNT.getSharedPrefKey().equals(key))
+            MAIN_EXECUTOR.execute(() -> updateNotificationDots(packageUserKey -> true));
+    };
+
     public PopupDataProvider(ActivityContext context) {
         mContext = context;
+        LauncherPrefs.get(mContext.asContext()).addListener(mNotificationBadgeCountListener, LauncherPrefs.NOTIFICATION_BADGE_COUNT);
     }
 
     private void updateNotificationDots(Predicate<PackageUserKey> updatedDots) {

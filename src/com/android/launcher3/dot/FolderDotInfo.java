@@ -22,7 +22,7 @@ import com.android.launcher3.Utilities;
 
 /**
  * Subclass of DotInfo that only contains the dot count, which is
- * the sum of all the Folder's items' notifications (each counts as 1).
+ * the sum of all the Folder's items' notifications.
  */
 public class FolderDotInfo extends DotInfo {
 
@@ -38,7 +38,7 @@ public class FolderDotInfo extends DotInfo {
         if (dotToAdd == null) {
             return;
         }
-        mNumNotifications += dotToAdd.getNotificationKeys().size();
+        mNumNotifications += dotToAdd.getNotificationCount();
         mNumNotifications = Utilities.boundToRange(
                 mNumNotifications, MIN_COUNT, DotInfo.MAX_COUNT);
     }

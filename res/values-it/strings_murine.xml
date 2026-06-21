@@ -97,6 +97,10 @@
 
     <string name="pref_blur_unsupported_warning"><![CDATA[La sfocatura dello sfondo potrebbe non essere completamente supportata o abilitata da questo OEM/ROM; se riscontri problemi, prova a cercare un\'opzione &quot;Consenti sfocature a livello di finestra&quot; nelle opzioni di visualizzazione o nelle opzioni sviluppatore.<br/>In alternativa, prova ad abilitare <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">questo modulo Magisk</a> su dispositivi con root]]></string>
 
+    <!-- Notification badges -->
+    <string name="pref_notification_badge_count_title">Conteggio notifiche</string>
+    <string name="pref_notification_badge_count_desc">Mostra il numero sui puntini di notifica</string>
+
     <!-- Icon packs -->
     <string name="pref_category_icon_pack_title">Pacchetto icone</string>
     <string name="pref_category_icon_pack_summary">Cambia icone app usando pacchetti di terze parti</string>

@@ -99,6 +99,10 @@
 
     <string name="pref_blur_unsupported_warning"><![CDATA[El desenfoque del fondo puede no estar completamente soportado o habilitado por este OEM/ROM; si encuentras problemas, intenta buscar una opción de &quot;Permitir desenfoques a nivel de ventana&quot; en las opciones de pantalla o en las opciones de desarrollador.<br/>Alternativamente, prueba a activar <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">este módulo de Magisk</a> en dispositivos con root]]></string>
 
+    <!-- Notification badges -->
+    <string name="pref_notification_badge_count_title">Número de notificaciones</string>
+    <string name="pref_notification_badge_count_desc">Mostrar número en los puntos de notificación</string>
+
     <!-- Icon packs -->
     <string name="pref_category_icon_pack_title">Paquete de iconos</string>
     <string name="pref_category_icon_pack_summary">Cambiar los iconos de las aplicaciones usando paquetes de iconos de terceros</string>

@@ -25,6 +25,13 @@
         android:persistent="false"
         android:widgetLayout="@layout/notification_pref_warning" />
 
+    <SwitchPreferenceCompat
+        android:key="pref_notification_badge_count"
+        android:title="@string/pref_notification_badge_count_title"
+        android:summary="@string/pref_notification_badge_count_desc"
+        android:persistent="true"
+        android:defaultValue="true" />
+
     <PreferenceCategory android:title="@string/pref_subcategory_appearance">
         <Preference
             android:key="pref_icon_pack_entry"

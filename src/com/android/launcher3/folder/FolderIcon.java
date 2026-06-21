@@ -46,6 +46,8 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import app.murinelauncher.icons.NotificationBadgeCounter;
+
 import com.android.app.animation.Interpolators;
 import com.android.launcher3.Alarm;
 import com.android.launcher3.BubbleTextView;
@@ -54,6 +56,7 @@ import com.android.launcher3.CheckLongPressHelper;
 import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.DropTarget.DragObject;
 import com.android.launcher3.Launcher;
+import com.android.launcher3.LauncherPrefs;
 import com.android.launcher3.LauncherSettings;
 import com.android.launcher3.OnAlarmListener;
 import com.android.launcher3.R;
@@ -129,6 +132,7 @@ public class FolderIcon extends FrameLayout implements FloatingIconViewCompanion
     @ViewDebug.ExportedProperty(category = "launcher", deepExport = true)
     private final FolderDotInfo mDotInfo = new FolderDotInfo();
     private DotRenderer mDotRenderer;
+    private final NotificationBadgeCounter mNotificationBadgeCounter = new NotificationBadgeCounter();
     @ViewDebug.ExportedProperty(category = "launcher", deepExport = true)
     private DotRenderer.DrawParams mDotParams;
     private float mDotScale;
@@ -620,8 +624,18 @@ public class FolderIcon extends FrameLayout implements FloatingIconViewCompanion
             // If we are animating to the accepting state, animate the dot out.
             mDotParams.scale = Math.max(0, mDotScale - mBackground.getAcceptScaleProgress());
             mDotParams.dotColor = mBackground.getDotColor();
-            mDotRenderer.draw(canvas, mDotParams);
+            if (shouldShowNotificationCount()) {
+                mNotificationBadgeCounter.draw(canvas, mDotRenderer, mDotParams,
+                        mDotParams.dotColor, mDotInfo.getNotificationCount());
+            } else {
+                mDotRenderer.draw(canvas, mDotParams);
+            }
         }
+    }
+
+    private boolean shouldShowNotificationCount() {
+        return mDotInfo != null && mDotInfo.hasDot()
+                && LauncherPrefs.NOTIFICATION_BADGE_COUNT.get(getContext());
     }
 
     @Override

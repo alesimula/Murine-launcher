@@ -17,6 +17,7 @@ public final class SettingsIconsFragment: AbstractSettingsFragment() {
         const val ICON_SIZE_KEY: String = "pref_icon_bitmap_size"
         const val ICON_LABEL_SIZE_KEY: String = "pref_icon_label_size"
         const val ICON_SHAPE_KEY: String = "pref_icon_shape"
+        const val NOTIFICATION_BADGE_COUNT_KEY: String = "pref_notification_badge_count"
     }
 
     override fun getPreferenceScreenResId() = R.xml.murine_prefs_icons
