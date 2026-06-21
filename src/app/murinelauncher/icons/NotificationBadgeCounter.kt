@@ -42,14 +42,9 @@ class NotificationBadgeCounter {
     fun draw(canvas: Canvas, renderer: DotRenderer?, params: DotRenderer.DrawParams?, dotColor: Int, count: Int) {
         if (renderer == null || params == null || count <= 0 || params.scale <= 0) return
 
-        val countText = if (count > MAX_DISPLAY_COUNT)
-            MAX_DISPLAY_COUNT.toString() + "+"
-        else count.toString()
+        val countText = if (count > MAX_DISPLAY_COUNT) MAX_DISPLAY_COUNT.toString() + "+" else count.toString()
         val iconBounds = params.iconBounds
-        val dotPosition = if (params.leftAlign)
-            renderer.getLeftDotPosition()
-        else
-            renderer.getRightDotPosition()
+        val dotPosition = if (params.leftAlign) renderer.getLeftDotPosition() else renderer.getRightDotPosition()
         val dotCenterX = iconBounds.left + iconBounds.width() * dotPosition[0]
         val dotCenterY = iconBounds.top + iconBounds.height() * dotPosition[1]
 
@@ -59,21 +54,14 @@ class NotificationBadgeCounter {
         mTextPaint.setTextSize(badgeHeight * TEXT_SIZE_PERCENTAGE)
         mTextPaint.setColor(getTextColor(dotColor))
 
-        val badgeWidth: Int = max(
-            badgeHeight, Math.round(
-                mTextPaint.measureText(countText)
-                        + badgeHeight * HORIZONTAL_PADDING_PERCENTAGE * 2
-            )
-        )
+        val badgeWidth: Int = max(badgeHeight,
+            Math.round(mTextPaint.measureText(countText) + badgeHeight * HORIZONTAL_PADDING_PERCENTAGE * 2))
         val backgroundWithShadow = getBackgroundWithShadow(badgeWidth, badgeHeight)
         val shadowRadius = backgroundWithShadow.getWidth() / 2f
 
         val canvasBounds = canvas.getClipBounds()
-        val offsetX =
-            if (params.leftAlign) max(0f, canvasBounds.left - (dotCenterX - shadowRadius)) else min(
-                0f,
-                canvasBounds.right - (dotCenterX + shadowRadius)
-            )
+        val offsetX = if (params.leftAlign) max(0f, canvasBounds.left - (dotCenterX - shadowRadius)) else
+            min(0f, canvasBounds.right - (dotCenterX + shadowRadius))
         val offsetY = max(0f, canvasBounds.top - (dotCenterY - shadowRadius))
 
         canvas.save()
