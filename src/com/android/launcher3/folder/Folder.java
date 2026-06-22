@@ -456,8 +456,8 @@ public class Folder extends AbstractFloatingView implements ClipPathView, DragSo
         this.setTranslationY(0);
         WindowInsetsCompat windowInsets = WindowInsetsCompat.toWindowInsetsCompat(insets, this);
 
-        if (windowInsets.isVisible(WindowInsets.Type.ime())) {
-            var keyboardInsets = windowInsets.getInsets(WindowInsets.Type.ime());
+        if (windowInsets.isVisible(WindowInsetsCompat.Type.ime())) {
+            var keyboardInsets = windowInsets.getInsets(WindowInsetsCompat.Type.ime());
             int folderHeightFromBottom = getHeightFromBottom();
 
             if (keyboardInsets.bottom > folderHeightFromBottom) {

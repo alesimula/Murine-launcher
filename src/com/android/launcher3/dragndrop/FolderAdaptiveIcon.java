@@ -18,6 +18,7 @@ package com.android.launcher3.dragndrop;
 
 import static com.android.launcher3.util.Executors.MAIN_EXECUTOR;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -37,6 +38,7 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 
+import com.android.launcher3.Utilities;
 import com.android.launcher3.folder.FolderIcon;
 import com.android.launcher3.icons.BitmapRenderer;
 import com.android.launcher3.util.Preconditions;
@@ -72,6 +74,7 @@ public class FolderAdaptiveIcon extends AdaptiveIconDrawable {
         return mBadge;
     }
 
+    @SuppressLint("NewApi")
     public static @Nullable FolderAdaptiveIcon createFolderAdaptiveIcon(
             ActivityContext activity, int folderId, Point size) {
         Preconditions.assertNonUiThread();
@@ -123,7 +126,14 @@ public class FolderAdaptiveIcon extends AdaptiveIconDrawable {
 
         // Only convert foreground to a bitmap as it can contain multiple draw commands. Other
         // layers either draw a nothing or a single draw call.
-        Bitmap fgBitmap = Bitmap.createBitmap(foreground);
+        Bitmap fgBitmap;
+        if (Utilities.ATLEAST_P) {
+            fgBitmap = Bitmap.createBitmap(foreground);
+        } else {
+            fgBitmap = Bitmap.createBitmap(
+                    foreground.getWidth(), foreground.getHeight(), Bitmap.Config.ARGB_8888);
+            new Canvas(fgBitmap).drawPicture(foreground);
+        }
         Paint foregroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
         // Do not use PictureDrawable as it moves the picture to the canvas bounds, whereas we want
