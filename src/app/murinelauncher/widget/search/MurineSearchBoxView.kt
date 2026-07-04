@@ -15,6 +15,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.graphics.ColorUtils
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -276,6 +277,10 @@ class MurineSearchBoxView(context: Context, attrs: AttributeSet?) :
                 context.startActivity(intent)
             } catch (e: ActivityNotFoundException) {
                 Log.w(TAG, "No web search activity found", e)
+                Toast.makeText(context, R.string.activity_not_found, Toast.LENGTH_SHORT).show()
+            } catch (e: SecurityException) {
+                Log.w(TAG, "Web search activity not launchable", e)
+                Toast.makeText(context, R.string.activity_not_found, Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -290,6 +295,10 @@ class MurineSearchBoxView(context: Context, attrs: AttributeSet?) :
                 context.startActivity(intent)
             } catch (e: ActivityNotFoundException) {
                 Log.w(TAG, "Could not open search provider", e)
+                performSystemSearch(context, query)
+            } catch (e: SecurityException) {
+                // In case of a browser without expoerted activity, fall back to the system web-search action instead of crashing
+                Log.w(TAG, "Search provider activity not launchable", e)
                 performSystemSearch(context, query)
             }
         }
