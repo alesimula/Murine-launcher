@@ -843,14 +843,17 @@ object IconPackManager {
      */
     fun hasIconForComponent(context: Context, packPackage: String, componentKey: String): Boolean {
         if (packPackage == SYSTEM_ICON_PACK) return false
-        // Check primary (global) cache
-        if (packPackage == cachedPackPackage && componentKey in cachedData.componentMap) return true
-        // Check per-app override cache
+        val isCachedPackage = packPackage == cachedPackPackage;
+        val isCachedPresent = isCachedPackage && componentKey in cachedData.componentMap;
+        // Check primary (global) cache presence
+        if (isCachedPresent) return true;
         val cached = overrideCache[packPackage]
-        if (cached != null) {
-            if (componentKey in cached.componentMap) return true
-            if (componentKey in cached.queriedMisses) return false
-        }
+        // Positive check for per-app override cache
+        if (cached != null && componentKey in cached.componentMap) return true
+        // Check primary (global) cache miss (always false)
+        if (isCachedPackage) return isCachedPresent
+        // Miss check for per-app override cache
+        if (cached != null && componentKey in cached.queriedMisses) return false
 
         // Targeted XML scan: only scans <item> tags, no shape computation
         val drawable = parseComponentOnly(context, packPackage, componentKey)
