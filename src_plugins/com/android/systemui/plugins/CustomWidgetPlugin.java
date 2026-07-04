@@ -19,6 +19,7 @@ package com.android.systemui.plugins;
 import android.appwidget.AppWidgetHostView;
 import android.appwidget.AppWidgetProviderInfo;
 import android.content.Context;
+import android.view.View;
 
 import com.android.systemui.plugins.annotations.ProvidesInterface;
 
@@ -51,4 +52,20 @@ public interface CustomWidgetPlugin extends Plugin {
      * Used to modify a widgets' info.
      */
     default void updateWidgetInfo(AppWidgetProviderInfo info, Context context) { }
+
+    /**
+     * Whether this widget should render a live preview (via {@link #createPreviewView}) in the
+     * picker instead of the default icon preview. Off unless a plugin opts in.
+     */
+    default boolean useLivePreview() {
+        return false;
+    }
+
+    /**
+     * Returns the view rendered as the widget's preview in the picker, or {@code null} to fall back
+     * to the standard icon preview. Called on the UI thread, and only if {@link #useLivePreview()}.
+     */
+    default View createPreviewView(Context context) {
+        return null;
+    }
 }

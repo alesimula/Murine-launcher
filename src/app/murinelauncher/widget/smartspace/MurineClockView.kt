@@ -1,13 +1,7 @@
 package app.murinelauncher.widget.smartspace
 
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.content.res.Configuration
-import android.icu.text.DateFormat
-import android.icu.text.DisplayContext
-import android.provider.AlarmClock
 import android.util.AttributeSet
 import android.widget.LinearLayout
 import android.widget.TextClock
@@ -80,6 +74,16 @@ class MurineClockView @JvmOverloads constructor(
         val pattern = android.text.format.DateFormat.getBestDateTimePattern(locale, DATE_SKELETON)
         clock.format12Hour = pattern
         clock.format24Hour = pattern
+    }
+
+    /**
+     * Will just cause it to refresh and correctly show the hour (useful for showing widget preview)
+     */
+    fun refreshClockFormat() {
+        listOfNotNull(clockView, dateText).forEach { tc ->
+            tc.format12Hour = tc.format12Hour
+            tc.format24Hour = tc.format24Hour
+        }
     }
 
     fun setTextColor(color: Int) {

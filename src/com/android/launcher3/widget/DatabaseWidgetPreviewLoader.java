@@ -24,6 +24,7 @@ import android.appwidget.AppWidgetProviderInfo;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
@@ -33,9 +34,11 @@ import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.util.Log;
 import android.util.Size;
+import android.view.View;
 import android.widget.RemoteViews;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.core.os.BuildCompat;
 
@@ -52,6 +55,7 @@ import com.android.launcher3.util.CancellableTask;
 import com.android.launcher3.util.Executors;
 import com.android.launcher3.util.LooperExecutor;
 import com.android.launcher3.views.ActivityContext;
+import com.android.launcher3.widget.custom.CustomWidgetManager;
 import com.android.launcher3.widget.util.WidgetSizes;
 
 import java.util.concurrent.ExecutionException;
@@ -155,6 +159,14 @@ public class DatabaseWidgetPreviewLoader {
         // Load the preview image if possible
         if (maxPreviewWidth < 0) maxPreviewWidth = Integer.MAX_VALUE;
 
+        if (info.isCustomWidget()) {
+            Bitmap livePreview = generateCustomWidgetPreview(info, maxPreviewWidth, preScaledWidthOut);
+            if (livePreview != null) {
+                return livePreview;
+            }
+            // Otherwise fall through to the standard (icon) preview.
+        }
+
         Drawable drawable = null;
         if (info.previewImage != 0) {
             try {
@@ -176,13 +188,14 @@ public class DatabaseWidgetPreviewLoader {
         }
 
         final boolean widgetPreviewExists = (drawable != null);
-        final int spanX = info.spanX;
-        final int spanY = info.spanY;
+        DeviceProfile dp = ActivityContext.lookupContext(mContext).getDeviceProfile();
+        // Clamp the span to the current grid (and honor min span) so a custom widget that declares
+        // an intentionally-large "full width" span doesn't produce an oversized preview.
+        final int spanX = Math.max(1, Math.min(Math.max(info.spanX, info.minSpanX), dp.inv.numColumns));
+        final int spanY = Math.max(1, Math.min(Math.max(info.spanY, info.minSpanY), dp.inv.numRows));
 
         int previewWidth;
         int previewHeight;
-
-        DeviceProfile dp = ActivityContext.lookupContext(mContext).getDeviceProfile();
 
         if (widgetPreviewExists && drawable.getIntrinsicWidth() > 0
                 && drawable.getIntrinsicHeight() > 0) {
@@ -271,6 +284,51 @@ public class DatabaseWidgetPreviewLoader {
                 }
             }
         });
+    }
+
+    /**
+     * Renders a custom widget's live preview view (supplied by its plugin) to a bitmap. Returns
+     * {@code null} if the plugin provides no preview view or rendering fails, so the caller can fall
+     * back to the standard preview. The view is inflated and drawn on the UI thread.
+     */
+    @Nullable
+    private Bitmap generateCustomWidgetPreview(LauncherAppWidgetProviderInfo info,
+            int maxPreviewWidth, int[] preScaledWidthOut) {
+        CustomWidgetManager cwm = CustomWidgetManager.INSTANCE.get(mContext);
+        DeviceProfile dp = ActivityContext.lookupContext(mContext).getDeviceProfile();
+        // Clamp the span to the current grid (and honor min span) so a custom widget that declares
+        // an intentionally-large "full width" span doesn't produce an oversized preview.
+        int spanX = Math.max(1, Math.min(Math.max(info.spanX, info.minSpanX), dp.inv.numColumns));
+        int spanY = Math.max(1, Math.min(Math.max(info.spanY, info.minSpanY), dp.inv.numRows));
+        Size widgetSize = WidgetSizes.getWidgetSizePx(dp, spanX, spanY);
+        final int width = Math.max(widgetSize.getWidth(), 1);
+        final int height = Math.max(widgetSize.getHeight(), 1);
+        if (preScaledWidthOut != null) {
+            preScaledWidthOut[0] = width;
+        }
+        final float scale = width > maxPreviewWidth ? (maxPreviewWidth / (float) width) : 1f;
+        final int scaledWidth = Math.max((int) (scale * width), 1);
+        final int scaledHeight = Math.max((int) (scale * height), 1);
+        try {
+            return MAIN_EXECUTOR.submit(() -> {
+                View view = cwm.createCustomWidgetPreview(mContext, info.provider);
+                if (view == null) {
+                    return null;
+                }
+                view.measure(
+                        View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
+                        View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY));
+                view.layout(0, 0, width, height);
+                Bitmap bitmap = Bitmap.createBitmap(scaledWidth, scaledHeight, Bitmap.Config.ARGB_8888);
+                Canvas canvas = new Canvas(bitmap);
+                if (scale != 1f) canvas.scale(scale, scale);
+                view.draw(canvas);
+                return bitmap;
+            }).get();
+        } catch (Exception e) {
+            Log.w(TAG, "Failed to render custom widget live preview for " + info.provider, e);
+            return null;
+        }
     }
 
     private Bitmap generateShortcutPreview(

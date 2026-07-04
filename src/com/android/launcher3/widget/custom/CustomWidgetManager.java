@@ -27,6 +27,7 @@ import android.content.Context;
 import android.os.Parcel;
 import android.os.Process;
 import android.util.Log;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -158,6 +159,20 @@ public class CustomWidgetManager implements PluginListener<CustomWidgetPlugin> {
     @NonNull
     public Stream<CustomAppWidgetProviderInfo> stream() {
         return mCustomWidgets.stream();
+    }
+
+    /**
+     * Returns the live preview view supplied by the plugin for the given custom widget provider, or
+     * {@code null} if there is no plugin, it hasn't opted into a live preview, or it supplies none.
+     * Must be called on the UI thread.
+     */
+    @Nullable
+    public View createCustomWidgetPreview(Context context, ComponentName provider) {
+        CustomWidgetPlugin plugin = mPlugins.get(provider);
+        if (plugin == null || !plugin.useLivePreview()) {
+            return null;
+        }
+        return plugin.createPreviewView(context);
     }
 
     /**
