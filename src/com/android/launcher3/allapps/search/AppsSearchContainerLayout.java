@@ -25,6 +25,7 @@ import static com.android.launcher3.icons.IconNormalizer.ICON_VISIBLE_AREA_FACTO
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
+import android.icu.text.RuleBasedCollator;
 import android.text.Selection;
 import android.text.SpannableStringBuilder;
 import android.text.method.TextKeyListener;
@@ -46,6 +47,8 @@ import com.android.launcher3.model.data.AppInfo;
 import com.android.launcher3.search.SearchCallback;
 import com.android.launcher3.views.ActivityContext;
 
+import android.icu.text.Collator;
+
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -63,6 +66,9 @@ public class AppsSearchContainerLayout extends ExtendedEditText
 
     // The amount of pixels to shift down and overlap with the rest of the content.
     private final int mContentOverlap;
+
+    // Locale-aware matcher for the private-space label
+    private final Collator mLabelMatcher;
 
     public AppsSearchContainerLayout(Context context) {
         this(context, null);
@@ -84,6 +90,12 @@ public class AppsSearchContainerLayout extends ExtendedEditText
 
         mContentOverlap =
                 getResources().getDimensionPixelSize(R.dimen.all_apps_search_bar_content_overlap);
+
+        mLabelMatcher = Collator.getInstance();
+        mLabelMatcher.setStrength(Collator.PRIMARY);
+        mLabelMatcher.setDecomposition(Collator.CANONICAL_DECOMPOSITION);
+        // Is it too permissive this way? (e.g. "privatespace" matches)
+        if (mLabelMatcher instanceof RuleBasedCollator rba) rba.setAlternateHandlingShifted(true);
     }
 
     @Override
@@ -173,8 +185,9 @@ public class AppsSearchContainerLayout extends ExtendedEditText
         if (items != null) {
             PrivateProfileManager ppm = mAppsView.getPrivateProfileManager();
             String privateSpaceLabel = getContext().getString(R.string.private_space_label);
-            String privateSpaceLabelEn = "private space";
-            if (ppm != null && ppm.isPrivateSpaceHidden() && (query.equalsIgnoreCase(privateSpaceLabelEn) || query.equalsIgnoreCase(privateSpaceLabelEn))) {
+            if (ppm != null && ppm.isPrivateSpaceHidden() && (
+                    mLabelMatcher.compare(query, privateSpaceLabel) == 0
+                            || mLabelMatcher.compare(query, "private space") == 0)) {
                 AppInfo unlockInfo = new AppInfo();
                 unlockInfo.title = privateSpaceLabel;
                 unlockInfo.bitmap = ppm.preparePSUnlockBitmapInfo();
