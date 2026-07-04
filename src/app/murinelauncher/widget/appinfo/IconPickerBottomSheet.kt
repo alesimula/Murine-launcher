@@ -79,11 +79,20 @@ class IconPickerBottomSheet : BottomSheetDialogFragment() {
             this.adapter = adapter
         }
 
-        view.findViewById<EditText>(R.id.search_bar)?.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) = adapter.filter(s?.toString().orEmpty())
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-        })
+        view.findViewById<EditText>(R.id.search_bar)?.let { searchBar ->
+            // Prevent fast typing from filtering immediately, so search doesn't feel sluggish
+            var pendingFilter: Runnable? = null
+            searchBar.addTextChangedListener(object : TextWatcher {
+                override fun afterTextChanged(s: Editable?) {
+                    pendingFilter?.let { searchBar.removeCallbacks(it) }
+                    val query = s?.toString().orEmpty()
+                    pendingFilter = Runnable { adapter.filter(query) }
+                        .also { searchBar.postDelayed(it, SEARCH_DEBOUNCE_MS) }
+                }
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            })
+        }
 
         Executors.MODEL_EXECUTOR.execute {
             val appIcons = IconPackManager.getPackIconsForApp(appCtx, pack, componentKey)
@@ -211,5 +220,7 @@ class IconPickerBottomSheet : BottomSheetDialogFragment() {
     companion object {
         const val TAG = "IconPickerBottomSheet"
         private const val SPAN_COUNT = 4
+        /** Long enough to skip rebuilds while typing, short enough not to feel unresponsive (hopefully :P). */
+        private const val SEARCH_DEBOUNCE_MS = 400L
     }
 }
