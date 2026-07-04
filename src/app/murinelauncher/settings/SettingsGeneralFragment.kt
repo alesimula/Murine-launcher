@@ -5,7 +5,9 @@ import androidx.preference.Preference
 import androidx.preference.SwitchPreferenceCompat
 import app.murinelauncher.graphics.WorkspaceBlurUtils
 import app.murinelauncher.settings.common.AbstractSettingsFragment
+import app.murinelauncher.icons.IconPackManager
 import app.murinelauncher.theme.ThemeOverride
+import com.android.launcher3.LauncherAppState
 import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.R
 import com.android.launcher3.util.DisplayController
@@ -53,6 +55,9 @@ public final class SettingsGeneralFragment: AbstractSettingsFragment() {
                         val selectedIndex = getCheckedIndex()
                         prefs.edit().putInt(LAUNCHER_THEME_DAY_NIGHT, selectedIndex).apply()
                         ThemeOverride.syncNightMode(preference.context)
+                        // UI theme flip: reload if an icon pack is selected to allow icons to refresh
+                        if (IconPackManager.isAnyPackActive(preference.context))
+                            LauncherAppState.getInstance(preference.context).model.forceReload()
                         tryRecreateActivity()
                         Log.d("Settings.Theme", "Selected UI theme: $selectedIndex")
                     }

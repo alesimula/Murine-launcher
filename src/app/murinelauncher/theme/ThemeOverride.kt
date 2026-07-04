@@ -41,9 +41,24 @@ object ThemeOverride {
         AppCompatDelegate.setDefaultNightMode(mode)
     }
 
+    /**
+     * @return true if night mode, checking the launcher's UI theme override if set, the system's otherwise.
+     */
     @JvmStatic
-    fun applyTheme(context: Context): Context {
-        val themePref = getThemePref(context)
+    fun isNightMode(context: Context): Boolean = when (getThemePref(context)) {
+        THEME_DARK -> true
+        THEME_LIGHT -> false
+        else -> (Resources.getSystem().configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+    }
+
+    /**
+     * @param prefContext where to read the theme pref from; lets [context] be another
+     *        package's context (e.g. an icon pack) while honoring the launcher's setting.
+     */
+    @JvmStatic
+    @JvmOverloads
+    fun applyTheme(context: Context, prefContext: Context = context): Context {
+        val themePref = getThemePref(prefContext)
         if (themePref == THEME_SYSTEM) return context
 
         val configuration = Configuration(context.resources.configuration)

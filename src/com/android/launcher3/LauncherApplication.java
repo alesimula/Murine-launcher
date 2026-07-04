@@ -16,6 +16,10 @@
 package com.android.launcher3;
 
 import android.app.Application;
+import android.content.res.Configuration;
+
+import app.murinelauncher.icons.IconPackManager;
+import app.murinelauncher.theme.ThemeOverride;
 
 import com.android.launcher3.dagger.DaggerLauncherAppComponent;
 import com.android.launcher3.dagger.LauncherAppComponent;
@@ -28,9 +32,12 @@ import com.android.launcher3.util.TraceHelper;
 public class LauncherApplication extends Application {
 
     private volatile LauncherBaseAppComponent mAppComponent;
+    private int mNightMode = Configuration.UI_MODE_NIGHT_UNDEFINED;
+
     @Override
     public void onCreate() {
         super.onCreate();
+        mNightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
 
         com.zxy.recovery.core.Recovery.getInstance()
                 .debug(true)
@@ -46,6 +53,19 @@ public class LauncherApplication extends Application {
 
         app.murinelauncher.theme.ThemeOverride.syncNightMode(this);
         MainProcessInitializer.initialize(this);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        int nightMode = newConfig.uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        if (nightMode != mNightMode) {
+            mNightMode = nightMode;
+            // System theme flip: reload if an icon pack is selected to allow icons to refresh
+            if (ThemeOverride.getThemePref(this) == ThemeOverride.THEME_SYSTEM
+                    && IconPackManager.INSTANCE.isAnyPackActive(this))
+                LauncherAppState.getInstance(this).getModel().forceReload();
+        };
     }
 
     public LauncherAppComponent getAppComponent() {

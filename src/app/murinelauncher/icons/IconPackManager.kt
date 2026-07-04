@@ -23,6 +23,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import androidx.core.content.res.ResourcesCompat
+import app.murinelauncher.theme.ThemeOverride
 import app.murinelauncher.widget.radio.RadioGroupPreference
 import com.android.launcher3.LauncherFiles
 import com.android.launcher3.R
@@ -644,12 +645,20 @@ object IconPackManager {
         return loadDrawableFromPack(context, packPackage, drawableName, iconDpi)
     }
 
-    /** Resolves a pack's [Resources] once, for repeated [loadDrawableFromPack] calls. */
+    /**
+     * Resolves a pack's [Resources] once, for repeated [loadDrawableFromPack] calls;
+     * Pack icons with night mode support follow the launcher's effective UI theme.
+     */
     fun getPackResources(context: Context, packPackage: String): Resources? = try {
-        context.packageManager.getResourcesForApplication(packPackage)
+        ThemeOverride.applyTheme(context.createPackageContext(packPackage, 0), context).resources
     } catch (_: Exception) {
         null
     }
+
+    /** True when icon pack features affect any icon (global pack or per-app overrides). */
+    @JvmStatic
+    fun isAnyPackActive(context: Context): Boolean =
+        getSelectedPack(context) != SYSTEM_ICON_PACK || hasAnyComponentOverrides(context)
 
     /** Loads a raw drawable from a pack by name, at the requested density. */
     fun loadDrawableFromPack(context: Context, packPackage: String, drawableName: String, iconDpi: Int): Drawable? =
@@ -714,7 +723,8 @@ object IconPackManager {
         }
 
         return try {
-            val packRes = context.packageManager.getResourcesForApplication(pack)
+            // Theme-aware: applies selected UI theme
+            val packRes = getPackResources(context, pack) ?: return null
             val hashCode = componentName.hashCode() and 0xFFFF
 
             // Render the default icon into a properly-sized bitmap through the normal icon pipeline (wrapping, shaping, shadow).

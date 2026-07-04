@@ -28,6 +28,7 @@ import android.util.ArrayMap;
 import android.util.Log;
 
 import app.murinelauncher.icons.IconPackManager;
+import app.murinelauncher.theme.ThemeOverride;
 
 import androidx.annotation.Nullable;
 
@@ -123,8 +124,11 @@ public class LauncherIconProvider extends IconProvider {
         boolean ignoreShape = IconPackManager.INSTANCE.isIgnoreShape(mContext);
         boolean readaptToFrame = IconPackManager.INSTANCE.isReadaptFrame(mContext);
         boolean themedOnly = IconPackManager.INSTANCE.isThemedOnly(mContext);
+        // UI theme (light / night) invalidates cached pack icons with night-qualified drawables.
+        String theme = IconPackManager.INSTANCE.isAnyPackActive(mContext)
+                ? (ThemeOverride.isNightMode(mContext) ? ",night" : ",day") : "";
         return base + "," + pack + "," + systemOnly + "," + ignoreShape
-                + "," + readaptToFrame + "," + themedOnly;
+                + "," + readaptToFrame + "," + themedOnly + theme;
     }
 
     @Override
