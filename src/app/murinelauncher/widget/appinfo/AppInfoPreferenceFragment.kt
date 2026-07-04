@@ -177,12 +177,12 @@ class AppInfoPreferenceFragment : SettingsBasePreferenceFragment() {
     }
 
     private lateinit var entries: List<IconPackInfo>
-    private var iconPackPref: Preference? = null
+    private var iconPackPref: IconPickerPreference? = null
 
     private fun setupIconPackPreference(ctx: Context, screen: PreferenceScreen) {
         val compKey = componentKey ?: return
         val pkg = packageName ?: return
-        val pref = screen.findPreference<Preference>(KEY_ICON_PACK) ?: return
+        val pref = screen.findPreference<IconPickerPreference>(KEY_ICON_PACK) ?: return
         iconPackPref = pref
 
         entries = IconPackManager.buildIconPackEntries(ctx, compKey)
@@ -192,15 +192,40 @@ class AppInfoPreferenceFragment : SettingsBasePreferenceFragment() {
             showFilterableIconPackSheet(ctx, compKey, pkg)
             true
         }
+        pref.onPickIconClick = { showIconPickerSheet(ctx, compKey, pkg) }
     }
 
     private fun updateIconPackSummary(ctx: Context, compKey: String) {
-        val override = IconPackManager.getComponentOverride(ctx, compKey)
-        iconPackPref?.summary = when {
-            override == null -> ctx.getString(R.string.app_info_icon_pack_default)
-            override == IconPackManager.SYSTEM_ICON_PACK -> IconPackManager.SYSTEM_ICON_PACK_INFO.label
-            else -> entries.firstOrNull { it.packageName == override }?.label ?: override
+        val overridePack = IconPackManager.getComponentOverridePack(ctx, compKey)
+        val packLabel = when {
+            overridePack == null -> ctx.getString(R.string.app_info_icon_pack_default)
+            overridePack == IconPackManager.SYSTEM_ICON_PACK -> IconPackManager.SYSTEM_ICON_PACK_INFO.label
+            else -> entries.firstOrNull { it.packageName == overridePack }?.label ?: overridePack
         }
+        val customIcon = IconPackManager.getComponentCustomIcon(ctx, compKey)
+        iconPackPref?.summary = if (customIcon != null) "$packLabel • $customIcon" else packLabel
+        // Custom icon picking only makes sense for a real icon pack
+        iconPackPref?.pickButtonVisible = overridePack != null && overridePack != IconPackManager.SYSTEM_ICON_PACK
+    }
+
+    private fun showIconPickerSheet(ctx: Context, compKey: String, pkg: String) {
+        val pack = IconPackManager.getComponentOverridePack(ctx, compKey) ?: return
+        if (pack == IconPackManager.SYSTEM_ICON_PACK) return
+        val fm = parentFragmentManager
+
+        fm.findFragmentByTag(IconPickerBottomSheet.TAG)?.let {
+            fm.beginTransaction().remove(it).commitAllowingStateLoss()
+            fm.executePendingTransactions()
+        }
+
+        val packLabel = entries.firstOrNull { it.packageName == pack }?.label ?: pack
+        val sheet = IconPickerBottomSheet()
+        sheet.configure(pack, packLabel, compKey) { drawableName ->
+            IconPackManager.setComponentOverride(ctx, compKey, pack, drawableName)
+            updateIconPackSummary(ctx, compKey)
+            refreshIconForPackage(ctx, pkg)
+        }
+        sheet.show(fm, IconPickerBottomSheet.TAG)
     }
 
     private fun showFilterableIconPackSheet(ctx: Context, compKey: String, pkg: String) {
@@ -211,7 +236,7 @@ class AppInfoPreferenceFragment : SettingsBasePreferenceFragment() {
             fm.executePendingTransactions()
         }
 
-        val currentOverride = IconPackManager.getComponentOverride(ctx, compKey)
+        val currentOverride = IconPackManager.getComponentOverridePack(ctx, compKey)
         val currentIdx = if (currentOverride == null) 0 else {
             val idx = entries.indexOfFirst { it.packageName == currentOverride }
             if (idx >= 0) idx else 0

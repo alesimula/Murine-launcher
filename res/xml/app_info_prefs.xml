@@ -29,7 +29,7 @@
         android:icon="@drawable/ic_app_info_source"
         android:persistent="false"
         android:title="@string/app_info_source" />
-    <Preference
+    <app.murinelauncher.widget.appinfo.IconPickerPreference
         android:key="pref_app_info_icon_pack"
         android:icon="@drawable/ic_app_info_icon_pack"
         android:persistent="false"

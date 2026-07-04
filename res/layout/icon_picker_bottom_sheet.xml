@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="8dp">
+
+    <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+        android:id="@+id/drag_handle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="-8dp" />
+
+    <TextView
+        android:id="@+id/sheet_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/HomeSettings.TitleMedium"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="12dp" />
+
+    <EditText
+        android:id="@+id/search_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/all_apps_header_pill_height"
+        android:layout_marginHorizontal="24dp"
+        android:hint="@string/icon_picker_search_hint"
+        android:inputType="text"
+        android:maxLines="1"
+        android:imeOptions="actionSearch"
+        android:background="@drawable/bg_all_apps_searchbox"
+        android:paddingHorizontal="24dp"
+        android:textColor="@color/all_apps_label_text_color"
+        android:textColorHint="@color/all_apps_label_text_color"
+        android:textSize="14sp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/icon_grid"
+        android:layout_width="match_parent"
+        android:layout_height="420dp"
+        android:layout_marginTop="4dp"
+        android:paddingHorizontal="16dp"
+        android:clipToPadding="false" />
+</LinearLayout>

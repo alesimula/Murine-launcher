@@ -72,42 +72,12 @@ open class RadioGroupBottomSheet : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         view.findViewById<TextView>(R.id.sheet_title)?.text = sheetTitle ?: ""
-        dialog?.setOnShowListener {
-            val bottomSheet = dialog?.findViewById<View>(
-                com.google.android.material.R.id.design_bottom_sheet
-            ) ?: return@setOnShowListener
-            val background = bottomSheet.background as? MaterialShapeDrawable
-                ?: return@setOnShowListener
-            val isDarkTheme = (bottomSheet.resources.configuration.uiMode and
-                    Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
-            val tintColor = adjustDialogColor(background.resolvedTintColor, isDarkTheme)
-            background.tintList = ColorStateList(arrayOf(intArrayOf()), intArrayOf(tintColor))
-        }
+        dialog?.setOnShowListener { applyAdjustedBackgroundTint(dialog) }
         if (savedInstanceState == null && textProvider != null) {
             childFragmentManager.beginTransaction()
                 .replace(R.id.prefs_container, RadioPreferenceFragment())
                 .commit()
         }
-    }
-
-    /**
-     * Makes very dark (e.g. AMOLED) dialog background colors ligher to increase visibility.
-     * Makes very light (e.g. pure white) dialog background colors darker to increase visibility.
-     */
-    private fun adjustDialogColor(color: Int, isDarkTheme: Boolean): Int {
-        val hsl = FloatArray(3)
-        ColorUtils.colorToHSL(color, hsl)
-        val currentLightness = hsl[2]
-        val maxShift = 0.05f
-        val power = 20.0
-        if (isDarkTheme) {
-            val factor = Math.pow((1.0f - currentLightness).toDouble(), power).toFloat()
-            hsl[2] = Math.min(1.0f, currentLightness + (maxShift * factor))
-        } else {
-            val factor = Math.pow(currentLightness.toDouble(), power).toFloat()
-            hsl[2] = Math.max(0.0f, currentLightness - (maxShift * factor))
-        }
-        return ColorUtils.HSLToColor(hsl)
     }
 
     class RadioPreferenceFragment : SettingsBasePreferenceFragment(),
@@ -229,5 +199,37 @@ open class RadioGroupBottomSheet : BottomSheetDialogFragment() {
     companion object {
         const val TAG = "RadioGroupBottomSheet"
         const val PREF_PREFIX = "radio_item_"
+
+        /**
+         * Adjusts a shown bottom sheet dialog's background tint for visibility;
+         * Makes very dark (e.g. AMOLED) backgrounds lighter, very light (pure white) ones darker.
+         */
+        @JvmStatic
+        fun applyAdjustedBackgroundTint(dialog: android.app.Dialog?) {
+            val bottomSheet = dialog?.findViewById<View>(
+                com.google.android.material.R.id.design_bottom_sheet
+            ) ?: return
+            val background = bottomSheet.background as? MaterialShapeDrawable ?: return
+            val isDarkTheme = (bottomSheet.resources.configuration.uiMode and
+                    Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+            val tintColor = adjustDialogColor(background.resolvedTintColor, isDarkTheme)
+            background.tintList = ColorStateList(arrayOf(intArrayOf()), intArrayOf(tintColor))
+        }
+
+        private fun adjustDialogColor(color: Int, isDarkTheme: Boolean): Int {
+            val hsl = FloatArray(3)
+            ColorUtils.colorToHSL(color, hsl)
+            val currentLightness = hsl[2]
+            val maxShift = 0.05f
+            val power = 20.0
+            if (isDarkTheme) {
+                val factor = Math.pow((1.0f - currentLightness).toDouble(), power).toFloat()
+                hsl[2] = Math.min(1.0f, currentLightness + (maxShift * factor))
+            } else {
+                val factor = Math.pow(currentLightness.toDouble(), power).toFloat()
+                hsl[2] = Math.max(0.0f, currentLightness - (maxShift * factor))
+            }
+            return ColorUtils.HSLToColor(hsl)
+        }
     }
 }
