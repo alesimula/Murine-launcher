@@ -134,8 +134,6 @@
     <string name="app_info_edit_label">Editar etiqueta</string>
 
     <!-- Per-app custom icon picker -->
-    <string name="icon_picker_from_app">De esta app</string>
-    <string name="icon_picker_all_icons">Todos los iconos</string>
     <string name="icon_picker_search_hint">Buscar iconos...</string>
 
     <!-- Clear custom icons -->

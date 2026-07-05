@@ -18,7 +18,12 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import app.murinelauncher.icons.IconPackManager
+import android.icu.text.Collator
+import android.icu.text.RuleBasedCollator
+import android.icu.text.SearchIterator
+import android.icu.text.StringSearch
 import app.murinelauncher.widget.radio.RadioGroupBottomSheet
+import java.text.StringCharacterIterator
 import com.android.launcher3.R
 import com.android.launcher3.util.Executors
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -88,10 +93,18 @@ class IconPickerBottomSheet : BottomSheetDialogFragment() {
 
         Executors.MODEL_EXECUTOR.execute {
             val appIcons = IconPackManager.getPackIconsForApp(appCtx, pack, componentKey)
-            val allIcons = IconPackManager.listPackDrawables(appCtx, pack)
+            // Bucket by first character; Anything not a letter goes to "#".
+            val sections = IconPackManager.listPackDrawables(appCtx, pack)
                 .filterNot(appIcons.toSet()::contains)
+                .sorted()
+                .groupBy { name ->
+                    val c = name.firstOrNull()
+                    if (c?.isLetter() == true) c.uppercase() else "#"
+                }
+                .toList()
+                .sortedBy { it.first }
             Executors.MAIN_EXECUTOR.execute {
-                if (isAdded) adapter.submit(appIcons, allIcons)
+                if (isAdded) adapter.submit(appIcons, sections)
             }
         }
     }
@@ -113,15 +126,23 @@ class IconPickerBottomSheet : BottomSheetDialogFragment() {
         private val iconSizePx = dp(context, CELL_SIZE_DP - 2 * CELL_PADDING_DP)
         private val bitmapCache = LruCache<String, Bitmap>(CACHE_SIZE)
         private var appIcons: List<String> = emptyList()
-        private var allIcons: List<String> = emptyList()
+        private var allSections: List<Pair<String, List<String>>> = emptyList()
         private var query = ""
+        /**
+         * Collator for permissive search.
+         */
+        private val collator = (Collator.getInstance() as? RuleBasedCollator)?.apply {
+            strength = Collator.PRIMARY
+            decomposition = Collator.CANONICAL_DECOMPOSITION
+            setAlternateHandlingShifted(true)
+        }
         private var rows: List<Row> = emptyList()
 
         fun isHeader(position: Int): Boolean = rows[position].header != null
 
-        fun submit(app: List<String>, all: List<String>) {
+        fun submit(app: List<String>, sections: List<Pair<String, List<String>>>) {
             appIcons = app
-            allIcons = all
+            allSections = sections
             rebuild()
         }
 
@@ -130,16 +151,39 @@ class IconPickerBottomSheet : BottomSheetDialogFragment() {
             rebuild()
         }
 
+        /** New collation search for the current query, or null when nothing should be filtered. */
+        private fun newSearch(): StringSearch? {
+            if (query.isEmpty() || collator == null) return null
+            return try {
+                StringSearch(query, StringCharacterIterator(query), collator)
+            } catch (_: Exception) {
+                null
+            }
+        }
+
+        private fun List<String>.filterQuery(search: StringSearch?): List<String> {
+            search ?: return this
+            return filter { name ->
+                search.setTarget(StringCharacterIterator(name))
+                search.first() != SearchIterator.DONE
+            }
+        }
+
         private fun rebuild() {
-            val app = appIcons.filter { it.contains(query, ignoreCase = true) }
-            val all = allIcons.filter { it.contains(query, ignoreCase = true) }
+            val search = newSearch()
+            val app = appIcons.filterQuery(search)
             rows = buildList {
                 if (app.isNotEmpty()) {
-                    add(Row(header = appCtx.getString(R.string.icon_picker_from_app)))
+                    add(Row(header = appCtx.getString(R.string.suggested_widgets_header_title)))
                     app.forEach { add(Row(icon = it)) }
-                    if (all.isNotEmpty()) add(Row(header = appCtx.getString(R.string.icon_picker_all_icons)))
                 }
-                all.forEach { add(Row(icon = it)) }
+                allSections.forEach { (section, icons) ->
+                    val filtered = icons.filterQuery(search)
+                    if (filtered.isNotEmpty()) {
+                        add(Row(header = section))
+                        filtered.forEach { add(Row(icon = it)) }
+                    }
+                }
             }
             notifyDataSetChanged()
         }
