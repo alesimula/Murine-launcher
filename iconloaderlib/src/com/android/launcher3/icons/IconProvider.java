@@ -128,16 +128,30 @@ public class IconProvider {
         }
         ComponentName result = null;
         try {
+            PackageManager pm = mContext.getPackageManager();
+            String key = info.packageName + ICON_METADATA_KEY_PREFIX;
             ComponentName cn = new ComponentName(info.packageName, info.name);
-            Bundle metadata = mContext.getPackageManager().getActivityInfo(cn,
-                    PackageManager.GET_UNINSTALLED_PACKAGES | PackageManager.GET_META_DATA)
-                    .metaData;
-            if (metadata != null && metadata.getInt(info.packageName + ICON_METADATA_KEY_PREFIX, ID_NULL) != ID_NULL) result = cn;
+            if (hasCalendarMetadata(pm, cn, key)) {
+                result = cn;
+            } else {
+                android.content.Intent launch = pm.getLaunchIntentForPackage(info.packageName);
+                ComponentName lcn = launch == null ? null : launch.getComponent();
+                if (lcn != null && !lcn.equals(cn) && hasCalendarMetadata(pm, lcn, key)) result = lcn;
+            }
         } catch (Exception ignored) { }
         synchronized (mDynamicCalendars) {
             mDynamicCalendars.put(info.packageName, result);
         }
         return result;
+    }
+
+    private static boolean hasCalendarMetadata(PackageManager pm, ComponentName cn, String key) {
+        try {
+            Bundle metadata = pm.getActivityInfo(cn, PackageManager.GET_UNINSTALLED_PACKAGES | PackageManager.GET_META_DATA).metaData;
+            return metadata != null && metadata.getInt(key, ID_NULL) != ID_NULL;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     /**
