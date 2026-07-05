@@ -17,6 +17,9 @@ package com.android.launcher3.icons;
 
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Handler;
+import android.os.UserHandle;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.ComponentInfo;
 import android.content.res.Resources;
@@ -37,11 +40,15 @@ import com.android.launcher3.config.FeatureFlags;
 import com.android.launcher3.dagger.ApplicationContext;
 import com.android.launcher3.dagger.LauncherAppSingleton;
 import com.android.launcher3.graphics.ThemeManager;
+import com.android.launcher3.pm.UserCache;
+import com.android.launcher3.util.SafeCloseable;
+import com.android.launcher3.util.SimpleBroadcastReceiver;
 
 import org.xmlpull.v1.XmlPullParser;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -127,8 +134,31 @@ public class LauncherIconProvider extends IconProvider {
         // UI theme (light / night) invalidates cached pack icons with night-qualified drawables.
         String theme = IconPackManager.INSTANCE.isAnyPackActive(mContext)
                 ? (ThemeOverride.isNightMode(mContext) ? ",night" : ",day") : "";
+        // Pack dynamic calendars change drawable daily
+        String day = (appInfo != null
+                && IconPackManager.INSTANCE.isPackCalendarPackage(mContext, appInfo.packageName))
+                ? ",day=" + getDay() : "";
         return base + "," + pack + "," + systemOnly + "," + ignoreShape
-                + "," + readaptToFrame + "," + themedOnly + theme;
+                + "," + readaptToFrame + "," + themedOnly + theme + day;
+    }
+
+    @Override
+    public SafeCloseable registerIconChangeListener(IconChangeListener listener, Handler handler) {
+        SafeCloseable base = super.registerIconChangeListener(listener, handler);
+        // Refresh pack-provided dynamic icons: calendars at midnight, clocks on time jumps
+        SimpleBroadcastReceiver receiver = new SimpleBroadcastReceiver(mContext, handler, intent -> {
+            Set<String> packages = Intent.ACTION_DATE_CHANGED.equals(intent.getAction())
+                    ? IconPackManager.getPackCalendarPackages(mContext)
+                    : IconPackManager.getPackClockPackages(mContext);
+            if (packages.isEmpty()) return;
+            for (UserHandle user : UserCache.INSTANCE.get(mContext).getUserProfiles())
+                for (String pkg : packages) listener.onAppIconChanged(pkg, user);
+        });
+        receiver.register(Intent.ACTION_DATE_CHANGED, Intent.ACTION_TIMEZONE_CHANGED, Intent.ACTION_TIME_CHANGED);
+        return () -> {
+            base.close();
+            receiver.unregisterReceiverSafely();
+        };
     }
 
     @Override

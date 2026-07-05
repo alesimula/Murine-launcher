@@ -28,6 +28,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.ComponentInfo;
 import android.content.pm.PackageItemInfo;
@@ -45,6 +46,7 @@ import android.os.Process;
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.text.TextUtils;
+import android.util.ArrayMap;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -99,12 +101,63 @@ public class IconProvider {
             return mSystemState;
         }
 
-        if (mCalendar != null && mCalendar.getPackageName().equals(appInfo.packageName)) {
+        boolean dynamicCalendar = mCalendar != null && mCalendar.getPackageName().equals(appInfo.packageName);
+        if (!dynamicCalendar) synchronized (mDynamicCalendars) {
+            dynamicCalendar = mDynamicCalendars.get(appInfo.packageName) != null;
+        }
+        if (dynamicCalendar) {
             return mSystemState + SYSTEM_STATE_SEPARATOR + getDay() + SYSTEM_STATE_SEPARATOR
                     + getApplicationInfoHash(appInfo);
         } else {
             return mSystemState + SYSTEM_STATE_SEPARATOR + getApplicationInfoHash(appInfo);
         }
+    }
+
+    private final ArrayMap<String, ComponentName> mDynamicCalendars = new ArrayMap<>();
+    private final ArrayMap<String, Boolean> mDynamicClocks = new ArrayMap<>();
+
+    /**
+     * Returns the dynamic-calendar activity for {@param info}'s package, or null
+     */
+    @Nullable
+    private ComponentName getDynamicCalendarComponent(PackageItemInfo info) {
+        if (mCalendar != null && mCalendar.getPackageName().equals(info.packageName)) return mCalendar;
+        if (!(info instanceof ActivityInfo)) return null;
+        synchronized (mDynamicCalendars) {
+            if (mDynamicCalendars.containsKey(info.packageName)) return mDynamicCalendars.get(info.packageName);
+        }
+        ComponentName result = null;
+        try {
+            ComponentName cn = new ComponentName(info.packageName, info.name);
+            Bundle metadata = mContext.getPackageManager().getActivityInfo(cn,
+                    PackageManager.GET_UNINSTALLED_PACKAGES | PackageManager.GET_META_DATA)
+                    .metaData;
+            if (metadata != null && metadata.getInt(info.packageName + ICON_METADATA_KEY_PREFIX, ID_NULL) != ID_NULL) result = cn;
+        } catch (Exception ignored) { }
+        synchronized (mDynamicCalendars) {
+            mDynamicCalendars.put(info.packageName, result);
+        }
+        return result;
+    }
+
+    /**
+     * True when {@param packageName} declares dynamic-clock metadata
+     */
+    private boolean isDynamicClockPackage(String packageName) {
+        if (mClock != null && mClock.getPackageName().equals(packageName)) return true;
+        synchronized (mDynamicClocks) {
+            Boolean cached = mDynamicClocks.get(packageName);
+            if (cached != null) return cached;
+        }
+        boolean result = false;
+        try {
+            Bundle metadata = mContext.getPackageManager().getApplicationInfo(packageName, PackageManager.GET_META_DATA).metaData;
+            result = metadata != null && metadata.getInt(ClockDrawableWrapper.ROUND_ICON_METADATA_KEY, 0) != 0;
+        } catch (Exception ignored) { }
+        synchronized (mDynamicClocks) {
+            mDynamicClocks.put(packageName, result);
+        }
+        return result;
     }
 
     /**
@@ -148,10 +201,11 @@ public class IconProvider {
         ThemeData td = getThemeDataForPackage(packageName);
 
         Drawable icon = null;
-        if (mCalendar != null && mCalendar.getPackageName().equals(packageName)) {
-            icon = loadCalendarDrawable(iconDpi, td);
-        } else if (mClock != null && mClock.getPackageName().equals(packageName)) {
-            icon = ClockDrawableWrapper.forPackage(mContext, mClock.getPackageName(), iconDpi);
+        ComponentName calendar = getDynamicCalendarComponent(info);
+        if (calendar != null) {
+            icon = loadCalendarDrawable(calendar, iconDpi, td);
+        } else if (isDynamicClockPackage(packageName)) {
+            icon = ClockDrawableWrapper.forPackage(mContext, packageName, iconDpi);
         }
         if (icon == null) {
             icon = loadPackageIconWithFallback(info, appInfo, iconDpi);
@@ -209,15 +263,15 @@ public class IconProvider {
     }
 
     @TargetApi(Build.VERSION_CODES.TIRAMISU)
-    protected Drawable loadCalendarDrawable(int iconDpi, @Nullable ThemeData td) {
+    protected Drawable loadCalendarDrawable(ComponentName calendar, int iconDpi, @Nullable ThemeData td) {
         PackageManager pm = mContext.getPackageManager();
         try {
             final Bundle metadata = pm.getActivityInfo(
-                    mCalendar,
+                    calendar,
                     PackageManager.GET_UNINSTALLED_PACKAGES | PackageManager.GET_META_DATA)
                     .metaData;
-            final Resources resources = pm.getResourcesForApplication(mCalendar.getPackageName());
-            final int id = getDynamicIconId(metadata, resources);
+            final Resources resources = pm.getResourcesForApplication(calendar.getPackageName());
+            final int id = getDynamicIconId(calendar.getPackageName(), metadata, resources);
             if (id != ID_NULL) {
                 if (DEBUG) Log.d(TAG, "Got icon #" + id);
                 Drawable drawable = resources.getDrawableForDensity(id, iconDpi, null /* theme */);
@@ -239,8 +293,7 @@ public class IconProvider {
             }
         } catch (PackageManager.NameNotFoundException e) {
             if (DEBUG) {
-                Log.d(TAG, "Could not get activityinfo or resources for package: "
-                        + mCalendar.getPackageName());
+                Log.d(TAG, "Could not get activityinfo or resources for package: " + calendar.getPackageName());
             }
         }
         return null;
@@ -262,11 +315,11 @@ public class IconProvider {
      * @param resources from the Calendar package
      * @return the resource id for today's Calendar icon; 0 if resources cannot be found.
      */
-    private int getDynamicIconId(Bundle metadata, Resources resources) {
+    private int getDynamicIconId(String packageName, Bundle metadata, Resources resources) {
         if (metadata == null) {
             return ID_NULL;
         }
-        String key = mCalendar.getPackageName() + ICON_METADATA_KEY_PREFIX;
+        String key = packageName + ICON_METADATA_KEY_PREFIX;
         final int arrayId = metadata.getInt(key, ID_NULL);
         if (arrayId == ID_NULL) {
             return ID_NULL;
@@ -344,14 +397,10 @@ public class IconProvider {
 
         IconChangeReceiver(IconChangeListener callback, Handler handler) {
             mCallback = callback;
-            if (mCalendar != null || mClock != null) {
-                final IntentFilter filter = new IntentFilter(ACTION_TIMEZONE_CHANGED);
-                if (mCalendar != null) {
-                    filter.addAction(Intent.ACTION_TIME_CHANGED);
-                    filter.addAction(ACTION_DATE_CHANGED);
-                }
-                mContext.registerReceiver(this, filter, null, handler);
-            }
+            final IntentFilter filter = new IntentFilter(ACTION_TIMEZONE_CHANGED);
+            filter.addAction(Intent.ACTION_TIME_CHANGED);
+            filter.addAction(ACTION_DATE_CHANGED);
+            mContext.registerReceiver(this, filter, null, handler);
         }
 
         @Override
@@ -361,13 +410,26 @@ public class IconProvider {
                     if (mClock != null) {
                         mCallback.onAppIconChanged(mClock.getPackageName(), Process.myUserHandle());
                     }
+                    synchronized (mDynamicClocks) {
+                        for (int i = 0; i < mDynamicClocks.size(); i++) {
+                            if (Boolean.TRUE.equals(mDynamicClocks.valueAt(i)))
+                                mCallback.onAppIconChanged(mDynamicClocks.keyAt(i), Process.myUserHandle());
+                        }
+                    }
                     // follow through
                 case ACTION_DATE_CHANGED:
                 case ACTION_TIME_CHANGED:
-                    if (mCalendar != null) {
-                        for (UserHandle user
-                                : context.getSystemService(UserManager.class).getUserProfiles()) {
+                    for (UserHandle user
+                            : context.getSystemService(UserManager.class).getUserProfiles()) {
+                        if (mCalendar != null) {
                             mCallback.onAppIconChanged(mCalendar.getPackageName(), user);
+                        }
+                        synchronized (mDynamicCalendars) {
+                            for (int i = 0; i < mDynamicCalendars.size(); i++) {
+                                if (mDynamicCalendars.valueAt(i) != null) {
+                                    mCallback.onAppIconChanged(mDynamicCalendars.keyAt(i), user);
+                                }
+                            }
                         }
                     }
                     break;

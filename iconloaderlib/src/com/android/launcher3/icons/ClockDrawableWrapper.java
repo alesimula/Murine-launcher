@@ -72,7 +72,7 @@ public class ClockDrawableWrapper extends CustomAdaptiveIconDrawable implements 
     public static final long TICK_MS = DISABLE_SECONDS ? TimeUnit.MINUTES.toMillis(1) : 200L;
 
     private static final String LAUNCHER_PACKAGE = "com.android.launcher3";
-    private static final String ROUND_ICON_METADATA_KEY = LAUNCHER_PACKAGE
+    public static final String ROUND_ICON_METADATA_KEY = LAUNCHER_PACKAGE
             + ".LEVEL_PER_TICK_ICON_ROUND";
     private static final String HOUR_INDEX_METADATA_KEY = LAUNCHER_PACKAGE + ".HOUR_LAYER_INDEX";
     private static final String MINUTE_INDEX_METADATA_KEY = LAUNCHER_PACKAGE

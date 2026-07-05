@@ -23,14 +23,17 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import androidx.core.content.res.ResourcesCompat
+import app.lawnchair.icons.ClockMetadata
 import app.murinelauncher.theme.ThemeOverride
 import app.murinelauncher.widget.radio.RadioGroupPreference
 import com.android.launcher3.LauncherFiles
 import com.android.launcher3.R
 import com.android.launcher3.icons.BaseIconFactory
+import com.android.launcher3.icons.ClockDrawableWrapper
 import com.android.launcher3.icons.LauncherIconProvider
 import com.android.launcher3.icons.LauncherIcons
 import org.xmlpull.v1.XmlPullParser
+import java.util.Calendar
 
 /**
  * Manages icon pack discovery, selection, and icon resolution.
@@ -250,6 +253,8 @@ object IconPackManager {
      */
     private class AppFilterData {
         val componentMap = mutableMapOf<String, String>() // item.component -> item.drawable
+        val calendarMap = mutableMapOf<String, String>() // calendar.component -> calendar.prefix (day appended)
+        val clockMetas = mutableMapOf<String, ClockMetadata>() // dynamic-clock.drawable -> metadata
         val queriedMisses = mutableSetOf<String>() // components confirmed not in pack (override cache only)
         val backDrawables = mutableListOf<String>() // iconback
         var maskDrawable: String? = null // iconmask
@@ -301,11 +306,11 @@ object IconPackManager {
                     return fullData
                 }
                 // If component already found or confirmed missing: return cached entry
-                if (overrideForComponent in cached.componentMap || overrideForComponent in cached.queriedMisses) return cached
+                if (overrideForComponent in cached.componentMap || overrideForComponent in cached.calendarMap
+                        || overrideForComponent in cached.queriedMisses) return cached
                 // If new component for an already-cached pack: cheap XML-only re-parse (no shape computation)
-                val drawableName = parseComponentOnly(context, packPackage, overrideForComponent)
-                if (drawableName != null) cached.componentMap[overrideForComponent] = drawableName
-                else cached.queriedMisses.add(overrideForComponent)
+                storeComponentResult(cached, overrideForComponent,
+                    parseComponentOnly(context, packPackage, overrideForComponent))
                 return cached
             }
             // First access for this override pack: full parse + shape computation
@@ -332,7 +337,8 @@ object IconPackManager {
         val drawableName = fullData.componentMap[overrideForComponent]
         fullData.componentMap.clear()
         if (drawableName != null) fullData.componentMap[overrideForComponent] = drawableName
-        else fullData.queriedMisses.add(overrideForComponent)
+        // calendarMap / clockMetas are kept whole (small), so calendar-only components are not misses
+        else if (overrideForComponent !in fullData.calendarMap) fullData.queriedMisses.add(overrideForComponent)
         return fullData
     }
 
@@ -408,24 +414,39 @@ object IconPackManager {
      * Used when the override cache already has the pack's global treatment / shape data
      *  but a new component needs to be looked up.
      */
-    private fun parseComponentOnly(context: Context, packPackage: String, componentKey: String): String? =
+    private fun parseComponentOnly(context: Context, packPackage: String, componentKey: String): Pair<String, Boolean>? =
         withPackXml(context, packPackage, "appfilter") { parser -> findComponentInXml(parser, componentKey) }
 
-    /** Scans appfilter.xml item entries for a specific component, returns early on match. */
-    private fun findComponentInXml(parser: XmlPullParser, targetComponent: String): String? {
+    /**
+     * Scans appfilter.xml item/calendar entries for a specific component, returns early on match.
+     * @return the drawable name (or calendar prefix), with second = true for calendar entries.
+     */
+    private fun findComponentInXml(parser: XmlPullParser, targetComponent: String): Pair<String, Boolean>? {
         var eventType = parser.eventType
         while (eventType != XmlPullParser.END_DOCUMENT) {
-            if (eventType == XmlPullParser.START_TAG && parser.name == "item") {
+            if (eventType == XmlPullParser.START_TAG && (parser.name == "item" || parser.name == "calendar")) {
+                val isCalendar = parser.name == "calendar"
                 val component = parser.getAttributeValue(null, "component")
-                val drawable = parser.getAttributeValue(null, "drawable")
+                val drawable = parser.getAttributeValue(null, if (isCalendar) "prefix" else "drawable")
                 if (component != null && drawable != null) {
                     val cn = extractComponentName(component)
-                    if (cn == targetComponent) return drawable
+                    if (cn == targetComponent) return drawable to isCalendar
                 }
             }
             eventType = parser.next()
         }
         return null
+    }
+
+    /**
+     * Stores a [findComponentInXml] result (or a miss) into the right map of [data]
+     */
+    private fun storeComponentResult(data: AppFilterData, componentKey: String, found: Pair<String, Boolean>?) {
+        when {
+            found == null -> data.queriedMisses.add(componentKey)
+            found.second -> data.calendarMap[componentKey] = found.first
+            else -> data.componentMap[componentKey] = found.first
+        }
     }
 
     /**
@@ -546,6 +567,29 @@ object IconPackManager {
                             if (cn != null) data.componentMap[cn] = drawable
                         }
                     }
+                    "calendar" -> {
+                        // Dynamic calendar: real drawable name = prefix + day of month
+                        val component = parser.getAttributeValue(null, "component")
+                        val prefix = parser.getAttributeValue(null, "prefix")
+                        if (component != null && prefix != null) {
+                            val cn = extractComponentName(component)
+                            if (cn != null) data.calendarMap[cn] = prefix
+                        }
+                    }
+                    "dynamic-clock" -> {
+                        // Layer indices only exist as int attributes in compiled appfilter.xml
+                        val drawable = parser.getAttributeValue(null, "drawable")
+                        if (drawable != null && parser is android.content.res.XmlResourceParser) {
+                            data.clockMetas[drawable] = ClockMetadata(
+                                parser.getAttributeIntValue(null, "hourLayerIndex", -1),
+                                parser.getAttributeIntValue(null, "minuteLayerIndex", -1),
+                                parser.getAttributeIntValue(null, "secondLayerIndex", -1),
+                                parser.getAttributeIntValue(null, "defaultHour", 0),
+                                parser.getAttributeIntValue(null, "defaultMinute", 0),
+                                parser.getAttributeIntValue(null, "defaultSecond", 0),
+                            )
+                        }
+                    }
                     "iconback" -> data.backDrawables.addAll(collectImgAttributes(parser))
                     "iconmask" -> {
                         val imgs = collectImgAttributes(parser)
@@ -625,8 +669,28 @@ object IconPackManager {
         }
 
         val data = ensureDataLoaded(context, pack)
-        val drawableName = data.componentMap[componentName.flattenToString()] ?: return null
-        return loadDrawableFromPack(context, pack, drawableName, iconDpi)
+        return loadResolvedIcon(context, pack, data, componentName.flattenToString(), iconDpi)
+    }
+
+    /**
+     * Resolves and loads a component's pack icon from parsed [data]:
+     * dynamic calendar entries first (drawable = prefix + day of month, refreshed daily via the freshness id),
+     * then normal entries, wrapped in [ClockDrawableWrapper] when the drawable has dynamic-clock metadata.
+     */
+    private fun loadResolvedIcon(context: Context, packPackage: String, data: AppFilterData, componentKey: String, iconDpi: Int): Drawable? {
+        data.calendarMap[componentKey]?.let { prefix ->
+            val day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+            loadDrawableFromPack(context, packPackage, prefix + day, iconDpi)?.let { return it }
+        }
+        val drawableName = data.componentMap[componentKey] ?: return null
+        val drawable = loadDrawableFromPack(context, packPackage, drawableName, iconDpi) ?: return null
+        data.clockMetas[drawableName]?.let { meta ->
+            try {
+                // Returns null when the drawable is not adaptive; fallback to the static icon
+                ClockDrawableWrapper.forMeta(0, meta) { drawable }?.let { return it }
+            } catch (_: Throwable) { }
+        }
+        return drawable
     }
 
     /**
@@ -641,8 +705,7 @@ object IconPackManager {
             return loadDrawableFromPack(context, packPackage, customDrawable, iconDpi)
         }
         val data = ensureDataLoaded(context, packPackage, overrideForComponent = componentKey)
-        val drawableName = data.componentMap[componentKey] ?: return null
-        return loadDrawableFromPack(context, packPackage, drawableName, iconDpi)
+        return loadResolvedIcon(context, packPackage, data, componentKey, iconDpi)
     }
 
     /**
@@ -853,31 +916,59 @@ object IconPackManager {
      */
     fun hasIconForComponent(context: Context, packPackage: String, componentKey: String): Boolean {
         if (packPackage == SYSTEM_ICON_PACK) return false
-        val isCachedPackage = packPackage == cachedPackPackage;
-        val isCachedPresent = isCachedPackage && componentKey in cachedData.componentMap;
-        // Check primary (global) cache presence
-        if (isCachedPresent) return true;
+        val isCachedPackage = packPackage == cachedPackPackage
+        // Check primary (global) cache presence (normal or dynamic calendar entry)
+        if (isCachedPackage && (componentKey in cachedData.componentMap || componentKey in cachedData.calendarMap)) return true
         val cached = overrideCache[packPackage]
         // Positive check for per-app override cache
-        if (cached != null && componentKey in cached.componentMap) return true
+        if (cached != null && (componentKey in cached.componentMap || componentKey in cached.calendarMap)) return true
         // Check primary (global) cache miss (always false)
-        if (isCachedPackage) return isCachedPresent
+        if (isCachedPackage) return false
         // Miss check for per-app override cache
         if (cached != null && componentKey in cached.queriedMisses) return false
 
-        // Targeted XML scan: only scans <item> tags, no shape computation
-        val drawable = parseComponentOnly(context, packPackage, componentKey)
+        // Targeted XML scan: only scans <item>/<calendar> tags, no shape computation
+        val found = parseComponentOnly(context, packPackage, componentKey)
         // Cache result in override cache, or create lightweight entry (shapeComputed = false) if needed
-        if (cached != null) {
-            if (drawable != null) cached.componentMap[componentKey] = drawable
-            else cached.queriedMisses.add(componentKey)
-        } else {
-            val entry = AppFilterData()
-            if (drawable != null) entry.componentMap[componentKey] = drawable
-            else entry.queriedMisses.add(componentKey)
-            overrideCache[packPackage] = entry
-        }
-        return drawable != null
+        storeComponentResult(cached ?: AppFilterData().also { overrideCache[packPackage] = it }, componentKey, found)
+        return found != null
+    }
+
+    // ---- Dynamic icon (clock / calendar) helpers ----
+
+    /**
+     * True when [packageName]'s icon in the current global pack is a dynamic calendar (day in freshness id)
+     */
+    @JvmStatic
+    fun isPackCalendarPackage(context: Context, packageName: String): Boolean {
+        val pack = getSelectedPack(context)
+        if (pack == SYSTEM_ICON_PACK) return false
+        // TODO Global pack only; per-app override packs' calendars refresh on reload, not midnight
+        return ensureDataLoaded(context, pack).calendarMap.keys.any { it.substringBefore('/') == packageName }
+    }
+
+    /**
+     * Packages whose icon in the current global pack is a dynamic calendar
+     */
+    @JvmStatic
+    fun getPackCalendarPackages(context: Context): Set<String> {
+        val pack = getSelectedPack(context)
+        if (pack == SYSTEM_ICON_PACK) return emptySet()
+        return ensureDataLoaded(context, pack).calendarMap.keys.mapTo(mutableSetOf()) { it.substringBefore('/') }
+    }
+
+    /**
+     * Packages whose icon in the current global pack is a dynamic clock
+     */
+    @JvmStatic
+    fun getPackClockPackages(context: Context): Set<String> {
+        val pack = getSelectedPack(context)
+        if (pack == SYSTEM_ICON_PACK) return emptySet()
+        val data = ensureDataLoaded(context, pack)
+        if (data.clockMetas.isEmpty()) return emptySet()
+        return data.componentMap.entries
+            .filter { it.value in data.clockMetas }
+            .mapTo(mutableSetOf()) { it.key.substringBefore('/') }
     }
 
     // ---- Pack icon listing (for the per-app custom icon picker) ----

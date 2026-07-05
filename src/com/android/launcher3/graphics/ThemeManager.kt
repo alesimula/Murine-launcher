@@ -18,7 +18,9 @@ package com.android.launcher3.graphics
 
 import android.content.Context
 import android.content.res.Resources
+import app.lawnchair.icons.CustomAdaptiveIconDrawable
 import app.murinelauncher.settings.SettingsIconsFragment
+import com.android.launcher3.Flags
 import com.android.launcher3.EncryptionType
 import com.android.launcher3.Item
 import com.android.launcher3.LauncherPrefChangeListener
@@ -116,6 +118,14 @@ constructor(
             oldState != null && oldState.folderShapeMask == folderShapeMask -> oldState.folderShape
             folderShapeMask == iconMask || folderShapeMask.isBlank() -> iconShape
             else -> pickBestShape(folderShapeMask)
+        }
+
+        // Keep CustomAdaptiveIconDrawable's static mask in sync with the chosen shape;
+        // live-drawn adaptive icons (e.g. dynamic clocks) clip against it
+        if (Flags.enableLauncherIconShapes()) {
+            CustomAdaptiveIconDrawable.sMask = iconShape.getPath()
+            CustomAdaptiveIconDrawable.sMaskId = iconMask
+            CustomAdaptiveIconDrawable.sInitialized = true
         }
 
         return IconState(
