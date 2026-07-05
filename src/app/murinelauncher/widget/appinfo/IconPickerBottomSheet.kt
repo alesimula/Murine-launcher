@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Bundle
+import android.os.SystemClock
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.LruCache
@@ -93,19 +94,47 @@ class IconPickerBottomSheet : BottomSheetDialogFragment() {
 
         Executors.MODEL_EXECUTOR.execute {
             val appIcons = IconPackManager.getPackIconsForApp(appCtx, pack, componentKey)
+            val allIcons = IconPackManager.listPackDrawables(appCtx, pack).filterNot(appIcons.toSet()::contains).sorted()
+
             // Bucket by first character; Anything not a letter goes to "#".
-            val sections = IconPackManager.listPackDrawables(appCtx, pack)
-                .filterNot(appIcons.toSet()::contains)
-                .sorted()
+            fun sectioned(names: List<String>) = names
                 .groupBy { name ->
                     val c = name.firstOrNull()
                     if (c?.isLetter() == true) c.uppercase() else "#"
                 }
                 .toList()
                 .sortedBy { it.first }
+
+            // Instant, unfiltered: blank icons (on some packs like 'Nothing Icons') are handled by removeIcon until the postDelayed removal has finished
+            // Hybrid approach makes for a responsive UI (constant removeIcon calls would cause sluggishness, waiting for a filter would cause an initial delay)
+            val sections = sectioned(allIcons)
             Executors.MAIN_EXECUTOR.execute {
                 if (isAdded) adapter.submit(appIcons, sections)
             }
+
+            // One-shot Lawnchair-style blank icon resolution scan, committed as a single submit when done;
+            Executors.MODEL_EXECUTOR.handler.postDelayed({
+                if (!isAdded) return@postDelayed
+                val packRes = IconPackManager.getPackResources(appCtx, pack) ?: return@postDelayed
+                val valid = HashSet<String>(allIcons.size)
+                // Time-based yield batch, can grab the AssetManager lock between work slices
+                var lastYield = SystemClock.uptimeMillis()
+                allIcons.filterTo(valid) { name ->
+                    if (SystemClock.uptimeMillis() - lastYield > SCAN_WORK_MS) {
+                        Thread.sleep(SCAN_YIELD_MS)
+                        lastYield = SystemClock.uptimeMillis()
+                    }
+                    packRes.getIdentifier(name, "drawable", pack) != 0
+                }
+                if (valid.size != allIcons.size) {
+                    // Suggestions were subtracted from allIcons, so they need their own check
+                    val validApp = appIcons.filter { packRes.getIdentifier(it, "drawable", pack) != 0 }
+                    val validSections = sectioned(allIcons.filter { it in valid })
+                    Executors.MAIN_EXECUTOR.execute {
+                        if (isAdded) adapter.submit(validApp, validSections)
+                    }
+                }
+            }, SCAN_START_DELAY);
         }
     }
 
@@ -241,6 +270,9 @@ class IconPickerBottomSheet : BottomSheetDialogFragment() {
                     Executors.MAIN_EXECUTOR.execute {
                         if (iv.tag == name) iv.setImageBitmap(bmp)
                     }
+                } else {
+                    // Unresolvable names are removed.
+                    Executors.MAIN_EXECUTOR.execute { removeIcon(name) }
                 }
             }
         }
@@ -252,6 +284,24 @@ class IconPickerBottomSheet : BottomSheetDialogFragment() {
             d.setBounds(0, 0, iconSizePx, iconSizePx)
             d.draw(Canvas(bmp))
             return bmp
+        }
+
+        /**
+         * Drops an unresolvable icon from the data set (invoked on the main thread);
+         * Not needed once the postDelayed scan has fully evaluated
+         */
+        private fun removeIcon(name: String) {
+            val inApp = name in appIcons
+            val inSections = allSections.any { name in it.second }
+            if (!inApp && !inSections) return // already removed (scan committed / duplicate render)
+            if (inApp) appIcons = appIcons - name
+            if (inSections) {
+                allSections = allSections.mapNotNull { (title, icons) ->
+                    if (name !in icons) title to icons
+                    else (title to (icons - name)).takeIf { it.second.isNotEmpty() }
+                }
+            }
+            rebuild()
         }
 
         private fun dp(ctx: Context, dp: Int): Int = (dp * ctx.resources.displayMetrics.density).toInt()
@@ -268,5 +318,12 @@ class IconPickerBottomSheet : BottomSheetDialogFragment() {
     companion object {
         const val TAG = "IconPickerBottomSheet"
         private const val SPAN_COUNT = 4
+        /**
+         * Scan variables are used for the empty icon scanning batch
+         * The scan yields [SCAN_YIELD_MS] per [SCAN_WORK_MS] of work: AssetManager lock fairness.
+         */
+        private const val SCAN_WORK_MS = 20L
+        private const val SCAN_YIELD_MS = 2L
+        private const val SCAN_START_DELAY = 100L
     }
 }
