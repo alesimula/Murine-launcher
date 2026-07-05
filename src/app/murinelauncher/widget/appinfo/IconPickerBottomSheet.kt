@@ -1,7 +1,8 @@
 package app.murinelauncher.widget.appinfo
 
 import android.content.Context
-import android.graphics.drawable.Drawable
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -79,20 +80,11 @@ class IconPickerBottomSheet : BottomSheetDialogFragment() {
             this.adapter = adapter
         }
 
-        view.findViewById<EditText>(R.id.search_bar)?.let { searchBar ->
-            // Prevent fast typing from filtering immediately, so search doesn't feel sluggish
-            var pendingFilter: Runnable? = null
-            searchBar.addTextChangedListener(object : TextWatcher {
-                override fun afterTextChanged(s: Editable?) {
-                    pendingFilter?.let { searchBar.removeCallbacks(it) }
-                    val query = s?.toString().orEmpty()
-                    pendingFilter = Runnable { adapter.filter(query) }
-                        .also { searchBar.postDelayed(it, SEARCH_DEBOUNCE_MS) }
-                }
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            })
-        }
+        view.findViewById<EditText>(R.id.search_bar)?.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) = adapter.filter(s?.toString().orEmpty())
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
 
         Executors.MODEL_EXECUTOR.execute {
             val appIcons = IconPackManager.getPackIconsForApp(appCtx, pack, componentKey)
@@ -106,8 +98,8 @@ class IconPickerBottomSheet : BottomSheetDialogFragment() {
 
     /**
      * Grid adapter: optional "From this app" section, separator header, then all pack icons.
-     * Drawables are loaded lazily off the main thread and kept only in a sheet-local
-     * [LruCache] (volatile; never touches [IconPackManager]'s caches).
+     * Icons are inflated and rasterized to cell-sized bitmaps off the main thread (in parallel),
+     * kept only in a sheet-local [LruCache] (volatile; never touches [IconPackManager]'s caches).
      */
     private class IconGridAdapter(context: Context, private val packPackage: String, private val onClick: (String) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -118,7 +110,8 @@ class IconPickerBottomSheet : BottomSheetDialogFragment() {
         private val iconDpi = context.resources.configuration.densityDpi
         /** Resolved once per sheet; each per-icon load would otherwise cost a PM IPC. */
         private val packRes by lazy { IconPackManager.getPackResources(appCtx, packPackage) }
-        private val drawableCache = LruCache<String, Drawable>(CACHE_SIZE)
+        private val iconSizePx = dp(context, CELL_SIZE_DP - 2 * CELL_PADDING_DP)
+        private val bitmapCache = LruCache<String, Bitmap>(CACHE_SIZE)
         private var appIcons: List<String> = emptyList()
         private var allIcons: List<String> = emptyList()
         private var query = ""
@@ -172,7 +165,8 @@ class IconPickerBottomSheet : BottomSheetDialogFragment() {
                 val iv = ImageView(ctx).apply {
                     layoutParams = RecyclerView.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT, dp(ctx, CELL_SIZE_DP))
-                    setPadding(dp(ctx, 10), dp(ctx, 10), dp(ctx, 10), dp(ctx, 10))
+                    val pad = dp(ctx, CELL_PADDING_DP)
+                    setPadding(pad, pad, pad, pad)
                     setBackgroundResource(R.drawable.rounded_popup_ripple)
                 }
                 object : RecyclerView.ViewHolder(iv) {}
@@ -190,21 +184,30 @@ class IconPickerBottomSheet : BottomSheetDialogFragment() {
             iv.contentDescription = name
             iv.setOnClickListener { onClick(name) }
             iv.tag = name
-            val cached = drawableCache.get(name)
+            val cached = bitmapCache.get(name)
             if (cached != null) {
-                iv.setImageDrawable(cached)
+                iv.setImageBitmap(cached)
                 return
             }
-            iv.setImageDrawable(null)
-            Executors.MODEL_EXECUTOR.execute {
-                val d = packRes?.let { IconPackManager.loadDrawableFromPack(it, packPackage, name, iconDpi) }
-                if (d != null) {
-                    drawableCache.put(name, d)
+            iv.setImageBitmap(null)
+            Executors.THREAD_POOL_EXECUTOR.execute {
+                val bmp = renderIcon(name)
+                if (bmp != null) {
+                    bitmapCache.put(name, bmp)
                     Executors.MAIN_EXECUTOR.execute {
-                        if (iv.tag == name) iv.setImageDrawable(d)
+                        if (iv.tag == name) iv.setImageBitmap(bmp)
                     }
                 }
             }
+        }
+
+        /** Inflates and rasterizes a pack icon to cell size. */
+        private fun renderIcon(name: String): Bitmap? {
+            val d = packRes?.let { IconPackManager.loadDrawableFromPack(it, packPackage, name, iconDpi) } ?: return null
+            val bmp = Bitmap.createBitmap(iconSizePx, iconSizePx, Bitmap.Config.ARGB_8888)
+            d.setBounds(0, 0, iconSizePx, iconSizePx)
+            d.draw(Canvas(bmp))
+            return bmp
         }
 
         private fun dp(ctx: Context, dp: Int): Int = (dp * ctx.resources.displayMetrics.density).toInt()
@@ -213,6 +216,7 @@ class IconPickerBottomSheet : BottomSheetDialogFragment() {
             const val TYPE_HEADER = 0
             const val TYPE_ICON = 1
             const val CELL_SIZE_DP = 64
+            const val CELL_PADDING_DP = 10
             const val CACHE_SIZE = 256
         }
     }
@@ -220,7 +224,5 @@ class IconPickerBottomSheet : BottomSheetDialogFragment() {
     companion object {
         const val TAG = "IconPickerBottomSheet"
         private const val SPAN_COUNT = 4
-        /** Long enough to skip rebuilds while typing, short enough not to feel unresponsive (hopefully :P). */
-        private const val SEARCH_DEBOUNCE_MS = 400L
     }
 }
