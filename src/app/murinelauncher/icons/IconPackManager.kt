@@ -937,38 +937,76 @@ object IconPackManager {
     // ---- Dynamic icon (clock / calendar) helpers ----
 
     /**
-     * True when [packageName]'s icon in the current global pack is a dynamic calendar (day in freshness id)
+     * The plain pack of an override pref value, or null for system-forced / custom icon entries
+     */
+    private fun overridePackFor(value: Any?): String? {
+        val raw = value as? String ?: return null
+        val pack = packOf(raw)
+        // Custom icon picks resolve to that exact drawable: never dynamic
+        return if (pack == SYSTEM_ICON_PACK || customIconOf(raw) != null) null else pack
+    }
+
+    /**
+     * True when [packageName]'s icon resolves to a dynamic calendar (day in freshness id),
+     * via either the global pack or a per-app override pack.
      */
     @JvmStatic
     fun isPackCalendarPackage(context: Context, packageName: String): Boolean {
         val pack = getSelectedPack(context)
-        if (pack == SYSTEM_ICON_PACK) return false
-        // TODO Global pack only; per-app override packs' calendars refresh on reload, not midnight
-        return ensureDataLoaded(context, pack).calendarMap.keys.any { it.substringBefore('/') == packageName }
+        if (pack != SYSTEM_ICON_PACK && ensureDataLoaded(context, pack)
+                .calendarMap.keys.any { it.substringBefore('/') == packageName }
+        ) return true
+        for ((key, value) in componentPrefs(context).all) {
+            if (key.substringBefore('/') != packageName) continue
+            val overridePack = overridePackFor(value) ?: continue
+            if (key in ensureDataLoaded(context, overridePack, overrideForComponent = key).calendarMap) {
+                return true
+            }
+        }
+        return false
     }
 
     /**
-     * Packages whose icon in the current global pack is a dynamic calendar
+     * Packages of per-app overrides whose pack maps them to a dynamic calendar (or clock)
+     */
+    private fun overrideDynamicPackages(context: Context, clocks: Boolean): Set<String> {
+        val result = mutableSetOf<String>()
+        for ((key, value) in componentPrefs(context).all) {
+            val pack = overridePackFor(value) ?: continue
+            val data = ensureDataLoaded(context, pack, overrideForComponent = key)
+            val dynamic = if (clocks) data.componentMap[key]?.let { it in data.clockMetas } == true
+            else key in data.calendarMap
+            if (dynamic) result.add(key.substringBefore('/'))
+        }
+        return result
+    }
+
+    /**
+     * Packages whose icon (global pack or per-app override) is a dynamic calendar
      */
     @JvmStatic
     fun getPackCalendarPackages(context: Context): Set<String> {
         val pack = getSelectedPack(context)
-        if (pack == SYSTEM_ICON_PACK) return emptySet()
-        return ensureDataLoaded(context, pack).calendarMap.keys.mapTo(mutableSetOf()) { it.substringBefore('/') }
+        val global: Set<String> = if (pack == SYSTEM_ICON_PACK) emptySet()
+        else ensureDataLoaded(context, pack).calendarMap.keys.mapTo(mutableSetOf()) { it.substringBefore('/') }
+        return global + overrideDynamicPackages(context, clocks = false)
     }
 
     /**
-     * Packages whose icon in the current global pack is a dynamic clock
+     * Packages whose icon (global pack or per-app override) is a dynamic clock
      */
     @JvmStatic
     fun getPackClockPackages(context: Context): Set<String> {
         val pack = getSelectedPack(context)
-        if (pack == SYSTEM_ICON_PACK) return emptySet()
-        val data = ensureDataLoaded(context, pack)
-        if (data.clockMetas.isEmpty()) return emptySet()
-        return data.componentMap.entries
-            .filter { it.value in data.clockMetas }
-            .mapTo(mutableSetOf()) { it.key.substringBefore('/') }
+        val global: Set<String> = if (pack == SYSTEM_ICON_PACK) emptySet()
+        else {
+            val data = ensureDataLoaded(context, pack)
+            if (data.clockMetas.isEmpty()) emptySet()
+            else data.componentMap.entries
+                .filter { it.value in data.clockMetas }
+                .mapTo(mutableSetOf()) { it.key.substringBefore('/') }
+        }
+        return global + overrideDynamicPackages(context, clocks = true)
     }
 
     // ---- Pack icon listing (for the per-app custom icon picker) ----
