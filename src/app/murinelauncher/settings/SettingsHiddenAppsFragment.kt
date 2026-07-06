@@ -12,6 +12,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
 import androidx.preference.Preference
+import app.murinelauncher.settings.hiddenapps.AppLock
 import app.murinelauncher.settings.hiddenapps.HiddenAppPreference
 import app.murinelauncher.settings.hiddenapps.HiddenAppsRepository
 import app.murinelauncher.settings.common.AbstractSettingsFragment
@@ -108,7 +109,19 @@ class SettingsHiddenAppsFragment : AbstractSettingsFragment() {
             .filter { !HIDE_SELF || it.componentName.packageName != selfPackage }
             .sortedBy { (it.label ?: it.componentName.shortClassName).toString().lowercase() }
 
+        // Master gate: check if app lock is supported
+        val appLockAvailable = AppLock.isAvailable(ctx)
+
         Executors.MODEL_EXECUTOR.execute {
+            // Per-app gate: the system marks exempt apps as unsupported
+            val lockable = if (appLockAvailable) {
+                filtered.filter { AppLock.isSupported(it.applicationInfo) }
+                    .mapTo(hashSetOf()) { it.componentName.flattenToString() }
+            } else emptySet()
+            val locked = if (appLockAvailable) {
+                filtered.filter { AppLock.isLocked(it.applicationInfo) }
+                    .mapTo(hashSetOf()) { it.componentName.flattenToString() }
+            } else emptySet()
             val results = filtered.map { info ->
                 val appInfo = AppInfo(ctx, info, info.user)
                 iconCache.getTitleAndIcon(appInfo, info, CacheLookupFlag.DEFAULT_LOOKUP_FLAG)
@@ -122,6 +135,12 @@ class SettingsHiddenAppsFragment : AbstractSettingsFragment() {
                         this.title = title
                         this.icon = icon
                         isAppHidden = hiddenComponents.contains(name)
+                        if (name in lockable) {
+                            isAppLocked = name in locked
+                            onLockClick = {
+                                AppLock.requestSetAppLock(ctx, name.substringBefore('/'))
+                            }
+                        }
                         setOnPreferenceClickListener {
                             val wasHidden = hiddenComponents.contains(name)
                             if (wasHidden) hiddenComponents.remove(name) else hiddenComponents.add(name)
@@ -153,6 +172,18 @@ class SettingsHiddenAppsFragment : AbstractSettingsFragment() {
             val matchesSearch = searchQuery.isEmpty() ||
                 pref.title?.toString()?.contains(searchQuery, ignoreCase = true) == true
             pref.isVisible = matchesTab && matchesSearch
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Re-read lock state after returning from the system lock/unlock dialog
+        // TODO maybe I could just check it for the last one the locking/unlocking was requested for
+        val ctx = context ?: return
+        val screen = preferenceScreen ?: return
+        for (i in 0 until screen.preferenceCount) {
+            val pref = screen.getPreference(i) as? HiddenAppPreference ?: continue
+            if (pref.onLockClick != null) pref.isAppLocked = AppLock.isLocked(ctx, pref.key.substringBefore('/'))
         }
     }
 
