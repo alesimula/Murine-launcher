@@ -34,6 +34,7 @@ import android.content.pm.ComponentInfo;
 import android.content.pm.PackageItemInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.drawable.AdaptiveIconDrawable;
@@ -148,7 +149,14 @@ public class IconProvider {
     private static boolean hasCalendarMetadata(PackageManager pm, ComponentName cn, String key) {
         try {
             Bundle metadata = pm.getActivityInfo(cn, PackageManager.GET_UNINSTALLED_PACKAGES | PackageManager.GET_META_DATA).metaData;
-            return metadata != null && metadata.getInt(key, ID_NULL) != ID_NULL;
+            int arrayId = metadata == null ? ID_NULL : metadata.getInt(key, ID_NULL);
+            if (arrayId == ID_NULL) return false;
+            // Exactly 31 entries, this it certainly a dynamic calendar and nothing else, right? (right?)
+            // TODO is there really no better way to detect this?
+            TypedArray ta = pm.getResourcesForApplication(cn.getPackageName()).obtainTypedArray(arrayId);
+            boolean isCalendar = ta.length() == 31;
+            ta.recycle();
+            return isCalendar;
         } catch (Exception e) {
             return false;
         }
@@ -296,7 +304,7 @@ public class IconProvider {
                     }
                     if ("array".equals(td.mResources.getResourceTypeName(td.mResID))) {
                         TypedArray ta = td.mResources.obtainTypedArray(td.mResID);
-                        int monoId = ta.getResourceId(IconProvider.getDay(), ID_NULL);
+                        int monoId = getDay() < ta.length() ? ta.getResourceId(getDay(), ID_NULL) : ID_NULL;
                         ta.recycle();
                         return monoId == ID_NULL ? drawable
                                 : new AdaptiveIconDrawable(aid.getBackground(), aid.getForeground(),
@@ -305,9 +313,9 @@ public class IconProvider {
                 }
                 return drawable;
             }
-        } catch (PackageManager.NameNotFoundException e) {
+        } catch (Exception e) {
             if (DEBUG) {
-                Log.d(TAG, "Could not get activityinfo or resources for package: " + calendar.getPackageName());
+                Log.d(TAG, "Could not load calendar icon for: " + calendar.getPackageName(), e);
             }
         }
         return null;
@@ -339,7 +347,10 @@ public class IconProvider {
             return ID_NULL;
         }
         try {
-            return resources.obtainTypedArray(arrayId).getResourceId(getDay(), ID_NULL);
+            TypedArray ta = resources.obtainTypedArray(arrayId);
+            int iconId = getDay() < ta.length() ? ta.getResourceId(getDay(), ID_NULL) : ID_NULL;
+            ta.recycle();
+            return iconId;
         } catch (Resources.NotFoundException e) {
             if (DEBUG) {
                 Log.d(TAG, "package defines '" + key + "' but corresponding array not found");
