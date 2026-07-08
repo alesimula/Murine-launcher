@@ -688,8 +688,7 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
 
     public CellLayout insertNewWorkspaceScreen(int screenId, int insertIndex) {
         if (mWorkspaceScreens.containsKey(screenId)) {
-            Log.w(TAG, "Screen id " + screenId + " already exists, skipping insertion");
-            return mWorkspaceScreens.get(screenId);
+            throw new RuntimeException("Screen id " + screenId + " already exists!");
         }
 
         // Inflate the cell layout, but do not add it automatically so that we can get the newly
