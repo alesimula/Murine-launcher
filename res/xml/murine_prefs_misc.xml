@@ -35,4 +35,17 @@
         android:title="@string/pref_restart_title"
         android:summary="@string/pref_restart_summary" />
 
+    <PreferenceCategory android:title="@string/pref_subcategory_backup">
+        <Preference
+            android:key="pref_backup_export"
+            android:title="@string/backup_export_title"
+            android:summary="@string/backup_export_desc"
+            android:persistent="false" />
+        <Preference
+            android:key="pref_backup_import"
+            android:title="@string/backup_import_title"
+            android:summary="@string/backup_import_desc"
+            android:persistent="false" />
+    </PreferenceCategory>
+
 </androidx.preference.PreferenceScreen>

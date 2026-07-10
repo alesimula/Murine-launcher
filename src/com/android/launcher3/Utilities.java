@@ -67,6 +67,7 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.animation.Interpolator;
+import android.widget.Toast;
 
 import androidx.annotation.ChecksSdkIntAtLeast;
 import androidx.annotation.IntDef;
@@ -1024,6 +1025,10 @@ public final class Utilities {
         if (BuildConfig.IS_DEBUG_DEVICE) {
             Log.d(tag, message);
         }
+    }
+
+    public static void uwu(Context context) {
+        Toast.makeText(context, "\u003E\u2A4A\u003C", Toast.LENGTH_SHORT).show();
     }
 
     public static void restart() {

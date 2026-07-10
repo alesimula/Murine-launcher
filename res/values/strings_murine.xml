@@ -26,6 +26,14 @@
     <string name="pref_subcategory_persistency">Persistency</string>
     <string name="pref_subcategory_gestures">Gestures</string>
     <string name="pref_subcategory_options">Options</string>
+    <string name="pref_subcategory_backup">Backup</string>
+
+    <string name="backup_export_title">Export backup</string>
+    <string name="backup_export_desc">Save layout, widgets and settings</string>
+    <string name="backup_export_done">Backup saved</string>
+    <string name="backup_import_title">Restore backup</string>
+    <string name="backup_import_desc">Restore saved layout and settings</string>
+    <string name="backup_import_confirm">This will restart the launcher and restore your configuration</string>
 
     <string name="pref_label_ui_mode_system">System</string>
     <string name="pref_label_ui_mode_day">Light</string>

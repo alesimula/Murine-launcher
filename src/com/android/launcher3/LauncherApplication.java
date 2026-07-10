@@ -37,6 +37,8 @@ public class LauncherApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        // Only checks if a backup is staged, does nothing otherwise
+        app.murinelauncher.backup.BackupHelper.INSTANCE.applyStagedRestoreIfNeeded(this);
         mNightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
 
         com.zxy.recovery.core.Recovery.getInstance()

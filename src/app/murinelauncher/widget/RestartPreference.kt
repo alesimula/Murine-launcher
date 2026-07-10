@@ -36,7 +36,7 @@ class RestartPreference @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     override fun onClick() {
-        Toast.makeText(context, "\u003E\u2A4A\u003C", Toast.LENGTH_SHORT).show()
+        Utilities.uwu(context)
         (context as? Activity ?: (context as? ContextWrapper)?.baseContext as? Activity)?.finish()
         Utilities.restart()
     }
