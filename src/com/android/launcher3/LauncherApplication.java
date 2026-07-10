@@ -18,6 +18,7 @@ package com.android.launcher3;
 import android.app.Application;
 import android.content.res.Configuration;
 
+import app.murinelauncher.backup.LayoutBackup;
 import app.murinelauncher.icons.IconPackManager;
 import app.murinelauncher.theme.ThemeOverride;
 
@@ -37,6 +38,12 @@ public class LauncherApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        // Must run before anything can open the workspace database: the model
+        // holds it open for the life of the process, and its WAL would be
+        // flushed back over an imported file.
+        LayoutBackup.applyPendingImport(this);
+
         mNightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
 
         com.zxy.recovery.core.Recovery.getInstance()

@@ -45,6 +45,11 @@
         android:summary="@string/pref_category_qsb_desc"
         android:fragment="app.murinelauncher.settings.SettingsQsbFragment"/>
     <Preference
+        android:icon="@drawable/ic_app_info_source"
+        android:title="@string/pref_category_backup_title"
+        android:summary="@string/pref_category_backup_desc"
+        android:fragment="app.murinelauncher.settings.SettingsBackupFragment"/>
+    <Preference
         android:icon="@drawable/ic_settings_misc"
         android:title="@string/pref_category_misc_title"
         android:summary="@string/pref_category_misc_desc"
