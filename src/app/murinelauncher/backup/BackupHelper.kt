@@ -51,14 +51,21 @@ object BackupHelper {
         LauncherFiles.GRID_DB_FILES.map(context::getDatabasePath).filter(File::exists).forEach { db ->
             val snapshot = File(snap, db.name)
             snapshotDatabase(db, snapshot)
-            SQLiteDatabase.openDatabase(snapshot.path, null, SQLiteDatabase.OPEN_READWRITE).use {
-                // Only keep legacy shortcuts' icons (their custom bitmap can exist nowhere else)
-                it.execSQL("UPDATE favorites SET icon = NULL WHERE itemType != 1")
-                // Migration scratch tables
-                it.execSQL("DROP TABLE IF EXISTS " + LauncherSettings.Favorites.HYBRID_HOTSEAT_BACKUP_TABLE)
-                it.execSQL("DROP TABLE IF EXISTS " + LauncherSettings.Favorites.TMP_TABLE)
-                // Rewrite the file so the freed pages are actually gone from the backup
-                it.execSQL("VACUUM")
+            SQLiteDatabase.openDatabase(snapshot.path, null, SQLiteDatabase.OPEN_READWRITE).use { snapshotDb ->
+                // Scrub statements' potential failures are catched individually
+                listOf(
+                    // Only keep legacy shortcuts' icons (their custom bitmap can exist nowhere else)
+                    "UPDATE favorites SET icon = NULL WHERE itemType != 1",
+                    // Migration scratch tables
+                    "DROP TABLE IF EXISTS " + LauncherSettings.Favorites.HYBRID_HOTSEAT_BACKUP_TABLE,
+                    "DROP TABLE IF EXISTS " + LauncherSettings.Favorites.TMP_TABLE,
+                    // Rewrite the file so the freed pages are actually gone from the backup
+                    "VACUUM"
+                ).forEach { sql -> try {
+                    snapshotDb.execSQL(sql)
+                } catch (e: Exception) {
+                    Log.w(TAG, "Scrub statement skipped for " + db.name + ": " + sql, e)
+                }}
             }
         }
         // Add all files to archive; each pref file is dumped through a temp SharedPreferences
