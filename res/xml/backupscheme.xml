@@ -13,6 +13,7 @@
     <include domain="database" path="launcher_7_by_3.db" />
     <include domain="database" path="launcher_8_by_3.db" />
     <include domain="sharedpref" path="com.android.launcher3.prefs.xml" />
+    <include domain="sharedpref" path="app.murinelauncher.ICON_OVERRIDE_DATABASE.xml" />
     <include domain="file" path="downgrade_schema.json" />
 
 </full-backup-content>

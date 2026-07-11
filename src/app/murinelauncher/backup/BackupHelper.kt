@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.net.Uri
 import android.util.Log
 import androidx.annotation.WorkerThread
+import app.murinelauncher.icons.IconPackManager
 import com.android.launcher3.LauncherFiles
 import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.provider.RestoreDbTask
@@ -24,7 +25,13 @@ object BackupHelper {
     private const val STAGING_DIR = "murine_restore_staging"
     private const val TMP_PREFS = "murine_backup_tmp_prefs"
     private const val DOWNGRADE_JSON = "downgrade_schema.json"
-    private const val PREFS_XML = LauncherFiles.SHARED_PREFERENCES_KEY + ".xml"
+    private const val MAIN_PREFS_XML = LauncherFiles.SHARED_PREFERENCES_KEY + ".xml"
+
+    /** Backed up prefs; IMPORTANT: also check backupscheme.xml **/
+    private val PREF_FILES = listOf(
+        LauncherFiles.SHARED_PREFERENCES_KEY,
+        IconPackManager.PREFS_DB_ICON_OVERRIDE,
+    )
 
     /**
      * Writes the backup zip to [uri] (SAF, no storage permission). To be called on MODEL_EXECUTOR.
@@ -38,15 +45,15 @@ object BackupHelper {
                 it.execSQL("VACUUM INTO ?", arrayOf<Any>(File(snap, db.name).path))
             }
         }
-        // Dump every backed-up pref through a temp SharedPreferences
-        context.getSharedPreferences(TMP_PREFS, Context.MODE_PRIVATE).edit().clear().also { ed ->
-            LauncherPrefs.getPrefs(context).all.forEach { (k, v) -> ed.putAny(k, v) }
-        }.commit()
-
-        // Add all files to zip
+        // Add all files to archive; each pref file is dumped through a temp SharedPreferences
         context.contentResolver.openOutputStream(uri, "wt")!!.let(::ZipOutputStream).use { zip ->
             snap.listFiles()!!.forEach { zip.add(it.name, it) }
-            zip.add(PREFS_XML, prefsFile(context, TMP_PREFS))
+            PREF_FILES.forEach { name ->
+                context.getSharedPreferences(TMP_PREFS, Context.MODE_PRIVATE).edit().clear().also { ed ->
+                    context.getSharedPreferences(name, Context.MODE_PRIVATE).all.forEach { (k, v) -> ed.putAny(k, v) }
+                }.commit()
+                zip.add("$name.xml", prefsFile(context, TMP_PREFS))
+            }
             File(context.filesDir, DOWNGRADE_JSON).takeIf(File::exists)
                 ?.let { zip.add(DOWNGRADE_JSON, it) }
         }
@@ -69,11 +76,11 @@ object BackupHelper {
         context.contentResolver.openInputStream(uri)!!.let(::ZipInputStream).use { zip ->
             generateSequence { zip.nextEntry }.forEach { entry ->
                 // Whitelist of exact file names for content validation
-                if (entry.name in LauncherFiles.GRID_DB_FILES || entry.name == PREFS_XML || entry.name == DOWNGRADE_JSON)
+                if (entry.name in LauncherFiles.GRID_DB_FILES || entry.name.removeSuffix(".xml") in PREF_FILES || entry.name == DOWNGRADE_JSON)
                     File(tmp, entry.name).outputStream().use(zip::copyTo)
             }
         }
-        val valid = File(tmp, PREFS_XML).exists() && tmp.list()!!.any { it.endsWith(".db") }
+        val valid = File(tmp, MAIN_PREFS_XML).exists() && tmp.list()!!.any { it.endsWith(".db") }
         (valid && tmp.renameTo(stagingDir(context))).also { if (!it) tmp.deleteRecursively() }
     } catch (e: Exception) {
         Log.e(TAG, "Staging restore failed", e)
@@ -93,22 +100,27 @@ object BackupHelper {
             LauncherFiles.GRID_DB_FILES.map(context::getDatabasePath).forEach { db ->
                 listOf("", "-wal", "-shm", "-journal").forEach { File(db.path + it).delete() }
             }
+            val stagedFiles = staging.list()!!.toSet()
             staging.listFiles()!!.forEach { f ->
                 when {
                     f.name.endsWith(".db") -> context.getDatabasePath(f.name)
                         .also { it.parentFile?.mkdirs() }.let(f::renameTo)
                     f.name == DOWNGRADE_JSON -> f.renameTo(File(context.filesDir, DOWNGRADE_JSON))
-                    f.name == PREFS_XML -> {
-                        // Read the xml as a temp SharedPreferences then commit to launcher prefs.
+                    f.name.endsWith(".xml") -> {
+                        // Read the xml as a temp SharedPreferences then commit to target prefs.
                         context.deleteSharedPreferences(TMP_PREFS)
                         f.renameTo(prefsFile(context, TMP_PREFS))
                         val restored = context.getSharedPreferences(TMP_PREFS, Context.MODE_PRIVATE).all
-                        LauncherPrefs.getPrefs(context).edit().clear().also { ed ->
+                        context.getSharedPreferences(f.name.removeSuffix(".xml"), Context.MODE_PRIVATE).edit().clear().also { ed ->
                             restored.forEach { (k, v) -> ed.putAny(k, v) }
                         }.commit()
                         context.deleteSharedPreferences(TMP_PREFS)
                     }
                 }
+            }
+            // Delete preferences in backupscheme present in the current app config but not in the backup
+            PREF_FILES.forEach { name ->
+                if ("$name.xml" !in stagedFiles) context.deleteSharedPreferences(name)
             }
             context.deleteSharedPreferences(LauncherPrefs.BOOT_AWARE_PREFS_KEY)
             context.createDeviceProtectedStorageContext().deleteSharedPreferences(LauncherPrefs.BOOT_AWARE_PREFS_KEY)
