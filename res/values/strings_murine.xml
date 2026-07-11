@@ -154,24 +154,4 @@
     <string name="pref_default_launcher_title">Default launcher</string>
     <string name="pref_restart_title">Restart</string>
     <string name="pref_restart_summary">Restart the launcher</string>
-
-    <!-- Backup and restore -->
-    <string name="pref_category_backup_title">Backup &amp; restore</string>
-    <string name="pref_category_backup_desc">Save your layout, or bring one over from another launcher</string>
-
-    <string name="layout_export_title">Export layout</string>
-    <string name="layout_export_summary">Save your home screen, folders and dock to a zip file</string>
-    <string name="layout_export_done">Layout exported</string>
-    <string name="layout_export_failed">Export failed: %1$s</string>
-
-    <string name="layout_import_title">Import layout</string>
-    <string name="layout_import_summary">Restore a Murine export, or a Lawnchair backup</string>
-    <string name="layout_import_failed">That file is not a workspace backup</string>
-    <string name="layout_import_confirm_title">Import this layout?</string>
-    <string name="layout_import_confirm_message">Your current home screen will be replaced.\n\n%1$s</string>
-    <string name="layout_import_confirm_button">Import and restart</string>
-    <string name="layout_import_restarting">Importing layout…</string>
-    <string name="layout_import_grid">Grid %1$d × %2$d, %3$d pages</string>
-    <string name="layout_import_contents">%1$d apps, %2$d folders, %3$d widgets, %4$d shortcuts</string>
-    <string name="layout_import_labels">%1$d custom app names</string>
 </resources>
