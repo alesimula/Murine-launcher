@@ -74,3 +74,4 @@ Last tested on:
 ## Extra resources
 
  - [Recovery: User-initiated, offline crash log sharing with zero permissions](https://github.com/alesimula/Recovery)
+ - [murine-aircompressor: full-Java zstd, lz4, snappy and lzo implementations](https://github.com/alesimula/murine-aircompressor)
