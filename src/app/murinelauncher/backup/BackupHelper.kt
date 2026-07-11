@@ -9,6 +9,7 @@ import androidx.annotation.WorkerThread
 import app.murinelauncher.icons.IconPackManager
 import com.android.launcher3.LauncherFiles
 import com.android.launcher3.LauncherPrefs
+import com.android.launcher3.LauncherSettings
 import com.android.launcher3.provider.RestoreDbTask
 import java.io.File
 import java.util.zip.ZipEntry
@@ -39,10 +40,20 @@ object BackupHelper {
     @WorkerThread
     fun backup(context: Context, uri: Uri): Boolean = try {
         val snap = File(context.cacheDir, "backup_snapshot").apply { deleteRecursively(); mkdirs() }
-        // Snapshot databases
+        // Snapshot databases, then scrub redundant blobs from the (private) snapshot copy
         LauncherFiles.GRID_DB_FILES.map(context::getDatabasePath).filter(File::exists).forEach { db ->
+            val snapshot = File(snap, db.name)
             SQLiteDatabase.openDatabase(db.path, null, SQLiteDatabase.OPEN_READONLY).use {
-                it.execSQL("VACUUM INTO ?", arrayOf<Any>(File(snap, db.name).path))
+                it.execSQL("VACUUM INTO ?", arrayOf<Any>(snapshot.path))
+            }
+            SQLiteDatabase.openDatabase(snapshot.path, null, SQLiteDatabase.OPEN_READWRITE).use {
+                // Only keep legacy shortcuts' icons (their custom bitmap can exist nowhere else)
+                it.execSQL("UPDATE favorites SET icon = NULL WHERE itemType != 1")
+                // Migration scratch tables
+                it.execSQL("DROP TABLE IF EXISTS " + LauncherSettings.Favorites.HYBRID_HOTSEAT_BACKUP_TABLE)
+                it.execSQL("DROP TABLE IF EXISTS " + LauncherSettings.Favorites.TMP_TABLE)
+                // Rewrite the file so the freed pages are actually gone from the backup
+                it.execSQL("VACUUM")
             }
         }
         // Add all files to archive; each pref file is dumped through a temp SharedPreferences
