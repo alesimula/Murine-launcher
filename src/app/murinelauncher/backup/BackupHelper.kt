@@ -124,7 +124,7 @@ object BackupHelper {
             }
             context.deleteSharedPreferences(LauncherPrefs.BOOT_AWARE_PREFS_KEY)
             context.createDeviceProtectedStorageContext().deleteSharedPreferences(LauncherPrefs.BOOT_AWARE_PREFS_KEY)
-            RestoreDbTask.setPending(context)
+            RestoreDbTask.setPending(context, true)
             Log.d(TAG, "Staged restore applied, RestoreDbTask pending")
         } catch (e: Exception) {
             Log.e(TAG, "Applying staged restore failed", e)

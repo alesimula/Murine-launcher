@@ -25,6 +25,7 @@ import static com.android.launcher3.LauncherPrefs.APP_WIDGET_IDS;
 import static com.android.launcher3.LauncherPrefs.IS_FIRST_LOAD_AFTER_RESTORE;
 import static com.android.launcher3.LauncherPrefs.OLD_APP_WIDGET_IDS;
 import static com.android.launcher3.LauncherPrefs.RESTORE_DEVICE;
+import static com.android.launcher3.LauncherPrefs.RESTORE_USER_INITIATED;
 import static com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE;
 import static com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_APPLICATION;
 import static com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_APPWIDGET;
@@ -42,6 +43,7 @@ import android.content.pm.LauncherActivityInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.UserHandle;
+import android.os.UserManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.LongSparseArray;
@@ -124,6 +126,7 @@ public class RestoreDbTask {
         // Set is pending to false irrespective of the result, so that it doesn't get
         // executed again.
         LauncherPrefs.get(context).removeSync(RESTORE_DEVICE);
+        LauncherPrefs.get(context).removeSync(RESTORE_USER_INITIATED);
 
         DeviceGridState deviceGridState = new DeviceGridState(context);
         FileLog.d(TAG, "restoreIfNeeded: deviceGridState from context: " + deviceGridState);
@@ -245,9 +248,12 @@ public class RestoreDbTask {
 
         // Build mapping of restored profile ids to their new profile ids.
         profileMapping.put(oldProfileId, myProfileId);
+        boolean isManualRestore = LauncherPrefs.get(context).get(RESTORE_USER_INITIATED);
         for (int i = oldManagedProfileIds.size() - 1; i >= 0; --i) {
             long oldManagedProfileId = oldManagedProfileIds.keyAt(i);
             UserHandle user = getUserForAncestralSerialNumber(backupManager, oldManagedProfileId);
+            if (user == null && isManualRestore)
+                user = context.getSystemService(UserManager.class).getUserForSerialNumber(oldManagedProfileId);
             if (user != null) {
                 long newManagedProfileId = controller.getSerialNumberForUser(user);
                 profileMapping.put(oldManagedProfileId, newManagedProfileId);
@@ -431,10 +437,18 @@ public class RestoreDbTask {
      * Marks the DB state as pending restoration
      */
     public static void setPending(Context context) {
+        setPending(context, false);
+    }
+
+    /**
+     * Marks the DB state as pending restoration
+     */
+    public static void setPending(Context context, boolean isManualRestore) {
         DeviceGridState deviceGridState = new DeviceGridState(context);
-        FileLog.d(TAG, "restore initiated from backup: DeviceGridState=" + deviceGridState);
+        FileLog.d(TAG, "restore initiated from backup: DeviceGridState=" + deviceGridState + ", isManualRestore=" + isManualRestore);
         LauncherPrefs.get(context).putSync(RESTORE_DEVICE.to(deviceGridState.getDeviceType()));
         LauncherPrefs.get(context).putSync(IS_FIRST_LOAD_AFTER_RESTORE.to(true));
+        if (isManualRestore) LauncherPrefs.get(context).putSync(RESTORE_USER_INITIATED.to(true));
     }
 
     @WorkerThread
