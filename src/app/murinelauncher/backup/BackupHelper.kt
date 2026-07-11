@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.database.sqlite.SQLiteDatabase
 import android.net.Uri
+import android.os.Build
 import android.util.Log
 import androidx.annotation.WorkerThread
 import app.murinelauncher.icons.IconPackManager
@@ -11,13 +12,17 @@ import com.android.launcher3.LauncherFiles
 import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.LauncherSettings
 import com.android.launcher3.provider.RestoreDbTask
+import io.airlift.compress.zstd.ZstdInputStream
+import io.airlift.compress.zstd.ZstdOutputStream
+import java.io.BufferedInputStream
 import java.io.File
+import java.util.zip.Deflater
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
 
 /**
- * Local backup ("*.rat", a plain zip) of the same file set AOSP cloud backup uses;
+ * Local backup ("*.rat", a zstd-compressed archive) of the same file set AOSP cloud backup uses;
  * Stages the restore, restarts the application and loads the backup through [RestoreDbTask].
  */
 object BackupHelper {
@@ -27,6 +32,8 @@ object BackupHelper {
     private const val TMP_PREFS = "murine_backup_tmp_prefs"
     private const val DOWNGRADE_JSON = "downgrade_schema.json"
     private const val MAIN_PREFS_XML = LauncherFiles.SHARED_PREFERENCES_KEY + ".xml"
+    // Current implementation only supports level 3 (default) and 4
+    private const val ZSTD_COMPRESSION_LEVEL = 4
 
     /** Backed up prefs; IMPORTANT: also check backupscheme.xml **/
     private val PREF_FILES = listOf(
@@ -43,9 +50,7 @@ object BackupHelper {
         // Snapshot databases, then scrub redundant blobs from the (private) snapshot copy
         LauncherFiles.GRID_DB_FILES.map(context::getDatabasePath).filter(File::exists).forEach { db ->
             val snapshot = File(snap, db.name)
-            SQLiteDatabase.openDatabase(db.path, null, SQLiteDatabase.OPEN_READONLY).use {
-                it.execSQL("VACUUM INTO ?", arrayOf<Any>(snapshot.path))
-            }
+            snapshotDatabase(db, snapshot)
             SQLiteDatabase.openDatabase(snapshot.path, null, SQLiteDatabase.OPEN_READWRITE).use {
                 // Only keep legacy shortcuts' icons (their custom bitmap can exist nowhere else)
                 it.execSQL("UPDATE favorites SET icon = NULL WHERE itemType != 1")
@@ -57,7 +62,9 @@ object BackupHelper {
             }
         }
         // Add all files to archive; each pref file is dumped through a temp SharedPreferences
-        context.contentResolver.openOutputStream(uri, "wt")!!.let(::ZipOutputStream).use { zip ->
+        context.contentResolver.openOutputStream(uri, "wt")!!
+            .let { ZstdOutputStream(it, ZSTD_COMPRESSION_LEVEL) }.let(::ZipOutputStream).use { zip ->
+            zip.setLevel(Deflater.NO_COMPRESSION) // Compression is handled by zstd
             snap.listFiles()!!.forEach { zip.add(it.name, it) }
             PREF_FILES.forEach { name ->
                 context.getSharedPreferences(TMP_PREFS, Context.MODE_PRIVATE).edit().clear().also { ed ->
@@ -84,7 +91,23 @@ object BackupHelper {
     fun stageRestore(context: Context, uri: Uri): Boolean = try {
         val tmp = tmpStagingDir(context).apply { deleteRecursively(); mkdirs() }
         stagingDir(context).deleteRecursively()
-        context.contentResolver.openInputStream(uri)!!.let(::ZipInputStream).use { zip ->
+        val src = BufferedInputStream(context.contentResolver.openInputStream(uri)!!)
+        src.mark(4)
+        val magic = ByteArray(4)
+        var magicRead = 0
+        while (magicRead < 4) {
+            val n = src.read(magic, magicRead, 4 - magicRead)
+            if (n < 0) break
+            magicRead += n
+        }
+        src.reset()
+        // Check file header to detect compression type
+        val input = when {
+            //magic.contentEquals(byteArrayOf(0xFF.toByte(), 0x06, 0x00, 0x00)) -> SnappyFramedInputStream(src)
+            magic.contentEquals(byteArrayOf(0x28, 0xB5.toByte(), 0x2F, 0xFD.toByte())) -> ZstdInputStream(src)
+            else -> src // File is a plain zip
+        }
+        input.let(::ZipInputStream).use { zip ->
             generateSequence { zip.nextEntry }.forEach { entry ->
                 // Whitelist of exact file names for content validation
                 if (entry.name in LauncherFiles.GRID_DB_FILES || entry.name.removeSuffix(".xml") in PREF_FILES || entry.name == DOWNGRADE_JSON)
@@ -141,6 +164,41 @@ object BackupHelper {
             Log.e(TAG, "Applying staged restore failed", e)
         } finally {
             staging.deleteRecursively()
+        }
+    }
+
+    /**
+     * Produces a consistent copy of the live SQLite database;
+     * Favors VACUUM INTO if supported (SQLite >= 3.27 - API 30+ only).
+     */
+    private fun snapshotDatabase(source: File, dest: File) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            SQLiteDatabase.openDatabase(source.path, null, SQLiteDatabase.OPEN_READONLY).use {
+                it.execSQL("VACUUM INTO ?", arrayOf<Any>(dest.path))
+            }
+            return
+        }
+        // Fallback snapshot logic for older SQLite versions
+        dest.createNewFile()
+        SQLiteDatabase.openDatabase(source.path, null, SQLiteDatabase.OPEN_READWRITE).use { db ->
+            db.execSQL("ATTACH DATABASE ? AS snapshot", arrayOf<Any>(dest.path))
+            db.beginTransaction()
+            try {
+                db.rawQuery("SELECT name, sql FROM sqlite_master WHERE type = 'table' AND sql IS NOT NULL AND name NOT LIKE 'sqlite_%'", null).use { c ->
+                    while (c.moveToNext()) {
+                        val name = c.getString(0)
+                        db.execSQL(c.getString(1).replaceFirst(Regex("CREATE\\s+TABLE\\s+"), "CREATE TABLE snapshot."))
+                        db.execSQL("INSERT INTO snapshot.\"$name\" SELECT * FROM main.\"$name\"")
+                    }
+                }
+                db.rawQuery("PRAGMA main.user_version", null).use { c ->
+                    if (c.moveToFirst()) db.execSQL("PRAGMA snapshot.user_version = " + c.getInt(0))
+                }
+                db.setTransactionSuccessful()
+            } finally {
+                db.endTransaction()
+                db.execSQL("DETACH DATABASE snapshot")
+            }
         }
     }
 
