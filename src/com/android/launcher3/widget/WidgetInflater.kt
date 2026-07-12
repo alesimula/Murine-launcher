@@ -154,10 +154,11 @@ constructor(
 
                     // Bind succeeded
                     if (success) {
-                        // If the widget has a configure activity, it is still needs to set it
-                        // up, otherwise the widget is ready to go.
+                        // If the widget has a configure activity (and is not optional), it is
+                        // still needs to set it up, otherwise the widget is ready to go.
                         item.restoreStatus =
-                            if ((appWidgetInfo.configure == null) || isDirectConfig)
+                            if ((appWidgetInfo.configure == null) || isDirectConfig
+                                    || appWidgetInfo.isConfigurationOptional())
                                 LauncherAppWidgetInfo.RESTORE_COMPLETED
                             else LauncherAppWidgetInfo.FLAG_UI_NOT_READY
                     }
@@ -165,10 +166,10 @@ constructor(
                 }
             } else if (
                 (item.hasRestoreFlag(LauncherAppWidgetInfo.FLAG_UI_NOT_READY) &&
-                    (appWidgetInfo.configure == null))
+                    (appWidgetInfo.configure == null || appWidgetInfo.isConfigurationOptional()))
             ) {
                 // The widget was marked as UI not ready, but there is no configure activity to
-                // update the UI.
+                // update the UI or the configuration is optional (not requested when adding it).
                 item.restoreStatus = LauncherAppWidgetInfo.RESTORE_COMPLETED
                 update = true
             } else if (
