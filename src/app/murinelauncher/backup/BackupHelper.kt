@@ -12,14 +12,14 @@ import com.android.launcher3.LauncherFiles
 import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.LauncherSettings
 import com.android.launcher3.provider.RestoreDbTask
+import io.airlift.compress.tar.TarEntry
+import io.airlift.compress.tar.TarInputStream
+import io.airlift.compress.tar.TarOutputStream
 import io.airlift.compress.zstd.ZstdInputStream
 import io.airlift.compress.zstd.ZstdOutputStream
 import java.io.BufferedInputStream
 import java.io.File
-import java.util.zip.Deflater
-import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
-import java.util.zip.ZipOutputStream
 
 /**
  * Local backup ("*.rat", a zstd-compressed archive) of the same file set AOSP cloud backup uses;
@@ -42,7 +42,7 @@ object BackupHelper {
     )
 
     /**
-     * Writes the backup zip to [uri] (SAF, no storage permission). To be called on MODEL_EXECUTOR.
+     * Writes the backup tar to [uri] (SAF, no storage permission). To be called on MODEL_EXECUTOR.
      */
     @WorkerThread
     fun backup(context: Context, uri: Uri): Boolean = try {
@@ -70,17 +70,16 @@ object BackupHelper {
         }
         // Add all files to archive; each pref file is dumped through a temp SharedPreferences
         context.contentResolver.openOutputStream(uri, "wt")!!
-            .let { ZstdOutputStream(it, ZSTD_COMPRESSION_LEVEL) }.let(::ZipOutputStream).use { zip ->
-            zip.setLevel(Deflater.NO_COMPRESSION) // Compression is handled by zstd
-            snap.listFiles()!!.forEach { zip.add(it.name, it) }
+            .let { ZstdOutputStream(it, ZSTD_COMPRESSION_LEVEL) }.let(::TarOutputStream).use { tar ->
+            snap.listFiles()!!.forEach { tar.add(it.name, it) }
             PREF_FILES.forEach { name ->
                 context.getSharedPreferences(TMP_PREFS, Context.MODE_PRIVATE).edit().clear().also { ed ->
                     context.getSharedPreferences(name, Context.MODE_PRIVATE).all.forEach { (k, v) -> ed.putAny(k, v) }
                 }.commit()
-                zip.add("$name.xml", prefsFile(context, TMP_PREFS))
+                tar.add("$name.xml", prefsFile(context, TMP_PREFS))
             }
             File(context.filesDir, DOWNGRADE_JSON).takeIf(File::exists)
-                ?.let { zip.add(DOWNGRADE_JSON, it) }
+                ?.let { tar.add(DOWNGRADE_JSON, it) }
         }
         snap.deleteRecursively()
         context.deleteSharedPreferences(TMP_PREFS)
@@ -99,27 +98,18 @@ object BackupHelper {
         val tmp = tmpStagingDir(context).apply { deleteRecursively(); mkdirs() }
         stagingDir(context).deleteRecursively()
         val src = BufferedInputStream(context.contentResolver.openInputStream(uri)!!)
-        src.mark(4)
-        val magic = ByteArray(4)
-        var magicRead = 0
-        while (magicRead < 4) {
-            val n = src.read(magic, magicRead, 4 - magicRead)
-            if (n < 0) break
-            magicRead += n
+        val input = BufferedInputStream(src.decompressed())
+        // Whitelist of exact file names for content validation
+        fun stage(name: String, content: java.io.InputStream) {
+            if (name in LauncherFiles.GRID_DB_FILES || name.removeSuffix(".xml") in PREF_FILES || name == DOWNGRADE_JSON)
+                File(tmp, name).outputStream().use(content::copyTo)
         }
-        src.reset()
-        // Check file header to detect compression type
-        val input = when {
-            //magic.contentEquals(byteArrayOf(0xFF.toByte(), 0x06, 0x00, 0x00)) -> SnappyFramedInputStream(src)
-            magic.contentEquals(byteArrayOf(0x28, 0xB5.toByte(), 0x2F, 0xFD.toByte())) -> ZstdInputStream(src)
-            else -> src // File is a plain zip
+        // The container also needs sniffing: current backups are tar, older ones are zip
+        if (input.isZip()) ZipInputStream(input).use { zip ->
+            generateSequence { zip.nextEntry }.forEach { stage(it.name, zip) }
         }
-        input.let(::ZipInputStream).use { zip ->
-            generateSequence { zip.nextEntry }.forEach { entry ->
-                // Whitelist of exact file names for content validation
-                if (entry.name in LauncherFiles.GRID_DB_FILES || entry.name.removeSuffix(".xml") in PREF_FILES || entry.name == DOWNGRADE_JSON)
-                    File(tmp, entry.name).outputStream().use(zip::copyTo)
-            }
+        else TarInputStream(input).use { tar ->
+            generateSequence { tar.nextEntry }.forEach { stage(it.name, tar) }
         }
         val valid = File(tmp, MAIN_PREFS_XML).exists() && tmp.list()!!.any { it.endsWith(".db") }
         (valid && tmp.renameTo(stagingDir(context))).also { if (!it) tmp.deleteRecursively() }
@@ -213,11 +203,45 @@ object BackupHelper {
 
     private fun tmpStagingDir(context: Context) = File(context.filesDir, "$STAGING_DIR.tmp")
 
+    //private val SNAPPY_MAGIC = byteArrayOf(0xFF.toByte(), 0x06, 0x00, 0x00)
+    private val ZSTD_MAGIC = byteArrayOf(0x28, 0xB5.toByte(), 0x2F, 0xFD.toByte())
+    private val ZIP_MAGIC = byteArrayOf('P'.code.toByte(), 'K'.code.toByte())
+
+    /** Reads up to [count] leading bytes without consuming the stream (short on EOF). */
+    private fun BufferedInputStream.peek(count: Int): ByteArray {
+        mark(count)
+        val bytes = ByteArray(count)
+        var total = 0
+        while (total < count) {
+            val n = read(bytes, total, count - total)
+            if (n < 0) break
+            total += n
+        }
+        reset()
+        return bytes.copyOf(total)
+    }
+
+    /**
+     * Wraps the stream with the proper decompressor based on its magic bytes;
+     * If none of the magic bytes are matched, it returns the original stream;
+     * NOTE: unused formats have been commented for code optimization
+     */
+    private fun BufferedInputStream.decompressed() = when {
+        //peek(4).contentEquals(SNAPPY_MAGIC) -> SnappyFramedInputStream(this)
+        peek(4).contentEquals(ZSTD_MAGIC) -> ZstdInputStream(this)
+        else -> this // Plain (uncompressed) archive
+    }
+
+    /**
+     * True when the stream starts with the zip local-header magic.
+     */
+    private fun BufferedInputStream.isZip() = peek(2).contentEquals(ZIP_MAGIC)
+
     private fun prefsFile(context: Context, name: String) =
         File(context.dataDir, "shared_prefs/$name.xml")
 
-    private fun ZipOutputStream.add(name: String, file: File) {
-        putNextEntry(ZipEntry(name))
+    private fun TarOutputStream.add(name: String, file: File) {
+        putNextEntry(TarEntry(name, file.length()))
         file.inputStream().use { it.copyTo(this) }
         closeEntry()
     }
