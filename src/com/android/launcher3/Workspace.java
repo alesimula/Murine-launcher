@@ -1006,6 +1006,29 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
         return -1;
     }
 
+    /**
+     * Guarantees the first page is a real, persistable screen and returns its id;
+     * Tries to restore it in the worst case scenario.
+     */
+    public int ensureFirstScreenForWidget() {
+        if (mWorkspaceScreens.containsKey(FIRST_SCREEN_ID)) return FIRST_SCREEN_ID;
+        int firstId = getScreenIdForPageIndex(0);
+        if (firstId >= 0) return firstId;
+        if (EXTRA_EMPTY_SCREEN_IDS.contains(firstId)) {
+            CellLayout cl = mWorkspaceScreens.get(firstId);
+            int index = mScreenOrder.indexOf(firstId);
+            mWorkspaceScreens.remove(firstId);
+            mScreenOrder.removeValue(firstId);
+            mWorkspaceScreens.put(FIRST_SCREEN_ID, cl);
+            mScreenOrder.add(index < 0 ? 0 : index, FIRST_SCREEN_ID);
+            Log.d(TAG, "ensureFirstScreenForWidget: re-keyed transient screen " + firstId + " to FIRST_SCREEN_ID");
+        } else {
+            insertNewWorkspaceScreen(FIRST_SCREEN_ID, 0);
+            Log.d(TAG, "ensureFirstScreenForWidget: created FIRST_SCREEN_ID (no page existed)");
+        }
+        return FIRST_SCREEN_ID;
+    }
+
     public IntArray getScreenOrder() {
         return mScreenOrder;
     }

@@ -282,8 +282,9 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
 
     override fun bindSmartspaceWidget() {
         val mode = LauncherPrefs.SMARTSPACE_MODE.get(launcher)
-        val cl = launcher.workspace.getScreenWithId(FIRST_SCREEN_ID) ?: run {
-            android.util.Log.w(TAG, "bindSmartspaceWidget: first screen not found")
+        val firstScreenId = launcher.workspace.ensureFirstScreenForWidget()
+        val cl = launcher.workspace.getScreenWithId(firstScreenId) ?: run {
+            android.util.Log.w(TAG, "bindSmartspaceWidget: first screen not found (id=$firstScreenId)")
             return
         }
         val idp = InvariantDeviceProfile.INSTANCE.get(launcher)
@@ -305,6 +306,7 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
             && existingMatchesMode(existingInDb, mode)
             && existingInDb.spanX == spanX
             && existingInDb.cellX == 0 && existingInDb.cellY == 0
+            && existingInDb.screenId == firstScreenId
         ) {
             // Reinforce canReorder=false (may have been reset by workspace rebuild)
             if (existingView != null) {
@@ -355,8 +357,8 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
 
         android.util.Log.d(TAG, "bindSmartspaceWidget: creating new widget, mode=$mode")
         when (mode) {
-            SmartspaceMode.MURINE_CLOCK -> addMurineClockWidget(cl, spanX)
-            SmartspaceMode.GOOGLE_SMARTSPACE -> addGoogleSmartspaceWidget(cl, spanX)
+            SmartspaceMode.MURINE_CLOCK -> addMurineClockWidget(cl, spanX, firstScreenId)
+            SmartspaceMode.GOOGLE_SMARTSPACE -> addGoogleSmartspaceWidget(cl, spanX, firstScreenId)
             else -> {}
         }
     }
@@ -379,7 +381,7 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
                 val item = bgDataModel.itemsIdMap.valueAt(i)
                 if (item is LauncherAppWidgetInfo
                     && item.container == LauncherSettings.Favorites.CONTAINER_DESKTOP
-                    && item.screenId == FIRST_SCREEN_ID
+                    && item.screenId == launcher.workspace.getScreenIdForPageIndex(0)
                     && (item.providerName == MURINE_CLOCK_CN || item.providerName == GOOGLE_SMARTSPACE_CN)
                 ) {
                     return item
@@ -444,7 +446,7 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
         launcher.workspace.addInScreen(hostView, info)
     }
 
-    private fun addMurineClockWidget(cl: CellLayout, spanX: Int) {
+    private fun addMurineClockWidget(cl: CellLayout, spanX: Int, screenId: Int) {
         val cwm = CustomWidgetManager.INSTANCE.get(launcher)
         val providerInfo = cwm.getWidgetProvider(MURINE_CLOCK_CN) ?: run {
             android.util.Log.w(TAG, "addMurineClockWidget: provider is null, plugin not ready")
@@ -462,7 +464,7 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
         launcher.modelWriter.addItemToDatabase(
             widgetInfo,
             LauncherSettings.Favorites.CONTAINER_DESKTOP,
-            FIRST_SCREEN_ID,
+            screenId,
             0, 0
         )
         hostView.setTag(widgetInfo)
@@ -474,7 +476,7 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
         launcher.workspace.addInScreen(hostView, widgetInfo)
     }
 
-    private fun addGoogleSmartspaceWidget(cl: CellLayout, spanX: Int) {
+    private fun addGoogleSmartspaceWidget(cl: CellLayout, spanX: Int, screenId: Int) {
         val wmh = com.android.launcher3.widget.WidgetManagerHelper(launcher)
         val providerInfo = wmh.findProvider(GOOGLE_SMARTSPACE_CN, android.os.Process.myUserHandle()) ?: run {
             android.util.Log.w(TAG, "addGoogleSmartspaceWidget: Google provider not found")
@@ -515,7 +517,7 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
         launcher.modelWriter.addItemToDatabase(
             widgetInfo,
             LauncherSettings.Favorites.CONTAINER_DESKTOP,
-            FIRST_SCREEN_ID,
+            screenId,
             0, 0
         )
         hostView.setTag(widgetInfo)
