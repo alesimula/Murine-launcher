@@ -295,7 +295,7 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
             "cols=${idp.numColumns} searchCols=${idp.numSearchContainerColumns}")
 
         // Both widget types are persisted in DB.
-        val existingInDb = findExistingSmartspaceInBgModel()
+        val existingInDb = findExistingSmartspaceInBgModel(firstScreenId)
         val existingView = findExistingSmartspaceView(cl)
         android.util.Log.d(TAG, "bindSmartspaceWidget: existingInDb=${existingInDb?.providerName} " +
             "pos=(${existingInDb?.cellX},${existingInDb?.cellY}) span=${existingInDb?.spanX} " +
@@ -374,14 +374,14 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
         SmartspaceMode.GOOGLE_SMARTSPACE_PROVIDER
     )
 
-    private fun findExistingSmartspaceInBgModel(): LauncherAppWidgetInfo? {
+    private fun findExistingSmartspaceInBgModel(firstScreenId: Int): LauncherAppWidgetInfo? {
         val bgDataModel = LauncherAppState.getInstance(launcher).model.bgDataModel
         synchronized(bgDataModel) {
             for (i in 0 until bgDataModel.itemsIdMap.size()) {
                 val item = bgDataModel.itemsIdMap.valueAt(i)
                 if (item is LauncherAppWidgetInfo
                     && item.container == LauncherSettings.Favorites.CONTAINER_DESKTOP
-                    && item.screenId == launcher.workspace.getScreenIdForPageIndex(0)
+                    && item.screenId == firstScreenId
                     && (item.providerName == MURINE_CLOCK_CN || item.providerName == GOOGLE_SMARTSPACE_CN)
                 ) {
                     return item
