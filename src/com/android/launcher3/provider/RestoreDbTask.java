@@ -298,6 +298,18 @@ public class RestoreDbTask {
         db.update(Favorites.TABLE_NAME, values, "itemType = ?",
                 new String[]{Integer.toString(Favorites.ITEM_TYPE_APPWIDGET)});
 
+        // CustomWidgetManager: clear restore flags and align provider package across debug/release
+        // builds for custom widgets, while letting foreign ones (different package) get pruned.
+        String basePkg = context.getPackageName().replaceFirst("\\.debug$", "");
+        db.execSQL("UPDATE " + Favorites.TABLE_NAME + " SET " + Favorites.RESTORED + " = 0, "
+                + Favorites.APPWIDGET_PROVIDER + " = ? || substr(" + Favorites.APPWIDGET_PROVIDER
+                + ", instr(" + Favorites.APPWIDGET_PROVIDER + ", '/')) "
+                + "WHERE itemType = ? AND (" + Favorites.APPWIDGET_PROVIDER + " LIKE ? OR "
+                + Favorites.APPWIDGET_PROVIDER + " LIKE ?)",
+                new Object[]{context.getPackageName(),
+                        Favorites.ITEM_TYPE_CUSTOM_APPWIDGET,
+                        basePkg + "/%", basePkg + ".debug/%"});
+
         // Migrate ids. To avoid any overlap, we initially move conflicting ids to a temp
         // location. Using Long.MIN_VALUE since profile ids can not be negative, so there will
         // be no overlap.
