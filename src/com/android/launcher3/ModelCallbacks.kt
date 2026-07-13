@@ -425,12 +425,6 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
             val lp = child.layoutParams as? CellLayoutLayoutParams ?: continue
             // Preserve user-placed widgets; only evict stray icons. Exception: a stale managed leftover
             val info = child.tag
-            if (info is LauncherAppWidgetInfo && info.rank != MANAGED_SMARTSPACE_RANK) {
-                val isLegacyManaged = (info.providerName == MURINE_CLOCK_CN
-                        || info.providerName == GOOGLE_SMARTSPACE_CN)
-                    && lp.getCellX() == 0 && lp.getCellY() == 0
-                if (!isLegacyManaged) continue
-            }
             // Remove any item whose cells overlap with the smartspace region (0,0)→(spanX-1,0)
             if (lp.getCellY() == 0 && lp.getCellX() < spanX
                 && lp.getCellX() + lp.cellHSpan > 0

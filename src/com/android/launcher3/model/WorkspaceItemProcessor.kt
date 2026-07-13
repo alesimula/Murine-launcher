@@ -482,6 +482,7 @@ class WorkspaceItemProcessor(
         val component = ComponentName.unflattenFromString(c.appWidgetProvider)!!
         val appWidgetInfo = LauncherAppWidgetInfo(c.appWidgetId, component)
         c.applyCommonProperties(appWidgetInfo)
+        appWidgetInfo.rank = c.rank
         appWidgetInfo.spanX = c.spanX
         appWidgetInfo.spanY = c.spanY
         appWidgetInfo.options = c.options
