@@ -38,6 +38,9 @@ import com.android.launcher3.widget.model.WidgetsListBaseEntry
 
 private const val TAG = "ModelCallbacks"
 
+// Used to mark first-screen smartspace widget (to distinguish from user-added one)
+private const val MANAGED_SMARTSPACE_RANK = 777
+
 class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
 
     var synchronouslyBoundPages = LIntSet()
@@ -363,11 +366,12 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
         }
     }
 
-    private val MURINE_CLOCK_CN = ComponentName(
-        "android",
+    // launcher.packageName is null during ModelCallbacks construction
+    private val MURINE_CLOCK_CN by lazy { ComponentName(
+        launcher.packageName,
         LauncherAppWidgetProviderInfo.CLS_CUSTOM_WIDGET_PREFIX +
             MurineClockWidgetPlugin::class.java.name
-    )
+    )}
 
     private val GOOGLE_SMARTSPACE_CN = ComponentName(
         SmartspaceMode.GOOGLE_SMARTSPACE_PACKAGE,
@@ -382,6 +386,7 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
                 if (item is LauncherAppWidgetInfo
                     && item.container == LauncherSettings.Favorites.CONTAINER_DESKTOP
                     && item.screenId == firstScreenId
+                    && item.rank == MANAGED_SMARTSPACE_RANK
                     && (item.providerName == MURINE_CLOCK_CN || item.providerName == GOOGLE_SMARTSPACE_CN)
                 ) {
                     return item
@@ -404,7 +409,8 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
         for (i in 0 until container.childCount) {
             val child = container.getChildAt(i) ?: continue
             val info = child.tag as? LauncherAppWidgetInfo ?: continue
-            if (info.providerName == MURINE_CLOCK_CN || info.providerName == GOOGLE_SMARTSPACE_CN) {
+            if (info.rank == MANAGED_SMARTSPACE_RANK
+                && (info.providerName == MURINE_CLOCK_CN || info.providerName == GOOGLE_SMARTSPACE_CN)) {
                 return child
             }
         }
@@ -417,6 +423,14 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
         for (i in 0 until container.childCount) {
             val child = container.getChildAt(i) ?: continue
             val lp = child.layoutParams as? CellLayoutLayoutParams ?: continue
+            // Preserve user-placed widgets; only evict stray icons. Exception: a stale managed leftover
+            val info = child.tag
+            if (info is LauncherAppWidgetInfo && info.rank != MANAGED_SMARTSPACE_RANK) {
+                val isLegacyManaged = (info.providerName == MURINE_CLOCK_CN
+                        || info.providerName == GOOGLE_SMARTSPACE_CN)
+                    && lp.getCellX() == 0 && lp.getCellY() == 0
+                if (!isLegacyManaged) continue
+            }
             // Remove any item whose cells overlap with the smartspace region (0,0)→(spanX-1,0)
             if (lp.getCellY() == 0 && lp.getCellX() < spanX
                 && lp.getCellX() + lp.cellHSpan > 0
@@ -460,6 +474,7 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
         widgetInfo.spanY = 1
         widgetInfo.minSpanX = spanX
         widgetInfo.minSpanY = 1
+        widgetInfo.rank = MANAGED_SMARTSPACE_RANK
 
         launcher.modelWriter.addItemToDatabase(
             widgetInfo,
@@ -513,6 +528,7 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
         widgetInfo.spanY = 1
         widgetInfo.minSpanX = spanX
         widgetInfo.minSpanY = 1
+        widgetInfo.rank = MANAGED_SMARTSPACE_RANK
 
         launcher.modelWriter.addItemToDatabase(
             widgetInfo,

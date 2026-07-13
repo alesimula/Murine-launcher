@@ -66,7 +66,6 @@ public class CustomWidgetManager implements PluginListener<CustomWidgetPlugin> {
             new DaggerSingletonObject<>(LauncherBaseAppComponent::getCustomWidgetManager);
 
     private static final String TAG = "CustomWidgetManager";
-    private static final String PLUGIN_PKG = "android";
     private final Context mContext;
     private final HashMap<ComponentName, CustomWidgetPlugin> mPlugins;
     private final List<CustomAppWidgetProviderInfo> mCustomWidgets;
@@ -112,7 +111,7 @@ public class CustomWidgetManager implements PluginListener<CustomWidgetPlugin> {
     @Override
     public void onPluginConnected(CustomWidgetPlugin plugin, Context context) {
         CustomAppWidgetProviderInfo info = getAndAddInfo(new ComponentName(
-                PLUGIN_PKG, CLS_CUSTOM_WIDGET_PREFIX + plugin.getClass().getName()));
+                mContext.getPackageName(), CLS_CUSTOM_WIDGET_PREFIX + plugin.getClass().getName()));
         if (info != null) {
             plugin.updateWidgetInfo(info, mContext);
             mPlugins.put(info.provider, plugin);

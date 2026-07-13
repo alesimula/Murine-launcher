@@ -320,7 +320,8 @@ public class WidgetsModel {
                     return false;
                 }
             }
-            if (!mAppFilter.shouldShowApp(item.componentName)) {
+            boolean isCustomWidget = item.widgetInfo != null && item.widgetInfo.isCustomWidget();
+            if (!isCustomWidget && !mAppFilter.shouldShowApp(item.componentName)) {
                 if (DEBUG) {
                     Log.d(TAG, String.format("%s is filtered and not added to the widget tray.",
                             item.componentName));

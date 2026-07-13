@@ -87,8 +87,7 @@ public class WidgetsListAdapter extends Adapter<ViewHolder> implements OnHeaderC
 
     private final Context mContext;
     private final SparseArray<ViewHolderBinder> mViewHolderBinders = new SparseArray<>();
-    private final WidgetListBaseRowEntryComparator mRowComparator =
-            new WidgetListBaseRowEntryComparator();
+    private final WidgetListBaseRowEntryComparator mRowComparator;
     @Nullable private WidgetsTwoPaneSheet.HeaderChangeListener mHeaderChangeListener;
 
     private final List<WidgetsListBaseEntry> mAllEntries = new ArrayList<>();
@@ -114,6 +113,7 @@ public class WidgetsListAdapter extends Adapter<ViewHolder> implements OnHeaderC
             ExpandButtonClickListener expandButtonClickListener,
             boolean isTwoPane) {
         mContext = context;
+        mRowComparator = new WidgetListBaseRowEntryComparator(context.getPackageName());
         mMaxHorizontalSpan = WidgetSizes.getWidgetSizePx(
                 ActivityContext.lookupContext(context).getDeviceProfile(),
                         DEFAULT_MAX_HORIZONTAL_SPANS, 1).getWidth();
@@ -489,9 +489,18 @@ public class WidgetsListAdapter extends Adapter<ViewHolder> implements OnHeaderC
             Comparator<WidgetsListBaseEntry> {
 
         private final LabelComparator mComparator = new LabelComparator();
+        private final String mPriorityPackage;
+
+        public WidgetListBaseRowEntryComparator(String priorityPackage) {
+            mPriorityPackage = priorityPackage;
+        }
 
         @Override
         public int compare(WidgetsListBaseEntry a, WidgetsListBaseEntry b) {
+            // Pin the launcher's own group (its custom widgets) to the top of the list.
+            boolean aTop = mPriorityPackage.equals(a.mPkgItem.packageName);
+            boolean bTop = mPriorityPackage.equals(b.mPkgItem.packageName);
+            if (aTop != bTop) return aTop ? -1 : 1;
             int i = mComparator.compare(a.mPkgItem.title.toString(), b.mPkgItem.title.toString());
             if (i != 0) {
                 return i;

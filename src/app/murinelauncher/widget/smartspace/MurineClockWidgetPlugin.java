@@ -52,7 +52,7 @@ public class MurineClockWidgetPlugin implements CustomWidgetPlugin {
             // 99 is just unrealistically wide enough in order to always pick the workspace width
             wpi.spanX = 99;
             wpi.spanY = 1;
-            wpi.minSpanX = 1;
+            wpi.minSpanX = 3;
             wpi.minSpanY = 1;
         }
         info.minResizeWidth = 250;
