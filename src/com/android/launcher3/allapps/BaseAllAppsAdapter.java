@@ -294,6 +294,8 @@ public abstract class BaseAllAppsAdapter<T extends Context & ActivityContext> ex
                         icon.setVisibility(GONE);
                     }
                 }
+                // Allows pressing enter to open first search result
+                if (position == 0 && mApps.hasSearchResults()) mAdapterProvider.onBindView(holder, position);
                 break;
             }
             case VIEW_TYPE_EMPTY_SEARCH: {

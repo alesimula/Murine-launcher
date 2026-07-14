@@ -56,9 +56,8 @@ public class DefaultSearchAdapterProvider extends SearchAdapterProvider<Activity
     public boolean launchHighlightedItem() {
         if (mHighlightedView instanceof BubbleTextView
                 && mHighlightedView.getTag() instanceof ItemInfo) {
-            ItemInfo itemInfo = (ItemInfo) mHighlightedView.getTag();
-            return mLauncher.startActivitySafely(
-                    mHighlightedView, itemInfo.getIntent(), itemInfo) != null;
+            // Route through the icon's click handler so it works on other types of icons (e.g. Private Space fake icon)
+            return mHighlightedView.performClick();
         }
         return false;
     }
