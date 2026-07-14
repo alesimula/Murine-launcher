@@ -126,6 +126,8 @@
     <string name="pref_category_hidden_apps_summary">Nascondi app dal cassetto</string>
     <string name="hidden_apps_label">Nascoste</string>
     <string name="hidden_apps_search_hint">Cerca app...</string>
+    <string name="pref_search_within_hidden_title">Cerca nelle app nascoste</string>
+    <string name="pref_search_within_hidden_summary">La ricerca nel cassetto delle app trova le app nascoste</string>
 
     <!-- App info sheet -->
     <string name="app_info_package">Pacchetto</string>

@@ -149,7 +149,8 @@ public class AllAppsList {
     }
 
     public void add(AppInfo info, LauncherActivityInfo activityInfo, boolean loadIcon) {
-        if (!mAppFilter.shouldShowApp(info.componentName)) {
+        // keeps hidden apps in the model when "search within hidden apps" is enabled (filtered later)
+        if (!mAppFilter.shouldShowApp(info.componentName, true)) {
             return;
         }
         if (findAppInfo(info.componentName, info.user) != null) {

@@ -32,6 +32,8 @@ import android.text.SpannableString;
 import android.text.style.ImageSpan;
 import android.util.Log;
 
+import app.murinelauncher.settings.hiddenapps.HiddenAppsRepository;
+
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.recyclerview.widget.DiffUtil;
@@ -46,11 +48,13 @@ import com.android.launcher3.util.LabelComparator;
 import com.android.launcher3.views.ActivityContext;
 
 import java.io.PrintWriter;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -247,6 +251,15 @@ public class AlphabeticalAppsList<T extends Context & ActivityContext> implement
 
         Stream<AppInfo> appSteam = Stream.of(mAllAppsStore.getApps());
         Stream<AppInfo> privateAppStream = Stream.of(mAllAppsStore.getApps());
+
+        // Keep hidden apps off the grid whilst still kept in the model (makes them searchable if option enabled)
+        Set<String> hiddenComponents = HiddenAppsRepository.getHiddenComponents(mActivityContext);
+        if (!hiddenComponents.isEmpty()) {
+            Predicate<AppInfo> notHidden = info -> !hiddenComponents.contains(info.componentName.flattenToString());
+            appSteam = appSteam.filter(notHidden);
+            // Hidden apps should probably not cover private space apps (I suppose)
+            //privateAppStream = privateAppStream.filter(notHidden);
+        }
 
         if (!hasSearchResults() && mItemFilter != null) {
             appSteam = appSteam.filter(mItemFilter);

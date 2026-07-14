@@ -92,6 +92,8 @@ public class PredictionUpdateTask implements ModelUpdateTask {
                     continue;
                 }
                 ComponentName cn = new ComponentName(target.getPackageName(), className);
+                // Never predict hidden apps
+                if (app.murinelauncher.settings.hiddenapps.HiddenAppsRepository.isHidden(context, cn)) continue;
                 UserHandle user = target.getUser();
                 itemInfo = apps.data.stream()
                         .filter(info -> user.equals(info.user) && cn.equals(info.componentName))

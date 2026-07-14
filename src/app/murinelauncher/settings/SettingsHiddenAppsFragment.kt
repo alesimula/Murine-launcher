@@ -12,6 +12,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
 import androidx.preference.Preference
+import androidx.preference.SwitchPreferenceCompat
 import app.murinelauncher.settings.hiddenapps.AppLock
 import app.murinelauncher.settings.hiddenapps.HiddenAppPreference
 import app.murinelauncher.settings.hiddenapps.HiddenAppsRepository
@@ -47,7 +48,30 @@ class SettingsHiddenAppsFragment : AbstractSettingsFragment() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         super.onCreatePreferences(savedInstanceState, rootKey)
         hiddenComponents = HiddenAppsRepository.getHiddenComponents(requireContext()).toMutableSet()
+        addSearchHiddenToggle()
         loadApps()
+    }
+
+    /**
+     * Toggle card for enabling the "search hidden apps" option
+     * TODO must be hidden via applyFilter when "Locked" tab is added
+     */
+    private fun addSearchHiddenToggle() {
+        val ctx = requireContext()
+        val toggle = SwitchPreferenceCompat(ctx).apply {
+            key = "search_within_hidden_apps"
+            isPersistent = false
+            order = -1000
+            title = getString(R.string.pref_search_within_hidden_title)
+            summary = getString(R.string.pref_search_within_hidden_summary)
+            isChecked = HiddenAppsRepository.isSearchHiddenAppsEnabled(ctx)
+            setOnPreferenceChangeListener { _, newValue ->
+                HiddenAppsRepository.setSearchHiddenAppsEnabled(ctx, newValue as Boolean)
+                LauncherAppState.getInstance(ctx).model.forceReload()
+                true
+            }
+        }
+        preferenceScreen.addPreference(toggle)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {

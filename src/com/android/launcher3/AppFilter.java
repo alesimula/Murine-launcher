@@ -32,8 +32,15 @@ public class AppFilter {
     }
 
     public boolean shouldShowApp(ComponentName app) {
+        return shouldShowApp(app, false);
+    }
+
+    /**
+     * @param retainSearchable: when true, hidden apps pass if "search within hidden apps" is enabled
+     */
+    public boolean shouldShowApp(ComponentName app, boolean retainSearchable) {
         if (mFilteredComponents.contains(app)) return false;
         if (SettingsHiddenAppsFragment.HIDE_SELF && app.getPackageName().equals(mContext.getPackageName())) return false;
-        return !HiddenAppsRepository.isHidden(mContext, app);
+        return !HiddenAppsRepository.isHidden(mContext, app) || (retainSearchable && HiddenAppsRepository.isSearchHiddenAppsEnabled(mContext));
     }
 }

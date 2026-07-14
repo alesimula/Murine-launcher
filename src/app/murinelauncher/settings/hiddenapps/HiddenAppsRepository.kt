@@ -9,9 +9,22 @@ import com.android.launcher3.LauncherFiles
  */
 object HiddenAppsRepository {
     private const val KEY_HIDDEN_APPS = "hidden_app_components"
+    private const val KEY_SEARCH_HIDDEN_APPS = "search_within_hidden_apps"
 
     private fun prefs(context: Context) =
         context.getSharedPreferences(LauncherFiles.SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+
+    /**
+     * When enabled, hidden apps stay searchable in the app drawer (but still off the grid).
+     */
+    @JvmStatic
+    fun isSearchHiddenAppsEnabled(context: Context): Boolean =
+        prefs(context).getBoolean(KEY_SEARCH_HIDDEN_APPS, false)
+
+    @JvmStatic
+    fun setSearchHiddenAppsEnabled(context: Context, enabled: Boolean) {
+        prefs(context).edit().putBoolean(KEY_SEARCH_HIDDEN_APPS, enabled).apply()
+    }
 
     @JvmStatic
     fun getHiddenComponents(context: Context): Set<String> =
