@@ -50,8 +50,8 @@ android {
     defaultConfig {
         minSdkVersion 26
         targetSdkVersion 36
-        versionCode 10101
-        versionName "1.1.1"
+        versionCode 10102
+        versionName "1.1.2"
 
         buildConfigField "boolean", "IS_STUDIO_BUILD", "false"
         buildConfigField "boolean", "QSB_ON_FIRST_SCREEN", "false"
