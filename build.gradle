@@ -316,7 +316,7 @@ dependencies {
 
     // Use the crash recovery library even for release (it's negligibly light)
     implementation 'com.github.alesimula.Recovery:recovery:1.0.7' // injected in LauncherApplication.java
-    implementation 'com.github.alesimula:murine-aircompressor:2.0.7'
+    implementation 'com.github.alesimula:murine-aircompressor:2.0.9'
 
     api libs.lottie
     implementation libs.dagger
