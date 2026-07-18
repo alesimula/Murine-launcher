@@ -50,6 +50,8 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.core.content.res.ResourcesCompat;
 
+import app.murinelauncher.settings.prefs.LabelVisibility;
+
 import com.android.launcher3.CellLayout.ContainerType;
 import com.android.launcher3.DevicePaddings.DevicePadding;
 import com.android.launcher3.folder.ClippedFolderIconLayoutRule;
@@ -177,6 +179,9 @@ public class DeviceProfile {
     public float iconScale;
     public int iconSizePx;
     public int iconTextSizePx;
+
+    private final LabelVisibility mLabelVisibility;
+    private final boolean mHideWorkspaceLabels; // True when labels must be hidden
     public int iconDrawablePaddingPx;
     private int mIconDrawablePaddingOriginalPx;
     public boolean iconCenterVertically;
@@ -386,6 +391,8 @@ public class DeviceProfile {
         mTransientTaskbarClaimedSpace = 0;
         startAlignTaskbar = false;
         isTransientTaskbar = false;
+        mLabelVisibility = LabelVisibility.AUTO;
+        mHideWorkspaceLabels = false;
     }
 
     /** TODO: Once we fully migrate to staged split, remove "isMultiWindowMode" */
@@ -417,6 +424,9 @@ public class DeviceProfile {
                 && inv.allAppsCellSpecsId != INVALID_RESOURCE_HANDLE;
 
         mIsScalableGrid = inv.isScalable && !isVerticalBarLayout() && !isMultiWindowMode;
+
+        mLabelVisibility = LauncherPrefs.get(context).get(LauncherPrefs.LABEL_VISIBILITY);
+        mHideWorkspaceLabels = mLabelVisibility == LabelVisibility.NEVER;
         // Determine device posture.
         mInfo = info;
         isTablet = info.isTablet(windowBounds);
@@ -1189,7 +1199,7 @@ public class DeviceProfile {
         float invIconSizeDp = inv.iconSize[mTypeIndex];
         float invIconTextSizeSp = inv.iconTextSize[mTypeIndex];
         iconSizePx = Math.max(1, pxFromDp(invIconSizeDp, mMetrics));
-        iconTextSizePx = pxFromSp(invIconTextSizeSp, mMetrics);
+        iconTextSizePx = mHideWorkspaceLabels ? 0 : pxFromSp(invIconTextSizeSp, mMetrics);
 
         updateIconSize(1f, context);
         updateWorkspacePadding();
@@ -1279,7 +1289,8 @@ public class DeviceProfile {
                 iconSizePx = mIconSizeSteps.getIconSmallerThan(cellWidthPx);
             }
 
-            if (isVerticalLayout) {
+            if (mHideWorkspaceLabels
+                    || (isVerticalLayout && mLabelVisibility == LabelVisibility.AUTO)) {
                 iconDrawablePaddingPx = 0;
                 iconTextSizePx = 0;
             } else {
@@ -1385,8 +1396,14 @@ public class DeviceProfile {
             updateAllAppsIconSize(1f, context.getResources());
         }
         updateAllAppsContainerWidth(context.getResources());
-        if (isVerticalLayout && !mIsResponsiveGrid) {
-            hideWorkspaceLabelsIfNotEnoughSpace();
+        if (!mIsResponsiveGrid) {
+            if (mHideWorkspaceLabels) {
+                iconTextSizePx = 0;
+                iconDrawablePaddingPx = 0;
+                cellHeightPx = getIconSizeWithOverlap(iconSizePx);
+            } else if (isVerticalLayout && mLabelVisibility != LabelVisibility.ALWAYS) {
+                hideWorkspaceLabelsIfNotEnoughSpace();
+            }
         }
         if (inv.enableTwoLinesInAllApps) {
             // Add extra textHeight to the existing allAppsCellHeight.
@@ -1650,6 +1667,7 @@ public class DeviceProfile {
             folderChildTextSizePx = cellContentDimensions.getIconTextSizePx();
             folderLabelTextSizePx = Math.max(minLabelTextSize,
                     (int) (folderChildTextSizePx * folderLabelTextScale));
+            hideFolderChildLabels();
             return;
         }
 
@@ -1706,6 +1724,20 @@ public class DeviceProfile {
 
             folderChildDrawablePaddingPx = getNormalizedFolderChildDrawablePaddingPx(textHeight);
         }
+        hideFolderChildLabels();
+    }
+
+    /**
+     * Drops the labels under icons inside folders when label visibility is set to "never";
+     * The folder's own name label ({@link #folderLabelTextSizePx}) is left untouched.
+     */
+    private void hideFolderChildLabels() {
+        if (!mHideWorkspaceLabels || folderChildTextSizePx == 0) return;
+        folderCellHeightPx = Math.max(folderChildIconSizePx, folderCellHeightPx
+                - Utilities.calculateTextHeight(folderChildTextSizePx)
+                - folderChildDrawablePaddingPx);
+        folderChildTextSizePx = 0;
+        folderChildDrawablePaddingPx = 0;
     }
 
     public void updateInsets(Rect insets) {

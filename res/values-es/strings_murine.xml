@@ -44,6 +44,11 @@
     <string name="pref_label_icon_size">Tamaño del icono (%)</string>
     <string name="pref_label_icon_label_size">Tamaño de la etiqueta (%)</string>
 
+    <string name="pref_label_visibility_title">Visibilidad de etiquetas</string>
+    <string name="label_visibility_never">Nunca</string>
+    <string name="label_visibility_auto">Automático</string>
+    <string name="label_visibility_always">Siempre</string>
+
     <string name="pref_icon_shape_title">Forma del icono</string>
     <string name="icon_shape_system">Sistema</string>
     <string name="icon_shape_circle">Círculo</string>

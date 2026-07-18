@@ -20,6 +20,7 @@ import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import androidx.annotation.VisibleForTesting
 import app.murinelauncher.graphics.WorkspaceBlurUtils
+import app.murinelauncher.settings.prefs.LabelVisibility
 import app.murinelauncher.settings.SettingsDrawerFragment
 import app.murinelauncher.settings.SettingsGeneralFragment
 import app.murinelauncher.settings.SettingsHomeFragment
@@ -316,6 +317,8 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
         val ICON_LABEL_SIZE = backedUpItem(SettingsIconsFragment.ICON_LABEL_SIZE_KEY, 100)
         @JvmField
         val NOTIFICATION_BADGE_COUNT = backedUpItem(SettingsIconsFragment.NOTIFICATION_BADGE_COUNT_KEY, true)
+        @JvmField
+        val LABEL_VISIBILITY = backedUpItem(SettingsIconsFragment.LABEL_VISIBILITY_KEY, LabelVisibility.AUTO)
 
         @JvmField
         val ENABLE_TWOLINE_ALLAPPS_TOGGLE = backedUpItem("pref_enable_two_line_toggle", false)

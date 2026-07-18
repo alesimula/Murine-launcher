@@ -44,6 +44,10 @@
             android:title="@string/pref_icon_shape_title"
             app:iconPosition="end"
             app:iconTint="@color/settingslib_materialColorOnSurfaceVariant" />
+        <app.murinelauncher.widget.radio.RadioGroupPreference
+            android:key="pref_label_visibility_mode"
+            android:title="@string/pref_label_visibility_title"
+            app:showPreviewIcon="false" />
         <com.android.settingslib.widget.ExpandablePreference
             android:title="@string/pref_group_icon_scale_title"
             android:summary="@string/pref_group_icon_scale_desc">

@@ -43,6 +43,11 @@
     <string name="pref_label_icon_size">Dimensione icone (%)</string>
     <string name="pref_label_icon_label_size">Dimensione etichette (%)</string>
 
+    <string name="pref_label_visibility_title">Visibilità etichette</string>
+    <string name="label_visibility_never">Mai</string>
+    <string name="label_visibility_auto">Auto</string>
+    <string name="label_visibility_always">Sempre</string>
+
     <string name="pref_icon_shape_title">Forma icone</string>
     <string name="icon_shape_system">Sistema</string>
     <string name="icon_shape_circle">Cerchio</string>
