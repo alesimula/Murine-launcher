@@ -1,8 +1,8 @@
 package com.android.launcher3.popup;
 
 import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_DISMISS_PREDICTION_UNDO;
+import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_ITEM_DROPPED_ON_UNINSTALL;
 import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_PRIVATE_SPACE_INSTALL_SYSTEM_SHORTCUT_TAP;
-import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_PRIVATE_SPACE_UNINSTALL_SYSTEM_SHORTCUT_TAP;
 import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_SYSTEM_SHORTCUT_APP_INFO_TAP;
 import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_SYSTEM_SHORTCUT_DONT_SUGGEST_APP_TAP;
 import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_SYSTEM_SHORTCUT_WIDGETS_TAP;
@@ -34,7 +34,6 @@ import com.android.launcher3.Utilities;
 import com.android.launcher3.allapps.PrivateProfileManager;
 import com.android.launcher3.model.data.ItemInfo;
 import com.android.launcher3.model.data.WorkspaceItemInfo;
-import com.android.launcher3.pm.UserCache;
 import com.android.launcher3.util.ActivityOptionsWrapper;
 import com.android.launcher3.util.ApiWrapper;
 import com.android.launcher3.util.ComponentKey;
@@ -361,19 +360,10 @@ public abstract class SystemShortcut<T extends ActivityContext> extends ItemInfo
                 if (originalView == null) {
                     return null;
                 }
-                if (!Flags.enablePrivateSpace()) {
-                    return null;
-                }
-                if (!UserCache.INSTANCE.get(originalView.getContext()).getUserInfo(
-                        itemInfo.user).isPrivate()) {
-                    // If app is not Private Space app.
-                    return null;
-                }
                 ComponentName cn = SecondaryDropTarget.getUninstallTarget(originalView.getContext(),
                         itemInfo);
                 if (cn == null) {
-                    // If component name is null, don't show uninstall shortcut.
-                    // System apps will have component name as null.
+                    // Only application items backed by a non-system package can be uninstalled.
                     return null;
                 }
                 return new UninstallApp(activityContext, itemInfo, originalView, cn);
@@ -385,7 +375,7 @@ public abstract class SystemShortcut<T extends ActivityContext> extends ItemInfo
         UninstallApp(T target, ItemInfo itemInfo, @NonNull View originalView,
                 @NonNull ComponentName cn) {
             super(R.drawable.ic_uninstall_no_shadow,
-                    R.string.uninstall_private_system_shortcut_label, target,
+                    R.string.uninstall_drop_target_label, target,
                     itemInfo, originalView);
             mComponentName = cn;
 
@@ -398,7 +388,7 @@ public abstract class SystemShortcut<T extends ActivityContext> extends ItemInfo
             mTarget.getStatsLogManager()
                     .logger()
                     .withItemInfo(mItemInfo)
-                    .log(LAUNCHER_PRIVATE_SPACE_UNINSTALL_SYSTEM_SHORTCUT_TAP);
+                    .log(LAUNCHER_ITEM_DROPPED_ON_UNINSTALL);
         }
     }
 
