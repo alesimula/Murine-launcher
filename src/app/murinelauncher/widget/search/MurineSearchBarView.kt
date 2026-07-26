@@ -73,7 +73,7 @@ class MurineSearchBarView @JvmOverloads constructor(
             context.getString(R.string.murine_search_hint_generic)
         else context.getString(
             R.string.murine_search_hint_provider,
-            SearchProvider.current.displayName
+            SearchProvider.current.getDisplayName(context)
         )
     }
 

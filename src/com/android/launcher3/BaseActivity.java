@@ -182,7 +182,8 @@ public abstract class BaseActivity extends FragmentActivity implements ActivityC
 
     @Override
     protected void attachBaseContext(android.content.Context base) {
-        super.attachBaseContext(app.murinelauncher.theme.ThemeOverride.applyTheme(base));
+        super.attachBaseContext(app.murinelauncher.theme.ThemeOverride.applyTheme(
+                app.murinelauncher.i18n.LanguageOverride.applyLocale(base)));
     }
 
     @Override
@@ -240,6 +241,8 @@ public abstract class BaseActivity extends FragmentActivity implements ActivityC
         super.onStart();
         mEventCallbacks[EVENT_STARTED].executeAllAndClear();
         if (app.murinelauncher.theme.ThemeOverride.isThemeStale(this)) {
+            getWindow().getDecorView().post(this::recreate);
+        } else if (app.murinelauncher.i18n.LanguageOverride.isLocaleStale(this)) {
             getWindow().getDecorView().post(this::recreate);
         }
     }

@@ -150,7 +150,7 @@
         <item>@dimen/swipe_up_max_velocity</item>
     </array>
 
-    <string-array name="filtered_components" ></string-array>
+    <string-array name="filtered_components" translatable="false"></string-array>
 
     <!-- Swipe back to home related -->
     <dimen name="swipe_back_window_scale_x_margin">10dp</dimen>
@@ -222,7 +222,7 @@
          DO NOT ADD TO THIS LIST.  Apps should use the PROPERTY_SUPPORTS_MULTI_INSTANCE_SYSTEM_UI
          property to declare multi-instance support in V+. This resource should match the resource
          of the same name in SystemUI. -->
-    <string-array name="config_appsSupportMultiInstancesSplit">
+    <string-array name="config_appsSupportMultiInstancesSplit" translatable="false">
     </string-array>
 
     <!-- Used to differentiate between desktop and non-desktop devices. -->

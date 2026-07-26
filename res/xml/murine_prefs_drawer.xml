@@ -22,7 +22,7 @@
     <PreferenceCategory android:title="@string/pref_drawer_type_title">
         <com.android.settingslib.widget.SegmentedButtonPreference
             android:key="pref_drawer_type"
-            android:title="Screen Mode" />
+            android:title="@string/pref_drawer_type_title" />
         <com.android.settingslib.widget.SpacePreference
             android:layout_height="6dp" />
 

@@ -74,6 +74,9 @@ enum class SearchProvider(
         return searchUrlTemplate
     }
 
+    fun getDisplayName(context: Context): String =
+        if (this == CUSTOM) context.getString(R.string.search_provider_custom) else displayName
+
     fun buildSearchIntent(context: Context, query: String): Intent {
         var uri: Uri
         try {

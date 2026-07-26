@@ -21,12 +21,28 @@
     <string name="pref_category_misc_desc">Other options</string>
 
     <string name="pref_subcategory_day_night">UI theme</string>
+    <string name="pref_subcategory_language">Language</string>
     <string name="pref_subcategory_layout">Layout</string>
     <string name="pref_subcategory_appearance">Appearance</string>
     <string name="pref_subcategory_persistency">Persistency</string>
     <string name="pref_subcategory_gestures">Gestures</string>
     <string name="pref_subcategory_options">Options</string>
     <string name="pref_subcategory_backup">Backup</string>
+
+    <string name="pref_language_title">Language</string>
+    <string name="pref_language_system">System default</string>
+    <string name="pref_language_norwegian">Norwegian</string>
+    <string name="pref_language_english">English</string>
+    <string-array name="pref_language_entries">
+        <item>@string/pref_language_system</item>
+        <item>@string/pref_language_norwegian</item>
+        <item>@string/pref_language_english</item>
+    </string-array>
+    <string-array name="pref_language_values" translatable="false">
+        <item>system</item>
+        <item>nb</item>
+        <item>en</item>
+    </string-array>
 
     <string name="backup_export_title">Export backup</string>
     <string name="backup_export_desc">Save layout, widgets and settings</string>
@@ -84,6 +100,7 @@
     <!-- Murine search bar preferences -->
     <string name="pref_qsb_show_search_bar_title">Show search bar</string>
     <string name="pref_qsb_search_provider_title">Search provider</string>
+    <string name="search_provider_custom">Custom</string>
     <string name="pref_qsb_enable_lens_title">Enable Lens</string>
     <string name="pref_qsb_enable_lens_summary">Show Google Lens button in quick search</string>
     <string name="pref_qsb_box_blur">Blur search bubble</string>

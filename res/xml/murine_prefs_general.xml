@@ -19,10 +19,20 @@
     xmlns:launcher="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <PreferenceCategory android:title="@string/pref_subcategory_language">
+        <ListPreference
+            android:key="pref_launcher_language"
+            android:title="@string/pref_language_title"
+            android:entries="@array/pref_language_entries"
+            android:entryValues="@array/pref_language_values"
+            android:defaultValue="system"
+            android:persistent="true" />
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/pref_subcategory_day_night">
         <com.android.settingslib.widget.SegmentedButtonPreference
             android:key="pref_launcher_theme_day_night"
-            android:title="Screen Mode" />
+            android:title="@string/pref_subcategory_day_night" />
         <com.android.settingslib.widget.SpacePreference
             android:layout_height="12dp" />
         <SwitchPreferenceCompat

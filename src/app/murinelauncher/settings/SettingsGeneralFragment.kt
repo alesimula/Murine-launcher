@@ -1,12 +1,15 @@
 package app.murinelauncher.settings
 
 import android.util.Log
+import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.SwitchPreferenceCompat
 import app.murinelauncher.graphics.WorkspaceBlurUtils
+import app.murinelauncher.i18n.LanguageOverride
 import app.murinelauncher.settings.common.AbstractSettingsFragment
 import app.murinelauncher.icons.IconPackManager
 import app.murinelauncher.theme.ThemeOverride
+import com.android.launcher3.Launcher
 import com.android.launcher3.LauncherAppState
 import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.R
@@ -17,6 +20,7 @@ public final class SettingsGeneralFragment: AbstractSettingsFragment() {
 
     companion object {
         const val LAUNCHER_THEME_DAY_NIGHT: String = "pref_launcher_theme_day_night"
+        const val LAUNCHER_LANGUAGE: String = LanguageOverride.PREF_LANGUAGE
         const val BLUR_PREVIEW: String = "pref_blur_preview"
         const val BLUR_WARNING: String = "pref_blur_warning"
     }
@@ -32,6 +36,18 @@ public final class SettingsGeneralFragment: AbstractSettingsFragment() {
 
     override fun initPreference(preference: Preference, info: DisplayController.Info): Boolean {
         when (preference.key) {
+            LAUNCHER_LANGUAGE -> {
+                preference as ListPreference
+                preference.value = LanguageOverride.getLanguage(requireContext())
+                preference.summaryProvider = ListPreference.SimpleSummaryProvider.getInstance()
+                preference.setOnPreferenceChangeListener { _, newValue ->
+                    LanguageOverride.setLanguage(requireContext(), newValue as String)
+                    Launcher.ACTIVITY_TRACKER.getCreatedContext<Launcher>()?.recreate()
+                    tryRecreateActivity()
+                    true
+                }
+                return true
+            }
             LAUNCHER_THEME_DAY_NIGHT -> {
                 preference as SegmentedButtonPreference
                 preference.apply {

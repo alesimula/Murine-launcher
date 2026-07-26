@@ -16,6 +16,7 @@
 package com.android.launcher3;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.res.Configuration;
 
 import app.murinelauncher.icons.IconPackManager;
@@ -33,6 +34,11 @@ public class LauncherApplication extends Application {
 
     private volatile LauncherBaseAppComponent mAppComponent;
     private int mNightMode = Configuration.UI_MODE_NIGHT_UNDEFINED;
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(app.murinelauncher.i18n.LanguageOverride.applyLocale(base));
+    }
 
     @Override
     public void onCreate() {

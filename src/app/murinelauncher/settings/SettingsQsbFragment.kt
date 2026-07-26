@@ -71,7 +71,7 @@ public final class SettingsQsbFragment: AbstractSettingsFragment() {
                 preference as RadioGroupPreference
                 preference.asEnum(SearchProvider::class.java).apply {
                     setDefaultValue(LauncherPrefs.QSB_SEARCH_PROVIDER.defaultValue)
-                    setTextProvider { _, provider -> provider.displayName }
+                    setTextProvider { context, provider -> provider.getDisplayName(context) }
                     setIconProvider { ctx, provider -> AppCompatResources.getDrawable(ctx, provider.iconRes) }
                     setOnSelected { provider ->
                         customProviderPref?.isVisible = provider == SearchProvider.CUSTOM
