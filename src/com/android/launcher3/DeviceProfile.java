@@ -1294,7 +1294,7 @@ public class DeviceProfile {
             }
 
             if (mHideWorkspaceLabels
-                    || (isVerticalLayout && mLabelVisibility == LabelVisibility.AUTO)) {
+                    || (isVerticalLayout && mLabelVisibility != LabelVisibility.ALWAYS)) {
                 iconDrawablePaddingPx = 0;
                 iconTextSizePx = 0;
             } else {
@@ -1409,7 +1409,7 @@ public class DeviceProfile {
                 hideWorkspaceLabelsIfNotEnoughSpace();
             }
         }
-        if (mLabelVisibility == LabelVisibility.NEVER_FULL) {
+        if (mLabelVisibility == LabelVisibility.NEVER_FULL || mLabelVisibility == LabelVisibility.NEVER_DRAWER) {
             allAppsCellHeightPx = (int) (((float) allAppsCellHeightPx) - allAppsIconTextSizePx - allAppsIconDrawablePaddingPx);
             allAppsIconTextSizePx = 0;
             allAppsIconDrawablePaddingPx = 0;
