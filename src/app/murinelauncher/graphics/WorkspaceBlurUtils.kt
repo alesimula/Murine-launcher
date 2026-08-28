@@ -19,6 +19,7 @@ import com.android.launcher3.Utilities
 import com.android.launcher3.Utilities.getSystemProperty
 import com.android.launcher3.Utilities.getSystemPropertyFlag
 import java.util.concurrent.ConcurrentHashMap
+import java.util.function.Function
 
 class WorkspaceBlurUtils {
     companion object {
@@ -78,8 +79,21 @@ class WorkspaceBlurUtils {
 
     abstract class BlurType(val radius: Int, val blurWorkspace: Boolean) {
         init {BLUR_TYPES.add(this)}
-        private var blurDrawableImpl : MutableMap<Int, BackgroundBlurDrawable> = ConcurrentHashMap()
+        private var blurDrawableImpl : MutableMap<ViewRootImpl, BackgroundBlurDrawable> = ConcurrentHashMap()
         private var fallbackDrawableImpl : MutableMap<Int, MurineLayerDrawable> = ConcurrentHashMap()
+        /**
+         * Built once per [BlurType]; captures only `this` (for [radius]), so [computeIfAbsent] can
+         * reuse it instead of allocating a fresh lambda every frame.
+         */
+        private val blurFactory = Function<ViewRootImpl, BackgroundBlurDrawable> { viewRoot ->
+            viewRoot.createBackgroundBlurDrawable().also {
+                it.setBlurRadius(radius)
+                createdDrawable = it
+            }
+        }
+        private val fallbackFactory = Function<Int, MurineLayerDrawable> { MurineLayerDrawable() }
+        /** Set by [blurFactory], which only runs on a miss; read and cleared right after. */
+        private var createdDrawable: BackgroundBlurDrawable? = null
         private val viewRootProvider: View.() -> ViewRootImpl? = if (radius > 0) View::getViewRootImpl else {_: View -> null}
         fun invalidate() {
             blurDrawableImpl.clear()
@@ -93,14 +107,10 @@ class WorkspaceBlurUtils {
         open fun withBlurDrawable(view: View, block: TriConsumer<BackgroundBlurDrawable, Boolean, Boolean>): Boolean {
             if (!isBlurSupportedSDK) return false;
             val viewRoot: ViewRootImpl? = viewRootProvider(view)
-            var isNew = false
             if (viewRoot != null) {
-                val blurDrawable = blurDrawableImpl.computeIfAbsent(System.identityHashCode(viewRoot)) {
-                    isNew = true
-                    val backgroundDrawable = viewRoot.createBackgroundBlurDrawable()
-                    backgroundDrawable.setBlurRadius(radius)
-                    backgroundDrawable
-                }
+                val blurDrawable = blurDrawableImpl.computeIfAbsent(viewRoot, blurFactory)
+                val isNew = createdDrawable != null
+                createdDrawable = null
                 block.accept(blurDrawable, isNew, blurDrawable !== lastBlurDrawable)
                 lastBlurDrawable = blurDrawable
             }
@@ -121,7 +131,7 @@ class WorkspaceBlurUtils {
 
         @Suppress("RedundantNullableReturnType")
         fun fallbackDrawable(window: Window): MurineLayerDrawable {
-            return fallbackDrawableImpl.computeIfAbsent(System.identityHashCode(window), {MurineLayerDrawable()})
+            return fallbackDrawableImpl.computeIfAbsent(System.identityHashCode(window), fallbackFactory)
         }
     }
 
