@@ -212,6 +212,10 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
             return;
         }
         Launcher launcher = Launcher.getLauncher(cellLayout.getContext());
+        // No resizing while the home screen is locked.
+        if (LauncherPrefs.LOCK_HOME_SCREEN.get(launcher)) {
+            return;
+        }
         AbstractFloatingView.closeAllOpenViews(launcher);
 
         DragLayer dl = launcher.getDragLayer();

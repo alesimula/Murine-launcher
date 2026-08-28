@@ -27,6 +27,7 @@ import androidx.annotation.Nullable;
 import com.android.launcher3.AbstractFloatingView;
 import com.android.launcher3.AbstractFloatingViewHelper;
 import com.android.launcher3.Flags;
+import com.android.launcher3.LauncherPrefs;
 import com.android.launcher3.LauncherSettings;
 import com.android.launcher3.R;
 import com.android.launcher3.SecondaryDropTarget;
@@ -115,6 +116,8 @@ public abstract class SystemShortcut<T extends ActivityContext> extends ItemInfo
     }
 
     public static final Factory<ActivityContext> WIDGETS = (context, itemInfo, originalView) -> {
+        // Hide the widget picker shortcut while the home screen is locked.
+        if (LauncherPrefs.LOCK_HOME_SCREEN.get(context.asContext())) return null;
         final PackageUserKey packageUserKey = PackageUserKey.fromItemInfo(itemInfo);
         if (packageUserKey == null) return null;
 

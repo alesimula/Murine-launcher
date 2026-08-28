@@ -29,6 +29,7 @@ import android.graphics.Rect;
 import android.view.View;
 import android.view.View.OnLongClickListener;
 
+import com.android.launcher3.BubbleTextView;
 import com.android.launcher3.DragSource;
 import com.android.launcher3.DropTarget;
 import com.android.launcher3.Launcher;
@@ -89,6 +90,14 @@ public class ItemLongClickListener {
             return false;
         }
 
+        // Home screen locked: still show the long-press popup but never start the drag
+        if (!launcher.isDraggingEnabled()) {
+            if (v instanceof BubbleTextView btv && btv.canShowLongPressPopup()) {
+                btv.startLongPressAction();
+            }
+            return true;
+        }
+
         launcher.setWaitingForResult(null);
         beginDrag(v, launcher, (ItemInfo) v.getTag(), new DragOptions());
         return true;
@@ -117,6 +126,8 @@ public class ItemLongClickListener {
         // Get the widget preview as the drag representation
         WidgetImageView image = v.getWidgetView();
         Launcher launcher = Launcher.getLauncher(v.getContext());
+        // Never let a widget be dragged out of the picker onto a locked home screen.
+        if (!launcher.isDraggingEnabled()) return false;
         DragSource dragSource = (target, dragObject, success) -> { };
 
         // If the ImageView doesn't have a drawable yet, the widget preview hasn't been loaded and
@@ -160,6 +171,8 @@ public class ItemLongClickListener {
                 : view;
         Launcher launcher = Launcher.getLauncher(v.getContext());
         if (!canStartDrag(launcher)) return false;
+        // Never let an app be dragged out of the drawer onto a locked home screen.
+        if (!launcher.isDraggingEnabled()) return false;
         // When we have exited all apps or are in transition, disregard long clicks
         if (!launcher.isInState(ALL_APPS) && !launcher.isInState(OVERVIEW)) return false;
         if (launcher.getWorkspace().isSwitchingState()) return false;

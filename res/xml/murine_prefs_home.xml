@@ -26,6 +26,12 @@
         android:persistent="true"
         launcher:logIdOn="613"
         launcher:logIdOff="614" />
+    <SwitchPreferenceCompat
+        android:key="pref_lock_home_screen"
+        android:title="@string/pref_lock_home_screen_title"
+        android:summary="@string/pref_lock_home_screen_summary"
+        android:defaultValue="false"
+        android:persistent="true" />
     <!--
       LAUNCHER_HOME_SCREEN_ROTATION_ENABLED(615)
       LAUNCHER_HOME_SCREEN_ROTATION_DISABLED(616)

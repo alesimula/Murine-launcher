@@ -2965,8 +2965,9 @@ public class Launcher extends StatefulActivity<LauncherState>
 
     public boolean isDraggingEnabled() {
         // We prevent dragging when we are loading the workspace as it is possible to pick up a view
-        // that is subsequently removed from the workspace in startBinding().
-        return !isWorkspaceLoading();
+        // that is subsequently removed from the workspace in startBinding();
+        // Dragging is also disabled while the home screen is locked.
+        return !isWorkspaceLoading() && !LauncherPrefs.LOCK_HOME_SCREEN.get(this);
     }
 
     public boolean isNaturalScrollingEnabled() {

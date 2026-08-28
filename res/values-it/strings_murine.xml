@@ -68,6 +68,9 @@
     <string name="pref_blur_preview_title">Sfocatura modalità anteprima</string>
     <string name="pref_blur_preview_desc">Sfoca lo sfondo durante il trascinamento di icone e widget</string>
 
+    <string name="pref_lock_home_screen_title">Blocco schermata home</string>
+    <string name="pref_lock_home_screen_summary">Impedisce di spostare icone e widget</string>
+
     <string name="pref_double_tap_to_sleep_title">Doppio tocco per bloccare</string>
     <string name="pref_double_tap_to_sleep_summary">Tocca due volte su uno spazio vuoto per bloccare lo schermo</string>
     <string name="pref_swipe_down_notifications_title">Scorrimento per pannello notifiche</string>

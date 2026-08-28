@@ -72,6 +72,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.android.launcher3.AbstractFloatingView;
 import com.android.launcher3.Alarm;
+import com.android.launcher3.BubbleTextView;
 import com.android.launcher3.CellLayout;
 import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.DragSource;
@@ -329,7 +330,13 @@ public class Folder extends AbstractFloatingView implements ClipPathView, DragSo
 
     public boolean onLongClick(View v) {
         // Return if global dragging is not enabled
-        if (!getIsLauncherDraggingEnabled()) return true;
+        if (!getIsLauncherDraggingEnabled()) {
+            // Home screen locked: show the popup instead of dragging, same as on the workspace.
+            if (v instanceof BubbleTextView btv && btv.canShowLongPressPopup()) {
+                btv.startLongPressAction();
+            }
+            return true;
+        }
         return startDrag(v, new DragOptions());
     }
 

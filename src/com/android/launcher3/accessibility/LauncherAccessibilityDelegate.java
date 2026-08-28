@@ -129,7 +129,8 @@ public class LauncherAccessibilityDelegate extends BaseAccessibilityDelegate<Lau
         }
 
         // Do not add move actions for keyboard request as this uses virtual nodes.
-        if (itemSupportsAccessibleDrag(item)) {
+        boolean editAllowed = mContext.isDraggingEnabled();
+        if (editAllowed && itemSupportsAccessibleDrag(item)) {
             out.add(mActions.get(MOVE));
 
             if (item.container >= 0) {
@@ -145,7 +146,7 @@ public class LauncherAccessibilityDelegate extends BaseAccessibilityDelegate<Lau
             out.add(mActions.get(CLOSE));
         }
 
-        if (supportAddToWorkSpace(item)) {
+        if (editAllowed && supportAddToWorkSpace(item)) {
             out.add(mActions.get(ADD_TO_WORKSPACE));
         }
     }

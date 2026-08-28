@@ -89,8 +89,8 @@ public class KeyboardShortcutsDelegate {
                     break;
                 case KeyEvent.KEYCODE_W:
                     if (mLauncher.isInState(NORMAL)) {
-                        OptionsPopupView.openWidgets(mLauncher);
-                        return true;
+                        // Returns null when the home screen is locked; don't swallow the key then.
+                        return OptionsPopupView.openWidgets(mLauncher) != null;
                     }
                     break;
                 default:

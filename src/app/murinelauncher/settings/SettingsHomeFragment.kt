@@ -33,6 +33,7 @@ public final class SettingsHomeFragment: AbstractSettingsFragment() {
         const val FIXED_LANDSCAPE_MODE: String = "pref_fixed_landscape_mode"
         const val GRID_SIZE_WIDTH: String = "pref_grid_size_width"
         const val GRID_SIZE_HEIGHT: String = "pref_grid_size_height"
+        const val LOCK_HOME_SCREEN: String = "pref_lock_home_screen"
         const val DOUBLE_TAP_TO_SLEEP: String = "pref_double_tap_to_sleep"
         const val SWIPE_DOWN_NOTIFICATIONS: String = "pref_swipe_down_notifications"
         const val SMARTSPACE_MODE: String = "pref_smartspace_mode"

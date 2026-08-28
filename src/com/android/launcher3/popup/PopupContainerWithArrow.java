@@ -672,6 +672,8 @@ public class PopupContainerWithArrow<T extends Context & ActivityContext>
         @Override
         public boolean onLongClick(View v) {
             if (!ItemLongClickListener.canStartDrag(mLauncher)) return false;
+            // Return early if the home screen is locked
+            if (!mLauncher.isDraggingEnabled()) return false;
             // Return early if not the correct view
             if (!(v.getParent() instanceof DeepShortcutView)) return false;
 
