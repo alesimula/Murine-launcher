@@ -45,6 +45,7 @@
 
     <string name="pref_label_visibility_title">Labels visibility</string>
     <string name="label_visibility_never">Never</string>
+    <string name="label_visibility_drawer_only">Drawer only</string>
     <string name="label_visibility_auto">Auto</string>
     <string name="label_visibility_always">Always</string>
 

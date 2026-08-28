@@ -426,7 +426,8 @@ public class DeviceProfile {
         mIsScalableGrid = inv.isScalable && !isVerticalBarLayout() && !isMultiWindowMode;
 
         mLabelVisibility = LauncherPrefs.get(context).get(LauncherPrefs.LABEL_VISIBILITY);
-        mHideWorkspaceLabels = mLabelVisibility == LabelVisibility.NEVER;
+        mHideWorkspaceLabels = mLabelVisibility == LabelVisibility.NEVER
+                || mLabelVisibility == LabelVisibility.NEVER_FULL;
         // Determine device posture.
         mInfo = info;
         isTablet = info.isTablet(windowBounds);
@@ -1404,6 +1405,12 @@ public class DeviceProfile {
             } else if (isVerticalLayout && mLabelVisibility != LabelVisibility.ALWAYS) {
                 hideWorkspaceLabelsIfNotEnoughSpace();
             }
+        }
+        if (mLabelVisibility == LabelVisibility.NEVER_FULL) {
+            allAppsCellHeightPx = (int) (((float) allAppsCellHeightPx) - allAppsIconTextSizePx - allAppsIconDrawablePaddingPx);
+            allAppsIconTextSizePx = 0;
+            allAppsIconDrawablePaddingPx = 0;
+            allAppsCellHeightPx = Math.max(allAppsCellHeightPx, getIconSizeWithOverlap(allAppsIconSizePx));
         }
         if (inv.enableTwoLinesInAllApps) {
             // Add extra textHeight to the existing allAppsCellHeight.

@@ -45,6 +45,7 @@
 
     <string name="pref_label_visibility_title">Visibilità etichette</string>
     <string name="label_visibility_never">Mai</string>
+    <string name="label_visibility_drawer_only">Solo cassetto</string>
     <string name="label_visibility_auto">Auto</string>
     <string name="label_visibility_always">Sempre</string>
 
