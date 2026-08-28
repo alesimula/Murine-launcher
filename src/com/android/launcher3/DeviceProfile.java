@@ -181,6 +181,7 @@ public class DeviceProfile {
     public int iconTextSizePx;
 
     private final LabelVisibility mLabelVisibility;
+    private final float mDrawerPaddingScale;
     private final boolean mHideWorkspaceLabels; // True when labels must be hidden
     public int iconDrawablePaddingPx;
     private int mIconDrawablePaddingOriginalPx;
@@ -392,6 +393,7 @@ public class DeviceProfile {
         startAlignTaskbar = false;
         isTransientTaskbar = false;
         mLabelVisibility = LabelVisibility.AUTO;
+        mDrawerPaddingScale = 1f;
         mHideWorkspaceLabels = false;
     }
 
@@ -426,6 +428,7 @@ public class DeviceProfile {
         mIsScalableGrid = inv.isScalable && !isVerticalBarLayout() && !isMultiWindowMode;
 
         mLabelVisibility = LauncherPrefs.get(context).get(LauncherPrefs.LABEL_VISIBILITY);
+        mDrawerPaddingScale = LauncherPrefs.get(context).get(LauncherPrefs.DRAWER_PADDING) / 100f;
         mHideWorkspaceLabels = mLabelVisibility == LabelVisibility.NEVER
                 || mLabelVisibility == LabelVisibility.NEVER_FULL;
         // Determine device posture.
@@ -1571,7 +1574,7 @@ public class DeviceProfile {
             allAppsLeftRightMargin = Math.max(1, (availableWidthPx - usedWidth) / 2);
         } else if (!mIsResponsiveGrid) {
             // New logic - uses sdp library and returns
-            int sdpBasePadding = res.getDimensionPixelSize(R.dimen.murine_drawer_padding_phone);
+            int sdpBasePadding = (int) (res.getDimensionPixelSize(R.dimen.murine_drawer_padding_phone) * mDrawerPaddingScale);
             allAppsPadding.left = allAppsPadding.right = sdpBasePadding;
             return;
             // Old logic - does not return and continues below

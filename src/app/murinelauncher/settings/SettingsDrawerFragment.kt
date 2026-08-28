@@ -20,6 +20,7 @@ public final class SettingsDrawerFragment: AbstractSettingsFragment() {
         const val BLUR_WARNING: String = "pref_blur_warning"
         const val GRID_SIZE_WIDTH_DRAWER_OVERRIDE_SWITCH: String = "pref_grid_size_width_drawer_override_switch"
         const val GRID_SIZE_WIDTH_DRAWER_OVERRIDE: String = "pref_grid_size_width_drawer_override"
+        const val DRAWER_PADDING: String = "pref_drawer_padding"
     }
 
     override fun getPreferenceScreenResId() = R.xml.murine_prefs_drawer
@@ -99,6 +100,10 @@ public final class SettingsDrawerFragment: AbstractSettingsFragment() {
                 preference.setDefaultValue(LauncherPrefs.defaultGridWidth(isTablet))
                 preference.min = if (LauncherPrefs.DRAWER_GRID_WIDTH_OVERRIDE.get(requireContext()) == 0) 0 else 3
                 return true
+            }
+            DRAWER_PADDING -> {
+                // For now only affects murine_drawer_padding_phone, it is displayed differently on tablets and would scale the whole sheet
+                return InvariantDeviceProfile.INSTANCE.get(requireContext()).deviceType != InvariantDeviceProfile.TYPE_TABLET
             }
             BLUR_WARNING -> return true
             else -> return true

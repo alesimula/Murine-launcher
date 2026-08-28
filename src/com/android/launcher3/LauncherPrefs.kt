@@ -312,6 +312,8 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
         @JvmField
         val DRAWER_GRID_WIDTH_OVERRIDE = backedUpItem(SettingsDrawerFragment.GRID_SIZE_WIDTH_DRAWER_OVERRIDE, 0)
         @JvmField
+        val DRAWER_PADDING = backedUpItem(SettingsDrawerFragment.DRAWER_PADDING, 100)
+        @JvmField
         val ICON_SIZE = backedUpItem(SettingsIconsFragment.ICON_SIZE_KEY, 100)
         @JvmField
         val ICON_LABEL_SIZE = backedUpItem(SettingsIconsFragment.ICON_LABEL_SIZE_KEY, 100)

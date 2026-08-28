@@ -66,6 +66,7 @@
 
     <string name="pref_drawer_grid_width_override_title">Ancho de cuadrícula personalizado</string>
     <string name="pref_drawer_grid_width_override_summary">Usar un número personalizado de columnas en el cajón de aplicaciones</string>
+    <string name="pref_drawer_padding_title">Espaciado lateral</string>
 
     <string name="pref_blur_preview_title">Vista previa del modo desenfoque</string>
     <string name="pref_blur_preview_desc">Desenfocar el fondo mientras se arrastran iconos y widgets</string>
