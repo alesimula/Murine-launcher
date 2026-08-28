@@ -105,6 +105,10 @@ public class SessionCommitReceiver extends BroadcastReceiver {
                 && UserCache.getInstance(context).getUserInfo(user).isPrivate()) {
             return false;
         }
+        // Always disabled when home screen is locked.
+        if (LauncherPrefs.LOCK_HOME_SCREEN.get(context)) {
+            return false;
+        }
         return LauncherPrefs.getPrefs(context).getBoolean(ADD_ICON_PREFERENCE_KEY, false);
     }
 }

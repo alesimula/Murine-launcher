@@ -23,6 +23,7 @@ import com.android.launcher3.Flags
 import com.android.launcher3.InvariantDeviceProfile
 import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.R
+import com.android.launcher3.SessionCommitReceiver
 import com.android.launcher3.Utilities
 import com.android.launcher3.states.RotationHelper
 import com.android.launcher3.util.DisplayController
@@ -122,6 +123,15 @@ public final class SettingsHomeFragment: AbstractSettingsFragment() {
                             return@setOnPreferenceChangeListener false
                         }
                     }
+                    true
+                }
+                return true
+            }
+            LOCK_HOME_SCREEN -> {
+                val addIcon = findPreference<Preference>(SessionCommitReceiver.ADD_ICON_PREFERENCE_KEY)
+                addIcon?.isEnabled = !(preference as SwitchPreferenceCompat).isChecked
+                preference.setOnPreferenceChangeListener { _, newValue ->
+                    addIcon?.isEnabled = !(newValue as Boolean)
                     true
                 }
                 return true
