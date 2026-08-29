@@ -730,7 +730,15 @@ public class LoaderTask implements Runnable {
             }
 
             // Query for the set of apps
-            final List<LauncherActivityInfo> apps = mLauncherApps.getActivityList(null, user);
+            List<LauncherActivityInfo> apps = null;
+            try {
+                apps = mLauncherApps.getActivityList(null, user);
+            } catch (SecurityException e) {
+                if (Process.myUserHandle().equals(user)) {
+                    throw e;
+                }
+                Log.e(TAG, "Failed to get activities for user " + user, e);
+            }
             // Fail if we don't have any apps
             if (apps == null || apps.isEmpty()) {
                 if (Process.myUserHandle().equals(user)) {
