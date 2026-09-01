@@ -105,12 +105,16 @@ public class LauncherIconProvider extends IconProvider {
         // Per-app icon overrides bypass the themedOnly filter (they always get global treatment).
         boolean hasOverride = IconPackManager.INSTANCE.getComponentOverride(
                 mContext, cn.flattenToString()) != null;
+
+        // Flag before pack treatment, otherwise applyGlobalTreatment would wrap it again under the pack frame
+        defaultIcon = applyAdaptivePreference(info, defaultIcon);
+
         if (hasOverride || !IconPackManager.INSTANCE.isThemedOnly(mContext)) {
             Drawable shaped = IconPackManager.INSTANCE.applyGlobalTreatment(mContext, cn, defaultIcon, iconDpi);
             if (shaped != null) return markPackIcon(shaped);
         }
 
-        return applyAdaptivePreference(info, defaultIcon);
+        return defaultIcon;
     }
 
     /**
