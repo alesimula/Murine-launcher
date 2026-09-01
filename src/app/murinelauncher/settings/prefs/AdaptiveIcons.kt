@@ -14,5 +14,7 @@ enum class AdaptiveIcons(@StringRes val title: Int) {
     /** Leave system app icons alone, wrap everything else */
     EXCEPT_SYSTEM(R.string.pref_adaptive_icons_except_system),
     /** Never wrap; legacy icons keep their original size and cannot be reshaped */
-    NEVER(R.string.label_visibility_never),
+    NEVER(R.string.pref_adaptive_icons_never),
+    /** Load the app's legacy icon even when it ships an adaptive one, then leave it as [NEVER] does */
+    FORCE_LEGACY(R.string.pref_adaptive_icons_force_legacy),
 }

@@ -22,6 +22,7 @@ import android.os.Handler;
 import android.os.UserHandle;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.ComponentInfo;
+import android.content.pm.PackageItemInfo;
 import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
 import android.graphics.drawable.AdaptiveIconDrawable;
@@ -32,8 +33,10 @@ import android.util.Log;
 
 import app.murinelauncher.icons.IconPackManager;
 import app.murinelauncher.settings.prefs.AdaptiveIcons;
+import app.murinelauncher.util.ResourceUtilsKt;
 import app.murinelauncher.theme.ThemeOverride;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.android.launcher3.LauncherPrefs;
@@ -117,6 +120,21 @@ public class LauncherIconProvider extends IconProvider {
         return defaultIcon;
     }
 
+    @Override
+    protected Drawable loadPackageIcon(
+            @NonNull PackageItemInfo info, @NonNull ApplicationInfo appInfo, int density) {
+        if (LauncherPrefs.get(mContext).get(LauncherPrefs.ADAPTIVE_ICONS) != AdaptiveIcons.FORCE_LEGACY) {
+            return super.loadPackageIcon(info, appInfo, density);
+        }
+        Resources res;
+        try {
+            res = mContext.getPackageManager().getResourcesForApplication(appInfo);
+        } catch (Exception e) {
+            return super.loadPackageIcon(info, appInfo, density);
+        }
+        return ResourceUtilsKt.withLegacyIcons(res, () -> super.loadPackageIcon(info, appInfo, density));
+    }
+
     /**
      * Applies the user's adaptive-icons preference to a plain (non icon pack) legacy icon by
      * flagging it so {@link BaseIconFactory} normalizes it without wrapping it as adaptive.
@@ -127,7 +145,8 @@ public class LauncherIconProvider extends IconProvider {
         AdaptiveIcons mode = LauncherPrefs.get(mContext).get(LauncherPrefs.ADAPTIVE_ICONS);
         boolean isSystem = info.applicationInfo != null
                 && (info.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0;
-        if (mode == AdaptiveIcons.NEVER || (mode == AdaptiveIcons.EXCEPT_SYSTEM && isSystem)) {
+        if (mode == AdaptiveIcons.NEVER || mode == AdaptiveIcons.FORCE_LEGACY
+                || (mode == AdaptiveIcons.EXCEPT_SYSTEM && isSystem)) {
             icon.setChangingConfigurations(
                     icon.getChangingConfigurations() | BaseIconFactory.CONFIG_HINT_NO_ADAPTIVE_WRAP);
         }
