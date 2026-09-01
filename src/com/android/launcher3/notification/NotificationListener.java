@@ -244,7 +244,9 @@ public class NotificationListener extends NotificationListenerService {
         super.onListenerDisconnected();
         Log.i(TAG, "onListenerDisconnected");
         sIsConnected = false;
-        mSettingsCache.unregister(NOTIFICATION_BADGING_URI, mNotificationSettingsChangedListener);
+        // onDestroy() could call this even when never connected, so the cache may be unset
+        if (mSettingsCache != null)
+            mSettingsCache.unregister(NOTIFICATION_BADGING_URI, mNotificationSettingsChangedListener);
         onNotificationFullRefresh();
     }
 
