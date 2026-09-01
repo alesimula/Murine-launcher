@@ -106,6 +106,13 @@ private fun setResSdk(res: Resources, versionArg: Int): Boolean {
 }
 
 /**
+ * Whether [withLegacyIcons] can actually do anything on this platform, i.e. whether an
+ * AssetManager.setConfiguration overload matching the known shape exists on this API version.
+ * False means a new Android release moved it again and the resolver above needs updating.
+ */
+fun isResourceHackSupported(): Boolean = setConfig != null
+
+/**
  * Runs [body] with [res] resolving resources as if the platform were pre-Oreo, so apps that ship
  * both a legacy and an adaptive icon hand back the legacy one. Falls through untouched when the
  * hidden method is not reachable.

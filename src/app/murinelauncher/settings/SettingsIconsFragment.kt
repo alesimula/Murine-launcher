@@ -4,6 +4,7 @@ import androidx.preference.Preference
 import app.murinelauncher.graphics.IconShapeDrawables
 import app.murinelauncher.settings.common.AbstractSettingsFragment
 import app.murinelauncher.settings.prefs.AdaptiveIcons
+import app.murinelauncher.util.isResourceHackSupported
 import app.murinelauncher.settings.prefs.LabelVisibility
 import app.murinelauncher.widget.radio.RadioGroupPreference
 import com.android.launcher3.BuildConfig
@@ -55,6 +56,10 @@ public final class SettingsIconsFragment: AbstractSettingsFragment() {
                 preference.asEnum(AdaptiveIcons::class.java).apply {
                     setDefaultValue(LauncherPrefs.ADAPTIVE_ICONS.defaultValue)
                     setTextProvider { ctx, mode -> ctx.getString(mode.title) }
+                    // Greyed out when a platform update moved AssetManager.setConfiguration again
+                    setEnabledProvider { _, mode ->
+                        mode != AdaptiveIcons.FORCE_LEGACY || isResourceHackSupported()
+                    }
                     setOnPreferenceChangeListener { _ ->
                         context?.let { LauncherAppState.getInstance(it).model.forceReload() }
                         true
