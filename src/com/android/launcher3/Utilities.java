@@ -737,8 +737,9 @@ public final class Utilities {
         AdaptiveIconDrawable result;
         if (mainIcon instanceof AdaptiveIconDrawable aid) {
             result = aid;
-        } else if ((mainIcon.getChangingConfigurations() & BaseIconFactory.CONFIG_HINT_NO_WRAP) != 0) {
-            // Avoid re-wrapping icon pack icon with baked-in shape
+        } else if ((mainIcon.getChangingConfigurations() & (BaseIconFactory.CONFIG_HINT_NO_WRAP
+                | BaseIconFactory.CONFIG_HINT_NO_ADAPTIVE_WRAP)) != 0) {
+            // Avoid re-wrapping icon pack icon with baked-in shape or non-reshaped legacy icon
             return null;
         } else {
             // Wrap the main icon in AID
