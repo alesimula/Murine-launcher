@@ -45,6 +45,11 @@
             app:iconPosition="end"
             app:iconTint="@color/settingslib_materialColorOnSurfaceVariant" />
         <app.murinelauncher.widget.radio.RadioGroupPreference
+            android:key="pref_adaptive_icons"
+            android:title="@string/pref_adaptive_icons_title"
+            android:summary="@string/pref_adaptive_icons_summary"
+            app:showPreviewIcon="false" />
+        <app.murinelauncher.widget.radio.RadioGroupPreference
             android:key="pref_label_visibility_mode"
             android:title="@string/pref_label_visibility_title"
             app:showPreviewIcon="false" />

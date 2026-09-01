@@ -48,6 +48,9 @@
     <string name="label_visibility_drawer_only">Solo cassetto</string>
     <string name="label_visibility_home_only">Solo home</string>
     <string name="label_visibility_auto">Auto</string>
+    <string name="pref_adaptive_icons_title">Icone adattive</string>
+    <string name="pref_adaptive_icons_summary">Rimodella le icone che non sono adattive</string>
+    <string name="pref_adaptive_icons_except_system">Tranne le app di sistema</string>
     <string name="label_visibility_always">Sempre</string>
 
     <string name="pref_icon_shape_title">Forma icone</string>

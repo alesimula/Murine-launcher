@@ -31,10 +31,12 @@ import android.util.ArrayMap;
 import android.util.Log;
 
 import app.murinelauncher.icons.IconPackManager;
+import app.murinelauncher.settings.prefs.AdaptiveIcons;
 import app.murinelauncher.theme.ThemeOverride;
 
 import androidx.annotation.Nullable;
 
+import com.android.launcher3.LauncherPrefs;
 import com.android.launcher3.R;
 import com.android.launcher3.config.FeatureFlags;
 import com.android.launcher3.dagger.ApplicationContext;
@@ -108,7 +110,24 @@ public class LauncherIconProvider extends IconProvider {
             if (shaped != null) return markPackIcon(shaped);
         }
 
-        return defaultIcon;
+        return applyAdaptivePreference(info, defaultIcon);
+    }
+
+    /**
+     * Applies the user's adaptive-icons preference to a plain (non icon pack) legacy icon by
+     * flagging it so {@link BaseIconFactory} normalizes it without wrapping it as adaptive.
+     * Icon pack icons never reach here: they are returned above, already marked or already adaptive.
+     */
+    private Drawable applyAdaptivePreference(ComponentInfo info, Drawable icon) {
+        if (icon == null || icon instanceof AdaptiveIconDrawable) return icon;
+        AdaptiveIcons mode = LauncherPrefs.get(mContext).get(LauncherPrefs.ADAPTIVE_ICONS);
+        boolean isSystem = info.applicationInfo != null
+                && (info.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0;
+        if (mode == AdaptiveIcons.NEVER || (mode == AdaptiveIcons.EXCEPT_SYSTEM && isSystem)) {
+            icon.setChangingConfigurations(
+                    icon.getChangingConfigurations() | BaseIconFactory.CONFIG_HINT_NO_ADAPTIVE_WRAP);
+        }
+        return icon;
     }
 
     /**
@@ -138,8 +157,9 @@ public class LauncherIconProvider extends IconProvider {
         String day = (appInfo != null
                 && IconPackManager.INSTANCE.isPackCalendarPackage(mContext, appInfo.packageName))
                 ? ",day=" + getDay() : "";
+        String adaptive = LauncherPrefs.get(mContext).get(LauncherPrefs.ADAPTIVE_ICONS).name();
         return base + "," + pack + "," + systemOnly + "," + ignoreShape
-                + "," + readaptToFrame + "," + themedOnly + theme + day;
+                + "," + readaptToFrame + "," + themedOnly + "," + adaptive + theme + day;
     }
 
     @Override

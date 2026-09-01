@@ -71,6 +71,13 @@ public class BaseIconFactory implements AutoCloseable {
      */
     public static final int CONFIG_HINT_PACK_SHAPE = 0x02000000;
 
+    /**
+     * Flag set on a Drawable's changingConfigurations;
+     * Signals that a legacy icon should be normalized but left unwrapped, per the user's
+     * adaptive-icons preference. Set by LauncherIconProvider, which knows the app it belongs to.
+     */
+    public static final int CONFIG_HINT_NO_ADAPTIVE_WRAP = 0x04000000;
+
     public static final int DEFAULT_WRAPPER_BACKGROUND = Color.WHITE;
     public static final float LEGACY_ICON_SCALE = .7f * (1f / (1 + 2 * getExtraInsetFraction()));
 
@@ -384,7 +391,8 @@ public class BaseIconFactory implements AutoCloseable {
             return icon;
         }
 
-        boolean shouldWrapAdaptive = IconPreferencesKt.shouldWrapAdaptive(mContext);
+        boolean shouldWrapAdaptive = IconPreferencesKt.shouldWrapAdaptive(mContext)
+                && (icon.getChangingConfigurations() & CONFIG_HINT_NO_ADAPTIVE_WRAP) == 0;
         if (IconProvider.ATLEAST_OREO && shouldWrapAdaptive) {
             float scale = new IconNormalizer(mIconBitmapSize).getScale(icon);
 

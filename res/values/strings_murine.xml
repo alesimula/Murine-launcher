@@ -48,6 +48,9 @@
     <string name="label_visibility_drawer_only">Drawer only</string>
     <string name="label_visibility_home_only">Home only</string>
     <string name="label_visibility_auto">Auto</string>
+    <string name="pref_adaptive_icons_title">Adaptive icons</string>
+    <string name="pref_adaptive_icons_summary">Reshape icons that are not adaptive</string>
+    <string name="pref_adaptive_icons_except_system">Except system apps</string>
     <string name="label_visibility_always">Always</string>
 
     <string name="pref_icon_shape_title">Icon shape</string>
