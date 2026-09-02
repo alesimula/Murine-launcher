@@ -1,5 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
 
 android {
     namespace = "com.android.app.animation"
@@ -8,14 +7,15 @@ android {
     compileSdk 36
 
     defaultConfig {
-        minSdkVersion 26
-        targetSdkVersion 36
+        minSdk = 26
+        targetSdk = 36
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     sourceSets {
         main {
             java.srcDirs = ['src']
+            kotlin.directories.addAll(['src'])
             res.srcDirs = ['res']
             manifest.srcFile 'AndroidManifest.xml'
         }
@@ -35,10 +35,6 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_21
         targetCompatibility JavaVersion.VERSION_21
-    }
-    kotlinOptions {
-        jvmTarget = '21'
-        freeCompilerArgs = ["-Xjvm-default=all"]
     }
 }
 

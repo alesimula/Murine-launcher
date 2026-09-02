@@ -1,6 +1,5 @@
 plugins {
     id 'com.android.library'
-    id 'org.jetbrains.kotlin.android'
 }
 
 android {
@@ -9,11 +8,10 @@ android {
     compileSdk 36
 
     defaultConfig {
-        minSdkVersion 26
-        targetSdkVersion 36
+        minSdk = 26
+        targetSdk = 36
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
 
     sourceSets {
         main {

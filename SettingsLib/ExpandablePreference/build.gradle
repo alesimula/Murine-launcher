@@ -1,6 +1,5 @@
 plugins {
     id 'com.android.library'
-    id 'org.jetbrains.kotlin.android'
 }
 
 android {
@@ -14,6 +13,7 @@ android {
     sourceSets {
         getByName("main") {
             java.srcDirs("src")
+            kotlin.directories.addAll(["src"])
             res.srcDirs("res")
         }
     }
@@ -23,9 +23,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_21
     }
 
-    kotlinOptions {
-        jvmTarget = "21"
-    }
 }
 
 dependencies {

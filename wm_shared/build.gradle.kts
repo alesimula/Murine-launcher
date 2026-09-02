@@ -1,6 +1,5 @@
 plugins {
     id("com.android.library")
-    id("kotlin-android")
 }
 
 android {
@@ -10,20 +9,23 @@ android {
 
     defaultConfig {
         minSdk = 26
-        targetSdk = 36
+        // Gone from the AGP 9 library DSL; only ever fed instrumentation tests, which we have none of
+        //targetSdk = 36
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
     sourceSets {
         named("main") {
-            java.setSrcDirs(listOf("src"))
+            java.directories.apply { clear(); add("src") }
+            kotlin.directories.add("src")
             manifest.srcFile("AndroidManifest.xml")
-            res.setSrcDirs(listOf("res"))
+            res.directories.apply { clear(); add("res") }
         }
     }
-    kotlin {
-        jvmToolchain(21)//1.8（8）
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 }
 

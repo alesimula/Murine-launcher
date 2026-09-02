@@ -2,7 +2,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
     dependencies {
-        classpath GRADLE_CLASS_PATH
         classpath PROTOBUF_CLASS_PATH
         classpath KOTLIN
     }
@@ -11,7 +10,12 @@ buildscript {
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.rikka.refine)
-    id "com.google.devtools.ksp" version "2.3.3"
+    // AGP's kapt bridge (ships in com.android.tools.build:gradle-kotlin, versioned with AGP)
+    // TODO drop this once Dagger can move to KSP - blocked by the ~61 Java @Module/@Component
+    // files, which KSP cannot see. legacy-kapt is a bridge, not a destination.
+    alias(libs.plugins.android.legacy.kapt)
+    // Unused (no `ksp` dependency anywhere); AGP 9 needs >= 2.3.6 if it ever comes back
+    //id "com.google.devtools.ksp" version "2.3.6"
 }
 
 final String ANDROID_TOP = "${rootDir}"
@@ -39,17 +43,15 @@ def frameworkStubs15 = resolveJitpackStub('15-r1')
 def frameworkStubs16 = resolveJitpackStub('16-r2')
 
 apply plugin: 'com.google.protobuf'
-apply plugin: 'org.jetbrains.kotlin.android'
-apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion COMPILE_SDK
+    compileSdk = COMPILE_SDK as int
 
     namespace = 'com.android.launcher3'
 
     defaultConfig {
-        minSdkVersion 26
-        targetSdkVersion 36
+        minSdk = 26
+        targetSdk = 36
         versionCode 10102
         versionName "1.1.2"
 
@@ -100,7 +102,7 @@ android {
 
     // The flavor dimensions for build variants (e.g. aospWithQuickstep, aospWithoutQuickstep)
     // See: https://developer.android.com/studio/build/build-variants#flavor-dimensions
-    flavorDimensions "app", "recents"
+    flavorDimensions = ["app", "recents"]
 
     productFlavors {
         aosp {
@@ -118,7 +120,7 @@ android {
         withQuickstep {
             dimension "recents"
 
-            minSdkVersion 33
+            minSdk = 33
         }
 
         withoutQuickstep {
@@ -130,6 +132,7 @@ android {
         main {
             res.srcDirs = ['res']
             java.srcDirs = ['src', 'src_plugins' /*, 'tests/shared', 'system_ext', 'tests/multivalentTests/shared', 'systemui_core/shared'*/]
+            kotlin.directories.addAll(['src', 'src_plugins' /*, 'tests/shared', 'system_ext', 'tests/multivalentTests/shared', 'systemui_core/shared'*/])
             manifest.srcFile 'AndroidManifest-common.xml'
             proto {
                 srcDirs = ['protos/', 'quickstep/protos_overrides/']
@@ -148,10 +151,12 @@ android {
 
         aosp {
             java.srcDirs = [/*'src_flags',*/ 'src_shortcuts_overrides']
+            kotlin.directories.addAll([/*'src_flags',*/ 'src_shortcuts_overrides'])
         }
 
         aospWithoutQuickstep {
             java.srcDirs = ['src_no_quickstep']
+            kotlin.directories.addAll(['src_no_quickstep'])
             manifest.srcFile "AndroidManifest.xml"
         }
 
@@ -162,6 +167,7 @@ android {
         l3go {
             res.srcDirs = ['go/res']
             java.srcDirs = ['go/src']
+            kotlin.directories.addAll(['go/src'])
             manifest.srcFile "go/AndroidManifest.xml"
         }
 
@@ -180,15 +186,20 @@ android {
         withQuickstep {
             res.srcDirs = ['quickstep/res', 'quickstep/recents_ui_overrides/res']
             java.srcDirs = ['quickstep/src', 'quickstep/recents_ui_overrides/src', 'quickstep/src_protolog', 'quickstep/dagger']
+            kotlin.directories.addAll(['quickstep/src', 'quickstep/recents_ui_overrides/src', 'quickstep/src_protolog', 'quickstep/dagger'])
             manifest.srcFile "quickstep/AndroidManifest.xml"
         }
     }
-    kotlinOptions {
-        jvmTarget = '21'
-    }
-
     buildFeatures {
         buildConfig = true
+    }
+
+    packaging {
+        resources {
+            // Dead weight at runtime, ~53 KB of APK
+            excludes += ['**/*.proto', 'META-INF/*.version', 'META-INF/**/*.kotlin_module',
+                         'kotlin/**', 'DebugProbesKt.bin']
+        }
     }
 
 }

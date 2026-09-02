@@ -6,7 +6,7 @@ android {
     namespace 'app.lawnchair.compatlib.thirteen'
     compileSdk 36
     defaultConfig {
-        minSdkVersion 26
+        minSdk = 26
     }
 
     buildFeatures {
