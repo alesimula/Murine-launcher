@@ -70,6 +70,10 @@ include ':SettingsLib-SegmentedButtonPreference'
 project(':SettingsLib-SegmentedButtonPreference').projectDir = new File(rootDir, 'SettingsLib/SegmentedButtonPreference')
 include ':SettingsLib-MainSwitchPreference'
 project(':SettingsLib-MainSwitchPreference').projectDir = new File(rootDir, 'SettingsLib/MainSwitchPreference')
+include ':SettingsLib-TopIntroPreference'
+project(':SettingsLib-TopIntroPreference').projectDir = new File(rootDir, 'SettingsLib/TopIntroPreference')
+include ':SettingsLib-FooterPreference'
+project(':SettingsLib-FooterPreference').projectDir = new File(rootDir, 'SettingsLib/FooterPreference')
 
 include ':compatLib'
 include ':compatLib:compatLibVQ'

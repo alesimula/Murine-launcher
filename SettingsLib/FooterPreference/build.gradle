@@ -1,0 +1,30 @@
+plugins {
+    id 'com.android.library'
+}
+
+android {
+    namespace = "com.android.settingslib.widget.preference.footer"
+    compileSdk = 36
+
+    defaultConfig {
+        minSdk = 26
+    }
+
+    sourceSets {
+        getByName("main") {
+            java.srcDirs("src")
+            res.srcDirs("res")
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+    }
+}
+
+dependencies {
+    api project(':SettingsLib-SettingsTheme')
+    implementation(libs.annotation)
+    implementation(libs.androidx.preference)
+}
