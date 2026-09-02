@@ -20,6 +20,7 @@
     android:layout_width="@dimen/settingslib_expressive_space_none"
     android:layout_height="wrap_content"
     android:layout_weight="1"
+    android:minHeight="@dimen/settingslib_expressive_space_medium3"
     android:paddingVertical="@dimen/settingslib_expressive_space_small1"
     android:paddingStart="@dimen/settingslib_expressive_space_none"
     android:paddingEnd="@dimen/settingslib_expressive_space_small1"

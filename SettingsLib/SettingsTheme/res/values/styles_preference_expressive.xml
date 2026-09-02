@@ -116,6 +116,7 @@
         <item name="android:layout_width">@dimen/settingslib_expressive_space_none</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
+        <item name="android:minHeight">@dimen/settingslib_expressive_space_medium3</item>
         <item name="android:paddingVertical">@dimen/settingslib_expressive_space_small1</item>
         <item name="android:paddingStart">@dimen/settingslib_expressive_space_none</item>
         <item name="android:paddingEnd">@dimen/settingslib_expressive_space_small1</item>
