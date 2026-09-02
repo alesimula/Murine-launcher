@@ -1,7 +1,8 @@
 [versions]
 agp = "9.3.0"
+kotlin = "2.3.21"
+ksp = "2.3.11" # version must track the Kotlin one
 protobuf = "0.10.0"
-kotlin = "2.2.21"
 appcompat = "1.7.1"
 palette = "1.0.0"
 baselineprofile = "1.4.1"
@@ -147,14 +148,13 @@ rikka-refine = { id = "dev.rikka.tools.refine", version.ref = "refine" }
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 android-test = { id = "com.android.test", version.ref = "agp" }
-android-legacy-kapt = { id = "com.android.legacy-kapt", version.ref = "agp" }
 androidx-baselineprofile = { id = "androidx.baselineprofile", version.ref = "baselineprofile" }
 
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-google-ksp = "com.google.devtools.ksp:2.3.3"
+google-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 google-protobuf = { id = "com.google.protobuf", version.ref = "protobuf" }
 #cash-licensee = { id = "app.cash.licensee", version.ref = "licensee" }
 #rikka-refine = { id = "dev.rikka.tools.refine", version.ref = "refine" }
