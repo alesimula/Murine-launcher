@@ -38,11 +38,13 @@
     <PreferenceCategory android:title="@string/pref_subcategory_backup">
         <Preference
             android:key="pref_backup_export"
+            android:widgetLayout="@layout/settingslib_pref_widget_chevron"
             android:title="@string/backup_export_title"
             android:summary="@string/backup_export_desc"
             android:persistent="false" />
         <Preference
             android:key="pref_backup_import"
+            android:widgetLayout="@layout/settingslib_pref_widget_chevron"
             android:title="@string/backup_import_title"
             android:summary="@string/backup_import_desc"
             android:persistent="false" />
