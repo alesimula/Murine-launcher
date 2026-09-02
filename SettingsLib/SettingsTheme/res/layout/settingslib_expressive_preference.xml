@@ -36,9 +36,8 @@
         android:id="@android:id/widget_frame"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:minWidth="@dimen/settingslib_expressive_space_medium3"
-        android:paddingStart="0dp"
+        android:gravity="end|center_vertical"
+        android:paddingStart="@dimen/settingslib_expressive_space_small1"
         android:paddingEnd="0dp"
         android:orientation="vertical"/>
 
