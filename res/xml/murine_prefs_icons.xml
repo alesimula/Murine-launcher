@@ -49,6 +49,12 @@
             android:title="@string/pref_adaptive_icons_title"
             android:summary="@string/pref_adaptive_icons_summary"
             app:showPreviewIcon="false" />
+        <SwitchPreferenceCompat
+            android:key="themed_icons"
+            android:title="@string/pref_themed_icons_title"
+            android:summary="@string/pref_themed_icons_summary"
+            android:persistent="true"
+            android:defaultValue="false" />
         <app.murinelauncher.widget.radio.RadioGroupPreference
             android:key="pref_label_visibility_mode"
             android:title="@string/pref_label_visibility_title"

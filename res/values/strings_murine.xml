@@ -53,6 +53,8 @@
     <string name="pref_adaptive_icons_except_system">Except system apps</string>
     <string name="pref_adaptive_icons_force_legacy">Force legacy icons</string>
     <string name="pref_adaptive_icons_never">Never reshape</string>
+    <string name="pref_themed_icons_title">Monochrome icons</string>
+    <string name="pref_themed_icons_summary">Recolor icons to match the system theme</string>
     <string name="label_visibility_always">Always</string>
 
     <string name="pref_icon_shape_title">Icon shape</string>

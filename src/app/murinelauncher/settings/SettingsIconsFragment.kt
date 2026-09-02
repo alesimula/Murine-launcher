@@ -12,6 +12,7 @@ import com.android.launcher3.LauncherAppState
 import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.R
 import com.android.launcher3.graphics.ThemeManager
+import com.android.launcher3.Utilities
 import com.android.launcher3.shapes.ShapesProvider
 import com.android.launcher3.util.DisplayController
 
@@ -66,6 +67,13 @@ public final class SettingsIconsFragment: AbstractSettingsFragment() {
                     }
                 }
                 return true
+            }
+            ThemeManager.KEY_THEMED_ICONS -> {
+                preference.setOnPreferenceChangeListener { _, _ ->
+                    context?.let { LauncherAppState.getInstance(it).model.forceReload() }
+                    true
+                }
+                return Utilities.ATLEAST_T
             }
             else -> return true
         }

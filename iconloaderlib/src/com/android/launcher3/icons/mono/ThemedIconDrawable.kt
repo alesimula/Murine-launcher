@@ -131,18 +131,16 @@ class ThemedIconDrawable(constantState: ThemedConstantState) :
 
         /** Get an int array representing background and foreground colors for themed icons */
         @JvmStatic
-        fun getColors(context: Context): IntArray {
-            if (COLORS_LOADER != null) {
-                return COLORS_LOADER(context);
-            }
+        fun getColors(context: Context): IntArray = COLORS_LOADER(context)
+
+        /** Overridable source of the themed icon colors; defaults to the framework resources */
+        @JvmStatic
+        var COLORS_LOADER: (Context) -> IntArray = { context ->
             val res = context.resources
-            return intArrayOf(
+            intArrayOf(
                 res.getColor(R.color.themed_icon_background_color),
                 res.getColor(R.color.themed_icon_color),
             )
         }
-
-        @JvmStatic
-        var COLORS_LOADER: (Context) -> IntArray = { context -> getColors(context) }
     }
 }
