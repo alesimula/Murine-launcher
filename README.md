@@ -57,8 +57,8 @@ Check [the website](https://www.murinelauncher.app/) or download it from:
 
 Last tested on:
 
- - Android Studio: Panda 2 (2025.3.2)
- - Gradle: 9.3.1 (bundled)
+ - Android Studio: Quail 4 (2026.1.4)
+ - Gradle: 9.7.1 (bundled)
 
 ## Buy me a beer
 
