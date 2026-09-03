@@ -22,6 +22,12 @@ Alternatively, try enabling <a href="https://github.com/Magisk-Modules-Alt-Repo/
 <img width="320" src="/fastlane/metadata/android/en-US/images/phoneScreenshots/5.png"/>    <img width="320" src="/fastlane/metadata/android/en-US/images/phoneScreenshots/6.png"/>
 <img width="320" src="/fastlane/metadata/android/en-US/images/phoneScreenshots/7.png"/>
 
+## Translations
+
+The launcher's own strings are translated separately from the locales it inherits from AOSP.
+
+[See which languages are covered, how complete each one is, and how to help](https://www.murinelauncher.app/localization-status/)
+
 ## Download
 
 Check [the website](https://www.murinelauncher.app/) or download it from:

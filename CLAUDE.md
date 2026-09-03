@@ -512,6 +512,33 @@ Optional Jetpack Compose support:
    - Use string resources (no hardcoded strings)
    - Support RTL (right-to-left) languages
    - Test with different locales
+   - The app's own strings live in `res/values/strings_murine.xml`. The rest of
+     `res/values/strings.xml` is inherited from AOSP Launcher3 and translated upstream,
+     so only `strings_murine.xml` is ours to maintain
+   - **New strings start as English + Italian only.** When adding strings for a new feature,
+     write `res/values/strings_murine.xml` and `res/values-it/strings_murine.xml` and stop there.
+     The other languages are filled in later, in one pass, when the wording has settled and the
+     maintainer explicitly asks for it. Do not translate a feature's strings into every shipped
+     language unprompted
+   - **Read `docs/_data/languages.yml` before adding or changing any string.** It lists every
+     language currently shipped; each of them eventually needs the new string in its own
+     `res/values-<code>/strings_murine.xml`, and until then that language falls back to English
+     for the new text. Changing the *wording* of an existing string is different: update every
+     language that already has it, since a stale translation is worse than a missing one
+   - **Every translated file mirrors the base file's structure.** Same string order, same blank
+     lines between groups, same `<!-- section -->` comments in the same places. Never reorder or
+     alphabetize a translation: matching line positions are what makes a missing or stale string
+     obvious when diffing two languages side by side. New entries in `docs/_data/languages.yml`
+     follow the same rule, keeping the existing key order (`code`, `name`, `native`, `status`,
+     `strings`, `by_git`, `by`, `note`)
+   - **Keep `docs/_data/languages.yml` up to date.** Bump `total` when the base string count
+     changes, and update each language's `strings` count. It drives the public status page at
+     `/localization-status/`, so a stale file publishes wrong numbers
+   - When adding a new language, read **both** the English and the Italian strings first.
+     Italian is hand-written and frequently disambiguates wording that English leaves open
+     (grammatical gender, formal vs informal address, whether a short label is a noun or a verb),
+     which makes the new translation noticeably more accurate. Add the language to
+     `docs/_data/languages.yml` with `status: ai` unless a speaker has actually reviewed it
 
 10. **Dependency Updates**:
     - Update `gradle.properties` for version changes
@@ -547,7 +574,7 @@ Optional Jetpack Compose support:
 1. Add to appropriate `res/` directory
 2. Consider variant-specific resources (e.g., `quickstep/res/`)
 3. Support different densities (drawable-mdpi, -hdpi, etc.)
-4. Add translations for strings
+4. Add translations for strings: English and Italian only for new features until otherwise requested (see **Localization** above)
 
 ### Debugging Tips
 

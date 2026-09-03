@@ -1,0 +1,168 @@
+# Translation status board (rendered by docs/localization-status.md).
+#
+# status: reviewed | mostly | partial | ai   -> see the legend in localization-status.md
+# strings: how many of the app's own strings (res/values-<code>/strings_murine.xml)
+#          are translated. Base count lives in `total` below.
+# by_git:  reviewer(s) with a GitHub account, rendered as links
+# by:      reviewer(s) without one, rendered as plain text
+#          both accept several names separated by ', ' and are shown together,
+#          in that order. Omit both if nobody has reviewed it
+
+total: 143
+
+languages:
+  - code: en
+    name: English
+    native: English
+    status: reviewed
+    strings: 143
+    by_git: alesimula
+    note: Source language
+
+  - code: it
+    name: Italian
+    native: Italiano
+    status: reviewed
+    strings: 143
+    by_git: alesimula
+    note: Dev's language
+
+  - code: es
+    name: Spanish
+    native: Español
+    status: mostly
+    strings: 143
+    by: EJDV
+
+  - code: de
+    name: German
+    native: Deutsch
+    status: ai
+    strings: 143
+
+  - code: fr
+    name: French
+    native: Français
+    status: ai
+    strings: 143
+
+  - code: pt
+    name: Portuguese
+    native: Português
+    status: ai
+    strings: 143
+
+  - code: ru
+    name: Russian
+    native: Русский
+    status: ai
+    strings: 143
+
+  - code: nl
+    name: Dutch
+    native: Nederlands
+    status: ai
+    strings: 143
+
+  - code: pl
+    name: Polish
+    native: Polski
+    status: ai
+    strings: 143
+
+  - code: tr
+    name: Turkish
+    native: Türkçe
+    status: ai
+    strings: 143
+
+  - code: uk
+    name: Ukrainian
+    native: Українська
+    status: ai
+    strings: 143
+
+  - code: ca
+    name: Catalan
+    native: Català
+    status: ai
+    strings: 143
+
+  - code: ja
+    name: Japanese
+    native: 日本語
+    status: ai
+    strings: 143
+
+  - code: ko
+    name: Korean
+    native: 한국어
+    status: ai
+    strings: 143
+
+  - code: ar
+    name: Arabic
+    native: العربية
+    status: ai
+    strings: 143
+
+  - code: fa
+    name: Persian
+    native: فارسی
+    status: ai
+    strings: 143
+
+  - code: iw
+    name: Hebrew
+    native: עברית
+    status: ai
+    strings: 143
+
+  - code: in
+    name: Indonesian
+    native: Bahasa Indonesia
+    status: ai
+    strings: 143
+
+  - code: vi
+    name: Vietnamese
+    native: Tiếng Việt
+    status: ai
+    strings: 143
+
+  - code: zh-rCN
+    name: Chinese (Simplified)
+    native: 简体中文
+    status: ai
+    strings: 143
+
+  - code: zh-rTW
+    name: Chinese (Traditional)
+    native: 繁體中文
+    status: ai
+    strings: 143
+
+  - code: hi
+    name: Hindi
+    native: हिन्दी
+    status: ai
+    strings: 143
+
+  - code: th
+    name: Thai
+    native: ไทย
+    status: ai
+    strings: 143
+
+  - code: tl
+    name: Filipino
+    native: Filipino
+    status: ai
+    strings: 143
+
+  - code: nb
+    name: Norwegian
+    native: Norsk bokmål
+    status: mostly
+    strings: 143
+    by_git: oddhap
