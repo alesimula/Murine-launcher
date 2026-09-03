@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.android.settingslib.widget.preference.footer"
+    namespace = "com.android.settingslib.widget.preference.topintro"
     compileSdk = 36
 
     defaultConfig {
@@ -13,6 +13,7 @@ android {
     sourceSets {
         getByName("main") {
             java.srcDirs("src")
+            kotlin.directories.addAll(["src"])
             res.srcDirs("res")
         }
     }
@@ -21,10 +22,11 @@ android {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
+
 }
 
 dependencies {
-    api project(':SettingsLib-SettingsTheme')
+    api project(':SettingsLib:SettingsTheme')
     implementation(libs.annotation)
     implementation(libs.androidx.preference)
 }

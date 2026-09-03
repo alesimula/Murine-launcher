@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.android.settingslib.widget.preference.selector"
+    namespace = "com.android.settingslib.widget.preference.expandable"
     compileSdk = 36
 
     defaultConfig {
@@ -13,6 +13,7 @@ android {
     sourceSets {
         getByName("main") {
             java.srcDirs("src")
+            kotlin.directories.addAll(["src"])
             res.srcDirs("res")
         }
     }
@@ -25,6 +26,7 @@ android {
 }
 
 dependencies {
-    api project(':SettingsLib-SettingsTheme')
+    api project(':SettingsLib:SettingsTheme')
+    implementation(libs.annotation)
     implementation(libs.androidx.preference)
 }

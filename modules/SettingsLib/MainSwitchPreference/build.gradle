@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.android.settingslib.widget.preference"
+    namespace = "com.android.settingslib.widget.mainswitch"
     compileSdk = 36
 
     defaultConfig {
@@ -26,9 +26,7 @@ android {
 }
 
 dependencies {
-    api project(':SettingsLib-DataStore')
-    api project(':SettingsLib-Metadata')
-    api project(':SettingsLib-SettingsTheme')
-    implementation(libs.annotation)
+    api project(':SettingsLib:Preference')
+    api project(':SettingsLib:SettingsTheme')
     implementation(libs.androidx.preference)
 }

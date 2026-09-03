@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.android.settingslib.widget.preference.expandable"
+    namespace = "com.android.settingslib.widget.preference.segmentedbutton"
     compileSdk = 36
 
     defaultConfig {
@@ -26,7 +26,7 @@ android {
 }
 
 dependencies {
-    api project(':SettingsLib-SettingsTheme')
+    api project(':SettingsLib:SettingsTheme')
     implementation(libs.annotation)
     implementation(libs.androidx.preference)
 }

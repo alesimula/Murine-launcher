@@ -26,7 +26,7 @@ android {
 }
 
 dependencies {
-    api(project(":flags"))
+    api(project(":flagslib"))
     api(libs.material)
     implementation(libs.androidx.preference)
 }

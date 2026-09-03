@@ -36,12 +36,18 @@ Launcher3Aosp13/
 │   ├── tapl/                    # Test Automation Platform Library
 │   └── multivalentTests/        # Multi-variant tests
 ├── go/                          # Launcher3Go variant (Android Go)
-├── animationlib/                # Animation library module
-├── iconloaderlib/              # Icon loading library module
-├── shared/                      # Shared utilities module
-├── wm_shared/                   # Window Manager shared code
-├── msdllib/                     # MSDL (Multi-Sensory Design Language) module
-├── flagslib/                    # Feature flags module
+├── modules/                     # All Gradle library modules live here
+│   ├── animationlib/            # Animation library module
+│   ├── iconloaderlib/           # Icon loading library module
+│   ├── shared/                  # Shared utilities module
+│   ├── wm_shared/               # Window Manager shared code
+│   ├── msdllib/                 # MSDL (Multi-Sensory Design Language) module
+│   ├── flagslib/                # Feature flags module
+│   ├── hidden-api/              # Hidden API stubs module
+│   ├── SettingsLib/             # Partial SettingsLib port (11 preference modules)
+│   ├── compatLib/               # Per-API-level compat shims (VQ..VBaklava)
+│   ├── systemUIPluginCore/      # SystemUI plugin core
+│   └── androidx-lib/            # AndroidX overrides
 ├── compose/                     # Jetpack Compose integration
 ├── protos/                      # Protocol buffer definitions
 ├── prebuilts/                   # Prebuilt JAR dependencies

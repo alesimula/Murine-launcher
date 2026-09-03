@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.android.settingslib.metadata"
+    namespace = "com.android.settingslib.widget.preference.slider"
     compileSdk = 36
 
     defaultConfig {
@@ -26,7 +26,8 @@ android {
 }
 
 dependencies {
-    api project(':SettingsLib-DataStore')
+    api project(':SettingsLib:Preference')
+    api project(':SettingsLib:SettingsTheme')
     implementation(libs.annotation)
-    implementation(libs.androidx.fragment)
+    implementation(libs.androidx.preference)
 }

@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.android.settingslib.widget.mainswitch"
+    namespace = "com.android.settingslib.widget.preference.selector"
     compileSdk = 36
 
     defaultConfig {
@@ -13,7 +13,6 @@ android {
     sourceSets {
         getByName("main") {
             java.srcDirs("src")
-            kotlin.directories.addAll(["src"])
             res.srcDirs("res")
         }
     }
@@ -26,7 +25,6 @@ android {
 }
 
 dependencies {
-    api project(':SettingsLib-Preference')
-    api project(':SettingsLib-SettingsTheme')
+    api project(':SettingsLib:SettingsTheme')
     implementation(libs.androidx.preference)
 }

@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.android.settingslib.widget.preference.topintro"
+    namespace = "com.android.settingslib.metadata"
     compileSdk = 36
 
     defaultConfig {
@@ -26,7 +26,7 @@ android {
 }
 
 dependencies {
-    api project(':SettingsLib-SettingsTheme')
+    api project(':SettingsLib:DataStore')
     implementation(libs.annotation)
-    implementation(libs.androidx.preference)
+    implementation(libs.androidx.fragment)
 }

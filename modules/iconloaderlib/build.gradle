@@ -29,5 +29,5 @@ android {
 dependencies {
     implementation libs.androidx.palette.ktx
     implementation libs.androidx.tracing
-    compileOnly project(':flags')
+    compileOnly project(':flagslib')
 }

@@ -31,58 +31,50 @@ dependencyResolutionManagement {
 }
 
 
-include ':IconLoader'
-project(':IconLoader').projectDir = new File(rootDir, 'iconloaderlib')
+// Previous explicit form, kept in case a module ever needs a project name that differs
+// from its folder (that is what the map used to provide):
+//// All modules; any child folder holding a build script becomes a subproject of it.
+//[
+//        'IconLoader'        : 'iconloaderlib',
+//        'Animation'         : 'animationlib',
+//        'Shared'            : 'shared',
+//        'WMShared'          : 'wm_shared',
+//        'msdl'              : 'msdllib',
+//        'flags'             : 'flagslib',
+//        'HiddenApi'         : 'hidden-api',
+//        'systemUIPluginCore': 'systemUIPluginCore',
+//        'androidx-lib'      : 'androidx-lib',
+//        'compatLib'         : 'compatLib',
+//        'SettingsLib'       : 'SettingsLib'
+//].each { name, dir ->
+//    File root = new File(rootDir, "modules/$dir")
+//    include ":$name"
+//    project(":$name").projectDir = root // set before children resolve against it
+//    root.listFiles()
+//            .findAll { new File(it, 'build.gradle').exists() || new File(it, 'build.gradle.kts').exists() }
+//            .sort { it.name }
+//            .each { include ":$name:${it.name}" }
+//}
 
-include ':Animation'
-project(':Animation').projectDir = new File(rootDir, 'animationlib')
+// Included so the IDE marks modules/ as a module too; it holds no build script itself.
+include ':modules'
 
-include ':Shared'
-project(':Shared').projectDir = new File(rootDir, 'shared')
+final File MODULES_DIR = new File(rootDir, 'modules')
 
-include ':WMShared'
-project(':WMShared').projectDir = new File(rootDir, 'wm_shared')
+// Folders under modules/ that are not projects themselves but hold subprojects.
+final List<String> MODULE_CONTAINERS = [
+        'SettingsLib'
+]
 
-include ':msdl'
-project(':msdl').projectDir = new File(rootDir, 'msdllib')
+def isProject = { File f ->
+    f.isDirectory() && (new File(f, 'build.gradle').exists() || new File(f, 'build.gradle.kts').exists())
+}
 
-include ':flags'
-project(':flags').projectDir = new File(rootDir, 'flagslib')
-
-include ':HiddenApi'
-project(':HiddenApi').projectDir = new File(rootDir, 'hidden-api')
-
-include ':SettingsLib-SettingsTheme'
-project(':SettingsLib-SettingsTheme').projectDir = new File(rootDir, 'SettingsLib/SettingsTheme')
-include ':SettingsLib-DataStore'
-project(':SettingsLib-DataStore').projectDir = new File(rootDir, 'SettingsLib/DataStore')
-include ':SettingsLib-Metadata'
-project(':SettingsLib-Metadata').projectDir = new File(rootDir, 'SettingsLib/Metadata')
-include ':SettingsLib-Preference'
-project(':SettingsLib-Preference').projectDir = new File(rootDir, 'SettingsLib/Preference')
-include ':SettingsLib-SliderPreference'
-project(':SettingsLib-SliderPreference').projectDir = new File(rootDir, 'SettingsLib/SliderPreference')
-include ':SettingsLib-SelectorWithWidgetPreference'
-project(':SettingsLib-SelectorWithWidgetPreference').projectDir = new File(rootDir, 'SettingsLib/SelectorWithWidgetPreference')
-include ':SettingsLib-ExpandablePreference'
-project(':SettingsLib-ExpandablePreference').projectDir = new File(rootDir, 'SettingsLib/ExpandablePreference')
-include ':SettingsLib-SegmentedButtonPreference'
-project(':SettingsLib-SegmentedButtonPreference').projectDir = new File(rootDir, 'SettingsLib/SegmentedButtonPreference')
-include ':SettingsLib-MainSwitchPreference'
-project(':SettingsLib-MainSwitchPreference').projectDir = new File(rootDir, 'SettingsLib/MainSwitchPreference')
-include ':SettingsLib-TopIntroPreference'
-project(':SettingsLib-TopIntroPreference').projectDir = new File(rootDir, 'SettingsLib/TopIntroPreference')
-include ':SettingsLib-FooterPreference'
-project(':SettingsLib-FooterPreference').projectDir = new File(rootDir, 'SettingsLib/FooterPreference')
-
-include ':compatLib'
-include ':compatLib:compatLibVQ'
-include ':compatLib:compatLibVR'
-include ':compatLib:compatLibVS'
-include ':compatLib:compatLibVT'
-include ':compatLib:compatLibVU'
-include ':compatLib:compatLibVV'
-include ':compatLib:compatLibVBaklava'
-
-include ':systemUIPluginCore'
-include ':androidx-lib'
+// A folder under modules/ is a project if it has a build script (or is listed as a container);
+// only then are its children scanned for subprojects.
+MODULES_DIR.listFiles().findAll { it.isDirectory() }.sort { it.name }.each { File dir ->
+    if (!isProject(dir) && !(dir.name in MODULE_CONTAINERS)) return
+    include ":${dir.name}"
+    project(":${dir.name}").projectDir = dir // set before children resolve against it
+    dir.listFiles().findAll(isProject).sort { it.name }.each { include ":${dir.name}:${it.name}" }
+}
