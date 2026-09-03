@@ -6,6 +6,7 @@ import android.util.AttributeSet
 import android.widget.LinearLayout
 import android.widget.TextClock
 import com.android.launcher3.R
+import com.android.launcher3.Utilities
 import java.util.Locale
 
 /**
@@ -77,12 +78,25 @@ class MurineClockView @JvmOverloads constructor(
     }
 
     /**
-     * Will just cause it to refresh and correctly show the hour (useful for showing widget preview)
+     * Refreshes the displayed time (useful for showing widget preview).
+     *
+     * A detached TextClock gets no onVisibilityAggregated, which below Android 10
+     * suppresses its own setText, so there the text is written directly instead.
      */
     fun refreshClockFormat() {
+        if (Utilities.ATLEAST_Q || isAttachedToWindow) {
+            listOfNotNull(clockView, dateText).forEach { tc ->
+                tc.format12Hour = tc.format12Hour
+                tc.format24Hour = tc.format24Hour
+            }
+            return
+        }
+        val now = System.currentTimeMillis()
+        val is24Hour = android.text.format.DateFormat.is24HourFormat(context)
         listOfNotNull(clockView, dateText).forEach { tc ->
-            tc.format12Hour = tc.format12Hour
-            tc.format24Hour = tc.format24Hour
+            val pattern = (if (is24Hour) tc.format24Hour else tc.format12Hour)
+                ?: tc.format24Hour ?: tc.format12Hour ?: return@forEach
+            tc.text = android.text.format.DateFormat.format(pattern, now)
         }
     }
 
