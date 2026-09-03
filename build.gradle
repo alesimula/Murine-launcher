@@ -307,7 +307,8 @@ dependencies {
     implementation libs.kotlinx.coroutines
 
     implementation libs.protobuf.javalite
-    implementation libs.chickenhook.restrictionbypass
+    implementation libs.lsposed.hiddenapibypass
+    //implementation libs.chickenhook.restrictionbypass
     implementation libs.rikka.refine.runtime
     implementation libs.intuit.sdp
 

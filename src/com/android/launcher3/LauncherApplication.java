@@ -16,7 +16,10 @@
 package com.android.launcher3;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.res.Configuration;
+
+import org.lsposed.hiddenapibypass.HiddenApiBypass;
 
 import app.murinelauncher.icons.IconPackManager;
 import app.murinelauncher.theme.ThemeOverride;
@@ -33,6 +36,13 @@ public class LauncherApplication extends Application {
 
     private volatile LauncherBaseAppComponent mAppComponent;
     private int mNightMode = Configuration.UI_MODE_NIGHT_UNDEFINED;
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        // Exempts every non-SDK interface, so hidden APIs stay reachable on Android 9+
+        if (Utilities.ATLEAST_P) HiddenApiBypass.setHiddenApiExemptions("");
+    }
 
     @Override
     public void onCreate() {

@@ -80,6 +80,8 @@ collection-ktx = "1.6.0-beta01"
 
 
 [libraries]
+lsposed-hiddenapibypass = "org.lsposed.hiddenapibypass:hiddenapibypass:6.1"
+# Replaced by hiddenapibypass above: same unsealing without the 1.3MB of libnrb.so
 # Lawnchair-TODO: Migrate it to the latest version once jitpack publishing is fixed
 # LC-Note: This specific commit is needed because of 16kb compatibility
 chickenhook-restrictionbypass = "com.github.ChickenHook:RestrictionBypass:c59bd6a680"
