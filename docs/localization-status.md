@@ -8,10 +8,11 @@ noindex: true    # and out of search engines
 ---
 
 <style>
-.lang-table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: .95rem; }
+.lang-scroll { overflow-x: auto; margin: 1.5rem 0; }
+.lang-table { width: 100%; min-width: 34rem; border-collapse: collapse; font-size: .95rem; }
 .lang-table th, .lang-table td { padding: .7rem .8rem; text-align: left; border-bottom: 1px solid var(--md-outline-variant); }
 .lang-table th { font-weight: 600; color: var(--md-on-surface-variant); font-size: .82rem;
-                 text-transform: uppercase; letter-spacing: .04em; }
+                 text-transform: uppercase; letter-spacing: .04em; white-space: nowrap; }
 .lang-table tr:last-child td { border-bottom: none; }
 .lang-table code { font-size: .85em; }
 .lang-native { color: var(--md-on-surface-variant); }
@@ -24,12 +25,13 @@ noindex: true    # and out of search engines
 .lang-bar > span { display: block; height: 100%; background: var(--md-primary); }
 .lang-legend { list-style: none; padding: 0; }
 .lang-legend li { margin: .3rem 0; }
-@media (max-width: 640px) { .lang-hide-sm { display: none; } }
+@media (max-width: 640px) { .lang-table { font-size: .88rem; } .lang-table th, .lang-table td { padding: .6rem .55rem; } }
 </style>
 
 The launcher's own strings live in `strings_murine.xml`. Everything inherited from
 AOSP Launcher3 is translated upstream into 85 locales and is not tracked here.
 
+<div class="lang-scroll">
 <table class="lang-table">
   <thead>
     <tr>
@@ -37,7 +39,7 @@ AOSP Launcher3 is translated upstream into 85 locales and is not tracked here.
       <th>Code</th>
       <th>Strings</th>
       <th>Status</th>
-      <th class="lang-hide-sm">Reviewed by</th>
+      <th>Reviewed by</th>
     </tr>
   </thead>
   <tbody>
@@ -69,7 +71,7 @@ AOSP Launcher3 is translated upstream into 85 locales and is not tracked here.
         {% endcase %}
         {% if lang.note %}<br><span class="lang-native">{{ lang.note }}</span>{% endif %}
       </td>
-      <td class="lang-hide-sm">
+      <td>
         {%- assign gits = lang.by_git | default: '' | split: ', ' -%}
         {%- assign names = lang.by | default: '' | split: ', ' -%}
         {%- capture credits -%}
@@ -83,6 +85,7 @@ AOSP Launcher3 is translated upstream into 85 locales and is not tracked here.
   {% endfor %}
   </tbody>
 </table>
+</div>
 
 ## What the statuses mean
 
