@@ -55,6 +55,12 @@ public class InsetsFrameProvider implements Parcelable {
     /** Uses {@link #mArbitraryRectangle} as the source. */
     public static final int SOURCE_ARBITRARY_RECTANGLE = 3;
 
+    /**
+     * Uses the container bounds to which the insets attached as the source.
+     * Only use this if the insets is a local insets only applied to the children of the container.
+     */
+    public static final int SOURCE_ATTACHED_CONTAINER_BOUNDS = 4;
+
     private final int mId;
 
     /** The selection of the starting rectangle to be converted into source frame. */
@@ -144,6 +150,12 @@ public class InsetsFrameProvider implements Parcelable {
 
     public int getSource() {
         return mSource;
+    }
+
+    /** Set the flags of this provider. */
+    public InsetsFrameProvider setFlags(@Flags int flags) {
+        mFlags = flags;
+        return this;
     }
 
     public InsetsFrameProvider setFlags(@Flags int flags, @Flags int mask) {
@@ -251,6 +263,8 @@ public class InsetsFrameProvider implements Parcelable {
                 return "FRAME";
             case SOURCE_ARBITRARY_RECTANGLE:
                 return "ARBITRARY_RECTANGLE";
+            case SOURCE_ATTACHED_CONTAINER_BOUNDS:
+                return "ATTACHED_CONTAINER_BOUNDS";
         }
         return "UNDEFINED";
     }

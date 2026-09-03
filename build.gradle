@@ -249,7 +249,7 @@ allprojects {
 
                 // Map compat lib suffix -> stubs info
                 def stubsMap = [
-                        ""      : frameworkStubs15,
+                        ""      : frameworkStubs16,
                         Baklava : frameworkStubs16,
                         Q       : frameworkStubs10,
                         R       : frameworkStubs11,

@@ -17,6 +17,7 @@
 package android.window;
 
 import static android.app.WindowConfiguration.ACTIVITY_TYPE_UNDEFINED;
+import static android.app.WindowConfiguration.WINDOWING_MODE_UNDEFINED;
 import static android.view.WindowManager.TransitionType;
 
 import android.annotation.IntDef;
@@ -184,7 +185,14 @@ public final class TransitionFilter implements Parcelable {
         public ComponentName mTopActivity;
         public IBinder mLaunchCookie;
 
-        public Requirement() {}
+        /** If non-null, requires the change to specifically have or not-have a custom animation. */
+        public Boolean mCustomAnimation = null;
+        public IBinder mTaskFragmentToken = null;
+
+        public int mWindowingMode = WINDOWING_MODE_UNDEFINED;
+
+        public Requirement() {
+        }
 
         private Requirement(Parcel in) {
             mActivityType = in.readInt();
@@ -196,12 +204,23 @@ public final class TransitionFilter implements Parcelable {
             mOrder = in.readInt();
             mTopActivity = in.readTypedObject(ComponentName.CREATOR);
             mLaunchCookie = in.readStrongBinder();
+            // 0: null, 1: false, 2: true
+            final int customAnimRaw = in.readInt();
+            mCustomAnimation = customAnimRaw == 0 ? null : Boolean.valueOf(customAnimRaw == 2);
+            mTaskFragmentToken = in.readStrongBinder();
+            mWindowingMode = in.readInt();
         }
 
         /** Go through changes and find if at-least one change matches this filter */
         boolean matches(@NonNull TransitionInfo info) {
             for (int i = info.getChanges().size() - 1; i >= 0; --i) {
                 final TransitionInfo.Change change = info.getChanges().get(i);
+
+                if (mTaskFragmentToken != null
+                        && !mTaskFragmentToken.equals(change.getTaskFragmentToken())) {
+                    continue;
+                }
+
                 if (mMustBeIndependent && !TransitionInfo.isIndependent(change, info)) {
                     // Only look at independent animating windows.
                     continue;
@@ -236,6 +255,27 @@ public final class TransitionFilter implements Parcelable {
                 }
                 if (!matchesCookie(change.getTaskInfo())) {
                     continue;
+                }
+                if (mCustomAnimation != null
+                        // only applies to activity/task
+                        && (change.getTaskInfo() != null
+                                || change.getActivityComponent() != null)) {
+                    final TransitionInfo.AnimationOptions opts = change.getAnimationOptions();
+                    if (opts != null) {
+                        boolean canActuallyOverride = change.getTaskInfo() == null
+                                || opts.getOverrideTaskTransition();
+                        if (mCustomAnimation != canActuallyOverride) {
+                            continue;
+                        }
+                    } else if (mCustomAnimation) {
+                        continue;
+                    }
+                }
+                if (mWindowingMode != WINDOWING_MODE_UNDEFINED) {
+                    if (change.getTaskInfo() == null
+                            || change.getTaskInfo().getWindowingMode() != mWindowingMode) {
+                        continue;
+                    }
                 }
                 return true;
             }
@@ -287,6 +327,10 @@ public final class TransitionFilter implements Parcelable {
             dest.writeInt(mOrder);
             dest.writeTypedObject(mTopActivity, flags);
             dest.writeStrongBinder(mLaunchCookie);
+            int customAnimRaw = mCustomAnimation == null ? 0 : (mCustomAnimation ? 2 : 1);
+            dest.writeInt(customAnimRaw);
+            dest.writeStrongBinder(mTaskFragmentToken);
+            dest.writeInt(mWindowingMode);
         }
 
         @NonNull
@@ -328,6 +372,14 @@ public final class TransitionFilter implements Parcelable {
             out.append(" order=" + containerOrderToString(mOrder));
             out.append(" topActivity=").append(mTopActivity);
             out.append(" launchCookie=").append(mLaunchCookie);
+            if (mCustomAnimation != null) {
+                out.append(" customAnim=").append(mCustomAnimation.booleanValue());
+            }
+            if (mTaskFragmentToken != null) {
+                out.append(" taskFragmentToken=").append(mTaskFragmentToken);
+            }
+            out.append(" windowingMode="
+                    + WindowConfiguration.windowingModeToString(mWindowingMode));
             out.append("}");
             return out.toString();
         }

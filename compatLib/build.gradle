@@ -1,9 +1,10 @@
 plugins {
     id 'com.android.library'
+//    alias(libs.plugins.google.protobuf)
 }
 
 android {
-    buildToolsVersion "36.1.0"
+    buildToolsVersion "37.0.0"
     namespace "app.lawnchair.compatlib"
     compileSdk 36
 
@@ -23,6 +24,9 @@ android {
     sourceSets {
         main {
             aidl.srcDirs = ['src/main/java']
+//            proto {
+//                srcDirs = ['src/main/java']
+//            }
         }
     }
 }

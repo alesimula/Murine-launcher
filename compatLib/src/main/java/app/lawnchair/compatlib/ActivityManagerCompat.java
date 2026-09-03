@@ -5,7 +5,6 @@ import android.app.ActivityManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
-import android.view.IRecentsAnimationController;
 import android.window.TaskSnapshot;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,8 +30,7 @@ public interface ActivityManagerCompat {
         return null;
     }
 
-    default ThumbnailData takeScreenshot(
-            IRecentsAnimationController animationController, int taskId) {
+    default ThumbnailData takeScreenshot(Object animationController, int taskId) {
         return null;
     }
 

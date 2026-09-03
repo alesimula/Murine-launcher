@@ -135,10 +135,10 @@ public class ActivityManagerCompatVQ implements ActivityManagerCompat {
     }
 
     @Override
-    public ThumbnailData takeScreenshot(
-            IRecentsAnimationController animationController, int taskId) {
+    public ThumbnailData takeScreenshot(Object animationController, int taskId) {
         try {
-            ActivityManager.TaskSnapshot snapshot = animationController.screenshotTask(taskId);
+            ActivityManager.TaskSnapshot snapshot =
+                    ((IRecentsAnimationController) animationController).screenshotTask(taskId);
             return snapshot != null ? makeThumbnailData(snapshot) : new ThumbnailData();
         } catch (RemoteException e) {
             Log.e(TAG, "Failed to screenshot task", e);

@@ -29,6 +29,7 @@ import static android.view.Display.INVALID_DISPLAY;
 import static android.view.WindowManager.LayoutParams.ROTATION_ANIMATION_UNSPECIFIED;
 import static android.view.WindowManager.TRANSIT_CHANGE;
 import static android.view.WindowManager.TRANSIT_CLOSE;
+import static android.view.WindowManager.TRANSIT_FLAG_AOD_APPEARING;
 import static android.view.WindowManager.TRANSIT_FLAG_KEYGUARD_APPEARING;
 import static android.view.WindowManager.TRANSIT_FLAG_KEYGUARD_GOING_AWAY;
 import static android.view.WindowManager.TRANSIT_NONE;
@@ -49,12 +50,14 @@ import android.content.ComponentName;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.hardware.HardwareBuffer;
+import android.os.BinderProxy;
+import android.os.IBinder;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.view.Surface;
 import android.view.SurfaceControl;
 import android.view.WindowManager;
-import com.android.window.flags.Flags;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
@@ -170,8 +173,11 @@ public final class TransitionInfo implements Parcelable {
     /** This change represents its start configuration for the duration of the animation. */
     public static final int FLAG_CONFIG_AT_END = 1 << 22;
 
+    /** This change represents one of a Task Display Area. */
+    public static final int FLAG_IS_TASK_DISPLAY_AREA = 1 << 23;
+
     /** The first unused bit. This can be used by remotes to attach custom flags to this change. */
-    public static final int FLAG_FIRST_CUSTOM = 1 << 23;
+    public static final int FLAG_FIRST_CUSTOM = 1 << 24;
 
     /** The change belongs to a window that won't contain activities. */
     public static final int FLAGS_IS_NON_APP_WINDOW =
@@ -182,35 +188,33 @@ public final class TransitionInfo implements Parcelable {
 
     /** @hide */
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef(
-            prefix = {"FLAG_"},
-            value = {
-                FLAG_NONE,
-                FLAG_SHOW_WALLPAPER,
-                FLAG_IS_WALLPAPER,
-                FLAG_TRANSLUCENT,
-                FLAG_STARTING_WINDOW_TRANSFER_RECIPIENT,
-                FLAG_IS_VOICE_INTERACTION,
-                FLAG_IS_DISPLAY,
-                FLAG_DISPLAY_HAS_ALERT_WINDOWS,
-                FLAG_IS_INPUT_METHOD,
-                FLAG_IN_TASK_WITH_EMBEDDED_ACTIVITY,
-                FLAG_FILLS_TASK,
-                FLAG_WILL_IME_SHOWN,
-                FLAG_CROSS_PROFILE_OWNER_THUMBNAIL,
-                FLAG_CROSS_PROFILE_WORK_THUMBNAIL,
-                FLAG_IS_BEHIND_STARTING_WINDOW,
-                FLAG_IS_OCCLUDED,
-                FLAG_IS_SYSTEM_WINDOW,
-                FLAG_BACK_GESTURE_ANIMATED,
-                FLAG_NO_ANIMATION,
-                FLAG_TASK_LAUNCHING_BEHIND,
-                FLAG_MOVED_TO_TOP,
-                FLAG_SYNC,
-                FLAG_CONFIG_AT_END,
-                FLAG_FIRST_CUSTOM
-            },
-            flag = true)
+    @IntDef(prefix = { "FLAG_" }, flag = true, value = {
+            FLAG_NONE,
+            FLAG_SHOW_WALLPAPER,
+            FLAG_IS_WALLPAPER,
+            FLAG_TRANSLUCENT,
+            FLAG_STARTING_WINDOW_TRANSFER_RECIPIENT,
+            FLAG_IS_VOICE_INTERACTION,
+            FLAG_IS_DISPLAY,
+            FLAG_DISPLAY_HAS_ALERT_WINDOWS,
+            FLAG_IS_INPUT_METHOD,
+            FLAG_IN_TASK_WITH_EMBEDDED_ACTIVITY,
+            FLAG_FILLS_TASK,
+            FLAG_WILL_IME_SHOWN,
+            FLAG_CROSS_PROFILE_OWNER_THUMBNAIL,
+            FLAG_CROSS_PROFILE_WORK_THUMBNAIL,
+            FLAG_IS_BEHIND_STARTING_WINDOW,
+            FLAG_IS_OCCLUDED,
+            FLAG_IS_SYSTEM_WINDOW,
+            FLAG_BACK_GESTURE_ANIMATED,
+            FLAG_NO_ANIMATION,
+            FLAG_TASK_LAUNCHING_BEHIND,
+            FLAG_MOVED_TO_TOP,
+            FLAG_SYNC,
+            FLAG_CONFIG_AT_END,
+            FLAG_IS_TASK_DISPLAY_AREA,
+            FLAG_FIRST_CUSTOM
+    })
     public @interface ChangeFlags {}
 
     private final @TransitionType int mType;
@@ -218,9 +222,6 @@ public final class TransitionInfo implements Parcelable {
     private int mTrack = 0;
     private final ArrayList<Change> mChanges = new ArrayList<>();
     private final ArrayList<Root> mRoots = new ArrayList<>();
-
-    // TODO(b/327332488): Clean-up usages after the flag is fully enabled.
-    @Deprecated private AnimationOptions mOptions;
 
     /** This is only a BEST-EFFORT id used for log correlation. DO NOT USE for any real work! */
     private int mDebugId = -1;
@@ -236,7 +237,6 @@ public final class TransitionInfo implements Parcelable {
         mFlags = in.readInt();
         in.readTypedList(mChanges, Change.CREATOR);
         in.readTypedList(mRoots, Root.CREATOR);
-        mOptions = in.readTypedObject(AnimationOptions.CREATOR);
         mDebugId = in.readInt();
         mTrack = in.readInt();
     }
@@ -248,7 +248,6 @@ public final class TransitionInfo implements Parcelable {
         dest.writeInt(mFlags);
         dest.writeTypedList(mChanges);
         dest.writeTypedList(mRoots, flags);
-        dest.writeTypedObject(mOptions, flags);
         dest.writeInt(mDebugId);
         dest.writeInt(mTrack);
     }
@@ -286,18 +285,6 @@ public final class TransitionInfo implements Parcelable {
      */
     public void addRoot(@NonNull Root other) {
         mRoots.add(other);
-    }
-
-    /**
-     * @deprecated Set {@link AnimationOptions} to change. This method is only used if {@link
-     *     Flags#FLAG_MOVE_ANIMATION_OPTIONS_TO_CHANGE} is disabled.
-     */
-    @Deprecated
-    public void setAnimationOptions(@Nullable AnimationOptions options) {
-        if (Flags.moveAnimationOptionsToChange()) {
-            return;
-        }
-        mOptions = options;
     }
 
     public @TransitionType int getType() {
@@ -361,18 +348,8 @@ public final class TransitionInfo implements Parcelable {
     }
 
     /**
-     * @deprecated Use {@link Change#getAnimationOptions()} instead. This method is called only if
-     *     {@link Flags#FLAG_MOVE_ANIMATION_OPTIONS_TO_CHANGE} is disabled.
-     */
-    @Deprecated
-    @Nullable
-    public AnimationOptions getAnimationOptions() {
-        return mOptions;
-    }
-
-    /**
-     * @return the list of {@link Change}s in this transition. The list is sorted top-to-bottom in Z
-     *     (meaning index 0 is the top-most container).
+     * @return the list of {@link Change}s in this transition. The list is sorted top-to-bottom
+     *         in Z (meaning index 0 is the top-most container).
      */
     @NonNull
     public List<Change> getChanges() {
@@ -402,9 +379,9 @@ public final class TransitionInfo implements Parcelable {
      * visibility.
      */
     public boolean hasChangesOrSideEffects() {
-        return !mChanges.isEmpty()
-                || isKeyguardGoingAway()
-                || (mFlags & TRANSIT_FLAG_KEYGUARD_APPEARING) != 0;
+        return !mChanges.isEmpty() || isKeyguardGoingAway()
+                || (mFlags & TRANSIT_FLAG_KEYGUARD_APPEARING) != 0
+                || (mFlags & TRANSIT_FLAG_AOD_APPEARING) != 0;
     }
 
     /** Whether this transition includes keyguard going away. */
@@ -451,17 +428,8 @@ public final class TransitionInfo implements Parcelable {
         final String changesLineStart = shouldPrettyPrint ? "\n" + prefix : "";
         final String perChangeLineStart = shouldPrettyPrint ? "\n" + innerPrefix : "";
         StringBuilder sb = new StringBuilder();
-        sb.append("{id=")
-                .append(mDebugId)
-                .append(" t=")
-                .append(transitTypeToString(mType))
-                .append(" f=0x")
-                .append(Integer.toHexString(mFlags))
-                .append(" trk=")
-                .append(mTrack);
-        if (mOptions != null) {
-            sb.append(" opt=").append(mOptions);
-        }
+        sb.append("{id=").append(mDebugId).append(" t=").append(transitTypeToString(mType))
+                .append(" f=0x").append(Integer.toHexString(mFlags)).append(" trk=").append(mTrack);
         sb.append(" r=[");
         for (int i = 0; i < mRoots.size(); ++i) {
             if (i > 0) {
@@ -569,6 +537,9 @@ public final class TransitionInfo implements Parcelable {
         if ((flags & FLAG_MOVED_TO_TOP) != 0) {
             sb.append(sb.length() == 0 ? "" : "|").append("MOVE_TO_TOP");
         }
+        if ((flags & FLAG_IS_TASK_DISPLAY_AREA) != 0) {
+            sb.append(sb.length() == 0 ? "" : "|").append("FLAG_IS_TASK_DISPLAY_AREA");
+        }
         return sb.toString();
     }
 
@@ -664,8 +635,6 @@ public final class TransitionInfo implements Parcelable {
         for (int i = 0; i < mRoots.size(); ++i) {
             out.mRoots.add(mRoots.get(i).localRemoteCopy());
         }
-        // Doesn't have any native stuff, so no need for actual copy
-        out.mOptions = mOptions;
         return out;
     }
 
@@ -680,6 +649,7 @@ public final class TransitionInfo implements Parcelable {
         private final Rect mStartAbsBounds = new Rect();
         private final Rect mEndAbsBounds = new Rect();
         private final Point mEndRelOffset = new Point();
+        private final Point mEndParentSize = new Point();
         private ActivityManager.RunningTaskInfo mTaskInfo = null;
         private boolean mAllowEnterPip;
         private int mStartDisplayId = INVALID_DISPLAY;
@@ -697,15 +667,16 @@ public final class TransitionInfo implements Parcelable {
         private @ColorInt int mBackgroundColor;
         private SurfaceControl mSnapshot = null;
         private float mSnapshotLuma;
-        private ComponentName mActivityComponent = null;
+        private ActivityTransitionInfo mActivityTransitionInfo = null;
         private AnimationOptions mAnimationOptions = null;
+        private IBinder mTaskFragmentToken = null;
 
         public Change(@Nullable WindowContainerToken container, @NonNull SurfaceControl leash) {
             mContainer = container;
             mLeash = leash;
         }
 
-        private Change(Parcel in) {
+        private Change(@NonNull Parcel in) {
             mContainer = in.readTypedObject(WindowContainerToken.CREATOR);
             mParent = in.readTypedObject(WindowContainerToken.CREATOR);
             mLastParent = in.readTypedObject(WindowContainerToken.CREATOR);
@@ -716,6 +687,7 @@ public final class TransitionInfo implements Parcelable {
             mStartAbsBounds.readFromParcel(in);
             mEndAbsBounds.readFromParcel(in);
             mEndRelOffset.readFromParcel(in);
+            mEndParentSize.readFromParcel(in);
             mTaskInfo = in.readTypedObject(ActivityManager.RunningTaskInfo.CREATOR);
             mAllowEnterPip = in.readBoolean();
             mStartDisplayId = in.readInt();
@@ -727,8 +699,9 @@ public final class TransitionInfo implements Parcelable {
             mBackgroundColor = in.readInt();
             mSnapshot = in.readTypedObject(SurfaceControl.CREATOR);
             mSnapshotLuma = in.readFloat();
-            mActivityComponent = in.readTypedObject(ComponentName.CREATOR);
+            mActivityTransitionInfo = in.readTypedObject(ActivityTransitionInfo.CREATOR);
             mAnimationOptions = in.readTypedObject(AnimationOptions.CREATOR);
+            mTaskFragmentToken = in.readStrongBinder();
         }
 
         private Change localRemoteCopy() {
@@ -740,6 +713,7 @@ public final class TransitionInfo implements Parcelable {
             out.mStartAbsBounds.set(mStartAbsBounds);
             out.mEndAbsBounds.set(mEndAbsBounds);
             out.mEndRelOffset.set(mEndRelOffset);
+            out.mEndParentSize.set(mEndParentSize);
             out.mTaskInfo = mTaskInfo;
             out.mAllowEnterPip = mAllowEnterPip;
             out.mStartDisplayId = mStartDisplayId;
@@ -751,8 +725,11 @@ public final class TransitionInfo implements Parcelable {
             out.mBackgroundColor = mBackgroundColor;
             out.mSnapshot = mSnapshot != null ? new SurfaceControl(mSnapshot, "localRemote") : null;
             out.mSnapshotLuma = mSnapshotLuma;
-            out.mActivityComponent = mActivityComponent;
+            if (mActivityTransitionInfo != null) {
+                out.mActivityTransitionInfo = new ActivityTransitionInfo(mActivityTransitionInfo);
+            }
             out.mAnimationOptions = mAnimationOptions;
+            out.mTaskFragmentToken = mTaskFragmentToken;
             return out;
         }
 
@@ -800,8 +777,15 @@ public final class TransitionInfo implements Parcelable {
         }
 
         /**
-         * Sets the taskinfo of this container if this is a task. WARNING: this takes the reference,
-         * so don't modify it afterwards.
+         * Sets the size of its parent container after the change.
+         */
+        public void setEndParentSize(int width, int height) {
+            mEndParentSize.set(width, height);
+        }
+
+        /**
+         * Sets the taskinfo of this container if this is a task. WARNING: this takes the
+         * reference, so don't modify it afterwards.
          */
         public void setTaskInfo(@Nullable ActivityManager.RunningTaskInfo taskInfo) {
             mTaskInfo = taskInfo;
@@ -848,22 +832,25 @@ public final class TransitionInfo implements Parcelable {
             mSnapshotLuma = luma;
         }
 
-        /** Sets the component-name of the container. Container must be an Activity. */
-        public void setActivityComponent(@Nullable ComponentName component) {
-            mActivityComponent = component;
+        /** Sets the activity-specific transition information. Container must be an Activity. */
+        public void setActivityTransitionInfo(@Nullable ActivityTransitionInfo info) {
+            mActivityTransitionInfo = info;
         }
 
         /** Sets {@link AnimationOptions} to override animation. */
         public void setAnimationOptions(@Nullable AnimationOptions options) {
-            if (!Flags.moveAnimationOptionsToChange()) {
-                return;
-            }
             mAnimationOptions = options;
         }
 
         /**
-         * @return the container that is changing. May be null if non-remotable (eg. activity)
+         * Sets the client-defined TaskFragment token. Only set this if the window is a
+         * client-organized TaskFragment.
          */
+        public void setTaskFragmentToken(@Nullable IBinder token) {
+            mTaskFragmentToken = token;
+        }
+
+        /** @return the container that is changing. May be null if non-remotable (eg. activity) */
         @Nullable
         public WindowContainerToken getContainer() {
             return mContainer;
@@ -941,8 +928,14 @@ public final class TransitionInfo implements Parcelable {
         }
 
         /**
-         * @return the leash or surface to animate for this container
+         * Returns the size of parent container after the change.
          */
+        @NonNull
+        public Point getEndParentSize() {
+            return mEndParentSize;
+        }
+
+        /** @return the leash or surface to animate for this container */
         @NonNull
         public SurfaceControl getLeash() {
             return mLeash;
@@ -1013,18 +1006,34 @@ public final class TransitionInfo implements Parcelable {
             return mSnapshotLuma;
         }
 
-        /**
-         * @return the component-name of this container (if it is an activity).
-         */
+        /** @return the component-name of this container (if it is an activity). */
         @Nullable
         public ComponentName getActivityComponent() {
-            return mActivityComponent;
+            return mActivityTransitionInfo != null ? mActivityTransitionInfo.getComponent() : null;
+        }
+
+        /**
+         * @return the activity-specific transition information, or {@code null} if this container
+         * is not an activity.
+         */
+        @Nullable
+        public ActivityTransitionInfo getActivityTransitionInfo() {
+            return mActivityTransitionInfo;
         }
 
         /** Returns the {@link AnimationOptions}. */
         @Nullable
         public AnimationOptions getAnimationOptions() {
             return mAnimationOptions;
+        }
+
+        /**
+         * Returns the client-defined TaskFragment token. {@code null} if this window is not a
+         * client-organized TaskFragment.
+         */
+        @Nullable
+        public IBinder getTaskFragmentToken() {
+            return mTaskFragmentToken;
         }
 
         /** @hide */
@@ -1039,6 +1048,7 @@ public final class TransitionInfo implements Parcelable {
             mStartAbsBounds.writeToParcel(dest, flags);
             mEndAbsBounds.writeToParcel(dest, flags);
             mEndRelOffset.writeToParcel(dest, flags);
+            mEndParentSize.writeToParcel(dest, flags);
             dest.writeTypedObject(mTaskInfo, flags);
             dest.writeBoolean(mAllowEnterPip);
             dest.writeInt(mStartDisplayId);
@@ -1050,8 +1060,9 @@ public final class TransitionInfo implements Parcelable {
             dest.writeInt(mBackgroundColor);
             dest.writeTypedObject(mSnapshot, flags);
             dest.writeFloat(mSnapshotLuma);
-            dest.writeTypedObject(mActivityComponent, flags);
+            dest.writeTypedObject(mActivityTransitionInfo, flags);
             dest.writeTypedObject(mAnimationOptions, flags);
+            dest.writeStrongBinder(mTaskFragmentToken);
         }
 
         @NonNull
@@ -1078,11 +1089,13 @@ public final class TransitionInfo implements Parcelable {
         public String toString() {
             final StringBuilder sb = new StringBuilder();
             sb.append('{');
-            sb.append(mContainer);
-            sb.append(" m=");
-            sb.append(modeToString(mMode));
-            sb.append(" f=");
-            sb.append(flagsToString(mFlags));
+            if (mContainer != null && !(mContainer.asBinder() instanceof BinderProxy)) {
+                // Only log the token if it is not a binder proxy and has additional container info
+                sb.append(mContainer);
+                sb.append(" ");
+            }
+            sb.append("m="); sb.append(modeToString(mMode));
+            sb.append(" f="); sb.append(flagsToString(mFlags));
             if (mParent != null) {
                 sb.append(" p=");
                 sb.append(mParent);
@@ -1096,8 +1109,10 @@ public final class TransitionInfo implements Parcelable {
             sb.append(" eb=");
             sb.append(mEndAbsBounds);
             if (mEndRelOffset.x != 0 || mEndRelOffset.y != 0) {
-                sb.append(" eo=");
-                sb.append(mEndRelOffset);
+                sb.append(" eo="); sb.append(mEndRelOffset);
+            }
+            if (!mEndParentSize.equals(0, 0)) {
+                sb.append(" epz=").append(mEndParentSize);
             }
             sb.append(" d=");
             if (mStartDisplayId != mEndDisplayId) {
@@ -1127,16 +1142,20 @@ public final class TransitionInfo implements Parcelable {
                 sb.append(" lastParent=");
                 sb.append(mLastParent);
             }
-            if (mActivityComponent != null) {
-                sb.append(" component=");
-                sb.append(mActivityComponent.flattenToShortString());
+            if (mActivityTransitionInfo != null) {
+                sb.append(" activity=").append(mActivityTransitionInfo);
             }
             if (mTaskInfo != null) {
                 sb.append(" taskParent=");
                 sb.append(mTaskInfo.parentTaskId);
+                sb.append(" winMode=");
+                sb.append(mTaskInfo.getWindowingMode());
             }
             if (mAnimationOptions != null) {
                 sb.append(" opt=").append(mAnimationOptions);
+            }
+            if (mTaskFragmentToken != null) {
+                sb.append(" taskFragmentToken=").append(mTaskFragmentToken);
             }
             sb.append('}');
             return sb.toString();
@@ -1169,6 +1188,7 @@ public final class TransitionInfo implements Parcelable {
         // Customize activity transition animation
         private CustomActivityTransition mCustomActivityOpenTransition;
         private CustomActivityTransition mCustomActivityCloseTransition;
+        private int mUserId;
 
         private AnimationOptions(int type) {
             mType = type;
@@ -1179,7 +1199,6 @@ public final class TransitionInfo implements Parcelable {
             mEnterResId = in.readInt();
             mChangeResId = in.readInt();
             mExitResId = in.readInt();
-            mBackgroundColor = in.readInt();
             mOverrideTaskTransition = in.readBoolean();
             mPackageName = in.readString();
             mTransitionBounds.readFromParcel(in);
@@ -1187,6 +1206,7 @@ public final class TransitionInfo implements Parcelable {
             mAnimations = in.readInt();
             mCustomActivityOpenTransition = in.readTypedObject(CustomActivityTransition.CREATOR);
             mCustomActivityCloseTransition = in.readTypedObject(CustomActivityTransition.CREATOR);
+            mUserId = in.readInt();
         }
 
         /** Make basic customized animation for a package */
@@ -1229,31 +1249,6 @@ public final class TransitionInfo implements Parcelable {
         }
 
         /**
-         * Make options for a custom animation based on anim resources.
-         *
-         * @param packageName the package name to find the animation resources
-         * @param enterResId the open animation resources ID
-         * @param exitResId the close animation resources ID
-         * @param backgroundColor the background color
-         * @param overrideTaskTransition whether to override the task transition
-         */
-        @NonNull
-        public static AnimationOptions makeCustomAnimOptions(
-                @NonNull String packageName,
-                @AnimRes int enterResId,
-                @AnimRes int exitResId,
-                @ColorInt int backgroundColor,
-                boolean overrideTaskTransition) {
-            return makeCustomAnimOptions(
-                    packageName,
-                    enterResId,
-                    DEFAULT_ANIMATION_RESOURCES_ID,
-                    exitResId,
-                    backgroundColor,
-                    overrideTaskTransition);
-        }
-
-        /**
          * Creates a {@link android.app.ActivityOptions#ANIM_CUSTOM} {@link AnimationOptions}.
          *
          * @param packageName the package name that includes the animation resources.
@@ -1263,19 +1258,14 @@ public final class TransitionInfo implements Parcelable {
          * @param overrideTaskTransition indicates whether to override task transition.
          */
         @NonNull
-        public static AnimationOptions makeCustomAnimOptions(
-                @NonNull String packageName,
-                @AnimRes int enterResId,
-                @AnimRes int changeResId,
-                @AnimRes int exitResId,
-                @ColorInt int backgroundColor,
+        public static AnimationOptions makeCustomAnimOptions(@NonNull String packageName,
+                @AnimRes int enterResId, @AnimRes int changeResId, @AnimRes int exitResId,
                 boolean overrideTaskTransition) {
             AnimationOptions options = new AnimationOptions(ANIM_CUSTOM);
             options.mPackageName = packageName;
             options.mEnterResId = enterResId;
             options.mChangeResId = changeResId;
             options.mExitResId = exitResId;
-            options.mBackgroundColor = backgroundColor;
             options.mOverrideTaskTransition = overrideTaskTransition;
             return options;
         }
@@ -1289,12 +1279,13 @@ public final class TransitionInfo implements Parcelable {
             return options;
         }
 
-        /** Make options for a scale-up animation. */
+        /** Make options for a scale-up animation with task override option */
         @NonNull
-        public static AnimationOptions makeScaleUpAnimOptions(
-                int startX, int startY, int width, int height) {
+        public static AnimationOptions makeScaleUpAnimOptions(int startX, int startY, int width,
+                int height, boolean overrideTaskTransition) {
             AnimationOptions options = new AnimationOptions(ANIM_SCALE_UP);
             options.mTransitionBounds.set(startX, startY, startX + width, startY + height);
+            options.mOverrideTaskTransition = overrideTaskTransition;
             return options;
         }
 
@@ -1324,6 +1315,14 @@ public final class TransitionInfo implements Parcelable {
             return options;
         }
 
+        public void setUserId(int userId) {
+            mUserId = userId;
+        }
+
+        public int getUserId() {
+            return mUserId;
+        }
+
         public int getType() {
             return mType;
         }
@@ -1341,10 +1340,6 @@ public final class TransitionInfo implements Parcelable {
         @AnimRes
         public int getExitResId() {
             return mExitResId;
-        }
-
-        public @ColorInt int getBackgroundColor() {
-            return mBackgroundColor;
         }
 
         public boolean getOverrideTaskTransition() {
@@ -1382,7 +1377,6 @@ public final class TransitionInfo implements Parcelable {
             dest.writeInt(mEnterResId);
             dest.writeInt(mChangeResId);
             dest.writeInt(mExitResId);
-            dest.writeInt(mBackgroundColor);
             dest.writeBoolean(mOverrideTaskTransition);
             dest.writeString(mPackageName);
             mTransitionBounds.writeToParcel(dest, flags);
@@ -1390,6 +1384,7 @@ public final class TransitionInfo implements Parcelable {
             dest.writeInt(mAnimations);
             dest.writeTypedObject(mCustomActivityOpenTransition, flags);
             dest.writeTypedObject(mCustomActivityCloseTransition, flags);
+            dest.writeInt(mUserId);
         }
 
         @NonNull
@@ -1447,6 +1442,7 @@ public final class TransitionInfo implements Parcelable {
             if (mExitResId != DEFAULT_ANIMATION_RESOURCES_ID) {
                 sb.append(" exitResId=").append(mExitResId);
             }
+            sb.append(" mUserId=").append(mUserId);
             sb.append('}');
             return sb.toString();
         }
