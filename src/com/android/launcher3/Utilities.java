@@ -30,6 +30,7 @@ import android.app.ActivityOptions;
 import android.app.Person;
 import android.app.WallpaperManager;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.content.pm.LauncherActivityInfo;
 import android.content.pm.LauncherApps;
 import android.content.pm.ShortcutInfo;
@@ -84,6 +85,7 @@ import com.android.launcher3.icons.BitmapInfo;
 import com.android.launcher3.icons.CacheableShortcutInfo;
 import com.android.launcher3.icons.IconThemeController;
 import com.android.launcher3.icons.LauncherIcons;
+import com.android.launcher3.icons.cache.LauncherActivityCachingLogic;
 import com.android.launcher3.model.data.ItemInfo;
 import com.android.launcher3.model.data.ItemInfoWithIcon;
 import com.android.launcher3.pm.ShortcutConfigActivityInfo;
@@ -696,11 +698,10 @@ public final class Utilities {
             if (activityInfo == null) {
                 return null;
             }
-            if (Utilities.ATLEAST_S) {
-                mainIcon = appState.getIconCache().getFullResIcon(activityInfo.getActivityInfo());
-            } else {
-                mainIcon = appState.getIconCache().getFullResIcon(activityInfo.getComponentName().getPackageName());
-            }
+            // Resolve like the loader does, so drag gets the same pack + adaptive treatment
+            ActivityInfo ai = LauncherActivityCachingLogic.resolveActivityInfo(context, activityInfo);
+            mainIcon = ai != null ? appState.getIconCache().getFullResIcon(ai)
+                    : appState.getIconCache().getFullResIcon(activityInfo.getComponentName().getPackageName());
         } else if (info.itemType == LauncherSettings.Favorites.ITEM_TYPE_DEEP_SHORTCUT) {
             List<ShortcutInfo> siList = ShortcutKey.fromItemInfo(info)
                     .buildRequest(context)

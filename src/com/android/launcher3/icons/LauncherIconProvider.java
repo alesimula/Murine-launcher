@@ -110,7 +110,7 @@ public class LauncherIconProvider extends IconProvider {
                 mContext, cn.flattenToString()) != null;
 
         // Flag before pack treatment, otherwise applyGlobalTreatment would wrap it again under the pack frame
-        defaultIcon = applyAdaptivePreference(info, defaultIcon);
+        defaultIcon = applyAdaptivePreference(info.applicationInfo, defaultIcon);
 
         if (hasOverride || !IconPackManager.INSTANCE.isThemedOnly(mContext)) {
             Drawable shaped = IconPackManager.INSTANCE.applyGlobalTreatment(mContext, cn, defaultIcon, iconDpi);
@@ -118,6 +118,12 @@ public class LauncherIconProvider extends IconProvider {
         }
 
         return defaultIcon;
+    }
+
+    @Override
+    public Drawable getIcon(ApplicationInfo info, int iconDpi) {
+        // Applies only the adaptive icons preference: ApplicationInfo has no component to key a pack on
+        return applyAdaptivePreference(info, super.getIcon(info, iconDpi));
     }
 
     @Override
@@ -140,11 +146,11 @@ public class LauncherIconProvider extends IconProvider {
      * flagging it so {@link BaseIconFactory} normalizes it without wrapping it as adaptive.
      * Icon pack icons never reach here: they are returned above, already marked or already adaptive.
      */
-    private Drawable applyAdaptivePreference(ComponentInfo info, Drawable icon) {
+    private Drawable applyAdaptivePreference(@Nullable ApplicationInfo appInfo, Drawable icon) {
         if (icon == null || icon instanceof AdaptiveIconDrawable) return icon;
         AdaptiveIcons mode = LauncherPrefs.get(mContext).get(LauncherPrefs.ADAPTIVE_ICONS);
-        boolean isSystem = info.applicationInfo != null
-                && (info.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0;
+        boolean isSystem = appInfo != null
+                && (appInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0;
         if (mode == AdaptiveIcons.NEVER || mode == AdaptiveIcons.FORCE_LEGACY
                 || (mode == AdaptiveIcons.EXCEPT_SYSTEM && isSystem)) {
             icon.setChangingConfigurations(

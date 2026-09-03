@@ -34,6 +34,31 @@ import app.lawnchair.icons.getCustomAppNameForComponent
 object LauncherActivityCachingLogic : CachingLogic<LauncherActivityInfo> {
     const val TAG = "LauncherActivityCachingLogic"
 
+    /**
+     * Resolves the [android.content.pm.ActivityInfo] backing [info].
+     *
+     * LauncherActivityInfo.getActivityInfo requires Android 12, so below that the component is
+     * looked up through the PackageManager instead.
+     */
+    @JvmStatic
+    fun resolveActivityInfo(context: Context, info: LauncherActivityInfo) = try {
+        if (VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            info.activityInfo
+        } else {
+            context.packageManager.getActivityInfo(info.componentName, 0)
+        }
+    } catch (e: PackageManager.NameNotFoundException) {
+        if (VERSION.SDK_INT < Build.VERSION_CODES.S) try {
+            // Search including disabled components and apex/system matches
+            context.packageManager.getActivityInfo(info.componentName,
+                PackageManager.MATCH_DIRECT_BOOT_AWARE or PackageManager.MATCH_DIRECT_BOOT_UNAWARE
+                        or PackageManager.MATCH_DISABLED_COMPONENTS)
+        } catch (_: Exception) {
+            Log.w(TAG, "Unable to find activity info for ${info.componentName}", e)
+            null
+        } else null
+    }
+
     override fun getComponent(info: LauncherActivityInfo): ComponentName = info.componentName
 
     override fun getUser(info: LauncherActivityInfo): UserHandle = info.user
@@ -47,24 +72,7 @@ object LauncherActivityCachingLogic : CachingLogic<LauncherActivityInfo> {
         cache: BaseIconCache,
         info: LauncherActivityInfo,
     ): BitmapInfo {
-        // LC-Note: LauncherActivityInfo.getActivityInfo or known as info.getActivityInfo in the code requires Android 12
-        val activityInfo = try {
-            if (VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                info.activityInfo
-            } else {
-                context.packageManager.getActivityInfo(info.componentName, 0)
-            }
-        } catch (e: PackageManager.NameNotFoundException) {
-            if (VERSION.SDK_INT < Build.VERSION_CODES.S) try {
-                // SECOND CHANCE: Search including disabled components and apex/system matches
-                context.packageManager.getActivityInfo(info.componentName,
-                    PackageManager.MATCH_DIRECT_BOOT_AWARE or PackageManager.MATCH_DIRECT_BOOT_UNAWARE
-                            or PackageManager.MATCH_DISABLED_COMPONENTS)
-            } catch (_: Exception) {
-                Log.w(TAG, "Unable to find activity info for ${info.componentName}", e)
-                null
-            } else null
-        }
+        val activityInfo = resolveActivityInfo(context, info)
         cache.iconFactory.use { li ->
             val iconOptions: IconOptions = IconOptions().setUser(info.user)
             iconOptions
