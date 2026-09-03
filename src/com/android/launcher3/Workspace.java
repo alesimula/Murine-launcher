@@ -119,6 +119,7 @@ import com.android.launcher3.util.IntSparseArrayMap;
 import com.android.launcher3.util.LauncherBindableItemsContainer;
 import com.android.launcher3.util.MSDLPlayerWrapper;
 import com.android.launcher3.util.OverlayEdgeEffect;
+import app.murinelauncher.ui.StretchEdgeEffect;
 import com.android.launcher3.util.RunnableList;
 import com.android.launcher3.util.Thunk;
 import com.android.launcher3.util.WallpaperOffsetInterpolator;
@@ -1302,7 +1303,7 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
     public void setLauncherOverlay(LauncherOverlayTouchProxy overlay) {
         final EdgeEffectCompat newEffect;
         if (overlay == null) {
-            newEffect = new EdgeEffectCompat(getContext());
+            newEffect = new StretchEdgeEffect(getContext(), this::invalidate, this::postInvalidateOnAnimation);
             mOverlayEdgeEffect = null;
         } else {
             newEffect = mOverlayEdgeEffect = new OverlayEdgeEffect(getContext(), overlay);

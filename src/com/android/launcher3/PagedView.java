@@ -60,6 +60,8 @@ import com.android.launcher3.touch.PagedOrientationHandler.ChildBounds;
 import com.android.launcher3.util.EdgeEffectCompat;
 import com.android.launcher3.util.IntSet;
 import com.android.launcher3.util.Thunk;
+
+import app.murinelauncher.ui.StretchEdgeEffect;
 import com.android.launcher3.views.ActivityContext;
 
 import java.util.ArrayList;
@@ -192,8 +194,8 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
     }
 
     protected void initEdgeEffect() {
-        mEdgeGlowLeft = new EdgeEffectCompat(getContext());
-        mEdgeGlowRight = new EdgeEffectCompat(getContext());
+        mEdgeGlowLeft = new StretchEdgeEffect(getContext(), this::invalidate, this::postInvalidateOnAnimation);
+        mEdgeGlowRight = new StretchEdgeEffect(getContext(), this::invalidate, this::postInvalidateOnAnimation);
     }
 
     public void initParentViews(View parent) {
@@ -1846,7 +1848,7 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
             info.addAction(pagesFlipped ?
                     AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_BACKWARD
                     : AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_FORWARD);
-            info.addAction(mIsRtl ?
+            if (Utilities.ATLEAST_Q) info.addAction(mIsRtl ?
                 AccessibilityNodeInfo.AccessibilityAction.ACTION_PAGE_LEFT
                 : AccessibilityNodeInfo.AccessibilityAction.ACTION_PAGE_RIGHT);
         }
@@ -1855,7 +1857,7 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
             info.addAction(pagesFlipped ?
                     AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_FORWARD
                     : AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_BACKWARD);
-            info.addAction(mIsRtl ?
+            if (Utilities.ATLEAST_Q) info.addAction(mIsRtl ?
                 AccessibilityNodeInfo.AccessibilityAction.ACTION_PAGE_RIGHT
                 : AccessibilityNodeInfo.AccessibilityAction.ACTION_PAGE_LEFT);
         }
@@ -1968,7 +1970,32 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
 
     @Override
     public void draw(Canvas canvas) {
-        super.draw(canvas);
+        boolean stretchLeft = mAllowOverScroll
+                && mEdgeGlowLeft instanceof StretchEdgeEffect && !mEdgeGlowLeft.isFinished();
+        boolean stretchRight = mAllowOverScroll
+                && mEdgeGlowRight instanceof StretchEdgeEffect && !mEdgeGlowRight.isFinished();
+
+        if (stretchLeft || stretchRight) {
+            final int saveCount = canvas.save();
+            boolean isAnimating = false;
+            // Canvas is translated by -scrollX, so shift the pivots onto the visible edges
+            final int scrollX = getScrollX();
+            if (stretchLeft) {
+                StretchEdgeEffect left = (StretchEdgeEffect) mEdgeGlowLeft;
+                left.setSize(getWidth(), getHeight());
+                isAnimating = left.applyStretch(canvas, StretchEdgeEffect.POSITION_LEFT, -scrollX, 0);
+            }
+            if (stretchRight) {
+                StretchEdgeEffect right = (StretchEdgeEffect) mEdgeGlowRight;
+                right.setSize(getWidth(), getHeight());
+                isAnimating = isAnimating | right.applyStretch(canvas, StretchEdgeEffect.POSITION_RIGHT, -scrollX, 0);
+            }
+            super.draw(canvas);
+            canvas.restoreToCount(saveCount);
+            if (isAnimating) postInvalidateOnAnimation();
+        } else {
+            super.draw(canvas);
+        }
         drawEdgeEffect(canvas);
         pageEndTransition();
     }
@@ -1977,7 +2004,7 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
         if (mAllowOverScroll && (!mEdgeGlowRight.isFinished() || !mEdgeGlowLeft.isFinished())) {
             final int width = getWidth();
             final int height = getHeight();
-            if (!mEdgeGlowLeft.isFinished()) {
+            if (!mEdgeGlowLeft.isFinished() && !(mEdgeGlowLeft instanceof StretchEdgeEffect)) {
                 final int restoreCount = canvas.save();
                 canvas.rotate(-90);
                 canvas.translate(-height, Math.min(mMinScroll, getScrollX()));
@@ -1987,7 +2014,7 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
                 }
                 canvas.restoreToCount(restoreCount);
             }
-            if (!mEdgeGlowRight.isFinished()) {
+            if (!mEdgeGlowRight.isFinished() && !(mEdgeGlowRight instanceof StretchEdgeEffect)) {
                 final int restoreCount = canvas.save();
                 canvas.rotate(90, width, 0);
                 canvas.translate(width, -(Math.max(mMaxScroll, getScrollX())));
