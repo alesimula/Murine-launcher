@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="pref_group_grid_size_title">Izgara boyutu</string>
+    <string name="pref_group_grid_size_desc">Satır ve sütun sayısını değiştir</string>
+    <string name="pref_group_icon_scale_title">Simge ölçeği</string>
+    <string name="pref_group_icon_scale_desc">Simge ve etiket boyutunu değiştir</string>
+    <string name="pref_group_qsb_transparency">Şeffaflık</string>
+    <string name="pref_group_qsb_transparency_desc">Hızlı arama çubuğu için şeffaflık efektlerini ayarla</string>
+
+    <string name="pref_category_general_title">Genel</string>
+    <string name="pref_category_general_desc">Genel tercihler</string>
+    <string name="pref_category_icons_title">Simgeler</string>
+    <string name="pref_category_icons_desc">Simge boyutunu ve görünümünü ayarla</string>
+    <string name="pref_category_home_title">Ana ekran</string>
+    <string name="pref_category_home_desc">Ana ekranını özelleştir</string>
+    <string name="pref_category_drawer_title">Uygulama çekmecesi</string>
+    <string name="pref_category_drawer_desc">Uygulama çekmeceni özelleştir</string>
+    <string name="pref_category_qsb_title">Arama</string>
+    <string name="pref_category_qsb_desc">Hızlı arama çubuğunu özelleştir</string>
+    <string name="pref_category_misc_title">Diğer</string>
+    <string name="pref_category_misc_desc">Diğer seçenekler</string>
+
+    <string name="pref_subcategory_day_night">Arayüz teması</string>
+    <string name="pref_subcategory_layout">Düzen</string>
+    <string name="pref_subcategory_appearance">Görünüm</string>
+    <string name="pref_subcategory_persistency">Kalıcılık</string>
+    <string name="pref_subcategory_gestures">Hareketler</string>
+    <string name="pref_subcategory_options">Seçenekler</string>
+    <string name="pref_subcategory_backup">Yedekleme</string>
+
+    <string name="backup_export_title">Yedeği dışa aktar</string>
+    <string name="backup_export_desc">Düzeni, widget\'ları ve ayarları kaydet</string>
+    <string name="backup_export_done">Yedek kaydedildi</string>
+    <string name="backup_import_title">Yedeği geri yükle</string>
+    <string name="backup_import_desc">Kaydedilen düzeni ve ayarları geri yükle</string>
+    <string name="backup_import_confirm">Başlatıcı yeniden başlatılacak ve yapılandırman geri yüklenecek</string>
+
+    <string name="pref_label_ui_mode_system">Sistem</string>
+    <string name="pref_label_ui_mode_day">Açık</string>
+    <string name="pref_label_ui_mode_night">Koyu</string>
+    <string name="pref_label_grid_width">Izgara genişliği</string>
+    <string name="pref_label_grid_height">Izgara yüksekliği</string>
+    <string name="pref_label_icon_size">Simge boyutu (%)</string>
+    <string name="pref_label_icon_label_size">Etiket boyutu (%)</string>
+
+    <string name="pref_label_visibility_title">Etiket görünürlüğü</string>
+    <string name="label_visibility_never">Asla</string>
+    <string name="label_visibility_drawer_only">Yalnızca çekmece</string>
+    <string name="label_visibility_home_only">Yalnızca ana ekran</string>
+    <string name="label_visibility_auto">Otomatik</string>
+    <string name="pref_adaptive_icons_title">Uyarlanabilir simgeler</string>
+    <string name="pref_adaptive_icons_summary">Uyarlanabilir olmayan simgeleri yeniden şekillendir</string>
+    <string name="pref_adaptive_icons_except_system">Sistem uygulamaları hariç</string>
+    <string name="pref_adaptive_icons_force_legacy">Eski simgeleri zorla</string>
+    <string name="pref_adaptive_icons_never">Asla yeniden şekillendirme</string>
+    <string name="pref_themed_icons_title">Tek renkli simgeler</string>
+    <string name="pref_themed_icons_summary">Simgeleri sistem temasına göre yeniden renklendir</string>
+    <string name="label_visibility_always">Her zaman</string>
+
+    <string name="pref_icon_shape_title">Simge şekli</string>
+    <string name="icon_shape_system">Sistem</string>
+    <string name="icon_shape_circle">Daire</string>
+    <string name="icon_shape_tofu">Tofu</string>
+    <string name="icon_shape_ios">iOS</string>
+    <string name="icon_shape_squircle">Squircle</string>
+    <string name="icon_shape_xperia">Xperia</string>
+    <string name="icon_shape_riceballs">RiceBalls</string>
+
+    <string name="pref_drawer_type_title">Çekmece türü</string>
+    <string name="drawer_type_frosted">Buzlu</string>
+    <string name="drawer_type_mica">MICA</string>
+    <string name="drawer_type_translucent">Yarı saydam</string>
+
+    <string name="pref_drawer_grid_width_override_title">Izgara genişliğini geçersiz kıl</string>
+    <string name="pref_drawer_grid_width_override_summary">Uygulama çekmecesinde özel sütun sayısı kullan</string>
+    <string name="pref_drawer_padding_title">Yan boşluk</string>
+
+    <string name="pref_blur_preview_title">Önizleme modunda bulanıklık</string>
+    <string name="pref_blur_preview_desc">Simge ve widget sürüklerken duvar kağıdını bulanıklaştır</string>
+
+    <string name="pref_lock_home_screen_title">Ana ekranı kilitle</string>
+    <string name="pref_lock_home_screen_summary">Simge ve widget taşımayı engelle</string>
+
+    <string name="pref_double_tap_to_sleep_title">Kilitlemek için çift dokunuş</string>
+    <string name="pref_double_tap_to_sleep_summary">Ekranı kilitlemek için boş bir alana iki kez dokun</string>
+    <string name="pref_swipe_down_notifications_title">Bildirimler için aşağı kaydır</string>
+    <string name="pref_swipe_down_notifications_summary">Bildirim panelini açmak için ana ekranda aşağı kaydır</string>
+
+    <!-- Murine search bar -->
+    <string name="murine_search_hint">Ara…</string>
+    <string name="murine_search_hint_provider">%1$s ile ara</string>
+    <string name="murine_search_hint_generic">Web\'de ara</string>
+    <string name="murine_search_button_desc">Ara</string>
+    <string name="murine_voice_search_desc">Sesli arama</string>
+    <string name="murine_voice_search_prompt">Şimdi konuş...</string>
+    <string name="murine_lens_desc">Görsel arama</string>
+    <!-- Murine search bar preferences -->
+    <string name="pref_qsb_show_search_bar_title">Arama çubuğunu göster</string>
+    <string name="pref_qsb_search_provider_title">Arama motoru</string>
+    <string name="pref_qsb_enable_lens_title">Lens\'i etkinleştir</string>
+    <string name="pref_qsb_enable_lens_summary">Hızlı aramada Google Lens düğmesini göster</string>
+    <string name="pref_qsb_box_blur">Arama balonunu bulanıklaştır</string>
+    <string name="pref_qsb_box_blur_desc">Arama balonu için MICA efektini göster</string>
+    <string name="pref_qsb_bar_alpha">Arama çubuğu saydamlığı</string>
+    <string name="pref_qsb_box_alpha">Arama balonu saydamlığı</string>
+    <string name="pref_qsb_custom_provider_title">Özel arama URL\'si</string>
+    <string name="pref_qsb_history_size_title">Arama geçmişi boyutu</string>
+    <string name="pref_qsb_history_size_summary">Maksimum kayıt</string>
+    <string name="pref_qsb_clear_history_title">Arama geçmişini temizle</string>
+    <string name="pref_qsb_clear_history_summary">Kaydedilen tüm aramaları sil</string>
+    <string name="pref_qsb_clear_history_confirm_title">Arama geçmişi temizlensin mi?</string>
+    <string name="pref_qsb_clear_history_confirm_message">Kaydedilen tüm aramalar kalıcı olarak silinecek.</string>
+    <string name="pref_qsb_clear_history_toast">Arama geçmişi temizlendi</string>
+
+    <!-- Murine smartspace / clock widget -->
+    <string name="smartspace_mode_clock">Saat</string>
+    <string name="smartspace_mode_google">Google Smartspace</string>
+    <string name="smartspace_mode_disabled">Devre dışı</string>
+    <string name="pref_smartspace_title">İlk ekran widget\'ı</string>
+    <string name="pref_smartspace_summary_clock">Bugünün tarihiyle birlikte bir saat gösterir</string>
+    <string name="pref_smartspace_summary_google">Google Smartspace widget\'ını gösterir</string>
+    <string name="pref_smartspace_summary_disabled">İlk ekranda widget yok</string>
+
+    <string name="pref_blur_unsupported_warning"><![CDATA[Duvar kağıdı bulanıklığı bu OEM/ROM tarafından tam olarak desteklenmiyor veya etkinleştirilmemiş olabilir; sorun yaşarsan ekran seçenekleri ya da geliştirici seçeneklerinde &quot;Pencere düzeyinde bulanıklığa izin ver&quot; seçeneğini ara.<br/>Alternatif olarak, root erişimi olan cihazlarda <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">bu Magisk modülünü</a> etkinleştirmeyi dene]]></string>
+
+    <!-- Notification badges -->
+    <string name="pref_notification_badge_count_title">Bildirim sayısı</string>
+    <string name="pref_notification_badge_count_desc">Bildirim noktalarında sayıyı göster</string>
+
+    <!-- Icon packs -->
+    <string name="pref_category_icon_pack_title">Simge paketi</string>
+    <string name="pref_category_icon_pack_summary">Uygulama simgelerini üçüncü taraf paketlerle değiştir</string>
+    <string name="pref_icon_pack_system_only_title">Yalnızca sistem uygulamaları</string>
+    <string name="pref_icon_pack_system_only_summary">Paketi yalnızca sistem uygulamalarına uygula</string>
+    <string name="pref_icon_pack_ignore_shape_title">Paket şeklini yoksay</string>
+    <string name="pref_icon_pack_ignore_shape_summary">Paketin şekli yerine başlatıcının simge şeklini kullan</string>
+    <string name="pref_icon_readapt_frame_title">Çerçeveye yeniden uyarla</string>
+    <string name="pref_icon_readapt_frame_summary">Temasız simgeleri verilen şekle sığdırmayı dener</string>
+    <string name="pref_icon_pack_themed_only_title">Yalnızca temalı simgeler</string>
+    <string name="pref_icon_pack_themed_only_summary">Pakette bulunmayan simgeleri değiştirmeden bırak</string>
+
+    <!-- Hidden apps -->
+    <string name="pref_category_hidden_apps_title">Gizli uygulamalar</string>
+    <string name="pref_category_hidden_apps_summary">Uygulamaları uygulama çekmecesinden gizle</string>
+    <string name="hidden_apps_label">Gizli</string>
+    <string name="hidden_apps_search_hint">Uygulama ara...</string>
+    <string name="pref_search_within_hidden_title">Gizli uygulamalarda ara</string>
+    <string name="pref_search_within_hidden_summary">Çekmece araması gizli uygulamaları bulur</string>
+
+    <!-- App info sheet -->
+    <string name="app_info_package">Paket</string>
+    <string name="app_info_version">Sürüm</string>
+    <string name="app_info_version_value">%1$s (%2$d)</string>
+    <string name="app_info_last_update">Son güncelleme</string>
+    <string name="app_info_source">Kaynak</string>
+    <string name="app_info_source_system">Sistem</string>
+    <string name="app_info_icon_pack_default">Varsayılan (genel)</string>
+    <string name="app_info_copied_toast">Panoya kopyalandı</string>
+    <string name="app_info_icon_pack_show_all">Tüm paketleri göster</string>
+    <string name="app_info_edit_label">Etiketi düzenle</string>
+
+    <!-- Per-app custom icon picker -->
+    <string name="icon_picker_search_hint">Simge ara...</string>
+
+    <!-- Clear custom icons -->
+    <string name="pref_clear_custom_icons_title">Özel simgeleri temizle</string>
+    <string name="pref_clear_custom_icons_summary">Uygulamalara özel tüm simge seçimlerini kaldır</string>
+    <string name="pref_clear_custom_icons_summary_none">Özel simge ayarlanmadı</string>
+    <string name="pref_clear_custom_icons_confirm_title">Özel simgeler temizlensin mi?</string>
+    <string name="pref_clear_custom_icons_confirm_message">Uygulamalara özel tüm simge seçimleri genel ayara sıfırlanacak.</string>
+    <string name="pref_clear_custom_icons_toast">Özel simgeler temizlendi</string>
+
+    <!-- Misc -->
+    <string name="pref_default_launcher_title">Varsayılan başlatıcı</string>
+    <string name="pref_restart_title">Yeniden başlat</string>
+    <string name="pref_restart_summary">Başlatıcıyı yeniden başlat</string>
+</resources>

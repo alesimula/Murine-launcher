@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="pref_group_grid_size_title">グリッドサイズ</string>
+    <string name="pref_group_grid_size_desc">行数と列数を変更します</string>
+    <string name="pref_group_icon_scale_title">アイコンの倍率</string>
+    <string name="pref_group_icon_scale_desc">アイコンとラベルの大きさを変更します</string>
+    <string name="pref_group_qsb_transparency">透明度</string>
+    <string name="pref_group_qsb_transparency_desc">クイック検索バーの透明効果を設定します</string>
+
+    <string name="pref_category_general_title">全般</string>
+    <string name="pref_category_general_desc">全体の設定</string>
+    <string name="pref_category_icons_title">アイコン</string>
+    <string name="pref_category_icons_desc">アイコンのサイズと外観を設定します</string>
+    <string name="pref_category_home_title">ホーム画面</string>
+    <string name="pref_category_home_desc">ホーム画面をカスタマイズします</string>
+    <string name="pref_category_drawer_title">アプリ一覧</string>
+    <string name="pref_category_drawer_desc">アプリ一覧をカスタマイズします</string>
+    <string name="pref_category_qsb_title">検索</string>
+    <string name="pref_category_qsb_desc">クイック検索バーをカスタマイズします</string>
+    <string name="pref_category_misc_title">その他</string>
+    <string name="pref_category_misc_desc">その他のオプション</string>
+
+    <string name="pref_subcategory_day_night">UIテーマ</string>
+    <string name="pref_subcategory_layout">レイアウト</string>
+    <string name="pref_subcategory_appearance">外観</string>
+    <string name="pref_subcategory_persistency">保持</string>
+    <string name="pref_subcategory_gestures">ジェスチャー</string>
+    <string name="pref_subcategory_options">オプション</string>
+    <string name="pref_subcategory_backup">バックアップ</string>
+
+    <string name="backup_export_title">バックアップをエクスポート</string>
+    <string name="backup_export_desc">レイアウト、ウィジェット、設定を保存します</string>
+    <string name="backup_export_done">バックアップを保存しました</string>
+    <string name="backup_import_title">バックアップを復元</string>
+    <string name="backup_import_desc">保存したレイアウトと設定を復元します</string>
+    <string name="backup_import_confirm">ランチャーが再起動し、設定が復元されます</string>
+
+    <string name="pref_label_ui_mode_system">システム</string>
+    <string name="pref_label_ui_mode_day">ライト</string>
+    <string name="pref_label_ui_mode_night">ダーク</string>
+    <string name="pref_label_grid_width">グリッドの幅</string>
+    <string name="pref_label_grid_height">グリッドの高さ</string>
+    <string name="pref_label_icon_size">アイコンのサイズ (%)</string>
+    <string name="pref_label_icon_label_size">ラベルのサイズ (%)</string>
+
+    <string name="pref_label_visibility_title">ラベルの表示</string>
+    <string name="label_visibility_never">表示しない</string>
+    <string name="label_visibility_drawer_only">アプリ一覧のみ</string>
+    <string name="label_visibility_home_only">ホーム画面のみ</string>
+    <string name="label_visibility_auto">自動</string>
+    <string name="pref_adaptive_icons_title">アダプティブアイコン</string>
+    <string name="pref_adaptive_icons_summary">アダプティブでないアイコンの形を変更します</string>
+    <string name="pref_adaptive_icons_except_system">システムアプリを除く</string>
+    <string name="pref_adaptive_icons_force_legacy">従来のアイコンを強制</string>
+    <string name="pref_adaptive_icons_never">形を変更しない</string>
+    <string name="pref_themed_icons_title">モノクロアイコン</string>
+    <string name="pref_themed_icons_summary">システムのテーマに合わせてアイコンの色を変更します</string>
+    <string name="label_visibility_always">常に表示</string>
+
+    <string name="pref_icon_shape_title">アイコンの形</string>
+    <string name="icon_shape_system">システム</string>
+    <string name="icon_shape_circle">円</string>
+    <string name="icon_shape_tofu">Tofu</string>
+    <string name="icon_shape_ios">iOS</string>
+    <string name="icon_shape_squircle">Squircle</string>
+    <string name="icon_shape_xperia">Xperia</string>
+    <string name="icon_shape_riceballs">RiceBalls</string>
+
+    <string name="pref_drawer_type_title">アプリ一覧の種類</string>
+    <string name="drawer_type_frosted">すりガラス</string>
+    <string name="drawer_type_mica">MICA</string>
+    <string name="drawer_type_translucent">半透明</string>
+
+    <string name="pref_drawer_grid_width_override_title">グリッドの幅を上書き</string>
+    <string name="pref_drawer_grid_width_override_summary">アプリ一覧で独自の列数を使用します</string>
+    <string name="pref_drawer_padding_title">左右の余白</string>
+
+    <string name="pref_blur_preview_title">プレビュー時のぼかし</string>
+    <string name="pref_blur_preview_desc">アイコンやウィジェットのドラッグ中に壁紙をぼかします</string>
+
+    <string name="pref_lock_home_screen_title">ホーム画面をロック</string>
+    <string name="pref_lock_home_screen_summary">アイコンとウィジェットの移動を禁止します</string>
+
+    <string name="pref_double_tap_to_sleep_title">ダブルタップでロック</string>
+    <string name="pref_double_tap_to_sleep_summary">空いている場所をダブルタップして画面をロックします</string>
+    <string name="pref_swipe_down_notifications_title">スワイプで通知を表示</string>
+    <string name="pref_swipe_down_notifications_summary">ホーム画面で下にスワイプして通知パネルを開きます</string>
+
+    <!-- Murine search bar -->
+    <string name="murine_search_hint">検索…</string>
+    <string name="murine_search_hint_provider">%1$s で検索</string>
+    <string name="murine_search_hint_generic">ウェブで検索</string>
+    <string name="murine_search_button_desc">検索</string>
+    <string name="murine_voice_search_desc">音声検索</string>
+    <string name="murine_voice_search_prompt">お話しください...</string>
+    <string name="murine_lens_desc">ビジュアル検索</string>
+    <!-- Murine search bar preferences -->
+    <string name="pref_qsb_show_search_bar_title">検索バーを表示</string>
+    <string name="pref_qsb_search_provider_title">検索エンジン</string>
+    <string name="pref_qsb_enable_lens_title">Lens を有効にする</string>
+    <string name="pref_qsb_enable_lens_summary">クイック検索に Google Lens ボタンを表示します</string>
+    <string name="pref_qsb_box_blur">検索バブルをぼかす</string>
+    <string name="pref_qsb_box_blur_desc">検索バブルに MICA 効果を表示します</string>
+    <string name="pref_qsb_bar_alpha">検索バーの不透明度</string>
+    <string name="pref_qsb_box_alpha">検索バブルの不透明度</string>
+    <string name="pref_qsb_custom_provider_title">カスタム検索URL</string>
+    <string name="pref_qsb_history_size_title">検索履歴の件数</string>
+    <string name="pref_qsb_history_size_summary">最大件数</string>
+    <string name="pref_qsb_clear_history_title">検索履歴を消去</string>
+    <string name="pref_qsb_clear_history_summary">保存されたすべての検索語句を削除します</string>
+    <string name="pref_qsb_clear_history_confirm_title">検索履歴を消去しますか?</string>
+    <string name="pref_qsb_clear_history_confirm_message">保存されたすべての検索語句が完全に削除されます。</string>
+    <string name="pref_qsb_clear_history_toast">検索履歴を消去しました</string>
+
+    <!-- Murine smartspace / clock widget -->
+    <string name="smartspace_mode_clock">時計</string>
+    <string name="smartspace_mode_google">Google Smartspace</string>
+    <string name="smartspace_mode_disabled">無効</string>
+    <string name="pref_smartspace_title">最初の画面のウィジェット</string>
+    <string name="pref_smartspace_summary_clock">今日の日付と時計を表示します</string>
+    <string name="pref_smartspace_summary_google">Google Smartspace ウィジェットを表示します</string>
+    <string name="pref_smartspace_summary_disabled">最初の画面にウィジェットを表示しません</string>
+
+    <string name="pref_blur_unsupported_warning"><![CDATA[壁紙のぼかしは、このOEM/ROMでは完全にサポートされていないか、有効になっていない場合があります。問題が発生する場合は、ディスプレイ設定または開発者向けオプションで &quot;ウィンドウレベルのぼかしを許可&quot; の項目を確認してください。<br/>また、root化された端末では <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">このMagiskモジュール</a> を有効にする方法もあります]]></string>
+
+    <!-- Notification badges -->
+    <string name="pref_notification_badge_count_title">通知の件数</string>
+    <string name="pref_notification_badge_count_desc">通知ドットに件数を表示します</string>
+
+    <!-- Icon packs -->
+    <string name="pref_category_icon_pack_title">アイコンパック</string>
+    <string name="pref_category_icon_pack_summary">サードパーティのアイコンパックでアプリのアイコンを変更します</string>
+    <string name="pref_icon_pack_system_only_title">システムアプリのみ</string>
+    <string name="pref_icon_pack_system_only_summary">アイコンパックをシステムアプリのみに適用します</string>
+    <string name="pref_icon_pack_ignore_shape_title">パックの形を無視</string>
+    <string name="pref_icon_pack_ignore_shape_summary">パックの形ではなくランチャーのアイコンの形を使用します</string>
+    <string name="pref_icon_readapt_frame_title">枠に合わせ直す</string>
+    <string name="pref_icon_readapt_frame_summary">テーマのないアイコンを指定の形に収めようとします</string>
+    <string name="pref_icon_pack_themed_only_title">テーマ付きアイコンのみ</string>
+    <string name="pref_icon_pack_themed_only_summary">アイコンパックにないアイコンはそのままにします</string>
+
+    <!-- Hidden apps -->
+    <string name="pref_category_hidden_apps_title">非表示のアプリ</string>
+    <string name="pref_category_hidden_apps_summary">アプリ一覧からアプリを非表示にします</string>
+    <string name="hidden_apps_label">非表示</string>
+    <string name="hidden_apps_search_hint">アプリを検索...</string>
+    <string name="pref_search_within_hidden_title">非表示のアプリも検索</string>
+    <string name="pref_search_within_hidden_summary">アプリ一覧の検索で非表示のアプリも見つかります</string>
+
+    <!-- App info sheet -->
+    <string name="app_info_package">パッケージ</string>
+    <string name="app_info_version">バージョン</string>
+    <string name="app_info_version_value">%1$s (%2$d)</string>
+    <string name="app_info_last_update">最終更新</string>
+    <string name="app_info_source">提供元</string>
+    <string name="app_info_source_system">システム</string>
+    <string name="app_info_icon_pack_default">デフォルト (全体)</string>
+    <string name="app_info_copied_toast">クリップボードにコピーしました</string>
+    <string name="app_info_icon_pack_show_all">すべてのパックを表示</string>
+    <string name="app_info_edit_label">ラベルを編集</string>
+
+    <!-- Per-app custom icon picker -->
+    <string name="icon_picker_search_hint">アイコンを検索...</string>
+
+    <!-- Clear custom icons -->
+    <string name="pref_clear_custom_icons_title">カスタムアイコンを消去</string>
+    <string name="pref_clear_custom_icons_summary">アプリごとのアイコン設定をすべて削除します</string>
+    <string name="pref_clear_custom_icons_summary_none">カスタムアイコンは未設定です</string>
+    <string name="pref_clear_custom_icons_confirm_title">カスタムアイコンを消去しますか?</string>
+    <string name="pref_clear_custom_icons_confirm_message">アプリごとのアイコン設定がすべて全体の設定に戻ります。</string>
+    <string name="pref_clear_custom_icons_toast">カスタムアイコンを消去しました</string>
+
+    <!-- Misc -->
+    <string name="pref_default_launcher_title">デフォルトのランチャー</string>
+    <string name="pref_restart_title">再起動</string>
+    <string name="pref_restart_summary">ランチャーを再起動します</string>
+</resources>

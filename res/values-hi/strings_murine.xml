@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="pref_group_grid_size_title">ग्रिड आकार</string>
+    <string name="pref_group_grid_size_desc">पंक्तियों और स्तंभों की संख्या बदलें</string>
+    <string name="pref_group_icon_scale_title">आइकन स्केल</string>
+    <string name="pref_group_icon_scale_desc">आइकन और लेबल का आकार बदलें</string>
+    <string name="pref_group_qsb_transparency">पारदर्शिता</string>
+    <string name="pref_group_qsb_transparency_desc">त्वरित खोज बॉक्स के लिए पारदर्शिता प्रभाव सेट करें</string>
+
+    <string name="pref_category_general_title">सामान्य</string>
+    <string name="pref_category_general_desc">वैश्विक प्राथमिकताएँ</string>
+    <string name="pref_category_icons_title">आइकन</string>
+    <string name="pref_category_icons_desc">आइकन का आकार और रूप सेट करें</string>
+    <string name="pref_category_home_title">होम स्क्रीन</string>
+    <string name="pref_category_home_desc">अपनी होम स्क्रीन को अनुकूलित करें</string>
+    <string name="pref_category_drawer_title">ऐप ड्रॉअर</string>
+    <string name="pref_category_drawer_desc">अपने ऐप ड्रॉअर को अनुकूलित करें</string>
+    <string name="pref_category_qsb_title">खोज</string>
+    <string name="pref_category_qsb_desc">त्वरित खोज बॉक्स को अनुकूलित करें</string>
+    <string name="pref_category_misc_title">विविध</string>
+    <string name="pref_category_misc_desc">अन्य विकल्प</string>
+
+    <string name="pref_subcategory_day_night">यूआई थीम</string>
+    <string name="pref_subcategory_layout">लेआउट</string>
+    <string name="pref_subcategory_appearance">दिखावट</string>
+    <string name="pref_subcategory_persistency">स्थायित्व</string>
+    <string name="pref_subcategory_gestures">जेस्चर</string>
+    <string name="pref_subcategory_options">विकल्प</string>
+    <string name="pref_subcategory_backup">बैकअप</string>
+
+    <string name="backup_export_title">बैकअप निर्यात करें</string>
+    <string name="backup_export_desc">लेआउट, विजेट और सेटिंग्स सहेजें</string>
+    <string name="backup_export_done">बैकअप सहेजा गया</string>
+    <string name="backup_import_title">बैकअप पुनर्स्थापित करें</string>
+    <string name="backup_import_desc">सहेजे गए लेआउट और सेटिंग्स पुनर्स्थापित करें</string>
+    <string name="backup_import_confirm">इससे लॉन्चर पुनः आरंभ होगा और आपका कॉन्फ़िगरेशन पुनर्स्थापित होगा</string>
+
+    <string name="pref_label_ui_mode_system">सिस्टम</string>
+    <string name="pref_label_ui_mode_day">हल्का</string>
+    <string name="pref_label_ui_mode_night">गहरा</string>
+    <string name="pref_label_grid_width">ग्रिड चौड़ाई</string>
+    <string name="pref_label_grid_height">ग्रिड ऊँचाई</string>
+    <string name="pref_label_icon_size">आइकन आकार (%)</string>
+    <string name="pref_label_icon_label_size">लेबल आकार (%)</string>
+
+    <string name="pref_label_visibility_title">लेबल दृश्यता</string>
+    <string name="label_visibility_never">कभी नहीं</string>
+    <string name="label_visibility_drawer_only">केवल ड्रॉअर</string>
+    <string name="label_visibility_home_only">केवल होम</string>
+    <string name="label_visibility_auto">स्वचालित</string>
+    <string name="pref_adaptive_icons_title">अनुकूली आइकन</string>
+    <string name="pref_adaptive_icons_summary">उन आइकनों को दोबारा आकार दें जो अनुकूली नहीं हैं</string>
+    <string name="pref_adaptive_icons_except_system">सिस्टम ऐप्स को छोड़कर</string>
+    <string name="pref_adaptive_icons_force_legacy">पुराने आइकन बाध्य करें</string>
+    <string name="pref_adaptive_icons_never">कभी दोबारा आकार न दें</string>
+    <string name="pref_themed_icons_title">मोनोक्रोम आइकन</string>
+    <string name="pref_themed_icons_summary">सिस्टम थीम से मेल खाने के लिए आइकन का रंग बदलें</string>
+    <string name="label_visibility_always">हमेशा</string>
+
+    <string name="pref_icon_shape_title">आइकन आकृति</string>
+    <string name="icon_shape_system">सिस्टम</string>
+    <string name="icon_shape_circle">वृत्त</string>
+    <string name="icon_shape_tofu">Tofu</string>
+    <string name="icon_shape_ios">iOS</string>
+    <string name="icon_shape_squircle">Squircle</string>
+    <string name="icon_shape_xperia">Xperia</string>
+    <string name="icon_shape_riceballs">RiceBalls</string>
+
+    <string name="pref_drawer_type_title">ड्रॉअर प्रकार</string>
+    <string name="drawer_type_frosted">फ्रॉस्टेड</string>
+    <string name="drawer_type_mica">MICA</string>
+    <string name="drawer_type_translucent">पारभासी</string>
+
+    <string name="pref_drawer_grid_width_override_title">ग्रिड चौड़ाई अधिलेखित करें</string>
+    <string name="pref_drawer_grid_width_override_summary">ऐप ड्रॉअर में कस्टम स्तंभ संख्या का उपयोग करें</string>
+    <string name="pref_drawer_padding_title">किनारे का अंतर</string>
+
+    <string name="pref_blur_preview_title">धुंधला पूर्वावलोकन मोड</string>
+    <string name="pref_blur_preview_desc">आइकन और विजेट खींचते समय वॉलपेपर धुंधला करें</string>
+
+    <string name="pref_lock_home_screen_title">होम स्क्रीन लॉक करें</string>
+    <string name="pref_lock_home_screen_summary">आइकन और विजेट को हिलने से रोकें</string>
+
+    <string name="pref_double_tap_to_sleep_title">सोने के लिए दो बार टैप करें</string>
+    <string name="pref_double_tap_to_sleep_summary">स्क्रीन लॉक करने के लिए खाली जगह पर दो बार टैप करें</string>
+    <string name="pref_swipe_down_notifications_title">सूचनाओं के लिए नीचे स्वाइप करें</string>
+    <string name="pref_swipe_down_notifications_summary">सूचना पैनल खोलने के लिए होम स्क्रीन पर नीचे स्वाइप करें</string>
+
+    <!-- Murine search bar -->
+    <string name="murine_search_hint">खोजें…</string>
+    <string name="murine_search_hint_provider">%1$s से खोजें</string>
+    <string name="murine_search_hint_generic">वेब पर खोजें</string>
+    <string name="murine_search_button_desc">खोजें</string>
+    <string name="murine_voice_search_desc">वॉइस खोज</string>
+    <string name="murine_voice_search_prompt">अब बोलें...</string>
+    <string name="murine_lens_desc">दृश्य खोज</string>
+    <!-- Murine search bar preferences -->
+    <string name="pref_qsb_show_search_bar_title">खोज बार दिखाएँ</string>
+    <string name="pref_qsb_search_provider_title">खोज प्रदाता</string>
+    <string name="pref_qsb_enable_lens_title">Lens सक्षम करें</string>
+    <string name="pref_qsb_enable_lens_summary">त्वरित खोज में Google Lens बटन दिखाएँ</string>
+    <string name="pref_qsb_box_blur">खोज बबल धुंधला करें</string>
+    <string name="pref_qsb_box_blur_desc">खोज बबल के लिए MICA प्रभाव दिखाएँ</string>
+    <string name="pref_qsb_bar_alpha">खोज बार अपारदर्शिता</string>
+    <string name="pref_qsb_box_alpha">खोज बबल अपारदर्शिता</string>
+    <string name="pref_qsb_custom_provider_title">कस्टम खोज URL</string>
+    <string name="pref_qsb_history_size_title">खोज इतिहास का आकार</string>
+    <string name="pref_qsb_history_size_summary">अधिकतम प्रविष्टियाँ</string>
+    <string name="pref_qsb_clear_history_title">खोज इतिहास साफ़ करें</string>
+    <string name="pref_qsb_clear_history_summary">सभी सहेजी गई खोजें हटाएँ</string>
+    <string name="pref_qsb_clear_history_confirm_title">खोज इतिहास साफ़ करें?</string>
+    <string name="pref_qsb_clear_history_confirm_message">इससे सभी सहेजी गई खोजें स्थायी रूप से हट जाएँगी।</string>
+    <string name="pref_qsb_clear_history_toast">खोज इतिहास साफ़ किया गया</string>
+
+    <!-- Murine smartspace / clock widget -->
+    <string name="smartspace_mode_clock">घड़ी</string>
+    <string name="smartspace_mode_google">Google Smartspace</string>
+    <string name="smartspace_mode_disabled">अक्षम</string>
+    <string name="pref_smartspace_title">पहली स्क्रीन का विजेट</string>
+    <string name="pref_smartspace_summary_clock">आज की तारीख के साथ घड़ी दिखाता है</string>
+    <string name="pref_smartspace_summary_google">Google का Smartspace विजेट दिखाता है</string>
+    <string name="pref_smartspace_summary_disabled">पहली स्क्रीन पर कोई विजेट नहीं</string>
+
+    <string name="pref_blur_unsupported_warning"><![CDATA[हो सकता है कि इस OEM/ROM द्वारा वॉलपेपर ब्लर पूरी तरह समर्थित या सक्षम न हो; अगर समस्या आए तो डिस्प्ले विकल्प या डेवलपर विकल्प में &quot;Allow window-level blurs&quot; विकल्प देखें।<br/>वैकल्पिक रूप से, रूट किए गए डिवाइस पर <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">यह Magisk मॉड्यूल</a> सक्षम करके देखें]]></string>
+
+    <!-- Notification badges -->
+    <string name="pref_notification_badge_count_title">सूचना गणना</string>
+    <string name="pref_notification_badge_count_desc">सूचना बिंदुओं पर संख्या दिखाएँ</string>
+
+    <!-- Icon packs -->
+    <string name="pref_category_icon_pack_title">आइकन पैक</string>
+    <string name="pref_category_icon_pack_summary">तृतीय-पक्ष आइकन पैक से ऐप आइकन बदलें</string>
+    <string name="pref_icon_pack_system_only_title">केवल सिस्टम ऐप्स</string>
+    <string name="pref_icon_pack_system_only_summary">आइकन पैक केवल सिस्टम ऐप्स पर लागू करें</string>
+    <string name="pref_icon_pack_ignore_shape_title">पैक की आकृति अनदेखा करें</string>
+    <string name="pref_icon_pack_ignore_shape_summary">पैक की जगह लॉन्चर की आइकन आकृति का उपयोग करें</string>
+    <string name="pref_icon_readapt_frame_title">फ़्रेम के अनुसार ढालें</string>
+    <string name="pref_icon_readapt_frame_summary">बिना थीम वाले आइकनों को चुनी गई आकृति में फ़िट करने का प्रयास करता है</string>
+    <string name="pref_icon_pack_themed_only_title">केवल थीम वाले आइकन</string>
+    <string name="pref_icon_pack_themed_only_summary">आइकन पैक में मौजूद न होने वाले आइकन अपरिवर्तित छोड़ें</string>
+
+    <!-- Hidden apps -->
+    <string name="pref_category_hidden_apps_title">छिपे हुए ऐप्स</string>
+    <string name="pref_category_hidden_apps_summary">ऐप ड्रॉअर से ऐप्स छिपाएँ</string>
+    <string name="hidden_apps_label">छिपा हुआ</string>
+    <string name="hidden_apps_search_hint">ऐप्स खोजें...</string>
+    <string name="pref_search_within_hidden_title">छिपे हुए ऐप्स में खोजें</string>
+    <string name="pref_search_within_hidden_summary">ऐप ड्रॉअर खोज छिपे हुए ऐप्स भी ढूँढ़ती है</string>
+
+    <!-- App info sheet -->
+    <string name="app_info_package">पैकेज</string>
+    <string name="app_info_version">संस्करण</string>
+    <string name="app_info_version_value">%1$s (%2$d)</string>
+    <string name="app_info_last_update">अंतिम अपडेट</string>
+    <string name="app_info_source">स्रोत</string>
+    <string name="app_info_source_system">सिस्टम</string>
+    <string name="app_info_icon_pack_default">डिफ़ॉल्ट (वैश्विक)</string>
+    <string name="app_info_copied_toast">क्लिपबोर्ड पर कॉपी किया गया</string>
+    <string name="app_info_icon_pack_show_all">सभी पैक दिखाएँ</string>
+    <string name="app_info_edit_label">लेबल संपादित करें</string>
+
+    <!-- Per-app custom icon picker -->
+    <string name="icon_picker_search_hint">आइकन खोजें...</string>
+
+    <!-- Clear custom icons -->
+    <string name="pref_clear_custom_icons_title">कस्टम आइकन साफ़ करें</string>
+    <string name="pref_clear_custom_icons_summary">प्रति-ऐप सभी आइकन पैक अधिलेखन हटाएँ</string>
+    <string name="pref_clear_custom_icons_summary_none">कोई कस्टम आइकन सेट नहीं</string>
+    <string name="pref_clear_custom_icons_confirm_title">कस्टम आइकन साफ़ करें?</string>
+    <string name="pref_clear_custom_icons_confirm_message">इससे प्रति-ऐप सभी आइकन पैक अधिलेखन वैश्विक सेटिंग पर रीसेट हो जाएँगे।</string>
+    <string name="pref_clear_custom_icons_toast">कस्टम आइकन साफ़ किए गए</string>
+
+    <!-- Misc -->
+    <string name="pref_default_launcher_title">डिफ़ॉल्ट लॉन्चर</string>
+    <string name="pref_restart_title">पुनः आरंभ करें</string>
+    <string name="pref_restart_summary">लॉन्चर पुनः आरंभ करें</string>
+</resources>

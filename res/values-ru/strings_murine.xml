@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="pref_group_grid_size_title">Размер сетки</string>
+    <string name="pref_group_grid_size_desc">Изменить количество строк и столбцов</string>
+    <string name="pref_group_icon_scale_title">Масштаб значков</string>
+    <string name="pref_group_icon_scale_desc">Изменить размер значков и подписей</string>
+    <string name="pref_group_qsb_transparency">Прозрачность</string>
+    <string name="pref_group_qsb_transparency_desc">Настроить эффекты прозрачности строки быстрого поиска</string>
+
+    <string name="pref_category_general_title">Общие</string>
+    <string name="pref_category_general_desc">Общие настройки</string>
+    <string name="pref_category_icons_title">Значки</string>
+    <string name="pref_category_icons_desc">Настроить размер и вид значков</string>
+    <string name="pref_category_home_title">Главный экран</string>
+    <string name="pref_category_home_desc">Настроить главный экран</string>
+    <string name="pref_category_drawer_title">Меню приложений</string>
+    <string name="pref_category_drawer_desc">Настроить меню приложений</string>
+    <string name="pref_category_qsb_title">Поиск</string>
+    <string name="pref_category_qsb_desc">Настроить строку быстрого поиска</string>
+    <string name="pref_category_misc_title">Разное</string>
+    <string name="pref_category_misc_desc">Другие параметры</string>
+
+    <string name="pref_subcategory_day_night">Тема интерфейса</string>
+    <string name="pref_subcategory_layout">Расположение</string>
+    <string name="pref_subcategory_appearance">Внешний вид</string>
+    <string name="pref_subcategory_persistency">Сохранение</string>
+    <string name="pref_subcategory_gestures">Жесты</string>
+    <string name="pref_subcategory_options">Параметры</string>
+    <string name="pref_subcategory_backup">Резервная копия</string>
+
+    <string name="backup_export_title">Экспорт резервной копии</string>
+    <string name="backup_export_desc">Сохранить расположение, виджеты и настройки</string>
+    <string name="backup_export_done">Резервная копия сохранена</string>
+    <string name="backup_import_title">Восстановить из копии</string>
+    <string name="backup_import_desc">Восстановить сохранённое расположение и настройки</string>
+    <string name="backup_import_confirm">Лаунчер перезапустится, и ваша конфигурация будет восстановлена</string>
+
+    <string name="pref_label_ui_mode_system">Системная</string>
+    <string name="pref_label_ui_mode_day">Светлая</string>
+    <string name="pref_label_ui_mode_night">Тёмная</string>
+    <string name="pref_label_grid_width">Ширина сетки</string>
+    <string name="pref_label_grid_height">Высота сетки</string>
+    <string name="pref_label_icon_size">Размер значков (%)</string>
+    <string name="pref_label_icon_label_size">Размер подписей (%)</string>
+
+    <string name="pref_label_visibility_title">Отображение подписей</string>
+    <string name="label_visibility_never">Никогда</string>
+    <string name="label_visibility_drawer_only">Только в меню</string>
+    <string name="label_visibility_home_only">Только на главном экране</string>
+    <string name="label_visibility_auto">Авто</string>
+    <string name="pref_adaptive_icons_title">Адаптивные значки</string>
+    <string name="pref_adaptive_icons_summary">Изменять форму неадаптивных значков</string>
+    <string name="pref_adaptive_icons_except_system">Кроме системных приложений</string>
+    <string name="pref_adaptive_icons_force_legacy">Принудительно старые значки</string>
+    <string name="pref_adaptive_icons_never">Не изменять форму</string>
+    <string name="pref_themed_icons_title">Монохромные значки</string>
+    <string name="pref_themed_icons_summary">Перекрашивать значки под тему системы</string>
+    <string name="label_visibility_always">Всегда</string>
+
+    <string name="pref_icon_shape_title">Форма значков</string>
+    <string name="icon_shape_system">Системная</string>
+    <string name="icon_shape_circle">Круг</string>
+    <string name="icon_shape_tofu">Тофу</string>
+    <string name="icon_shape_ios">iOS</string>
+    <string name="icon_shape_squircle">Squircle</string>
+    <string name="icon_shape_xperia">Xperia</string>
+    <string name="icon_shape_riceballs">RiceBalls</string>
+
+    <string name="pref_drawer_type_title">Тип меню</string>
+    <string name="drawer_type_frosted">Матовый</string>
+    <string name="drawer_type_mica">MICA</string>
+    <string name="drawer_type_translucent">Полупрозрачный</string>
+
+    <string name="pref_drawer_grid_width_override_title">Переопределить ширину сетки</string>
+    <string name="pref_drawer_grid_width_override_summary">Использовать своё количество столбцов в меню приложений</string>
+    <string name="pref_drawer_padding_title">Боковые отступы</string>
+
+    <string name="pref_blur_preview_title">Размытие в режиме предпросмотра</string>
+    <string name="pref_blur_preview_desc">Размывать обои при перетаскивании значков и виджетов</string>
+
+    <string name="pref_lock_home_screen_title">Заблокировать главный экран</string>
+    <string name="pref_lock_home_screen_summary">Запретить перемещение значков и виджетов</string>
+
+    <string name="pref_double_tap_to_sleep_title">Двойное касание для блокировки</string>
+    <string name="pref_double_tap_to_sleep_summary">Дважды коснитесь пустого места, чтобы заблокировать экран</string>
+    <string name="pref_swipe_down_notifications_title">Свайп вниз для уведомлений</string>
+    <string name="pref_swipe_down_notifications_summary">Проведите вниз по главному экрану, чтобы открыть панель уведомлений</string>
+
+    <!-- Murine search bar -->
+    <string name="murine_search_hint">Поиск…</string>
+    <string name="murine_search_hint_provider">Искать в %1$s</string>
+    <string name="murine_search_hint_generic">Искать в интернете</string>
+    <string name="murine_search_button_desc">Поиск</string>
+    <string name="murine_voice_search_desc">Голосовой поиск</string>
+    <string name="murine_voice_search_prompt">Говорите...</string>
+    <string name="murine_lens_desc">Визуальный поиск</string>
+    <!-- Murine search bar preferences -->
+    <string name="pref_qsb_show_search_bar_title">Показывать строку поиска</string>
+    <string name="pref_qsb_search_provider_title">Поисковая система</string>
+    <string name="pref_qsb_enable_lens_title">Включить Lens</string>
+    <string name="pref_qsb_enable_lens_summary">Показывать кнопку Google Lens в быстром поиске</string>
+    <string name="pref_qsb_box_blur">Размытие панели поиска</string>
+    <string name="pref_qsb_box_blur_desc">Показывать эффект MICA для панели поиска</string>
+    <string name="pref_qsb_bar_alpha">Прозрачность строки поиска</string>
+    <string name="pref_qsb_box_alpha">Прозрачность панели поиска</string>
+    <string name="pref_qsb_custom_provider_title">Свой URL поиска</string>
+    <string name="pref_qsb_history_size_title">Размер истории поиска</string>
+    <string name="pref_qsb_history_size_summary">Максимум записей</string>
+    <string name="pref_qsb_clear_history_title">Очистить историю поиска</string>
+    <string name="pref_qsb_clear_history_summary">Удалить все сохранённые поисковые запросы</string>
+    <string name="pref_qsb_clear_history_confirm_title">Очистить историю поиска?</string>
+    <string name="pref_qsb_clear_history_confirm_message">Все сохранённые поисковые запросы будут удалены безвозвратно.</string>
+    <string name="pref_qsb_clear_history_toast">История поиска очищена</string>
+
+    <!-- Murine smartspace / clock widget -->
+    <string name="smartspace_mode_clock">Часы</string>
+    <string name="smartspace_mode_google">Google Smartspace</string>
+    <string name="smartspace_mode_disabled">Отключено</string>
+    <string name="pref_smartspace_title">Виджет первого экрана</string>
+    <string name="pref_smartspace_summary_clock">Показывает часы с сегодняшней датой</string>
+    <string name="pref_smartspace_summary_google">Показывает виджет Google Smartspace</string>
+    <string name="pref_smartspace_summary_disabled">Без виджета на первом экране</string>
+
+    <string name="pref_blur_unsupported_warning"><![CDATA[Размытие обоев может не полностью поддерживаться или быть отключено этим OEM/ROM; если возникнут проблемы, поищите параметр &quot;Разрешить размытие на уровне окон&quot; в настройках экрана или в параметрах разработчика.<br/>Также можно включить <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">этот модуль Magisk</a> на устройствах с root-доступом]]></string>
+
+    <!-- Notification badges -->
+    <string name="pref_notification_badge_count_title">Количество уведомлений</string>
+    <string name="pref_notification_badge_count_desc">Показывать число на точках уведомлений</string>
+
+    <!-- Icon packs -->
+    <string name="pref_category_icon_pack_title">Пакет значков</string>
+    <string name="pref_category_icon_pack_summary">Изменить значки приложений с помощью сторонних пакетов</string>
+    <string name="pref_icon_pack_system_only_title">Только системные приложения</string>
+    <string name="pref_icon_pack_system_only_summary">Применять пакет только к системным приложениям</string>
+    <string name="pref_icon_pack_ignore_shape_title">Игнорировать форму пакета</string>
+    <string name="pref_icon_pack_ignore_shape_summary">Использовать форму значков лаунчера вместо формы пакета</string>
+    <string name="pref_icon_readapt_frame_title">Подогнать под рамку</string>
+    <string name="pref_icon_readapt_frame_summary">Пытается вписать значки без темы в заданную форму</string>
+    <string name="pref_icon_pack_themed_only_title">Только тематические значки</string>
+    <string name="pref_icon_pack_themed_only_summary">Оставлять без изменений значки, которых нет в пакете</string>
+
+    <!-- Hidden apps -->
+    <string name="pref_category_hidden_apps_title">Скрытые приложения</string>
+    <string name="pref_category_hidden_apps_summary">Скрыть приложения из меню приложений</string>
+    <string name="hidden_apps_label">Скрытые</string>
+    <string name="hidden_apps_search_hint">Поиск приложений...</string>
+    <string name="pref_search_within_hidden_title">Искать среди скрытых приложений</string>
+    <string name="pref_search_within_hidden_summary">Поиск в меню приложений находит скрытые приложения</string>
+
+    <!-- App info sheet -->
+    <string name="app_info_package">Пакет</string>
+    <string name="app_info_version">Версия</string>
+    <string name="app_info_version_value">%1$s (%2$d)</string>
+    <string name="app_info_last_update">Последнее обновление</string>
+    <string name="app_info_source">Источник</string>
+    <string name="app_info_source_system">Система</string>
+    <string name="app_info_icon_pack_default">По умолчанию (глобально)</string>
+    <string name="app_info_copied_toast">Скопировано в буфер обмена</string>
+    <string name="app_info_icon_pack_show_all">Показать все пакеты</string>
+    <string name="app_info_edit_label">Изменить подпись</string>
+
+    <!-- Per-app custom icon picker -->
+    <string name="icon_picker_search_hint">Поиск значков...</string>
+
+    <!-- Clear custom icons -->
+    <string name="pref_clear_custom_icons_title">Очистить свои значки</string>
+    <string name="pref_clear_custom_icons_summary">Удалить все переопределения значков для отдельных приложений</string>
+    <string name="pref_clear_custom_icons_summary_none">Свои значки не заданы</string>
+    <string name="pref_clear_custom_icons_confirm_title">Очистить свои значки?</string>
+    <string name="pref_clear_custom_icons_confirm_message">Все переопределения значков для отдельных приложений будут сброшены до глобальной настройки.</string>
+    <string name="pref_clear_custom_icons_toast">Свои значки очищены</string>
+
+    <!-- Misc -->
+    <string name="pref_default_launcher_title">Лаунчер по умолчанию</string>
+    <string name="pref_restart_title">Перезапустить</string>
+    <string name="pref_restart_summary">Перезапустить лаунчер</string>
+</resources>

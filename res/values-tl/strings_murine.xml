@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="pref_group_grid_size_title">Laki ng grid</string>
+    <string name="pref_group_grid_size_desc">Baguhin ang bilang ng mga hilera at hanay</string>
+    <string name="pref_group_icon_scale_title">Sukat ng icon</string>
+    <string name="pref_group_icon_scale_desc">Baguhin ang sukat ng mga icon at label</string>
+    <string name="pref_group_qsb_transparency">Transparency</string>
+    <string name="pref_group_qsb_transparency_desc">Itakda ang mga epekto ng transparency para sa mabilisang search box</string>
+
+    <string name="pref_category_general_title">Pangkalahatan</string>
+    <string name="pref_category_general_desc">Mga pandaigdigang kagustuhan</string>
+    <string name="pref_category_icons_title">Mga icon</string>
+    <string name="pref_category_icons_desc">Itakda ang laki at anyo ng mga icon</string>
+    <string name="pref_category_home_title">Home screen</string>
+    <string name="pref_category_home_desc">I-customize ang iyong home screen</string>
+    <string name="pref_category_drawer_title">App drawer</string>
+    <string name="pref_category_drawer_desc">I-customize ang iyong app drawer</string>
+    <string name="pref_category_qsb_title">Paghahanap</string>
+    <string name="pref_category_qsb_desc">I-customize ang mabilisang search box</string>
+    <string name="pref_category_misc_title">Iba pa</string>
+    <string name="pref_category_misc_desc">Iba pang opsyon</string>
+
+    <string name="pref_subcategory_day_night">Tema ng UI</string>
+    <string name="pref_subcategory_layout">Layout</string>
+    <string name="pref_subcategory_appearance">Anyo</string>
+    <string name="pref_subcategory_persistency">Pananatili</string>
+    <string name="pref_subcategory_gestures">Mga galaw</string>
+    <string name="pref_subcategory_options">Mga opsyon</string>
+    <string name="pref_subcategory_backup">Backup</string>
+
+    <string name="backup_export_title">I-export ang backup</string>
+    <string name="backup_export_desc">I-save ang layout, mga widget at setting</string>
+    <string name="backup_export_done">Na-save ang backup</string>
+    <string name="backup_import_title">Ibalik ang backup</string>
+    <string name="backup_import_desc">Ibalik ang naka-save na layout at mga setting</string>
+    <string name="backup_import_confirm">Ire-restart nito ang launcher at ibabalik ang iyong configuration</string>
+
+    <string name="pref_label_ui_mode_system">Sistema</string>
+    <string name="pref_label_ui_mode_day">Maliwanag</string>
+    <string name="pref_label_ui_mode_night">Madilim</string>
+    <string name="pref_label_grid_width">Lapad ng grid</string>
+    <string name="pref_label_grid_height">Taas ng grid</string>
+    <string name="pref_label_icon_size">Laki ng icon (%)</string>
+    <string name="pref_label_icon_label_size">Laki ng label (%)</string>
+
+    <string name="pref_label_visibility_title">Pagpapakita ng mga label</string>
+    <string name="label_visibility_never">Hindi kailanman</string>
+    <string name="label_visibility_drawer_only">Drawer lang</string>
+    <string name="label_visibility_home_only">Home lang</string>
+    <string name="label_visibility_auto">Awtomatiko</string>
+    <string name="pref_adaptive_icons_title">Mga adaptive na icon</string>
+    <string name="pref_adaptive_icons_summary">Hubugin muli ang mga icon na hindi adaptive</string>
+    <string name="pref_adaptive_icons_except_system">Maliban sa mga system app</string>
+    <string name="pref_adaptive_icons_force_legacy">Piliting gamitin ang lumang mga icon</string>
+    <string name="pref_adaptive_icons_never">Huwag hubugin muli</string>
+    <string name="pref_themed_icons_title">Mga monochrome na icon</string>
+    <string name="pref_themed_icons_summary">Kulayan muli ang mga icon ayon sa tema ng sistema</string>
+    <string name="label_visibility_always">Palagi</string>
+
+    <string name="pref_icon_shape_title">Hugis ng icon</string>
+    <string name="icon_shape_system">Sistema</string>
+    <string name="icon_shape_circle">Bilog</string>
+    <string name="icon_shape_tofu">Tofu</string>
+    <string name="icon_shape_ios">iOS</string>
+    <string name="icon_shape_squircle">Squircle</string>
+    <string name="icon_shape_xperia">Xperia</string>
+    <string name="icon_shape_riceballs">RiceBalls</string>
+
+    <string name="pref_drawer_type_title">Uri ng drawer</string>
+    <string name="drawer_type_frosted">Frosted</string>
+    <string name="drawer_type_mica">MICA</string>
+    <string name="drawer_type_translucent">Translucent</string>
+
+    <string name="pref_drawer_grid_width_override_title">I-override ang lapad ng grid</string>
+    <string name="pref_drawer_grid_width_override_summary">Gumamit ng custom na bilang ng hanay sa app drawer</string>
+    <string name="pref_drawer_padding_title">Espasyo sa gilid</string>
+
+    <string name="pref_blur_preview_title">Blur preview mode</string>
+    <string name="pref_blur_preview_desc">I-blur ang wallpaper habang hinihila ang mga icon at widget</string>
+
+    <string name="pref_lock_home_screen_title">I-lock ang home screen</string>
+    <string name="pref_lock_home_screen_summary">Pigilan ang paglipat ng mga icon at widget</string>
+
+    <string name="pref_double_tap_to_sleep_title">I-double tap para matulog</string>
+    <string name="pref_double_tap_to_sleep_summary">I-double tap ang walang lamang bahagi para i-lock ang screen</string>
+    <string name="pref_swipe_down_notifications_title">Mag-swipe pababa para sa mga notification</string>
+    <string name="pref_swipe_down_notifications_summary">Mag-swipe pababa sa home screen para buksan ang notification shade</string>
+
+    <!-- Murine search bar -->
+    <string name="murine_search_hint">Maghanap…</string>
+    <string name="murine_search_hint_provider">Maghanap gamit ang %1$s</string>
+    <string name="murine_search_hint_generic">Maghanap sa web</string>
+    <string name="murine_search_button_desc">Maghanap</string>
+    <string name="murine_voice_search_desc">Paghahanap sa pamamagitan ng boses</string>
+    <string name="murine_voice_search_prompt">Magsalita na...</string>
+    <string name="murine_lens_desc">Visual na paghahanap</string>
+    <!-- Murine search bar preferences -->
+    <string name="pref_qsb_show_search_bar_title">Ipakita ang search bar</string>
+    <string name="pref_qsb_search_provider_title">Search provider</string>
+    <string name="pref_qsb_enable_lens_title">Paganahin ang Lens</string>
+    <string name="pref_qsb_enable_lens_summary">Ipakita ang button ng Google Lens sa mabilisang paghahanap</string>
+    <string name="pref_qsb_box_blur">I-blur ang search bubble</string>
+    <string name="pref_qsb_box_blur_desc">Ipakita ang epektong MICA para sa search bubble</string>
+    <string name="pref_qsb_bar_alpha">Alpha ng search bar</string>
+    <string name="pref_qsb_box_alpha">Alpha ng search bubble</string>
+    <string name="pref_qsb_custom_provider_title">Custom na search URL</string>
+    <string name="pref_qsb_history_size_title">Laki ng kasaysayan ng paghahanap</string>
+    <string name="pref_qsb_history_size_summary">Pinakamaraming entry</string>
+    <string name="pref_qsb_clear_history_title">I-clear ang kasaysayan ng paghahanap</string>
+    <string name="pref_qsb_clear_history_summary">Alisin ang lahat ng naka-save na hinanap</string>
+    <string name="pref_qsb_clear_history_confirm_title">I-clear ang kasaysayan ng paghahanap?</string>
+    <string name="pref_qsb_clear_history_confirm_message">Permanenteng aalisin nito ang lahat ng naka-save na hinanap.</string>
+    <string name="pref_qsb_clear_history_toast">Na-clear ang kasaysayan ng paghahanap</string>
+
+    <!-- Murine smartspace / clock widget -->
+    <string name="smartspace_mode_clock">Orasan</string>
+    <string name="smartspace_mode_google">Google Smartspace</string>
+    <string name="smartspace_mode_disabled">Naka-disable</string>
+    <string name="pref_smartspace_title">Widget sa unang screen</string>
+    <string name="pref_smartspace_summary_clock">Nagpapakita ng orasan kasama ang petsa ngayon</string>
+    <string name="pref_smartspace_summary_google">Nagpapakita ng Smartspace widget ng Google</string>
+    <string name="pref_smartspace_summary_disabled">Walang widget sa unang screen</string>
+
+    <string name="pref_blur_unsupported_warning"><![CDATA[Maaaring hindi lubusang sinusuportahan o naka-enable ng OEM/ROM na ito ang pag-blur ng wallpaper; Kung may makitang problema, subukang hanapin ang opsyong &quot;Allow window-level blurs&quot; sa Display Options o Developer Options.<br/>Bilang alternatibo, subukang i-enable ang <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">Magisk module na ito</a> sa mga naka-root na device]]></string>
+
+    <!-- Notification badges -->
+    <string name="pref_notification_badge_count_title">Bilang ng notification</string>
+    <string name="pref_notification_badge_count_desc">Ipakita ang bilang sa mga tuldok ng notification</string>
+
+    <!-- Icon packs -->
+    <string name="pref_category_icon_pack_title">Icon pack</string>
+    <string name="pref_category_icon_pack_summary">Baguhin ang mga icon ng app gamit ang mga icon pack ng third-party</string>
+    <string name="pref_icon_pack_system_only_title">Mga system app lang</string>
+    <string name="pref_icon_pack_system_only_summary">Ilapat ang icon pack sa mga system app lang</string>
+    <string name="pref_icon_pack_ignore_shape_title">Huwag pansinin ang hugis ng pack</string>
+    <string name="pref_icon_pack_ignore_shape_summary">Gamitin ang hugis ng icon ng launcher sa halip na sa pack</string>
+    <string name="pref_icon_readapt_frame_title">Iangkop muli sa frame</string>
+    <string name="pref_icon_readapt_frame_summary">Sinusubukang iangkop ang mga icon na walang tema sa napiling hugis</string>
+    <string name="pref_icon_pack_themed_only_title">Mga icon na may tema lang</string>
+    <string name="pref_icon_pack_themed_only_summary">Iwanang hindi nagbabago ang mga icon na wala sa icon pack</string>
+
+    <!-- Hidden apps -->
+    <string name="pref_category_hidden_apps_title">Mga nakatagong app</string>
+    <string name="pref_category_hidden_apps_summary">Itago ang mga app mula sa app drawer</string>
+    <string name="hidden_apps_label">Nakatago</string>
+    <string name="hidden_apps_search_hint">Maghanap ng mga app...</string>
+    <string name="pref_search_within_hidden_title">Maghanap sa mga nakatagong app</string>
+    <string name="pref_search_within_hidden_summary">Nakikita ng paghahanap sa app drawer ang mga nakatagong app</string>
+
+    <!-- App info sheet -->
+    <string name="app_info_package">Package</string>
+    <string name="app_info_version">Bersyon</string>
+    <string name="app_info_version_value">%1$s (%2$d)</string>
+    <string name="app_info_last_update">Huling update</string>
+    <string name="app_info_source">Pinagmulan</string>
+    <string name="app_info_source_system">Sistema</string>
+    <string name="app_info_icon_pack_default">Default (pandaigdig)</string>
+    <string name="app_info_copied_toast">Nakopya sa clipboard</string>
+    <string name="app_info_icon_pack_show_all">Ipakita ang lahat ng pack</string>
+    <string name="app_info_edit_label">I-edit ang label</string>
+
+    <!-- Per-app custom icon picker -->
+    <string name="icon_picker_search_hint">Maghanap ng mga icon...</string>
+
+    <!-- Clear custom icons -->
+    <string name="pref_clear_custom_icons_title">I-clear ang mga custom na icon</string>
+    <string name="pref_clear_custom_icons_summary">Alisin ang lahat ng per-app na icon pack override</string>
+    <string name="pref_clear_custom_icons_summary_none">Walang nakatakdang custom na icon</string>
+    <string name="pref_clear_custom_icons_confirm_title">I-clear ang mga custom na icon?</string>
+    <string name="pref_clear_custom_icons_confirm_message">Ire-reset nito ang lahat ng per-app na icon pack override sa pandaigdigang setting.</string>
+    <string name="pref_clear_custom_icons_toast">Na-clear ang mga custom na icon</string>
+
+    <!-- Misc -->
+    <string name="pref_default_launcher_title">Default na launcher</string>
+    <string name="pref_restart_title">I-restart</string>
+    <string name="pref_restart_summary">I-restart ang launcher</string>
+</resources>

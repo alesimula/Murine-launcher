@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="pref_group_grid_size_title">ขนาดตาราง</string>
+    <string name="pref_group_grid_size_desc">เปลี่ยนจำนวนแถวและคอลัมน์</string>
+    <string name="pref_group_icon_scale_title">ขนาดไอคอน</string>
+    <string name="pref_group_icon_scale_desc">เปลี่ยนขนาดของไอคอนและป้ายชื่อ</string>
+    <string name="pref_group_qsb_transparency">ความโปร่งใส</string>
+    <string name="pref_group_qsb_transparency_desc">ตั้งค่าเอฟเฟกต์ความโปร่งใสของช่องค้นหาด่วน</string>
+
+    <string name="pref_category_general_title">ทั่วไป</string>
+    <string name="pref_category_general_desc">การตั้งค่าส่วนกลาง</string>
+    <string name="pref_category_icons_title">ไอคอน</string>
+    <string name="pref_category_icons_desc">ตั้งค่าขนาดและรูปลักษณ์ของไอคอน</string>
+    <string name="pref_category_home_title">หน้าจอหลัก</string>
+    <string name="pref_category_home_desc">ปรับแต่งหน้าจอหลักของคุณ</string>
+    <string name="pref_category_drawer_title">ลิ้นชักแอป</string>
+    <string name="pref_category_drawer_desc">ปรับแต่งลิ้นชักแอปของคุณ</string>
+    <string name="pref_category_qsb_title">ค้นหา</string>
+    <string name="pref_category_qsb_desc">ปรับแต่งช่องค้นหาด่วน</string>
+    <string name="pref_category_misc_title">เบ็ดเตล็ด</string>
+    <string name="pref_category_misc_desc">ตัวเลือกอื่น ๆ</string>
+
+    <string name="pref_subcategory_day_night">ธีมอินเทอร์เฟซ</string>
+    <string name="pref_subcategory_layout">เลย์เอาต์</string>
+    <string name="pref_subcategory_appearance">รูปลักษณ์</string>
+    <string name="pref_subcategory_persistency">การคงค่า</string>
+    <string name="pref_subcategory_gestures">ท่าทางสัมผัส</string>
+    <string name="pref_subcategory_options">ตัวเลือก</string>
+    <string name="pref_subcategory_backup">การสำรองข้อมูล</string>
+
+    <string name="backup_export_title">ส่งออกข้อมูลสำรอง</string>
+    <string name="backup_export_desc">บันทึกเลย์เอาต์ วิดเจ็ต และการตั้งค่า</string>
+    <string name="backup_export_done">บันทึกข้อมูลสำรองแล้ว</string>
+    <string name="backup_import_title">กู้คืนข้อมูลสำรอง</string>
+    <string name="backup_import_desc">กู้คืนเลย์เอาต์และการตั้งค่าที่บันทึกไว้</string>
+    <string name="backup_import_confirm">การดำเนินการนี้จะรีสตาร์ทตัวเรียกใช้งานและกู้คืนการตั้งค่าของคุณ</string>
+
+    <string name="pref_label_ui_mode_system">ระบบ</string>
+    <string name="pref_label_ui_mode_day">สว่าง</string>
+    <string name="pref_label_ui_mode_night">มืด</string>
+    <string name="pref_label_grid_width">ความกว้างของตาราง</string>
+    <string name="pref_label_grid_height">ความสูงของตาราง</string>
+    <string name="pref_label_icon_size">ขนาดไอคอน (%)</string>
+    <string name="pref_label_icon_label_size">ขนาดป้ายชื่อ (%)</string>
+
+    <string name="pref_label_visibility_title">การแสดงป้ายชื่อ</string>
+    <string name="label_visibility_never">ไม่แสดงเลย</string>
+    <string name="label_visibility_drawer_only">เฉพาะลิ้นชักแอป</string>
+    <string name="label_visibility_home_only">เฉพาะหน้าจอหลัก</string>
+    <string name="label_visibility_auto">อัตโนมัติ</string>
+    <string name="pref_adaptive_icons_title">ไอคอนแบบปรับเปลี่ยนได้</string>
+    <string name="pref_adaptive_icons_summary">ปรับรูปทรงไอคอนที่ไม่ใช่แบบปรับเปลี่ยนได้</string>
+    <string name="pref_adaptive_icons_except_system">ยกเว้นแอประบบ</string>
+    <string name="pref_adaptive_icons_force_legacy">บังคับใช้ไอคอนแบบเดิม</string>
+    <string name="pref_adaptive_icons_never">ไม่ปรับรูปทรง</string>
+    <string name="pref_themed_icons_title">ไอคอนสีเดียว</string>
+    <string name="pref_themed_icons_summary">เปลี่ยนสีไอคอนให้เข้ากับธีมของระบบ</string>
+    <string name="label_visibility_always">เสมอ</string>
+
+    <string name="pref_icon_shape_title">รูปทรงไอคอน</string>
+    <string name="icon_shape_system">ระบบ</string>
+    <string name="icon_shape_circle">วงกลม</string>
+    <string name="icon_shape_tofu">Tofu</string>
+    <string name="icon_shape_ios">iOS</string>
+    <string name="icon_shape_squircle">Squircle</string>
+    <string name="icon_shape_xperia">Xperia</string>
+    <string name="icon_shape_riceballs">RiceBalls</string>
+
+    <string name="pref_drawer_type_title">ประเภทลิ้นชัก</string>
+    <string name="drawer_type_frosted">ฝ้า</string>
+    <string name="drawer_type_mica">MICA</string>
+    <string name="drawer_type_translucent">โปร่งแสง</string>
+
+    <string name="pref_drawer_grid_width_override_title">แทนที่ความกว้างของตาราง</string>
+    <string name="pref_drawer_grid_width_override_summary">ใช้จำนวนคอลัมน์ที่กำหนดเองในลิ้นชักแอป</string>
+    <string name="pref_drawer_padding_title">ระยะขอบด้านข้าง</string>
+
+    <string name="pref_blur_preview_title">โหมดแสดงตัวอย่างแบบเบลอ</string>
+    <string name="pref_blur_preview_desc">เบลอวอลเปเปอร์ขณะลากไอคอนและวิดเจ็ต</string>
+
+    <string name="pref_lock_home_screen_title">ล็อกหน้าจอหลัก</string>
+    <string name="pref_lock_home_screen_summary">ป้องกันการย้ายไอคอนและวิดเจ็ต</string>
+
+    <string name="pref_double_tap_to_sleep_title">แตะสองครั้งเพื่อล็อกหน้าจอ</string>
+    <string name="pref_double_tap_to_sleep_summary">แตะสองครั้งบนพื้นที่ว่างเพื่อล็อกหน้าจอ</string>
+    <string name="pref_swipe_down_notifications_title">ปัดลงเพื่อดูการแจ้งเตือน</string>
+    <string name="pref_swipe_down_notifications_summary">ปัดลงบนหน้าจอหลักเพื่อเปิดแผงการแจ้งเตือน</string>
+
+    <!-- Murine search bar -->
+    <string name="murine_search_hint">ค้นหา…</string>
+    <string name="murine_search_hint_provider">ค้นหาด้วย %1$s</string>
+    <string name="murine_search_hint_generic">ค้นหาบนเว็บ</string>
+    <string name="murine_search_button_desc">ค้นหา</string>
+    <string name="murine_voice_search_desc">ค้นหาด้วยเสียง</string>
+    <string name="murine_voice_search_prompt">พูดได้เลย...</string>
+    <string name="murine_lens_desc">ค้นหาด้วยภาพ</string>
+    <!-- Murine search bar preferences -->
+    <string name="pref_qsb_show_search_bar_title">แสดงแถบค้นหา</string>
+    <string name="pref_qsb_search_provider_title">ผู้ให้บริการค้นหา</string>
+    <string name="pref_qsb_enable_lens_title">เปิดใช้ Lens</string>
+    <string name="pref_qsb_enable_lens_summary">แสดงปุ่ม Google Lens ในการค้นหาด่วน</string>
+    <string name="pref_qsb_box_blur">เบลอฟองค้นหา</string>
+    <string name="pref_qsb_box_blur_desc">แสดงเอฟเฟกต์ MICA สำหรับฟองค้นหา</string>
+    <string name="pref_qsb_bar_alpha">ความทึบของแถบค้นหา</string>
+    <string name="pref_qsb_box_alpha">ความทึบของฟองค้นหา</string>
+    <string name="pref_qsb_custom_provider_title">URL ค้นหาที่กำหนดเอง</string>
+    <string name="pref_qsb_history_size_title">ขนาดประวัติการค้นหา</string>
+    <string name="pref_qsb_history_size_summary">จำนวนรายการสูงสุด</string>
+    <string name="pref_qsb_clear_history_title">ล้างประวัติการค้นหา</string>
+    <string name="pref_qsb_clear_history_summary">ลบคำค้นหาที่บันทึกไว้ทั้งหมด</string>
+    <string name="pref_qsb_clear_history_confirm_title">ล้างประวัติการค้นหาไหม</string>
+    <string name="pref_qsb_clear_history_confirm_message">การดำเนินการนี้จะลบคำค้นหาที่บันทึกไว้ทั้งหมดอย่างถาวร</string>
+    <string name="pref_qsb_clear_history_toast">ล้างประวัติการค้นหาแล้ว</string>
+
+    <!-- Murine smartspace / clock widget -->
+    <string name="smartspace_mode_clock">นาฬิกา</string>
+    <string name="smartspace_mode_google">Google Smartspace</string>
+    <string name="smartspace_mode_disabled">ปิดใช้งาน</string>
+    <string name="pref_smartspace_title">วิดเจ็ตหน้าจอแรก</string>
+    <string name="pref_smartspace_summary_clock">แสดงนาฬิกาพร้อมวันที่ของวันนี้</string>
+    <string name="pref_smartspace_summary_google">แสดงวิดเจ็ต Smartspace ของ Google</string>
+    <string name="pref_smartspace_summary_disabled">ไม่มีวิดเจ็ตบนหน้าจอแรก</string>
+
+    <string name="pref_blur_unsupported_warning"><![CDATA[OEM/ROM นี้อาจรองรับหรือเปิดใช้การเบลอวอลเปเปอร์ได้ไม่เต็มที่ หากพบปัญหา ลองมองหาตัวเลือก &quot;Allow window-level blurs&quot; ในตัวเลือกการแสดงผลหรือตัวเลือกสำหรับนักพัฒนา<br/>หรืออีกทางหนึ่ง ลองเปิดใช้ <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">โมดูล Magisk นี้</a> บนอุปกรณ์ที่รูทแล้ว]]></string>
+
+    <!-- Notification badges -->
+    <string name="pref_notification_badge_count_title">จำนวนการแจ้งเตือน</string>
+    <string name="pref_notification_badge_count_desc">แสดงจำนวนบนจุดแจ้งเตือน</string>
+
+    <!-- Icon packs -->
+    <string name="pref_category_icon_pack_title">ชุดไอคอน</string>
+    <string name="pref_category_icon_pack_summary">เปลี่ยนไอคอนแอปด้วยชุดไอคอนจากผู้พัฒนาอื่น</string>
+    <string name="pref_icon_pack_system_only_title">เฉพาะแอประบบ</string>
+    <string name="pref_icon_pack_system_only_summary">ใช้ชุดไอคอนกับแอประบบเท่านั้น</string>
+    <string name="pref_icon_pack_ignore_shape_title">ไม่สนใจรูปทรงของชุดไอคอน</string>
+    <string name="pref_icon_pack_ignore_shape_summary">ใช้รูปทรงไอคอนของตัวเรียกใช้งานแทนของชุดไอคอน</string>
+    <string name="pref_icon_readapt_frame_title">ปรับให้เข้ากับกรอบ</string>
+    <string name="pref_icon_readapt_frame_summary">พยายามจัดไอคอนที่ไม่มีธีมให้พอดีกับกรอบรูปทรงที่เลือก</string>
+    <string name="pref_icon_pack_themed_only_title">เฉพาะไอคอนที่มีธีม</string>
+    <string name="pref_icon_pack_themed_only_summary">ปล่อยไอคอนที่ไม่มีในชุดไอคอนไว้ตามเดิม</string>
+
+    <!-- Hidden apps -->
+    <string name="pref_category_hidden_apps_title">แอปที่ซ่อนไว้</string>
+    <string name="pref_category_hidden_apps_summary">ซ่อนแอปจากลิ้นชักแอป</string>
+    <string name="hidden_apps_label">ซ่อนอยู่</string>
+    <string name="hidden_apps_search_hint">ค้นหาแอป...</string>
+    <string name="pref_search_within_hidden_title">ค้นหาในแอปที่ซ่อนไว้</string>
+    <string name="pref_search_within_hidden_summary">การค้นหาในลิ้นชักแอปจะพบแอปที่ซ่อนไว้ด้วย</string>
+
+    <!-- App info sheet -->
+    <string name="app_info_package">แพ็กเกจ</string>
+    <string name="app_info_version">เวอร์ชัน</string>
+    <string name="app_info_version_value">%1$s (%2$d)</string>
+    <string name="app_info_last_update">อัปเดตล่าสุด</string>
+    <string name="app_info_source">แหล่งที่มา</string>
+    <string name="app_info_source_system">ระบบ</string>
+    <string name="app_info_icon_pack_default">ค่าเริ่มต้น (ส่วนกลาง)</string>
+    <string name="app_info_copied_toast">คัดลอกไปยังคลิปบอร์ดแล้ว</string>
+    <string name="app_info_icon_pack_show_all">แสดงชุดไอคอนทั้งหมด</string>
+    <string name="app_info_edit_label">แก้ไขป้ายชื่อ</string>
+
+    <!-- Per-app custom icon picker -->
+    <string name="icon_picker_search_hint">ค้นหาไอคอน...</string>
+
+    <!-- Clear custom icons -->
+    <string name="pref_clear_custom_icons_title">ล้างไอคอนที่กำหนดเอง</string>
+    <string name="pref_clear_custom_icons_summary">ลบการแทนที่ชุดไอคอนของแต่ละแอปทั้งหมด</string>
+    <string name="pref_clear_custom_icons_summary_none">ยังไม่ได้ตั้งไอคอนที่กำหนดเอง</string>
+    <string name="pref_clear_custom_icons_confirm_title">ล้างไอคอนที่กำหนดเองไหม</string>
+    <string name="pref_clear_custom_icons_confirm_message">การดำเนินการนี้จะรีเซ็ตการแทนที่ชุดไอคอนของแต่ละแอปทั้งหมดกลับไปใช้การตั้งค่าส่วนกลาง</string>
+    <string name="pref_clear_custom_icons_toast">ล้างไอคอนที่กำหนดเองแล้ว</string>
+
+    <!-- Misc -->
+    <string name="pref_default_launcher_title">ตัวเรียกใช้งานเริ่มต้น</string>
+    <string name="pref_restart_title">รีสตาร์ท</string>
+    <string name="pref_restart_summary">รีสตาร์ทตัวเรียกใช้งาน</string>
+</resources>

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="pref_group_grid_size_title">그리드 크기</string>
+    <string name="pref_group_grid_size_desc">행과 열 개수 변경</string>
+    <string name="pref_group_icon_scale_title">아이콘 배율</string>
+    <string name="pref_group_icon_scale_desc">아이콘과 라벨 크기 변경</string>
+    <string name="pref_group_qsb_transparency">투명도</string>
+    <string name="pref_group_qsb_transparency_desc">빠른 검색창의 투명 효과 설정</string>
+
+    <string name="pref_category_general_title">일반</string>
+    <string name="pref_category_general_desc">전체 설정</string>
+    <string name="pref_category_icons_title">아이콘</string>
+    <string name="pref_category_icons_desc">아이콘 크기와 모양 설정</string>
+    <string name="pref_category_home_title">홈 화면</string>
+    <string name="pref_category_home_desc">홈 화면 맞춤설정</string>
+    <string name="pref_category_drawer_title">앱 서랍</string>
+    <string name="pref_category_drawer_desc">앱 서랍 맞춤설정</string>
+    <string name="pref_category_qsb_title">검색</string>
+    <string name="pref_category_qsb_desc">빠른 검색창 맞춤설정</string>
+    <string name="pref_category_misc_title">기타</string>
+    <string name="pref_category_misc_desc">기타 옵션</string>
+
+    <string name="pref_subcategory_day_night">UI 테마</string>
+    <string name="pref_subcategory_layout">레이아웃</string>
+    <string name="pref_subcategory_appearance">모양</string>
+    <string name="pref_subcategory_persistency">유지</string>
+    <string name="pref_subcategory_gestures">제스처</string>
+    <string name="pref_subcategory_options">옵션</string>
+    <string name="pref_subcategory_backup">백업</string>
+
+    <string name="backup_export_title">백업 내보내기</string>
+    <string name="backup_export_desc">레이아웃, 위젯, 설정 저장</string>
+    <string name="backup_export_done">백업 저장됨</string>
+    <string name="backup_import_title">백업 복원</string>
+    <string name="backup_import_desc">저장된 레이아웃과 설정 복원</string>
+    <string name="backup_import_confirm">런처가 다시 시작되고 설정이 복원됩니다</string>
+
+    <string name="pref_label_ui_mode_system">시스템</string>
+    <string name="pref_label_ui_mode_day">라이트</string>
+    <string name="pref_label_ui_mode_night">다크</string>
+    <string name="pref_label_grid_width">그리드 너비</string>
+    <string name="pref_label_grid_height">그리드 높이</string>
+    <string name="pref_label_icon_size">아이콘 크기 (%)</string>
+    <string name="pref_label_icon_label_size">라벨 크기 (%)</string>
+
+    <string name="pref_label_visibility_title">라벨 표시</string>
+    <string name="label_visibility_never">표시 안 함</string>
+    <string name="label_visibility_drawer_only">앱 서랍만</string>
+    <string name="label_visibility_home_only">홈 화면만</string>
+    <string name="label_visibility_auto">자동</string>
+    <string name="pref_adaptive_icons_title">적응형 아이콘</string>
+    <string name="pref_adaptive_icons_summary">적응형이 아닌 아이콘의 모양 변경</string>
+    <string name="pref_adaptive_icons_except_system">시스템 앱 제외</string>
+    <string name="pref_adaptive_icons_force_legacy">레거시 아이콘 강제 적용</string>
+    <string name="pref_adaptive_icons_never">모양 변경 안 함</string>
+    <string name="pref_themed_icons_title">단색 아이콘</string>
+    <string name="pref_themed_icons_summary">시스템 테마에 맞게 아이콘 색상 변경</string>
+    <string name="label_visibility_always">항상</string>
+
+    <string name="pref_icon_shape_title">아이콘 모양</string>
+    <string name="icon_shape_system">시스템</string>
+    <string name="icon_shape_circle">원</string>
+    <string name="icon_shape_tofu">Tofu</string>
+    <string name="icon_shape_ios">iOS</string>
+    <string name="icon_shape_squircle">Squircle</string>
+    <string name="icon_shape_xperia">Xperia</string>
+    <string name="icon_shape_riceballs">RiceBalls</string>
+
+    <string name="pref_drawer_type_title">앱 서랍 유형</string>
+    <string name="drawer_type_frosted">불투명 유리</string>
+    <string name="drawer_type_mica">MICA</string>
+    <string name="drawer_type_translucent">반투명</string>
+
+    <string name="pref_drawer_grid_width_override_title">그리드 너비 재정의</string>
+    <string name="pref_drawer_grid_width_override_summary">앱 서랍에서 사용자 지정 열 개수 사용</string>
+    <string name="pref_drawer_padding_title">좌우 여백</string>
+
+    <string name="pref_blur_preview_title">미리보기 모드 흐림</string>
+    <string name="pref_blur_preview_desc">아이콘과 위젯을 드래그할 때 배경화면 흐리게</string>
+
+    <string name="pref_lock_home_screen_title">홈 화면 잠금</string>
+    <string name="pref_lock_home_screen_summary">아이콘과 위젯 이동 방지</string>
+
+    <string name="pref_double_tap_to_sleep_title">두 번 탭하여 잠금</string>
+    <string name="pref_double_tap_to_sleep_summary">빈 공간을 두 번 탭하면 화면이 잠깁니다</string>
+    <string name="pref_swipe_down_notifications_title">아래로 스와이프하여 알림 표시</string>
+    <string name="pref_swipe_down_notifications_summary">홈 화면에서 아래로 스와이프하여 알림 패널 열기</string>
+
+    <!-- Murine search bar -->
+    <string name="murine_search_hint">검색…</string>
+    <string name="murine_search_hint_provider">%1$s(으)로 검색</string>
+    <string name="murine_search_hint_generic">웹에서 검색</string>
+    <string name="murine_search_button_desc">검색</string>
+    <string name="murine_voice_search_desc">음성 검색</string>
+    <string name="murine_voice_search_prompt">지금 말하세요...</string>
+    <string name="murine_lens_desc">시각 검색</string>
+    <!-- Murine search bar preferences -->
+    <string name="pref_qsb_show_search_bar_title">검색창 표시</string>
+    <string name="pref_qsb_search_provider_title">검색 엔진</string>
+    <string name="pref_qsb_enable_lens_title">Lens 사용</string>
+    <string name="pref_qsb_enable_lens_summary">빠른 검색에 Google Lens 버튼 표시</string>
+    <string name="pref_qsb_box_blur">검색 버블 흐리게</string>
+    <string name="pref_qsb_box_blur_desc">검색 버블에 MICA 효과 표시</string>
+    <string name="pref_qsb_bar_alpha">검색창 불투명도</string>
+    <string name="pref_qsb_box_alpha">검색 버블 불투명도</string>
+    <string name="pref_qsb_custom_provider_title">사용자 지정 검색 URL</string>
+    <string name="pref_qsb_history_size_title">검색 기록 개수</string>
+    <string name="pref_qsb_history_size_summary">최대 항목 수</string>
+    <string name="pref_qsb_clear_history_title">검색 기록 삭제</string>
+    <string name="pref_qsb_clear_history_summary">저장된 모든 검색어 삭제</string>
+    <string name="pref_qsb_clear_history_confirm_title">검색 기록을 삭제할까요?</string>
+    <string name="pref_qsb_clear_history_confirm_message">저장된 모든 검색어가 영구적으로 삭제됩니다.</string>
+    <string name="pref_qsb_clear_history_toast">검색 기록이 삭제되었습니다</string>
+
+    <!-- Murine smartspace / clock widget -->
+    <string name="smartspace_mode_clock">시계</string>
+    <string name="smartspace_mode_google">Google Smartspace</string>
+    <string name="smartspace_mode_disabled">사용 안 함</string>
+    <string name="pref_smartspace_title">첫 화면 위젯</string>
+    <string name="pref_smartspace_summary_clock">오늘 날짜와 함께 시계를 표시합니다</string>
+    <string name="pref_smartspace_summary_google">Google Smartspace 위젯을 표시합니다</string>
+    <string name="pref_smartspace_summary_disabled">첫 화면에 위젯 없음</string>
+
+    <string name="pref_blur_unsupported_warning"><![CDATA[배경화면 흐림 효과는 이 OEM/ROM에서 완전히 지원되지 않거나 사용 설정되어 있지 않을 수 있습니다. 문제가 발생하면 디스플레이 설정 또는 개발자 옵션에서 &quot;창 수준 흐림 허용&quot; 항목을 확인해 보세요.<br/>또는 루팅된 기기에서 <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">이 Magisk 모듈</a>을 사용 설정해 볼 수 있습니다]]></string>
+
+    <!-- Notification badges -->
+    <string name="pref_notification_badge_count_title">알림 개수</string>
+    <string name="pref_notification_badge_count_desc">알림 점에 개수 표시</string>
+
+    <!-- Icon packs -->
+    <string name="pref_category_icon_pack_title">아이콘 팩</string>
+    <string name="pref_category_icon_pack_summary">서드파티 아이콘 팩으로 앱 아이콘 변경</string>
+    <string name="pref_icon_pack_system_only_title">시스템 앱만</string>
+    <string name="pref_icon_pack_system_only_summary">아이콘 팩을 시스템 앱에만 적용</string>
+    <string name="pref_icon_pack_ignore_shape_title">팩 모양 무시</string>
+    <string name="pref_icon_pack_ignore_shape_summary">팩의 모양 대신 런처의 아이콘 모양 사용</string>
+    <string name="pref_icon_readapt_frame_title">프레임에 다시 맞추기</string>
+    <string name="pref_icon_readapt_frame_summary">테마가 없는 아이콘을 지정된 모양에 맞추려고 시도합니다</string>
+    <string name="pref_icon_pack_themed_only_title">테마 아이콘만</string>
+    <string name="pref_icon_pack_themed_only_summary">아이콘 팩에 없는 아이콘은 그대로 둡니다</string>
+
+    <!-- Hidden apps -->
+    <string name="pref_category_hidden_apps_title">숨긴 앱</string>
+    <string name="pref_category_hidden_apps_summary">앱 서랍에서 앱 숨기기</string>
+    <string name="hidden_apps_label">숨김</string>
+    <string name="hidden_apps_search_hint">앱 검색...</string>
+    <string name="pref_search_within_hidden_title">숨긴 앱에서도 검색</string>
+    <string name="pref_search_within_hidden_summary">앱 서랍 검색에서 숨긴 앱도 찾습니다</string>
+
+    <!-- App info sheet -->
+    <string name="app_info_package">패키지</string>
+    <string name="app_info_version">버전</string>
+    <string name="app_info_version_value">%1$s (%2$d)</string>
+    <string name="app_info_last_update">마지막 업데이트</string>
+    <string name="app_info_source">출처</string>
+    <string name="app_info_source_system">시스템</string>
+    <string name="app_info_icon_pack_default">기본값 (전체)</string>
+    <string name="app_info_copied_toast">클립보드에 복사되었습니다</string>
+    <string name="app_info_icon_pack_show_all">모든 팩 표시</string>
+    <string name="app_info_edit_label">라벨 편집</string>
+
+    <!-- Per-app custom icon picker -->
+    <string name="icon_picker_search_hint">아이콘 검색...</string>
+
+    <!-- Clear custom icons -->
+    <string name="pref_clear_custom_icons_title">사용자 지정 아이콘 삭제</string>
+    <string name="pref_clear_custom_icons_summary">앱별 아이콘 설정을 모두 삭제</string>
+    <string name="pref_clear_custom_icons_summary_none">설정된 사용자 지정 아이콘 없음</string>
+    <string name="pref_clear_custom_icons_confirm_title">사용자 지정 아이콘을 삭제할까요?</string>
+    <string name="pref_clear_custom_icons_confirm_message">앱별 아이콘 설정이 모두 전체 설정으로 초기화됩니다.</string>
+    <string name="pref_clear_custom_icons_toast">사용자 지정 아이콘이 삭제되었습니다</string>
+
+    <!-- Misc -->
+    <string name="pref_default_launcher_title">기본 런처</string>
+    <string name="pref_restart_title">다시 시작</string>
+    <string name="pref_restart_summary">런처를 다시 시작합니다</string>
+</resources>

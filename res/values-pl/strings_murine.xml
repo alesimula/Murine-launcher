@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="pref_group_grid_size_title">Rozmiar siatki</string>
+    <string name="pref_group_grid_size_desc">Zmień liczbę wierszy i kolumn</string>
+    <string name="pref_group_icon_scale_title">Skala ikon</string>
+    <string name="pref_group_icon_scale_desc">Zmień rozmiar ikon i etykiet</string>
+    <string name="pref_group_qsb_transparency">Przezroczystość</string>
+    <string name="pref_group_qsb_transparency_desc">Ustaw efekty przezroczystości paska szybkiego wyszukiwania</string>
+
+    <string name="pref_category_general_title">Ogólne</string>
+    <string name="pref_category_general_desc">Ustawienia globalne</string>
+    <string name="pref_category_icons_title">Ikony</string>
+    <string name="pref_category_icons_desc">Ustaw rozmiar i wygląd ikon</string>
+    <string name="pref_category_home_title">Ekran główny</string>
+    <string name="pref_category_home_desc">Dostosuj ekran główny</string>
+    <string name="pref_category_drawer_title">Szuflada aplikacji</string>
+    <string name="pref_category_drawer_desc">Dostosuj szufladę aplikacji</string>
+    <string name="pref_category_qsb_title">Wyszukiwanie</string>
+    <string name="pref_category_qsb_desc">Dostosuj pasek szybkiego wyszukiwania</string>
+    <string name="pref_category_misc_title">Różne</string>
+    <string name="pref_category_misc_desc">Inne opcje</string>
+
+    <string name="pref_subcategory_day_night">Motyw interfejsu</string>
+    <string name="pref_subcategory_layout">Układ</string>
+    <string name="pref_subcategory_appearance">Wygląd</string>
+    <string name="pref_subcategory_persistency">Trwałość</string>
+    <string name="pref_subcategory_gestures">Gesty</string>
+    <string name="pref_subcategory_options">Opcje</string>
+    <string name="pref_subcategory_backup">Kopia zapasowa</string>
+
+    <string name="backup_export_title">Eksportuj kopię zapasową</string>
+    <string name="backup_export_desc">Zapisz układ, widżety i ustawienia</string>
+    <string name="backup_export_done">Kopia zapasowa zapisana</string>
+    <string name="backup_import_title">Przywróć kopię zapasową</string>
+    <string name="backup_import_desc">Przywróć zapisany układ i ustawienia</string>
+    <string name="backup_import_confirm">Launcher zostanie uruchomiony ponownie, a konfiguracja przywrócona</string>
+
+    <string name="pref_label_ui_mode_system">Systemowy</string>
+    <string name="pref_label_ui_mode_day">Jasny</string>
+    <string name="pref_label_ui_mode_night">Ciemny</string>
+    <string name="pref_label_grid_width">Szerokość siatki</string>
+    <string name="pref_label_grid_height">Wysokość siatki</string>
+    <string name="pref_label_icon_size">Rozmiar ikon (%)</string>
+    <string name="pref_label_icon_label_size">Rozmiar etykiet (%)</string>
+
+    <string name="pref_label_visibility_title">Widoczność etykiet</string>
+    <string name="label_visibility_never">Nigdy</string>
+    <string name="label_visibility_drawer_only">Tylko szuflada</string>
+    <string name="label_visibility_home_only">Tylko ekran główny</string>
+    <string name="label_visibility_auto">Automatycznie</string>
+    <string name="pref_adaptive_icons_title">Ikony adaptacyjne</string>
+    <string name="pref_adaptive_icons_summary">Zmieniaj kształt ikon nieadaptacyjnych</string>
+    <string name="pref_adaptive_icons_except_system">Oprócz aplikacji systemowych</string>
+    <string name="pref_adaptive_icons_force_legacy">Wymuś stare ikony</string>
+    <string name="pref_adaptive_icons_never">Nie zmieniaj kształtu</string>
+    <string name="pref_themed_icons_title">Ikony monochromatyczne</string>
+    <string name="pref_themed_icons_summary">Dopasuj kolory ikon do motywu systemu</string>
+    <string name="label_visibility_always">Zawsze</string>
+
+    <string name="pref_icon_shape_title">Kształt ikon</string>
+    <string name="icon_shape_system">Systemowy</string>
+    <string name="icon_shape_circle">Koło</string>
+    <string name="icon_shape_tofu">Tofu</string>
+    <string name="icon_shape_ios">iOS</string>
+    <string name="icon_shape_squircle">Squircle</string>
+    <string name="icon_shape_xperia">Xperia</string>
+    <string name="icon_shape_riceballs">RiceBalls</string>
+
+    <string name="pref_drawer_type_title">Typ szuflady</string>
+    <string name="drawer_type_frosted">Matowy</string>
+    <string name="drawer_type_mica">MICA</string>
+    <string name="drawer_type_translucent">Półprzezroczysty</string>
+
+    <string name="pref_drawer_grid_width_override_title">Zastąp szerokość siatki</string>
+    <string name="pref_drawer_grid_width_override_summary">Użyj własnej liczby kolumn w szufladzie aplikacji</string>
+    <string name="pref_drawer_padding_title">Odstęp boczny</string>
+
+    <string name="pref_blur_preview_title">Rozmycie w trybie podglądu</string>
+    <string name="pref_blur_preview_desc">Rozmywaj tapetę podczas przeciągania ikon i widżetów</string>
+
+    <string name="pref_lock_home_screen_title">Zablokuj ekran główny</string>
+    <string name="pref_lock_home_screen_summary">Zapobiegaj przenoszeniu ikon i widżetów</string>
+
+    <string name="pref_double_tap_to_sleep_title">Dwukrotne dotknięcie blokuje</string>
+    <string name="pref_double_tap_to_sleep_summary">Dotknij dwukrotnie pustego miejsca, aby zablokować ekran</string>
+    <string name="pref_swipe_down_notifications_title">Przesuń w dół po powiadomienia</string>
+    <string name="pref_swipe_down_notifications_summary">Przesuń palcem w dół na ekranie głównym, aby rozwinąć panel powiadomień</string>
+
+    <!-- Murine search bar -->
+    <string name="murine_search_hint">Szukaj…</string>
+    <string name="murine_search_hint_provider">Szukaj w %1$s</string>
+    <string name="murine_search_hint_generic">Szukaj w internecie</string>
+    <string name="murine_search_button_desc">Szukaj</string>
+    <string name="murine_voice_search_desc">Wyszukiwanie głosowe</string>
+    <string name="murine_voice_search_prompt">Mów teraz...</string>
+    <string name="murine_lens_desc">Wyszukiwanie wizualne</string>
+    <!-- Murine search bar preferences -->
+    <string name="pref_qsb_show_search_bar_title">Pokaż pasek wyszukiwania</string>
+    <string name="pref_qsb_search_provider_title">Wyszukiwarka</string>
+    <string name="pref_qsb_enable_lens_title">Włącz Lens</string>
+    <string name="pref_qsb_enable_lens_summary">Pokaż przycisk Google Lens w szybkim wyszukiwaniu</string>
+    <string name="pref_qsb_box_blur">Rozmycie dymka wyszukiwania</string>
+    <string name="pref_qsb_box_blur_desc">Pokaż efekt MICA dla dymka wyszukiwania</string>
+    <string name="pref_qsb_bar_alpha">Krycie paska wyszukiwania</string>
+    <string name="pref_qsb_box_alpha">Krycie dymka wyszukiwania</string>
+    <string name="pref_qsb_custom_provider_title">Własny adres URL wyszukiwania</string>
+    <string name="pref_qsb_history_size_title">Rozmiar historii wyszukiwania</string>
+    <string name="pref_qsb_history_size_summary">Maksymalna liczba wpisów</string>
+    <string name="pref_qsb_clear_history_title">Wyczyść historię wyszukiwania</string>
+    <string name="pref_qsb_clear_history_summary">Usuń wszystkie zapisane zapytania</string>
+    <string name="pref_qsb_clear_history_confirm_title">Wyczyścić historię wyszukiwania?</string>
+    <string name="pref_qsb_clear_history_confirm_message">Wszystkie zapisane zapytania zostaną trwale usunięte.</string>
+    <string name="pref_qsb_clear_history_toast">Historia wyszukiwania wyczyszczona</string>
+
+    <!-- Murine smartspace / clock widget -->
+    <string name="smartspace_mode_clock">Zegar</string>
+    <string name="smartspace_mode_google">Google Smartspace</string>
+    <string name="smartspace_mode_disabled">Wyłączone</string>
+    <string name="pref_smartspace_title">Widżet pierwszego ekranu</string>
+    <string name="pref_smartspace_summary_clock">Pokazuje zegar z dzisiejszą datą</string>
+    <string name="pref_smartspace_summary_google">Pokazuje widżet Google Smartspace</string>
+    <string name="pref_smartspace_summary_disabled">Brak widżetu na pierwszym ekranie</string>
+
+    <string name="pref_blur_unsupported_warning"><![CDATA[Rozmycie tapety może nie być w pełni obsługiwane lub włączone przez ten OEM/ROM; w razie problemów poszukaj opcji &quot;Zezwalaj na rozmycia na poziomie okna&quot; w opcjach wyświetlania lub opcjach programisty.<br/>Alternatywnie spróbuj włączyć <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">ten moduł Magisk</a> na urządzeniach z rootem]]></string>
+
+    <!-- Notification badges -->
+    <string name="pref_notification_badge_count_title">Liczba powiadomień</string>
+    <string name="pref_notification_badge_count_desc">Pokazuj liczbę na kropkach powiadomień</string>
+
+    <!-- Icon packs -->
+    <string name="pref_category_icon_pack_title">Pakiet ikon</string>
+    <string name="pref_category_icon_pack_summary">Zmień ikony aplikacji za pomocą pakietów innych firm</string>
+    <string name="pref_icon_pack_system_only_title">Tylko aplikacje systemowe</string>
+    <string name="pref_icon_pack_system_only_summary">Zastosuj pakiet tylko do aplikacji systemowych</string>
+    <string name="pref_icon_pack_ignore_shape_title">Ignoruj kształt pakietu</string>
+    <string name="pref_icon_pack_ignore_shape_summary">Użyj kształtu ikon launchera zamiast kształtu pakietu</string>
+    <string name="pref_icon_readapt_frame_title">Dopasuj do ramki</string>
+    <string name="pref_icon_readapt_frame_summary">Próbuje dopasować ikony bez motywu do podanego kształtu</string>
+    <string name="pref_icon_pack_themed_only_title">Tylko ikony z motywem</string>
+    <string name="pref_icon_pack_themed_only_summary">Pozostaw bez zmian ikony, których nie ma w pakiecie</string>
+
+    <!-- Hidden apps -->
+    <string name="pref_category_hidden_apps_title">Ukryte aplikacje</string>
+    <string name="pref_category_hidden_apps_summary">Ukryj aplikacje w szufladzie aplikacji</string>
+    <string name="hidden_apps_label">Ukryte</string>
+    <string name="hidden_apps_search_hint">Szukaj aplikacji...</string>
+    <string name="pref_search_within_hidden_title">Szukaj w ukrytych aplikacjach</string>
+    <string name="pref_search_within_hidden_summary">Wyszukiwanie w szufladzie znajduje ukryte aplikacje</string>
+
+    <!-- App info sheet -->
+    <string name="app_info_package">Pakiet</string>
+    <string name="app_info_version">Wersja</string>
+    <string name="app_info_version_value">%1$s (%2$d)</string>
+    <string name="app_info_last_update">Ostatnia aktualizacja</string>
+    <string name="app_info_source">Źródło</string>
+    <string name="app_info_source_system">System</string>
+    <string name="app_info_icon_pack_default">Domyślny (globalny)</string>
+    <string name="app_info_copied_toast">Skopiowano do schowka</string>
+    <string name="app_info_icon_pack_show_all">Pokaż wszystkie pakiety</string>
+    <string name="app_info_edit_label">Edytuj etykietę</string>
+
+    <!-- Per-app custom icon picker -->
+    <string name="icon_picker_search_hint">Szukaj ikon...</string>
+
+    <!-- Clear custom icons -->
+    <string name="pref_clear_custom_icons_title">Wyczyść własne ikony</string>
+    <string name="pref_clear_custom_icons_summary">Usuń wszystkie własne ikony aplikacji</string>
+    <string name="pref_clear_custom_icons_summary_none">Brak własnych ikon</string>
+    <string name="pref_clear_custom_icons_confirm_title">Wyczyścić własne ikony?</string>
+    <string name="pref_clear_custom_icons_confirm_message">Wszystkie własne ikony aplikacji zostaną przywrócone do ustawienia globalnego.</string>
+    <string name="pref_clear_custom_icons_toast">Własne ikony wyczyszczone</string>
+
+    <!-- Misc -->
+    <string name="pref_default_launcher_title">Domyślny launcher</string>
+    <string name="pref_restart_title">Uruchom ponownie</string>
+    <string name="pref_restart_summary">Uruchom ponownie launcher</string>
+</resources>

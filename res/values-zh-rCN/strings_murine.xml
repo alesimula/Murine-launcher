@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="pref_group_grid_size_title">网格大小</string>
+    <string name="pref_group_grid_size_desc">更改行数和列数</string>
+    <string name="pref_group_icon_scale_title">图标缩放</string>
+    <string name="pref_group_icon_scale_desc">更改图标和标签的大小</string>
+    <string name="pref_group_qsb_transparency">透明度</string>
+    <string name="pref_group_qsb_transparency_desc">设置快速搜索框的透明效果</string>
+
+    <string name="pref_category_general_title">常规</string>
+    <string name="pref_category_general_desc">全局偏好设置</string>
+    <string name="pref_category_icons_title">图标</string>
+    <string name="pref_category_icons_desc">设置图标大小和外观</string>
+    <string name="pref_category_home_title">主屏幕</string>
+    <string name="pref_category_home_desc">自定义你的主屏幕</string>
+    <string name="pref_category_drawer_title">应用抽屉</string>
+    <string name="pref_category_drawer_desc">自定义你的应用抽屉</string>
+    <string name="pref_category_qsb_title">搜索</string>
+    <string name="pref_category_qsb_desc">自定义快速搜索框</string>
+    <string name="pref_category_misc_title">杂项</string>
+    <string name="pref_category_misc_desc">其他选项</string>
+
+    <string name="pref_subcategory_day_night">界面主题</string>
+    <string name="pref_subcategory_layout">布局</string>
+    <string name="pref_subcategory_appearance">外观</string>
+    <string name="pref_subcategory_persistency">持久化</string>
+    <string name="pref_subcategory_gestures">手势</string>
+    <string name="pref_subcategory_options">选项</string>
+    <string name="pref_subcategory_backup">备份</string>
+
+    <string name="backup_export_title">导出备份</string>
+    <string name="backup_export_desc">保存布局、小部件和设置</string>
+    <string name="backup_export_done">备份已保存</string>
+    <string name="backup_import_title">恢复备份</string>
+    <string name="backup_import_desc">恢复已保存的布局和设置</string>
+    <string name="backup_import_confirm">此操作将重启启动器并恢复你的配置</string>
+
+    <string name="pref_label_ui_mode_system">跟随系统</string>
+    <string name="pref_label_ui_mode_day">浅色</string>
+    <string name="pref_label_ui_mode_night">深色</string>
+    <string name="pref_label_grid_width">网格宽度</string>
+    <string name="pref_label_grid_height">网格高度</string>
+    <string name="pref_label_icon_size">图标大小 (%)</string>
+    <string name="pref_label_icon_label_size">标签大小 (%)</string>
+
+    <string name="pref_label_visibility_title">标签显示</string>
+    <string name="label_visibility_never">从不</string>
+    <string name="label_visibility_drawer_only">仅应用抽屉</string>
+    <string name="label_visibility_home_only">仅主屏幕</string>
+    <string name="label_visibility_auto">自动</string>
+    <string name="pref_adaptive_icons_title">自适应图标</string>
+    <string name="pref_adaptive_icons_summary">重塑非自适应的图标</string>
+    <string name="pref_adaptive_icons_except_system">系统应用除外</string>
+    <string name="pref_adaptive_icons_force_legacy">强制使用旧版图标</string>
+    <string name="pref_adaptive_icons_never">从不重塑</string>
+    <string name="pref_themed_icons_title">单色图标</string>
+    <string name="pref_themed_icons_summary">重新着色图标以匹配系统主题</string>
+    <string name="label_visibility_always">始终</string>
+
+    <string name="pref_icon_shape_title">图标形状</string>
+    <string name="icon_shape_system">系统</string>
+    <string name="icon_shape_circle">圆形</string>
+    <string name="icon_shape_tofu">豆腐</string>
+    <string name="icon_shape_ios">iOS</string>
+    <string name="icon_shape_squircle">圆角方形</string>
+    <string name="icon_shape_xperia">Xperia</string>
+    <string name="icon_shape_riceballs">饭团</string>
+
+    <string name="pref_drawer_type_title">抽屉类型</string>
+    <string name="drawer_type_frosted">磨砂</string>
+    <string name="drawer_type_mica">MICA</string>
+    <string name="drawer_type_translucent">半透明</string>
+
+    <string name="pref_drawer_grid_width_override_title">覆盖网格宽度</string>
+    <string name="pref_drawer_grid_width_override_summary">在应用抽屉中使用自定义列数</string>
+    <string name="pref_drawer_padding_title">两侧边距</string>
+
+    <string name="pref_blur_preview_title">模糊预览模式</string>
+    <string name="pref_blur_preview_desc">拖动图标和小部件时模糊壁纸</string>
+
+    <string name="pref_lock_home_screen_title">锁定主屏幕</string>
+    <string name="pref_lock_home_screen_summary">禁止移动图标和小部件</string>
+
+    <string name="pref_double_tap_to_sleep_title">双击锁屏</string>
+    <string name="pref_double_tap_to_sleep_summary">双击空白处锁定屏幕</string>
+    <string name="pref_swipe_down_notifications_title">下滑显示通知</string>
+    <string name="pref_swipe_down_notifications_summary">在主屏幕下滑以展开通知栏</string>
+
+    <!-- Murine search bar -->
+    <string name="murine_search_hint">搜索…</string>
+    <string name="murine_search_hint_provider">使用 %1$s 搜索</string>
+    <string name="murine_search_hint_generic">在网络上搜索</string>
+    <string name="murine_search_button_desc">搜索</string>
+    <string name="murine_voice_search_desc">语音搜索</string>
+    <string name="murine_voice_search_prompt">请说话...</string>
+    <string name="murine_lens_desc">视觉搜索</string>
+    <!-- Murine search bar preferences -->
+    <string name="pref_qsb_show_search_bar_title">显示搜索栏</string>
+    <string name="pref_qsb_search_provider_title">搜索引擎</string>
+    <string name="pref_qsb_enable_lens_title">启用 Lens</string>
+    <string name="pref_qsb_enable_lens_summary">在快速搜索中显示 Google Lens 按钮</string>
+    <string name="pref_qsb_box_blur">模糊搜索气泡</string>
+    <string name="pref_qsb_box_blur_desc">为搜索气泡显示 MICA 效果</string>
+    <string name="pref_qsb_bar_alpha">搜索栏透明度</string>
+    <string name="pref_qsb_box_alpha">搜索气泡透明度</string>
+    <string name="pref_qsb_custom_provider_title">自定义搜索网址</string>
+    <string name="pref_qsb_history_size_title">搜索历史数量</string>
+    <string name="pref_qsb_history_size_summary">最大条目数</string>
+    <string name="pref_qsb_clear_history_title">清除搜索历史</string>
+    <string name="pref_qsb_clear_history_summary">移除所有已保存的搜索记录</string>
+    <string name="pref_qsb_clear_history_confirm_title">清除搜索历史？</string>
+    <string name="pref_qsb_clear_history_confirm_message">此操作将永久移除所有已保存的搜索记录。</string>
+    <string name="pref_qsb_clear_history_toast">搜索历史已清除</string>
+
+    <!-- Murine smartspace / clock widget -->
+    <string name="smartspace_mode_clock">时钟</string>
+    <string name="smartspace_mode_google">Google Smartspace</string>
+    <string name="smartspace_mode_disabled">已禁用</string>
+    <string name="pref_smartspace_title">首屏小部件</string>
+    <string name="pref_smartspace_summary_clock">显示带有今天日期的时钟</string>
+    <string name="pref_smartspace_summary_google">显示 Google 的 Smartspace 小部件</string>
+    <string name="pref_smartspace_summary_disabled">首屏不显示小部件</string>
+
+    <string name="pref_blur_unsupported_warning"><![CDATA[此 OEM/ROM 可能未完全支持或未启用壁纸模糊；如果遇到问题，请在显示选项或开发者选项中查找&quot;允许窗口级模糊&quot;选项。<br/>或者，可以在已 root 的设备上尝试启用<a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">此 Magisk 模块</a>]]></string>
+
+    <!-- Notification badges -->
+    <string name="pref_notification_badge_count_title">通知计数</string>
+    <string name="pref_notification_badge_count_desc">在通知圆点上显示数量</string>
+
+    <!-- Icon packs -->
+    <string name="pref_category_icon_pack_title">图标包</string>
+    <string name="pref_category_icon_pack_summary">使用第三方图标包更改应用图标</string>
+    <string name="pref_icon_pack_system_only_title">仅系统应用</string>
+    <string name="pref_icon_pack_system_only_summary">仅对系统应用应用图标包</string>
+    <string name="pref_icon_pack_ignore_shape_title">忽略图标包形状</string>
+    <string name="pref_icon_pack_ignore_shape_summary">使用启动器的图标形状而非图标包的</string>
+    <string name="pref_icon_readapt_frame_title">重新适配到框架</string>
+    <string name="pref_icon_readapt_frame_summary">尝试将未适配的图标放入所选的形状画布中</string>
+    <string name="pref_icon_pack_themed_only_title">仅主题图标</string>
+    <string name="pref_icon_pack_themed_only_summary">保持图标包中不存在的图标不变</string>
+
+    <!-- Hidden apps -->
+    <string name="pref_category_hidden_apps_title">隐藏的应用</string>
+    <string name="pref_category_hidden_apps_summary">从应用抽屉中隐藏应用</string>
+    <string name="hidden_apps_label">已隐藏</string>
+    <string name="hidden_apps_search_hint">搜索应用...</string>
+    <string name="pref_search_within_hidden_title">在隐藏的应用中搜索</string>
+    <string name="pref_search_within_hidden_summary">应用抽屉搜索可找到隐藏的应用</string>
+
+    <!-- App info sheet -->
+    <string name="app_info_package">包名</string>
+    <string name="app_info_version">版本</string>
+    <string name="app_info_version_value">%1$s (%2$d)</string>
+    <string name="app_info_last_update">上次更新</string>
+    <string name="app_info_source">来源</string>
+    <string name="app_info_source_system">系统</string>
+    <string name="app_info_icon_pack_default">默认（全局）</string>
+    <string name="app_info_copied_toast">已复制到剪贴板</string>
+    <string name="app_info_icon_pack_show_all">显示所有图标包</string>
+    <string name="app_info_edit_label">编辑标签</string>
+
+    <!-- Per-app custom icon picker -->
+    <string name="icon_picker_search_hint">搜索图标...</string>
+
+    <!-- Clear custom icons -->
+    <string name="pref_clear_custom_icons_title">清除自定义图标</string>
+    <string name="pref_clear_custom_icons_summary">移除所有单个应用的图标包覆盖</string>
+    <string name="pref_clear_custom_icons_summary_none">未设置自定义图标</string>
+    <string name="pref_clear_custom_icons_confirm_title">清除自定义图标？</string>
+    <string name="pref_clear_custom_icons_confirm_message">此操作会将所有单个应用的图标包覆盖重置为全局设置。</string>
+    <string name="pref_clear_custom_icons_toast">自定义图标已清除</string>
+
+    <!-- Misc -->
+    <string name="pref_default_launcher_title">默认启动器</string>
+    <string name="pref_restart_title">重启</string>
+    <string name="pref_restart_summary">重启启动器</string>
+</resources>

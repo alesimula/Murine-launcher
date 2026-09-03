@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="pref_group_grid_size_title">Rastergrootte</string>
+    <string name="pref_group_grid_size_desc">Het aantal rijen en kolommen wijzigen</string>
+    <string name="pref_group_icon_scale_title">Pictogramschaal</string>
+    <string name="pref_group_icon_scale_desc">De grootte van pictogrammen en labels wijzigen</string>
+    <string name="pref_group_qsb_transparency">Transparantie</string>
+    <string name="pref_group_qsb_transparency_desc">Transparantie-effecten voor de snelzoekbalk instellen</string>
+
+    <string name="pref_category_general_title">Algemeen</string>
+    <string name="pref_category_general_desc">Algemene voorkeuren</string>
+    <string name="pref_category_icons_title">Pictogrammen</string>
+    <string name="pref_category_icons_desc">Grootte en weergave van pictogrammen instellen</string>
+    <string name="pref_category_home_title">Startscherm</string>
+    <string name="pref_category_home_desc">Je startscherm aanpassen</string>
+    <string name="pref_category_drawer_title">App-overzicht</string>
+    <string name="pref_category_drawer_desc">Je app-overzicht aanpassen</string>
+    <string name="pref_category_qsb_title">Zoeken</string>
+    <string name="pref_category_qsb_desc">De snelzoekbalk aanpassen</string>
+    <string name="pref_category_misc_title">Overig</string>
+    <string name="pref_category_misc_desc">Andere opties</string>
+
+    <string name="pref_subcategory_day_night">Interfacethema</string>
+    <string name="pref_subcategory_layout">Indeling</string>
+    <string name="pref_subcategory_appearance">Weergave</string>
+    <string name="pref_subcategory_persistency">Persistentie</string>
+    <string name="pref_subcategory_gestures">Gebaren</string>
+    <string name="pref_subcategory_options">Opties</string>
+    <string name="pref_subcategory_backup">Back-up</string>
+
+    <string name="backup_export_title">Back-up exporteren</string>
+    <string name="backup_export_desc">Indeling, widgets en instellingen opslaan</string>
+    <string name="backup_export_done">Back-up opgeslagen</string>
+    <string name="backup_import_title">Back-up herstellen</string>
+    <string name="backup_import_desc">Opgeslagen indeling en instellingen herstellen</string>
+    <string name="backup_import_confirm">De launcher wordt opnieuw gestart en je configuratie wordt hersteld</string>
+
+    <string name="pref_label_ui_mode_system">Systeem</string>
+    <string name="pref_label_ui_mode_day">Licht</string>
+    <string name="pref_label_ui_mode_night">Donker</string>
+    <string name="pref_label_grid_width">Rasterbreedte</string>
+    <string name="pref_label_grid_height">Rasterhoogte</string>
+    <string name="pref_label_icon_size">Pictogramgrootte (%)</string>
+    <string name="pref_label_icon_label_size">Labelgrootte (%)</string>
+
+    <string name="pref_label_visibility_title">Zichtbaarheid van labels</string>
+    <string name="label_visibility_never">Nooit</string>
+    <string name="label_visibility_drawer_only">Alleen overzicht</string>
+    <string name="label_visibility_home_only">Alleen startscherm</string>
+    <string name="label_visibility_auto">Automatisch</string>
+    <string name="pref_adaptive_icons_title">Adaptieve pictogrammen</string>
+    <string name="pref_adaptive_icons_summary">Niet-adaptieve pictogrammen hervormen</string>
+    <string name="pref_adaptive_icons_except_system">Behalve systeem-apps</string>
+    <string name="pref_adaptive_icons_force_legacy">Verouderde pictogrammen forceren</string>
+    <string name="pref_adaptive_icons_never">Nooit hervormen</string>
+    <string name="pref_themed_icons_title">Monochrome pictogrammen</string>
+    <string name="pref_themed_icons_summary">Pictogrammen aanpassen aan het systeemthema</string>
+    <string name="label_visibility_always">Altijd</string>
+
+    <string name="pref_icon_shape_title">Pictogramvorm</string>
+    <string name="icon_shape_system">Systeem</string>
+    <string name="icon_shape_circle">Cirkel</string>
+    <string name="icon_shape_tofu">Tofu</string>
+    <string name="icon_shape_ios">iOS</string>
+    <string name="icon_shape_squircle">Squircle</string>
+    <string name="icon_shape_xperia">Xperia</string>
+    <string name="icon_shape_riceballs">RiceBalls</string>
+
+    <string name="pref_drawer_type_title">Type overzicht</string>
+    <string name="drawer_type_frosted">Matglas</string>
+    <string name="drawer_type_mica">MICA</string>
+    <string name="drawer_type_translucent">Doorschijnend</string>
+
+    <string name="pref_drawer_grid_width_override_title">Rasterbreedte overschrijven</string>
+    <string name="pref_drawer_grid_width_override_summary">Een eigen aantal kolommen in het app-overzicht gebruiken</string>
+    <string name="pref_drawer_padding_title">Zijmarge</string>
+
+    <string name="pref_blur_preview_title">Vervaging in voorbeeldmodus</string>
+    <string name="pref_blur_preview_desc">Achtergrond vervagen tijdens het slepen van pictogrammen en widgets</string>
+
+    <string name="pref_lock_home_screen_title">Startscherm vergrendelen</string>
+    <string name="pref_lock_home_screen_summary">Verplaatsen van pictogrammen en widgets voorkomen</string>
+
+    <string name="pref_double_tap_to_sleep_title">Dubbeltik om te vergrendelen</string>
+    <string name="pref_double_tap_to_sleep_summary">Dubbeltik op een lege plek om het scherm te vergrendelen</string>
+    <string name="pref_swipe_down_notifications_title">Veeg omlaag voor meldingen</string>
+    <string name="pref_swipe_down_notifications_summary">Veeg omlaag op het startscherm om het meldingenpaneel te openen</string>
+
+    <!-- Murine search bar -->
+    <string name="murine_search_hint">Zoeken…</string>
+    <string name="murine_search_hint_provider">Zoeken met %1$s</string>
+    <string name="murine_search_hint_generic">Op het web zoeken</string>
+    <string name="murine_search_button_desc">Zoeken</string>
+    <string name="murine_voice_search_desc">Spraakgestuurd zoeken</string>
+    <string name="murine_voice_search_prompt">Spreek nu...</string>
+    <string name="murine_lens_desc">Visueel zoeken</string>
+    <!-- Murine search bar preferences -->
+    <string name="pref_qsb_show_search_bar_title">Zoekbalk tonen</string>
+    <string name="pref_qsb_search_provider_title">Zoekmachine</string>
+    <string name="pref_qsb_enable_lens_title">Lens inschakelen</string>
+    <string name="pref_qsb_enable_lens_summary">Google Lens-knop tonen in snelzoeken</string>
+    <string name="pref_qsb_box_blur">Zoekballon vervagen</string>
+    <string name="pref_qsb_box_blur_desc">MICA-effect tonen voor de zoekballon</string>
+    <string name="pref_qsb_bar_alpha">Dekking van de zoekbalk</string>
+    <string name="pref_qsb_box_alpha">Dekking van de zoekballon</string>
+    <string name="pref_qsb_custom_provider_title">Eigen zoek-URL</string>
+    <string name="pref_qsb_history_size_title">Grootte van zoekgeschiedenis</string>
+    <string name="pref_qsb_history_size_summary">Maximum aantal items</string>
+    <string name="pref_qsb_clear_history_title">Zoekgeschiedenis wissen</string>
+    <string name="pref_qsb_clear_history_summary">Alle opgeslagen zoekopdrachten verwijderen</string>
+    <string name="pref_qsb_clear_history_confirm_title">Zoekgeschiedenis wissen?</string>
+    <string name="pref_qsb_clear_history_confirm_message">Alle opgeslagen zoekopdrachten worden definitief verwijderd.</string>
+    <string name="pref_qsb_clear_history_toast">Zoekgeschiedenis gewist</string>
+
+    <!-- Murine smartspace / clock widget -->
+    <string name="smartspace_mode_clock">Klok</string>
+    <string name="smartspace_mode_google">Google Smartspace</string>
+    <string name="smartspace_mode_disabled">Uitgeschakeld</string>
+    <string name="pref_smartspace_title">Widget op eerste scherm</string>
+    <string name="pref_smartspace_summary_clock">Toont een klok met de datum van vandaag</string>
+    <string name="pref_smartspace_summary_google">Toont de Google Smartspace-widget</string>
+    <string name="pref_smartspace_summary_disabled">Geen widget op het eerste scherm</string>
+
+    <string name="pref_blur_unsupported_warning"><![CDATA[De achtergrondvervaging wordt door deze OEM/ROM mogelijk niet volledig ondersteund of ingeschakeld; als je problemen ondervindt, zoek dan naar een optie &quot;Vervaging op vensterniveau toestaan&quot; in de weergave-opties of de ontwikkelaarsopties.<br/>Je kunt ook <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">deze Magisk-module</a> inschakelen op apparaten met root]]></string>
+
+    <!-- Notification badges -->
+    <string name="pref_notification_badge_count_title">Aantal meldingen</string>
+    <string name="pref_notification_badge_count_desc">Het aantal op meldingsstippen tonen</string>
+
+    <!-- Icon packs -->
+    <string name="pref_category_icon_pack_title">Pictogrammenpakket</string>
+    <string name="pref_category_icon_pack_summary">App-pictogrammen wijzigen met pakketten van derden</string>
+    <string name="pref_icon_pack_system_only_title">Alleen systeem-apps</string>
+    <string name="pref_icon_pack_system_only_summary">Het pakket alleen op systeem-apps toepassen</string>
+    <string name="pref_icon_pack_ignore_shape_title">Vorm van pakket negeren</string>
+    <string name="pref_icon_pack_ignore_shape_summary">De pictogramvorm van de launcher gebruiken in plaats van die van het pakket</string>
+    <string name="pref_icon_readapt_frame_title">Aanpassen aan kader</string>
+    <string name="pref_icon_readapt_frame_summary">Probeert pictogrammen zonder thema in de opgegeven vorm te passen</string>
+    <string name="pref_icon_pack_themed_only_title">Alleen pictogrammen met thema</string>
+    <string name="pref_icon_pack_themed_only_summary">Pictogrammen die niet in het pakket staan ongewijzigd laten</string>
+
+    <!-- Hidden apps -->
+    <string name="pref_category_hidden_apps_title">Verborgen apps</string>
+    <string name="pref_category_hidden_apps_summary">Apps verbergen uit het app-overzicht</string>
+    <string name="hidden_apps_label">Verborgen</string>
+    <string name="hidden_apps_search_hint">Apps zoeken...</string>
+    <string name="pref_search_within_hidden_title">Zoeken in verborgen apps</string>
+    <string name="pref_search_within_hidden_summary">Zoeken in het app-overzicht vindt verborgen apps</string>
+
+    <!-- App info sheet -->
+    <string name="app_info_package">Pakket</string>
+    <string name="app_info_version">Versie</string>
+    <string name="app_info_version_value">%1$s (%2$d)</string>
+    <string name="app_info_last_update">Laatste update</string>
+    <string name="app_info_source">Bron</string>
+    <string name="app_info_source_system">Systeem</string>
+    <string name="app_info_icon_pack_default">Standaard (globaal)</string>
+    <string name="app_info_copied_toast">Gekopieerd naar klembord</string>
+    <string name="app_info_icon_pack_show_all">Alle pakketten tonen</string>
+    <string name="app_info_edit_label">Label bewerken</string>
+
+    <!-- Per-app custom icon picker -->
+    <string name="icon_picker_search_hint">Pictogrammen zoeken...</string>
+
+    <!-- Clear custom icons -->
+    <string name="pref_clear_custom_icons_title">Eigen pictogrammen wissen</string>
+    <string name="pref_clear_custom_icons_summary">Alle pictogramkeuzes per app verwijderen</string>
+    <string name="pref_clear_custom_icons_summary_none">Geen eigen pictogrammen ingesteld</string>
+    <string name="pref_clear_custom_icons_confirm_title">Eigen pictogrammen wissen?</string>
+    <string name="pref_clear_custom_icons_confirm_message">Alle pictogramkeuzes per app worden teruggezet naar de algemene instelling.</string>
+    <string name="pref_clear_custom_icons_toast">Eigen pictogrammen gewist</string>
+
+    <!-- Misc -->
+    <string name="pref_default_launcher_title">Standaardlauncher</string>
+    <string name="pref_restart_title">Opnieuw starten</string>
+    <string name="pref_restart_summary">De launcher opnieuw starten</string>
+</resources>

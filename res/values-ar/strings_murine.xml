@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="pref_group_grid_size_title">حجم الشبكة</string>
+    <string name="pref_group_grid_size_desc">تغيير عدد الصفوف والأعمدة</string>
+    <string name="pref_group_icon_scale_title">مقياس الأيقونات</string>
+    <string name="pref_group_icon_scale_desc">تغيير حجم الأيقونات والتسميات</string>
+    <string name="pref_group_qsb_transparency">الشفافية</string>
+    <string name="pref_group_qsb_transparency_desc">ضبط تأثيرات الشفافية لشريط البحث السريع</string>
+
+    <string name="pref_category_general_title">عام</string>
+    <string name="pref_category_general_desc">التفضيلات العامة</string>
+    <string name="pref_category_icons_title">الأيقونات</string>
+    <string name="pref_category_icons_desc">ضبط حجم الأيقونات ومظهرها</string>
+    <string name="pref_category_home_title">الشاشة الرئيسية</string>
+    <string name="pref_category_home_desc">تخصيص الشاشة الرئيسية</string>
+    <string name="pref_category_drawer_title">درج التطبيقات</string>
+    <string name="pref_category_drawer_desc">تخصيص درج التطبيقات</string>
+    <string name="pref_category_qsb_title">البحث</string>
+    <string name="pref_category_qsb_desc">تخصيص شريط البحث السريع</string>
+    <string name="pref_category_misc_title">متنوع</string>
+    <string name="pref_category_misc_desc">خيارات أخرى</string>
+
+    <string name="pref_subcategory_day_night">مظهر الواجهة</string>
+    <string name="pref_subcategory_layout">التخطيط</string>
+    <string name="pref_subcategory_appearance">المظهر</string>
+    <string name="pref_subcategory_persistency">الاستمرارية</string>
+    <string name="pref_subcategory_gestures">الإيماءات</string>
+    <string name="pref_subcategory_options">الخيارات</string>
+    <string name="pref_subcategory_backup">النسخ الاحتياطي</string>
+
+    <string name="backup_export_title">تصدير النسخة الاحتياطية</string>
+    <string name="backup_export_desc">حفظ التخطيط والأدوات والإعدادات</string>
+    <string name="backup_export_done">تم حفظ النسخة الاحتياطية</string>
+    <string name="backup_import_title">استعادة النسخة الاحتياطية</string>
+    <string name="backup_import_desc">استعادة التخطيط والإعدادات المحفوظة</string>
+    <string name="backup_import_confirm">ستتم إعادة تشغيل المشغّل واستعادة إعداداتك</string>
+
+    <string name="pref_label_ui_mode_system">النظام</string>
+    <string name="pref_label_ui_mode_day">فاتح</string>
+    <string name="pref_label_ui_mode_night">داكن</string>
+    <string name="pref_label_grid_width">عرض الشبكة</string>
+    <string name="pref_label_grid_height">ارتفاع الشبكة</string>
+    <string name="pref_label_icon_size">حجم الأيقونات (%)</string>
+    <string name="pref_label_icon_label_size">حجم التسميات (%)</string>
+
+    <string name="pref_label_visibility_title">ظهور التسميات</string>
+    <string name="label_visibility_never">أبدًا</string>
+    <string name="label_visibility_drawer_only">الدرج فقط</string>
+    <string name="label_visibility_home_only">الشاشة الرئيسية فقط</string>
+    <string name="label_visibility_auto">تلقائي</string>
+    <string name="pref_adaptive_icons_title">الأيقونات التكيفية</string>
+    <string name="pref_adaptive_icons_summary">إعادة تشكيل الأيقونات غير التكيفية</string>
+    <string name="pref_adaptive_icons_except_system">باستثناء تطبيقات النظام</string>
+    <string name="pref_adaptive_icons_force_legacy">فرض الأيقونات القديمة</string>
+    <string name="pref_adaptive_icons_never">عدم إعادة التشكيل</string>
+    <string name="pref_themed_icons_title">أيقونات أحادية اللون</string>
+    <string name="pref_themed_icons_summary">إعادة تلوين الأيقونات لتطابق مظهر النظام</string>
+    <string name="label_visibility_always">دائمًا</string>
+
+    <string name="pref_icon_shape_title">شكل الأيقونات</string>
+    <string name="icon_shape_system">النظام</string>
+    <string name="icon_shape_circle">دائرة</string>
+    <string name="icon_shape_tofu">Tofu</string>
+    <string name="icon_shape_ios">iOS</string>
+    <string name="icon_shape_squircle">Squircle</string>
+    <string name="icon_shape_xperia">Xperia</string>
+    <string name="icon_shape_riceballs">RiceBalls</string>
+
+    <string name="pref_drawer_type_title">نوع الدرج</string>
+    <string name="drawer_type_frosted">زجاج مصنفر</string>
+    <string name="drawer_type_mica">MICA</string>
+    <string name="drawer_type_translucent">شبه شفاف</string>
+
+    <string name="pref_drawer_grid_width_override_title">تجاوز عرض الشبكة</string>
+    <string name="pref_drawer_grid_width_override_summary">استخدام عدد أعمدة مخصص في درج التطبيقات</string>
+    <string name="pref_drawer_padding_title">الهامش الجانبي</string>
+
+    <string name="pref_blur_preview_title">تمويه وضع المعاينة</string>
+    <string name="pref_blur_preview_desc">تمويه الخلفية أثناء سحب الأيقونات والأدوات</string>
+
+    <string name="pref_lock_home_screen_title">قفل الشاشة الرئيسية</string>
+    <string name="pref_lock_home_screen_summary">منع نقل الأيقونات والأدوات</string>
+
+    <string name="pref_double_tap_to_sleep_title">النقر مرتين للقفل</string>
+    <string name="pref_double_tap_to_sleep_summary">انقر مرتين على مساحة فارغة لقفل الشاشة</string>
+    <string name="pref_swipe_down_notifications_title">التمرير لأسفل للإشعارات</string>
+    <string name="pref_swipe_down_notifications_summary">مرّر لأسفل على الشاشة الرئيسية لفتح لوحة الإشعارات</string>
+
+    <!-- Murine search bar -->
+    <string name="murine_search_hint">بحث…</string>
+    <string name="murine_search_hint_provider">البحث باستخدام %1$s</string>
+    <string name="murine_search_hint_generic">البحث على الويب</string>
+    <string name="murine_search_button_desc">بحث</string>
+    <string name="murine_voice_search_desc">البحث الصوتي</string>
+    <string name="murine_voice_search_prompt">تحدث الآن...</string>
+    <string name="murine_lens_desc">البحث المرئي</string>
+    <!-- Murine search bar preferences -->
+    <string name="pref_qsb_show_search_bar_title">إظهار شريط البحث</string>
+    <string name="pref_qsb_search_provider_title">محرك البحث</string>
+    <string name="pref_qsb_enable_lens_title">تفعيل Lens</string>
+    <string name="pref_qsb_enable_lens_summary">إظهار زر Google Lens في البحث السريع</string>
+    <string name="pref_qsb_box_blur">تمويه فقاعة البحث</string>
+    <string name="pref_qsb_box_blur_desc">إظهار تأثير MICA لفقاعة البحث</string>
+    <string name="pref_qsb_bar_alpha">شفافية شريط البحث</string>
+    <string name="pref_qsb_box_alpha">شفافية فقاعة البحث</string>
+    <string name="pref_qsb_custom_provider_title">رابط بحث مخصص</string>
+    <string name="pref_qsb_history_size_title">حجم سجل البحث</string>
+    <string name="pref_qsb_history_size_summary">الحد الأقصى للإدخالات</string>
+    <string name="pref_qsb_clear_history_title">مسح سجل البحث</string>
+    <string name="pref_qsb_clear_history_summary">إزالة جميع عمليات البحث المحفوظة</string>
+    <string name="pref_qsb_clear_history_confirm_title">مسح سجل البحث؟</string>
+    <string name="pref_qsb_clear_history_confirm_message">ستتم إزالة جميع عمليات البحث المحفوظة نهائيًا.</string>
+    <string name="pref_qsb_clear_history_toast">تم مسح سجل البحث</string>
+
+    <!-- Murine smartspace / clock widget -->
+    <string name="smartspace_mode_clock">الساعة</string>
+    <string name="smartspace_mode_google">Google Smartspace</string>
+    <string name="smartspace_mode_disabled">معطّل</string>
+    <string name="pref_smartspace_title">أداة الشاشة الأولى</string>
+    <string name="pref_smartspace_summary_clock">تعرض ساعة مع تاريخ اليوم</string>
+    <string name="pref_smartspace_summary_google">تعرض أداة Google Smartspace</string>
+    <string name="pref_smartspace_summary_disabled">لا توجد أداة في الشاشة الأولى</string>
+
+    <string name="pref_blur_unsupported_warning"><![CDATA[قد لا يكون تمويه الخلفية مدعومًا بالكامل أو مفعّلاً في هذا الـ OEM/ROM؛ إذا واجهت مشكلات، ابحث عن خيار &quot;السماح بالتمويه على مستوى النوافذ&quot; في خيارات العرض أو خيارات المطوّر.<br/>وبدلاً من ذلك، جرّب تفعيل <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">وحدة Magisk هذه</a> على الأجهزة التي بها روت]]></string>
+
+    <!-- Notification badges -->
+    <string name="pref_notification_badge_count_title">عدد الإشعارات</string>
+    <string name="pref_notification_badge_count_desc">إظهار العدد على نقاط الإشعارات</string>
+
+    <!-- Icon packs -->
+    <string name="pref_category_icon_pack_title">حزمة الأيقونات</string>
+    <string name="pref_category_icon_pack_summary">تغيير أيقونات التطبيقات باستخدام حزم خارجية</string>
+    <string name="pref_icon_pack_system_only_title">تطبيقات النظام فقط</string>
+    <string name="pref_icon_pack_system_only_summary">تطبيق الحزمة على تطبيقات النظام فقط</string>
+    <string name="pref_icon_pack_ignore_shape_title">تجاهل شكل الحزمة</string>
+    <string name="pref_icon_pack_ignore_shape_summary">استخدام شكل أيقونات المشغّل بدلاً من شكل الحزمة</string>
+    <string name="pref_icon_readapt_frame_title">إعادة التكيّف مع الإطار</string>
+    <string name="pref_icon_readapt_frame_summary">يحاول ملاءمة الأيقونات غير المُنسّقة مع الشكل المحدد</string>
+    <string name="pref_icon_pack_themed_only_title">الأيقونات المُنسّقة فقط</string>
+    <string name="pref_icon_pack_themed_only_summary">ترك الأيقونات غير الموجودة في الحزمة دون تغيير</string>
+
+    <!-- Hidden apps -->
+    <string name="pref_category_hidden_apps_title">التطبيقات المخفية</string>
+    <string name="pref_category_hidden_apps_summary">إخفاء التطبيقات من درج التطبيقات</string>
+    <string name="hidden_apps_label">مخفية</string>
+    <string name="hidden_apps_search_hint">البحث عن التطبيقات...</string>
+    <string name="pref_search_within_hidden_title">البحث ضمن التطبيقات المخفية</string>
+    <string name="pref_search_within_hidden_summary">يعثر البحث في درج التطبيقات على التطبيقات المخفية</string>
+
+    <!-- App info sheet -->
+    <string name="app_info_package">الحزمة</string>
+    <string name="app_info_version">الإصدار</string>
+    <string name="app_info_version_value">%1$s (%2$d)</string>
+    <string name="app_info_last_update">آخر تحديث</string>
+    <string name="app_info_source">المصدر</string>
+    <string name="app_info_source_system">النظام</string>
+    <string name="app_info_icon_pack_default">الافتراضي (عام)</string>
+    <string name="app_info_copied_toast">تم النسخ إلى الحافظة</string>
+    <string name="app_info_icon_pack_show_all">إظهار جميع الحزم</string>
+    <string name="app_info_edit_label">تعديل التسمية</string>
+
+    <!-- Per-app custom icon picker -->
+    <string name="icon_picker_search_hint">البحث عن الأيقونات...</string>
+
+    <!-- Clear custom icons -->
+    <string name="pref_clear_custom_icons_title">مسح الأيقونات المخصصة</string>
+    <string name="pref_clear_custom_icons_summary">إزالة جميع تخصيصات الأيقونات لكل تطبيق</string>
+    <string name="pref_clear_custom_icons_summary_none">لا توجد أيقونات مخصصة</string>
+    <string name="pref_clear_custom_icons_confirm_title">مسح الأيقونات المخصصة؟</string>
+    <string name="pref_clear_custom_icons_confirm_message">ستتم إعادة تعيين جميع تخصيصات الأيقونات لكل تطبيق إلى الإعداد العام.</string>
+    <string name="pref_clear_custom_icons_toast">تم مسح الأيقونات المخصصة</string>
+
+    <!-- Misc -->
+    <string name="pref_default_launcher_title">المشغّل الافتراضي</string>
+    <string name="pref_restart_title">إعادة التشغيل</string>
+    <string name="pref_restart_summary">إعادة تشغيل المشغّل</string>
+</resources>

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="pref_group_grid_size_title">Ukuran petak</string>
+    <string name="pref_group_grid_size_desc">Ubah jumlah baris dan kolom</string>
+    <string name="pref_group_icon_scale_title">Skala ikon</string>
+    <string name="pref_group_icon_scale_desc">Ubah ukuran ikon dan label</string>
+    <string name="pref_group_qsb_transparency">Transparansi</string>
+    <string name="pref_group_qsb_transparency_desc">Atur efek transparansi kotak telusur cepat</string>
+
+    <string name="pref_category_general_title">Umum</string>
+    <string name="pref_category_general_desc">Preferensi global</string>
+    <string name="pref_category_icons_title">Ikon</string>
+    <string name="pref_category_icons_desc">Atur ukuran dan tampilan ikon</string>
+    <string name="pref_category_home_title">Layar utama</string>
+    <string name="pref_category_home_desc">Sesuaikan layar utama</string>
+    <string name="pref_category_drawer_title">Laci aplikasi</string>
+    <string name="pref_category_drawer_desc">Sesuaikan laci aplikasi</string>
+    <string name="pref_category_qsb_title">Telusur</string>
+    <string name="pref_category_qsb_desc">Sesuaikan kotak telusur cepat</string>
+    <string name="pref_category_misc_title">Lain-lain</string>
+    <string name="pref_category_misc_desc">Opsi lainnya</string>
+
+    <string name="pref_subcategory_day_night">Tema antarmuka</string>
+    <string name="pref_subcategory_layout">Tata letak</string>
+    <string name="pref_subcategory_appearance">Tampilan</string>
+    <string name="pref_subcategory_persistency">Persistensi</string>
+    <string name="pref_subcategory_gestures">Gestur</string>
+    <string name="pref_subcategory_options">Opsi</string>
+    <string name="pref_subcategory_backup">Cadangan</string>
+
+    <string name="backup_export_title">Ekspor cadangan</string>
+    <string name="backup_export_desc">Simpan tata letak, widget, dan setelan</string>
+    <string name="backup_export_done">Cadangan disimpan</string>
+    <string name="backup_import_title">Pulihkan cadangan</string>
+    <string name="backup_import_desc">Pulihkan tata letak dan setelan yang tersimpan</string>
+    <string name="backup_import_confirm">Peluncur akan dimulai ulang dan konfigurasi Anda akan dipulihkan</string>
+
+    <string name="pref_label_ui_mode_system">Sistem</string>
+    <string name="pref_label_ui_mode_day">Terang</string>
+    <string name="pref_label_ui_mode_night">Gelap</string>
+    <string name="pref_label_grid_width">Lebar petak</string>
+    <string name="pref_label_grid_height">Tinggi petak</string>
+    <string name="pref_label_icon_size">Ukuran ikon (%)</string>
+    <string name="pref_label_icon_label_size">Ukuran label (%)</string>
+
+    <string name="pref_label_visibility_title">Visibilitas label</string>
+    <string name="label_visibility_never">Tidak pernah</string>
+    <string name="label_visibility_drawer_only">Hanya laci</string>
+    <string name="label_visibility_home_only">Hanya layar utama</string>
+    <string name="label_visibility_auto">Otomatis</string>
+    <string name="pref_adaptive_icons_title">Ikon adaptif</string>
+    <string name="pref_adaptive_icons_summary">Ubah bentuk ikon yang tidak adaptif</string>
+    <string name="pref_adaptive_icons_except_system">Kecuali aplikasi sistem</string>
+    <string name="pref_adaptive_icons_force_legacy">Paksa ikon lama</string>
+    <string name="pref_adaptive_icons_never">Jangan ubah bentuk</string>
+    <string name="pref_themed_icons_title">Ikon monokrom</string>
+    <string name="pref_themed_icons_summary">Warnai ulang ikon sesuai tema sistem</string>
+    <string name="label_visibility_always">Selalu</string>
+
+    <string name="pref_icon_shape_title">Bentuk ikon</string>
+    <string name="icon_shape_system">Sistem</string>
+    <string name="icon_shape_circle">Lingkaran</string>
+    <string name="icon_shape_tofu">Tofu</string>
+    <string name="icon_shape_ios">iOS</string>
+    <string name="icon_shape_squircle">Squircle</string>
+    <string name="icon_shape_xperia">Xperia</string>
+    <string name="icon_shape_riceballs">RiceBalls</string>
+
+    <string name="pref_drawer_type_title">Jenis laci</string>
+    <string name="drawer_type_frosted">Buram</string>
+    <string name="drawer_type_mica">MICA</string>
+    <string name="drawer_type_translucent">Tembus cahaya</string>
+
+    <string name="pref_drawer_grid_width_override_title">Ganti lebar petak</string>
+    <string name="pref_drawer_grid_width_override_summary">Gunakan jumlah kolom khusus di laci aplikasi</string>
+    <string name="pref_drawer_padding_title">Jarak samping</string>
+
+    <string name="pref_blur_preview_title">Buram pada mode pratinjau</string>
+    <string name="pref_blur_preview_desc">Buramkan wallpaper saat menyeret ikon dan widget</string>
+
+    <string name="pref_lock_home_screen_title">Kunci layar utama</string>
+    <string name="pref_lock_home_screen_summary">Cegah pemindahan ikon dan widget</string>
+
+    <string name="pref_double_tap_to_sleep_title">Ketuk dua kali untuk mengunci</string>
+    <string name="pref_double_tap_to_sleep_summary">Ketuk dua kali pada ruang kosong untuk mengunci layar</string>
+    <string name="pref_swipe_down_notifications_title">Geser ke bawah untuk notifikasi</string>
+    <string name="pref_swipe_down_notifications_summary">Geser ke bawah di layar utama untuk membuka panel notifikasi</string>
+
+    <!-- Murine search bar -->
+    <string name="murine_search_hint">Telusuri…</string>
+    <string name="murine_search_hint_provider">Telusuri dengan %1$s</string>
+    <string name="murine_search_hint_generic">Telusuri di web</string>
+    <string name="murine_search_button_desc">Telusuri</string>
+    <string name="murine_voice_search_desc">Penelusuran suara</string>
+    <string name="murine_voice_search_prompt">Bicara sekarang...</string>
+    <string name="murine_lens_desc">Penelusuran visual</string>
+    <!-- Murine search bar preferences -->
+    <string name="pref_qsb_show_search_bar_title">Tampilkan bilah telusur</string>
+    <string name="pref_qsb_search_provider_title">Mesin telusur</string>
+    <string name="pref_qsb_enable_lens_title">Aktifkan Lens</string>
+    <string name="pref_qsb_enable_lens_summary">Tampilkan tombol Google Lens di telusur cepat</string>
+    <string name="pref_qsb_box_blur">Buramkan gelembung telusur</string>
+    <string name="pref_qsb_box_blur_desc">Tampilkan efek MICA untuk gelembung telusur</string>
+    <string name="pref_qsb_bar_alpha">Opasitas bilah telusur</string>
+    <string name="pref_qsb_box_alpha">Opasitas gelembung telusur</string>
+    <string name="pref_qsb_custom_provider_title">URL telusur khusus</string>
+    <string name="pref_qsb_history_size_title">Ukuran riwayat telusur</string>
+    <string name="pref_qsb_history_size_summary">Entri maksimum</string>
+    <string name="pref_qsb_clear_history_title">Hapus riwayat telusur</string>
+    <string name="pref_qsb_clear_history_summary">Hapus semua kueri telusur tersimpan</string>
+    <string name="pref_qsb_clear_history_confirm_title">Hapus riwayat telusur?</string>
+    <string name="pref_qsb_clear_history_confirm_message">Semua kueri telusur tersimpan akan dihapus secara permanen.</string>
+    <string name="pref_qsb_clear_history_toast">Riwayat telusur dihapus</string>
+
+    <!-- Murine smartspace / clock widget -->
+    <string name="smartspace_mode_clock">Jam</string>
+    <string name="smartspace_mode_google">Google Smartspace</string>
+    <string name="smartspace_mode_disabled">Nonaktif</string>
+    <string name="pref_smartspace_title">Widget layar pertama</string>
+    <string name="pref_smartspace_summary_clock">Menampilkan jam dengan tanggal hari ini</string>
+    <string name="pref_smartspace_summary_google">Menampilkan widget Google Smartspace</string>
+    <string name="pref_smartspace_summary_disabled">Tidak ada widget di layar pertama</string>
+
+    <string name="pref_blur_unsupported_warning"><![CDATA[Efek buram wallpaper mungkin tidak sepenuhnya didukung atau diaktifkan oleh OEM/ROM ini; jika mengalami masalah, cari opsi &quot;Izinkan efek buram tingkat jendela&quot; di opsi layar atau opsi developer.<br/>Sebagai alternatif, coba aktifkan <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">modul Magisk ini</a> pada perangkat yang sudah di-root]]></string>
+
+    <!-- Notification badges -->
+    <string name="pref_notification_badge_count_title">Jumlah notifikasi</string>
+    <string name="pref_notification_badge_count_desc">Tampilkan jumlah pada titik notifikasi</string>
+
+    <!-- Icon packs -->
+    <string name="pref_category_icon_pack_title">Paket ikon</string>
+    <string name="pref_category_icon_pack_summary">Ubah ikon aplikasi menggunakan paket pihak ketiga</string>
+    <string name="pref_icon_pack_system_only_title">Hanya aplikasi sistem</string>
+    <string name="pref_icon_pack_system_only_summary">Terapkan paket hanya pada aplikasi sistem</string>
+    <string name="pref_icon_pack_ignore_shape_title">Abaikan bentuk paket</string>
+    <string name="pref_icon_pack_ignore_shape_summary">Gunakan bentuk ikon peluncur, bukan bentuk paket</string>
+    <string name="pref_icon_readapt_frame_title">Sesuaikan ulang ke bingkai</string>
+    <string name="pref_icon_readapt_frame_summary">Mencoba menyesuaikan ikon tanpa tema ke bentuk yang ditentukan</string>
+    <string name="pref_icon_pack_themed_only_title">Hanya ikon bertema</string>
+    <string name="pref_icon_pack_themed_only_summary">Biarkan ikon yang tidak ada di paket tetap sama</string>
+
+    <!-- Hidden apps -->
+    <string name="pref_category_hidden_apps_title">Aplikasi tersembunyi</string>
+    <string name="pref_category_hidden_apps_summary">Sembunyikan aplikasi dari laci aplikasi</string>
+    <string name="hidden_apps_label">Tersembunyi</string>
+    <string name="hidden_apps_search_hint">Telusuri aplikasi...</string>
+    <string name="pref_search_within_hidden_title">Telusuri dalam aplikasi tersembunyi</string>
+    <string name="pref_search_within_hidden_summary">Penelusuran laci aplikasi menemukan aplikasi tersembunyi</string>
+
+    <!-- App info sheet -->
+    <string name="app_info_package">Paket</string>
+    <string name="app_info_version">Versi</string>
+    <string name="app_info_version_value">%1$s (%2$d)</string>
+    <string name="app_info_last_update">Pembaruan terakhir</string>
+    <string name="app_info_source">Sumber</string>
+    <string name="app_info_source_system">Sistem</string>
+    <string name="app_info_icon_pack_default">Default (global)</string>
+    <string name="app_info_copied_toast">Disalin ke papan klip</string>
+    <string name="app_info_icon_pack_show_all">Tampilkan semua paket</string>
+    <string name="app_info_edit_label">Edit label</string>
+
+    <!-- Per-app custom icon picker -->
+    <string name="icon_picker_search_hint">Telusuri ikon...</string>
+
+    <!-- Clear custom icons -->
+    <string name="pref_clear_custom_icons_title">Hapus ikon khusus</string>
+    <string name="pref_clear_custom_icons_summary">Hapus semua ikon khusus per aplikasi</string>
+    <string name="pref_clear_custom_icons_summary_none">Tidak ada ikon khusus</string>
+    <string name="pref_clear_custom_icons_confirm_title">Hapus ikon khusus?</string>
+    <string name="pref_clear_custom_icons_confirm_message">Semua ikon khusus per aplikasi akan dikembalikan ke setelan global.</string>
+    <string name="pref_clear_custom_icons_toast">Ikon khusus dihapus</string>
+
+    <!-- Misc -->
+    <string name="pref_default_launcher_title">Peluncur default</string>
+    <string name="pref_restart_title">Mulai ulang</string>
+    <string name="pref_restart_summary">Mulai ulang peluncur</string>
+</resources>

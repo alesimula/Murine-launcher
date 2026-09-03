@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="pref_group_grid_size_title">גודל הרשת</string>
+    <string name="pref_group_grid_size_desc">שינוי מספר השורות והעמודות</string>
+    <string name="pref_group_icon_scale_title">קנה מידה של הסמלים</string>
+    <string name="pref_group_icon_scale_desc">שינוי גודל הסמלים והתוויות</string>
+    <string name="pref_group_qsb_transparency">שקיפות</string>
+    <string name="pref_group_qsb_transparency_desc">הגדרת אפקטי שקיפות לסרגל החיפוש המהיר</string>
+
+    <string name="pref_category_general_title">כללי</string>
+    <string name="pref_category_general_desc">העדפות כלליות</string>
+    <string name="pref_category_icons_title">סמלים</string>
+    <string name="pref_category_icons_desc">הגדרת גודל ומראה הסמלים</string>
+    <string name="pref_category_home_title">מסך הבית</string>
+    <string name="pref_category_home_desc">התאמה אישית של מסך הבית</string>
+    <string name="pref_category_drawer_title">מגירת האפליקציות</string>
+    <string name="pref_category_drawer_desc">התאמה אישית של מגירת האפליקציות</string>
+    <string name="pref_category_qsb_title">חיפוש</string>
+    <string name="pref_category_qsb_desc">התאמה אישית של סרגל החיפוש המהיר</string>
+    <string name="pref_category_misc_title">שונות</string>
+    <string name="pref_category_misc_desc">אפשרויות נוספות</string>
+
+    <string name="pref_subcategory_day_night">ערכת נושא לממשק</string>
+    <string name="pref_subcategory_layout">פריסה</string>
+    <string name="pref_subcategory_appearance">מראה</string>
+    <string name="pref_subcategory_persistency">שמירה</string>
+    <string name="pref_subcategory_gestures">מחוות</string>
+    <string name="pref_subcategory_options">אפשרויות</string>
+    <string name="pref_subcategory_backup">גיבוי</string>
+
+    <string name="backup_export_title">ייצוא גיבוי</string>
+    <string name="backup_export_desc">שמירת הפריסה, הווידג\'טים וההגדרות</string>
+    <string name="backup_export_done">הגיבוי נשמר</string>
+    <string name="backup_import_title">שחזור גיבוי</string>
+    <string name="backup_import_desc">שחזור הפריסה וההגדרות שנשמרו</string>
+    <string name="backup_import_confirm">המשגר יופעל מחדש והתצורה שלך תשוחזר</string>
+
+    <string name="pref_label_ui_mode_system">מערכת</string>
+    <string name="pref_label_ui_mode_day">בהיר</string>
+    <string name="pref_label_ui_mode_night">כהה</string>
+    <string name="pref_label_grid_width">רוחב הרשת</string>
+    <string name="pref_label_grid_height">גובה הרשת</string>
+    <string name="pref_label_icon_size">גודל הסמלים (%)</string>
+    <string name="pref_label_icon_label_size">גודל התוויות (%)</string>
+
+    <string name="pref_label_visibility_title">הצגת תוויות</string>
+    <string name="label_visibility_never">אף פעם</string>
+    <string name="label_visibility_drawer_only">מגירה בלבד</string>
+    <string name="label_visibility_home_only">מסך הבית בלבד</string>
+    <string name="label_visibility_auto">אוטומטי</string>
+    <string name="pref_adaptive_icons_title">סמלים מסתגלים</string>
+    <string name="pref_adaptive_icons_summary">שינוי צורת סמלים שאינם מסתגלים</string>
+    <string name="pref_adaptive_icons_except_system">למעט אפליקציות מערכת</string>
+    <string name="pref_adaptive_icons_force_legacy">אילוץ סמלים ישנים</string>
+    <string name="pref_adaptive_icons_never">לא לשנות צורה</string>
+    <string name="pref_themed_icons_title">סמלים חד-גוניים</string>
+    <string name="pref_themed_icons_summary">צביעת הסמלים בהתאם לערכת הנושא של המערכת</string>
+    <string name="label_visibility_always">תמיד</string>
+
+    <string name="pref_icon_shape_title">צורת הסמלים</string>
+    <string name="icon_shape_system">מערכת</string>
+    <string name="icon_shape_circle">עיגול</string>
+    <string name="icon_shape_tofu">Tofu</string>
+    <string name="icon_shape_ios">iOS</string>
+    <string name="icon_shape_squircle">Squircle</string>
+    <string name="icon_shape_xperia">Xperia</string>
+    <string name="icon_shape_riceballs">RiceBalls</string>
+
+    <string name="pref_drawer_type_title">סוג המגירה</string>
+    <string name="drawer_type_frosted">זכוכית חלבית</string>
+    <string name="drawer_type_mica">MICA</string>
+    <string name="drawer_type_translucent">שקוף למחצה</string>
+
+    <string name="pref_drawer_grid_width_override_title">עקיפת רוחב הרשת</string>
+    <string name="pref_drawer_grid_width_override_summary">שימוש במספר עמודות מותאם במגירת האפליקציות</string>
+    <string name="pref_drawer_padding_title">ריווח צדדי</string>
+
+    <string name="pref_blur_preview_title">טשטוש במצב תצוגה מקדימה</string>
+    <string name="pref_blur_preview_desc">טשטוש הטפט בזמן גרירת סמלים וווידג\'טים</string>
+
+    <string name="pref_lock_home_screen_title">נעילת מסך הבית</string>
+    <string name="pref_lock_home_screen_summary">מניעת הזזת סמלים וווידג\'טים</string>
+
+    <string name="pref_double_tap_to_sleep_title">הקשה כפולה לנעילה</string>
+    <string name="pref_double_tap_to_sleep_summary">הקש פעמיים על שטח ריק כדי לנעול את המסך</string>
+    <string name="pref_swipe_down_notifications_title">החלקה מטה להתראות</string>
+    <string name="pref_swipe_down_notifications_summary">החלק מטה במסך הבית כדי לפתוח את לוח ההתראות</string>
+
+    <!-- Murine search bar -->
+    <string name="murine_search_hint">חיפוש…</string>
+    <string name="murine_search_hint_provider">חיפוש באמצעות %1$s</string>
+    <string name="murine_search_hint_generic">חיפוש באינטרנט</string>
+    <string name="murine_search_button_desc">חיפוש</string>
+    <string name="murine_voice_search_desc">חיפוש קולי</string>
+    <string name="murine_voice_search_prompt">דבר עכשיו...</string>
+    <string name="murine_lens_desc">חיפוש חזותי</string>
+    <!-- Murine search bar preferences -->
+    <string name="pref_qsb_show_search_bar_title">הצגת סרגל החיפוש</string>
+    <string name="pref_qsb_search_provider_title">מנוע חיפוש</string>
+    <string name="pref_qsb_enable_lens_title">הפעלת Lens</string>
+    <string name="pref_qsb_enable_lens_summary">הצגת לחצן Google Lens בחיפוש המהיר</string>
+    <string name="pref_qsb_box_blur">טשטוש בועת החיפוש</string>
+    <string name="pref_qsb_box_blur_desc">הצגת אפקט MICA לבועת החיפוש</string>
+    <string name="pref_qsb_bar_alpha">שקיפות סרגל החיפוש</string>
+    <string name="pref_qsb_box_alpha">שקיפות בועת החיפוש</string>
+    <string name="pref_qsb_custom_provider_title">כתובת חיפוש מותאמת</string>
+    <string name="pref_qsb_history_size_title">גודל היסטוריית החיפוש</string>
+    <string name="pref_qsb_history_size_summary">מספר רשומות מרבי</string>
+    <string name="pref_qsb_clear_history_title">ניקוי היסטוריית החיפוש</string>
+    <string name="pref_qsb_clear_history_summary">הסרת כל שאילתות החיפוש השמורות</string>
+    <string name="pref_qsb_clear_history_confirm_title">לנקות את היסטוריית החיפוש?</string>
+    <string name="pref_qsb_clear_history_confirm_message">כל שאילתות החיפוש השמורות יוסרו לצמיתות.</string>
+    <string name="pref_qsb_clear_history_toast">היסטוריית החיפוש נוקתה</string>
+
+    <!-- Murine smartspace / clock widget -->
+    <string name="smartspace_mode_clock">שעון</string>
+    <string name="smartspace_mode_google">Google Smartspace</string>
+    <string name="smartspace_mode_disabled">מושבת</string>
+    <string name="pref_smartspace_title">ווידג\'ט המסך הראשון</string>
+    <string name="pref_smartspace_summary_clock">מציג שעון עם התאריך של היום</string>
+    <string name="pref_smartspace_summary_google">מציג את הווידג\'ט Google Smartspace</string>
+    <string name="pref_smartspace_summary_disabled">ללא ווידג\'ט במסך הראשון</string>
+
+    <string name="pref_blur_unsupported_warning"><![CDATA[ייתכן שטשטוש הטפט אינו נתמך במלואו או אינו מופעל ב-OEM/ROM הזה; אם נתקלת בבעיות, חפש אפשרות &quot;אפשר טשטוש ברמת החלון&quot; בהגדרות התצוגה או באפשרויות המפתח.<br/>לחלופין, אפשר להפעיל <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">את מודול Magisk הזה</a> במכשירים עם רוט]]></string>
+
+    <!-- Notification badges -->
+    <string name="pref_notification_badge_count_title">מספר ההתראות</string>
+    <string name="pref_notification_badge_count_desc">הצגת המספר על נקודות ההתראה</string>
+
+    <!-- Icon packs -->
+    <string name="pref_category_icon_pack_title">חבילת סמלים</string>
+    <string name="pref_category_icon_pack_summary">שינוי סמלי האפליקציות באמצעות חבילות של צד שלישי</string>
+    <string name="pref_icon_pack_system_only_title">אפליקציות מערכת בלבד</string>
+    <string name="pref_icon_pack_system_only_summary">החלת החבילה על אפליקציות מערכת בלבד</string>
+    <string name="pref_icon_pack_ignore_shape_title">התעלמות מצורת החבילה</string>
+    <string name="pref_icon_pack_ignore_shape_summary">שימוש בצורת הסמלים של המשגר במקום זו של החבילה</string>
+    <string name="pref_icon_readapt_frame_title">התאמה מחדש למסגרת</string>
+    <string name="pref_icon_readapt_frame_summary">מנסה להתאים סמלים ללא ערכת נושא לצורה שנקבעה</string>
+    <string name="pref_icon_pack_themed_only_title">סמלים עם ערכת נושא בלבד</string>
+    <string name="pref_icon_pack_themed_only_summary">השארת סמלים שאינם בחבילה ללא שינוי</string>
+
+    <!-- Hidden apps -->
+    <string name="pref_category_hidden_apps_title">אפליקציות מוסתרות</string>
+    <string name="pref_category_hidden_apps_summary">הסתרת אפליקציות ממגירת האפליקציות</string>
+    <string name="hidden_apps_label">מוסתרות</string>
+    <string name="hidden_apps_search_hint">חיפוש אפליקציות...</string>
+    <string name="pref_search_within_hidden_title">חיפוש בתוך אפליקציות מוסתרות</string>
+    <string name="pref_search_within_hidden_summary">החיפוש במגירת האפליקציות מוצא אפליקציות מוסתרות</string>
+
+    <!-- App info sheet -->
+    <string name="app_info_package">חבילה</string>
+    <string name="app_info_version">גרסה</string>
+    <string name="app_info_version_value">%1$s (%2$d)</string>
+    <string name="app_info_last_update">עדכון אחרון</string>
+    <string name="app_info_source">מקור</string>
+    <string name="app_info_source_system">מערכת</string>
+    <string name="app_info_icon_pack_default">ברירת מחדל (כללי)</string>
+    <string name="app_info_copied_toast">הועתק ללוח</string>
+    <string name="app_info_icon_pack_show_all">הצגת כל החבילות</string>
+    <string name="app_info_edit_label">עריכת התווית</string>
+
+    <!-- Per-app custom icon picker -->
+    <string name="icon_picker_search_hint">חיפוש סמלים...</string>
+
+    <!-- Clear custom icons -->
+    <string name="pref_clear_custom_icons_title">ניקוי סמלים מותאמים</string>
+    <string name="pref_clear_custom_icons_summary">הסרת כל הסמלים המותאמים לכל אפליקציה</string>
+    <string name="pref_clear_custom_icons_summary_none">לא הוגדרו סמלים מותאמים</string>
+    <string name="pref_clear_custom_icons_confirm_title">לנקות את הסמלים המותאמים?</string>
+    <string name="pref_clear_custom_icons_confirm_message">כל הסמלים המותאמים לכל אפליקציה יאופסו להגדרה הכללית.</string>
+    <string name="pref_clear_custom_icons_toast">הסמלים המותאמים נוקו</string>
+
+    <!-- Misc -->
+    <string name="pref_default_launcher_title">משגר ברירת מחדל</string>
+    <string name="pref_restart_title">הפעלה מחדש</string>
+    <string name="pref_restart_summary">הפעלה מחדש של המשגר</string>
+</resources>

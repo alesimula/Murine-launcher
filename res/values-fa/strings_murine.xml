@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="pref_group_grid_size_title">اندازه شبکه</string>
+    <string name="pref_group_grid_size_desc">تغییر تعداد سطرها و ستون‌ها</string>
+    <string name="pref_group_icon_scale_title">مقیاس نمادها</string>
+    <string name="pref_group_icon_scale_desc">تغییر اندازه نمادها و برچسب‌ها</string>
+    <string name="pref_group_qsb_transparency">شفافیت</string>
+    <string name="pref_group_qsb_transparency_desc">تنظیم جلوه‌های شفافیت نوار جستجوی سریع</string>
+
+    <string name="pref_category_general_title">عمومی</string>
+    <string name="pref_category_general_desc">تنظیمات کلی</string>
+    <string name="pref_category_icons_title">نمادها</string>
+    <string name="pref_category_icons_desc">تنظیم اندازه و ظاهر نمادها</string>
+    <string name="pref_category_home_title">صفحه اصلی</string>
+    <string name="pref_category_home_desc">سفارشی‌سازی صفحه اصلی</string>
+    <string name="pref_category_drawer_title">کشوی برنامه‌ها</string>
+    <string name="pref_category_drawer_desc">سفارشی‌سازی کشوی برنامه‌ها</string>
+    <string name="pref_category_qsb_title">جستجو</string>
+    <string name="pref_category_qsb_desc">سفارشی‌سازی نوار جستجوی سریع</string>
+    <string name="pref_category_misc_title">متفرقه</string>
+    <string name="pref_category_misc_desc">گزینه‌های دیگر</string>
+
+    <string name="pref_subcategory_day_night">طرح زمینه رابط کاربری</string>
+    <string name="pref_subcategory_layout">چیدمان</string>
+    <string name="pref_subcategory_appearance">ظاهر</string>
+    <string name="pref_subcategory_persistency">ماندگاری</string>
+    <string name="pref_subcategory_gestures">اشاره‌ها</string>
+    <string name="pref_subcategory_options">گزینه‌ها</string>
+    <string name="pref_subcategory_backup">پشتیبان‌گیری</string>
+
+    <string name="backup_export_title">برون‌بری نسخه پشتیبان</string>
+    <string name="backup_export_desc">ذخیره چیدمان، ابزارک‌ها و تنظیمات</string>
+    <string name="backup_export_done">نسخه پشتیبان ذخیره شد</string>
+    <string name="backup_import_title">بازیابی نسخه پشتیبان</string>
+    <string name="backup_import_desc">بازیابی چیدمان و تنظیمات ذخیره‌شده</string>
+    <string name="backup_import_confirm">لانچر دوباره راه‌اندازی می‌شود و پیکربندی شما بازیابی خواهد شد</string>
+
+    <string name="pref_label_ui_mode_system">سیستم</string>
+    <string name="pref_label_ui_mode_day">روشن</string>
+    <string name="pref_label_ui_mode_night">تیره</string>
+    <string name="pref_label_grid_width">عرض شبکه</string>
+    <string name="pref_label_grid_height">ارتفاع شبکه</string>
+    <string name="pref_label_icon_size">اندازه نمادها (%)</string>
+    <string name="pref_label_icon_label_size">اندازه برچسب‌ها (%)</string>
+
+    <string name="pref_label_visibility_title">نمایش برچسب‌ها</string>
+    <string name="label_visibility_never">هرگز</string>
+    <string name="label_visibility_drawer_only">فقط کشو</string>
+    <string name="label_visibility_home_only">فقط صفحه اصلی</string>
+    <string name="label_visibility_auto">خودکار</string>
+    <string name="pref_adaptive_icons_title">نمادهای تطبیقی</string>
+    <string name="pref_adaptive_icons_summary">تغییر شکل نمادهای غیرتطبیقی</string>
+    <string name="pref_adaptive_icons_except_system">به‌جز برنامه‌های سیستمی</string>
+    <string name="pref_adaptive_icons_force_legacy">اجبار نمادهای قدیمی</string>
+    <string name="pref_adaptive_icons_never">بدون تغییر شکل</string>
+    <string name="pref_themed_icons_title">نمادهای تک‌رنگ</string>
+    <string name="pref_themed_icons_summary">رنگ‌آمیزی مجدد نمادها متناسب با طرح زمینه سیستم</string>
+    <string name="label_visibility_always">همیشه</string>
+
+    <string name="pref_icon_shape_title">شکل نمادها</string>
+    <string name="icon_shape_system">سیستم</string>
+    <string name="icon_shape_circle">دایره</string>
+    <string name="icon_shape_tofu">Tofu</string>
+    <string name="icon_shape_ios">iOS</string>
+    <string name="icon_shape_squircle">Squircle</string>
+    <string name="icon_shape_xperia">Xperia</string>
+    <string name="icon_shape_riceballs">RiceBalls</string>
+
+    <string name="pref_drawer_type_title">نوع کشو</string>
+    <string name="drawer_type_frosted">شیشه مات</string>
+    <string name="drawer_type_mica">MICA</string>
+    <string name="drawer_type_translucent">نیمه‌شفاف</string>
+
+    <string name="pref_drawer_grid_width_override_title">لغو عرض شبکه</string>
+    <string name="pref_drawer_grid_width_override_summary">استفاده از تعداد ستون دلخواه در کشوی برنامه‌ها</string>
+    <string name="pref_drawer_padding_title">حاشیه کناری</string>
+
+    <string name="pref_blur_preview_title">تاری در حالت پیش‌نمایش</string>
+    <string name="pref_blur_preview_desc">تار کردن کاغذدیواری هنگام کشیدن نمادها و ابزارک‌ها</string>
+
+    <string name="pref_lock_home_screen_title">قفل صفحه اصلی</string>
+    <string name="pref_lock_home_screen_summary">جلوگیری از جابه‌جایی نمادها و ابزارک‌ها</string>
+
+    <string name="pref_double_tap_to_sleep_title">دو بار ضربه برای قفل</string>
+    <string name="pref_double_tap_to_sleep_summary">روی فضای خالی دو بار ضربه بزنید تا صفحه قفل شود</string>
+    <string name="pref_swipe_down_notifications_title">کشیدن به پایین برای اعلان‌ها</string>
+    <string name="pref_swipe_down_notifications_summary">در صفحه اصلی به پایین بکشید تا کشوی اعلان‌ها باز شود</string>
+
+    <!-- Murine search bar -->
+    <string name="murine_search_hint">جستجو…</string>
+    <string name="murine_search_hint_provider">جستجو با %1$s</string>
+    <string name="murine_search_hint_generic">جستجو در وب</string>
+    <string name="murine_search_button_desc">جستجو</string>
+    <string name="murine_voice_search_desc">جستجوی صوتی</string>
+    <string name="murine_voice_search_prompt">اکنون صحبت کنید...</string>
+    <string name="murine_lens_desc">جستجوی تصویری</string>
+    <!-- Murine search bar preferences -->
+    <string name="pref_qsb_show_search_bar_title">نمایش نوار جستجو</string>
+    <string name="pref_qsb_search_provider_title">موتور جستجو</string>
+    <string name="pref_qsb_enable_lens_title">فعال کردن Lens</string>
+    <string name="pref_qsb_enable_lens_summary">نمایش دکمه Google Lens در جستجوی سریع</string>
+    <string name="pref_qsb_box_blur">تار کردن حباب جستجو</string>
+    <string name="pref_qsb_box_blur_desc">نمایش جلوه MICA برای حباب جستجو</string>
+    <string name="pref_qsb_bar_alpha">شفافیت نوار جستجو</string>
+    <string name="pref_qsb_box_alpha">شفافیت حباب جستجو</string>
+    <string name="pref_qsb_custom_provider_title">نشانی جستجوی دلخواه</string>
+    <string name="pref_qsb_history_size_title">اندازه تاریخچه جستجو</string>
+    <string name="pref_qsb_history_size_summary">حداکثر موارد</string>
+    <string name="pref_qsb_clear_history_title">پاک کردن تاریخچه جستجو</string>
+    <string name="pref_qsb_clear_history_summary">حذف همه جستجوهای ذخیره‌شده</string>
+    <string name="pref_qsb_clear_history_confirm_title">تاریخچه جستجو پاک شود؟</string>
+    <string name="pref_qsb_clear_history_confirm_message">همه جستجوهای ذخیره‌شده برای همیشه حذف خواهند شد.</string>
+    <string name="pref_qsb_clear_history_toast">تاریخچه جستجو پاک شد</string>
+
+    <!-- Murine smartspace / clock widget -->
+    <string name="smartspace_mode_clock">ساعت</string>
+    <string name="smartspace_mode_google">Google Smartspace</string>
+    <string name="smartspace_mode_disabled">غیرفعال</string>
+    <string name="pref_smartspace_title">ابزارک صفحه اول</string>
+    <string name="pref_smartspace_summary_clock">ساعتی همراه با تاریخ امروز نمایش می‌دهد</string>
+    <string name="pref_smartspace_summary_google">ابزارک Google Smartspace را نمایش می‌دهد</string>
+    <string name="pref_smartspace_summary_disabled">بدون ابزارک در صفحه اول</string>
+
+    <string name="pref_blur_unsupported_warning"><![CDATA[ممکن است تاری کاغذدیواری در این OEM/ROM به‌طور کامل پشتیبانی یا فعال نشده باشد؛ اگر با مشکل روبه‌رو شدید، در تنظیمات نمایش یا گزینه‌های برنامه‌نویس به دنبال گزینه &quot;اجازه دادن به تاری در سطح پنجره&quot; بگردید.<br/>همچنین می‌توانید در دستگاه‌های روت‌شده <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">این ماژول Magisk</a> را فعال کنید]]></string>
+
+    <!-- Notification badges -->
+    <string name="pref_notification_badge_count_title">تعداد اعلان‌ها</string>
+    <string name="pref_notification_badge_count_desc">نمایش تعداد روی نقطه‌های اعلان</string>
+
+    <!-- Icon packs -->
+    <string name="pref_category_icon_pack_title">بسته نمادها</string>
+    <string name="pref_category_icon_pack_summary">تغییر نمادهای برنامه‌ها با بسته‌های شخص ثالث</string>
+    <string name="pref_icon_pack_system_only_title">فقط برنامه‌های سیستمی</string>
+    <string name="pref_icon_pack_system_only_summary">اعمال بسته فقط روی برنامه‌های سیستمی</string>
+    <string name="pref_icon_pack_ignore_shape_title">نادیده گرفتن شکل بسته</string>
+    <string name="pref_icon_pack_ignore_shape_summary">استفاده از شکل نمادهای لانچر به‌جای شکل بسته</string>
+    <string name="pref_icon_readapt_frame_title">تطبیق دوباره با قاب</string>
+    <string name="pref_icon_readapt_frame_summary">تلاش می‌کند نمادهای بدون طرح را در شکل تعیین‌شده جا دهد</string>
+    <string name="pref_icon_pack_themed_only_title">فقط نمادهای دارای طرح</string>
+    <string name="pref_icon_pack_themed_only_summary">نمادهایی که در بسته نیستند بدون تغییر بمانند</string>
+
+    <!-- Hidden apps -->
+    <string name="pref_category_hidden_apps_title">برنامه‌های پنهان</string>
+    <string name="pref_category_hidden_apps_summary">پنهان کردن برنامه‌ها از کشوی برنامه‌ها</string>
+    <string name="hidden_apps_label">پنهان</string>
+    <string name="hidden_apps_search_hint">جستجوی برنامه‌ها...</string>
+    <string name="pref_search_within_hidden_title">جستجو در برنامه‌های پنهان</string>
+    <string name="pref_search_within_hidden_summary">جستجوی کشوی برنامه‌ها برنامه‌های پنهان را پیدا می‌کند</string>
+
+    <!-- App info sheet -->
+    <string name="app_info_package">بسته</string>
+    <string name="app_info_version">نسخه</string>
+    <string name="app_info_version_value">%1$s (%2$d)</string>
+    <string name="app_info_last_update">آخرین به‌روزرسانی</string>
+    <string name="app_info_source">منبع</string>
+    <string name="app_info_source_system">سیستم</string>
+    <string name="app_info_icon_pack_default">پیش‌فرض (کلی)</string>
+    <string name="app_info_copied_toast">در بریده‌دان کپی شد</string>
+    <string name="app_info_icon_pack_show_all">نمایش همه بسته‌ها</string>
+    <string name="app_info_edit_label">ویرایش برچسب</string>
+
+    <!-- Per-app custom icon picker -->
+    <string name="icon_picker_search_hint">جستجوی نمادها...</string>
+
+    <!-- Clear custom icons -->
+    <string name="pref_clear_custom_icons_title">پاک کردن نمادهای سفارشی</string>
+    <string name="pref_clear_custom_icons_summary">حذف همه نمادهای سفارشی هر برنامه</string>
+    <string name="pref_clear_custom_icons_summary_none">نماد سفارشی تنظیم نشده است</string>
+    <string name="pref_clear_custom_icons_confirm_title">نمادهای سفارشی پاک شوند؟</string>
+    <string name="pref_clear_custom_icons_confirm_message">همه نمادهای سفارشی هر برنامه به تنظیم کلی بازنشانی خواهند شد.</string>
+    <string name="pref_clear_custom_icons_toast">نمادهای سفارشی پاک شدند</string>
+
+    <!-- Misc -->
+    <string name="pref_default_launcher_title">لانچر پیش‌فرض</string>
+    <string name="pref_restart_title">راه‌اندازی مجدد</string>
+    <string name="pref_restart_summary">راه‌اندازی مجدد لانچر</string>
+</resources>
