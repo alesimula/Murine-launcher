@@ -80,6 +80,12 @@ android {
             shrinkResources true
             pseudoLocalesEnabled false
             proguardFiles proguardFilesFromAosp + "proguard.pro"
+            optimization {
+                enable = true
+                keepRules {
+                    includeDefault = false  // Do not include default proguard: AOSP flags + proguard.pro already cover the platform
+                }
+            }
         }
     }
 
