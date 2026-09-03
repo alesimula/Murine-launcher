@@ -306,7 +306,8 @@ dependencies {
     implementation libs.androidx.graphics.shapes
     implementation libs.androidx.window
     implementation libs.androidx.core.animation
-    implementation libs.androidx.material3
+    // Unused, and it would drag in graphics-path with its native libandroidx.graphics.path.so
+    //implementation libs.androidx.material3
     implementation libs.androidx.tracing
     implementation libs.androidx.palette.ktx
     implementation libs.material
@@ -322,7 +323,7 @@ dependencies {
     implementation 'com.github.alesimula.Recovery:recovery:1.0.7' // injected in LauncherApplication.java
     implementation 'com.github.alesimula:murine-aircompressor:2.0.12'
 
-    api libs.lottie
+    withQuickstepApi libs.lottie
     implementation libs.dagger
     ksp libs.dagger.compiler
 
