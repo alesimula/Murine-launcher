@@ -20,6 +20,8 @@ import android.content.pm.ApplicationInfo
 import android.database.sqlite.SQLiteException
 import android.os.Handler
 import android.os.SystemClock
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
 import android.os.UserHandle
 import android.util.ArrayMap
 import android.util.Log
@@ -162,6 +164,7 @@ class IconCacheUpdateHandler(
         // Insert remaining apps.
         if (componentMap.isNotEmpty() || appsToUpdate.isNotEmpty()) {
             val appsToAdd = ArrayDeque(componentMap.values)
+            pendingTasks.incrementAndGet()
             SerializedIconUpdateTask(
                     userSerial,
                     user,
@@ -205,6 +208,7 @@ class IconCacheUpdateHandler(
         if (componentMap.isNotEmpty() || appsToUpdate.isNotEmpty()) {
             val appsToAdd = ArrayDeque<T>()
             appsToAdd.addAll(componentMap.values)
+            pendingTasks.incrementAndGet()
             SerializedIconUpdateTask(
                     userSerial,
                     user,
@@ -228,6 +232,9 @@ class IconCacheUpdateHandler(
             info != null && row.freshnessId == iconCache.iconProvider.getStateForApp(info)
         }
 
+        queuingDone = true
+        notifyIfDrained()
+
         // Commit all deletes
         if (itemsToDelete.isNotEmpty()) {
             val r = itemsToDelete.joinToString { it.rowId.toString() }
@@ -235,6 +242,19 @@ class IconCacheUpdateHandler(
             Log.d(TAG, "Deleting obsolete entries, count=" + itemsToDelete.size)
         }
     }
+
+    /**
+     * Fires once queuing is over and every queued icon has been written.
+     */
+    private fun notifyIfDrained() {
+        if (queuingDone && pendingTasks.get() == 0 && notified.compareAndSet(false, true)) {
+            onIconsDrained?.run()
+        }
+    }
+
+    private val pendingTasks = AtomicInteger()
+    private val notified = AtomicBoolean()
+    @Volatile private var queuingDone = false
 
     data class UpdateRow(
         val rowId: Int,
@@ -278,6 +298,9 @@ class IconCacheUpdateHandler(
 
                 // Let it run one more time.
                 scheduleNext()
+            } else {
+                pendingTasks.decrementAndGet()
+                notifyIfDrained()
             }
         }
 
@@ -296,5 +319,9 @@ class IconCacheUpdateHandler(
 
     companion object {
         private const val TAG = "IconCacheUpdateHandler"
+
+        /** Set by the app; run when an update handler has written its last icon. */
+        @JvmStatic var onIconsDrained: Runnable? = null
+
     }
 }

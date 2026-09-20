@@ -97,6 +97,7 @@ class SettingsIconPackFragment : AbstractSettingsFragment() {
 
     private fun reloadLauncher() {
         val ctx = context ?: return
+        app.murinelauncher.icons.IconPackProgress.start(ctx)
         LauncherAppState.getInstance(ctx).model.forceReload()
     }
 }

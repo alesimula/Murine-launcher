@@ -646,6 +646,7 @@ object IconPackManager {
      * for setting CONFIG_HINT_NO_WRAP if the pack's shape should be preserved.
      */
     fun getIconForComponent(context: Context, componentName: ComponentName, iconDpi: Int): Drawable? {
+        IconPackProgress.tick()
         // Check per-component override first
         val componentKey = componentName.flattenToString()
         val override = getComponentOverride(context, componentKey)

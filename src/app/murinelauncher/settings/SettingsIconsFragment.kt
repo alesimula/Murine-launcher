@@ -62,7 +62,10 @@ public final class SettingsIconsFragment: AbstractSettingsFragment() {
                         mode != AdaptiveIcons.FORCE_LEGACY || isResourceHackSupported()
                     }
                     setOnPreferenceChangeListener { _ ->
-                        context?.let { LauncherAppState.getInstance(it).model.forceReload() }
+                        context?.let {
+                            app.murinelauncher.icons.IconPackProgress.start(it)
+                            LauncherAppState.getInstance(it).model.forceReload()
+                        }
                         true
                     }
                 }
@@ -70,7 +73,10 @@ public final class SettingsIconsFragment: AbstractSettingsFragment() {
             }
             ThemeManager.KEY_THEMED_ICONS -> {
                 preference.setOnPreferenceChangeListener { _, _ ->
-                    context?.let { LauncherAppState.getInstance(it).model.forceReload() }
+                    context?.let {
+                        app.murinelauncher.icons.IconPackProgress.start(it)
+                        LauncherAppState.getInstance(it).model.forceReload()
+                    }
                     true
                 }
                 return Utilities.ATLEAST_T

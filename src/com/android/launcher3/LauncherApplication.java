@@ -49,6 +49,9 @@ public class LauncherApplication extends Application {
         super.onCreate();
         // Only checks if a backup is staged, does nothing otherwise
         app.murinelauncher.backup.BackupHelper.INSTANCE.applyStagedRestoreIfNeeded(this);
+        app.murinelauncher.icons.IconPackProgress.install(this);
+        com.android.launcher3.icons.cache.IconCacheUpdateHandler.setOnIconsDrained(
+                app.murinelauncher.icons.IconPackProgress::finish);
         mNightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
 
         com.zxy.recovery.core.Recovery.getInstance()
