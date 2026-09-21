@@ -83,8 +83,8 @@ android {
         release {
             debuggable false
             minifyEnabled true
-            shrinkResources true
-            pseudoLocalesEnabled false
+            shrinkResources = true
+            pseudoLocalesEnabled = false
             proguardFiles proguardFilesFromAosp + "proguard.pro"
             optimization {
                 enable = true

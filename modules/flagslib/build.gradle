@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace "com.android.launcher3.flags"
+    namespace = "com.android.launcher3.flags"
 
     compileSdk 36
 

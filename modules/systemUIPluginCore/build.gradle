@@ -8,7 +8,7 @@ android {
         version = sdkMinor ? release(sdkMajor as int) { it.minorApiLevel = sdkMinor as int } : release(sdkMajor as int)
     }
 
-    namespace "com.android.systemui.plugin_core"
+    namespace = "com.android.systemui.plugin_core"
 
     defaultConfig {
         minSdk = 26
@@ -17,7 +17,7 @@ android {
         versionName "1.0"
     }
     buildFeatures {
-        aidl true
+        aidl = true
     }
     sourceSets {
         main {

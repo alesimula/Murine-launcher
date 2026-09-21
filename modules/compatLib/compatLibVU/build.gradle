@@ -3,14 +3,14 @@ plugins {
 }
 
 android {
-    namespace 'app.lawnchair.compatlib.fourteen'
+    namespace = 'app.lawnchair.compatlib.fourteen'
     compileSdk 36
     defaultConfig {
         minSdk = 26
     }
 
     buildFeatures {
-        aidl true
+        aidl = true
     }
 
     compileOptions {

@@ -5,7 +5,7 @@ plugins {
 
 android {
     buildToolsVersion "37.0.0"
-    namespace "app.lawnchair.compatlib"
+    namespace = "app.lawnchair.compatlib"
     compileSdk 36
 
     defaultConfig {
@@ -13,7 +13,7 @@ android {
     }
 
     buildFeatures {
-        aidl true
+        aidl = true
     }
 
     compileOptions {

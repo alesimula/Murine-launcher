@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace "androidx.dynamicanimation.animation"
+    namespace = "androidx.dynamicanimation.animation"
 
     compileSdk 36
 

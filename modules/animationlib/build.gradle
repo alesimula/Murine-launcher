@@ -26,7 +26,7 @@ android {
     }
 
     lintOptions {
-        abortOnError false
+        abortOnError = false
     }
     tasks.lint.enabled = false
     tasks.withType(JavaCompile) {
