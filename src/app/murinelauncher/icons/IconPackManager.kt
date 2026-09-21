@@ -6,7 +6,9 @@ import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
+import android.content.res.Configuration
 import android.content.res.Resources
+import android.os.SystemClock
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Matrix
@@ -34,6 +36,10 @@ import com.android.launcher3.icons.LauncherIconProvider
 import com.android.launcher3.icons.LauncherIcons
 import org.xmlpull.v1.XmlPullParser
 import java.util.Calendar
+import java.util.Optional
+import java.util.concurrent.ConcurrentHashMap
+import java.util.function.Function
+import kotlin.text.clear
 
 /**
  * Manages icon pack discovery, selection, and icon resolution.
@@ -267,20 +273,34 @@ object IconPackManager {
         fun hasGlobalTreatment() = backDrawables.isNotEmpty() || maskDrawable != null
     }
 
+    data class PackResourceKey(val packPackage: String, val nightMode: Int) {
+        lateinit var appContext: Context // Not in primary constructor -> not in hashCode evaluation
+        constructor(packPackage: String, nightMode: Int, appContext: Context) : this(packPackage, nightMode) {
+            this.appContext = appContext
+        }
+    }
+
     private var cachedPackPackage: String? = null
     private var cachedData: AppFilterData = AppFilterData()
     private val overrideCache = mutableMapOf<String, AppFilterData>()
+    /** Transient [Resources] cache that only exists briefly while loading an icon pack */
+    private val resourceMap : MutableMap<PackResourceKey, Optional<Resources>> = ConcurrentHashMap()
+    /** [resourceMap] is dropped as soon as queries stop coming in this fast. */
+    private const val IDLE_RESOURCE_MS = 5_000L
+    @Volatile private var lastResourceQuery = 0L
 
     /** Clears the primary (global pack) cache. Override cache is kept. */
     fun clearMainCache() {
         cachedPackPackage = null
         cachedData = AppFilterData()
+        resourceMap.clear()
     }
 
     /** Clears both the primary and override caches. */
     fun clearCaches() {
         cachedPackPackage = null
         cachedData = AppFilterData()
+        resourceMap.clear()
         overrideCache.clear()
     }
 
@@ -710,13 +730,29 @@ object IconPackManager {
     }
 
     /**
+     * Lambda evaluating an icon pack resources.
+     */
+    private val RESOURCE_LOADER = Function<PackResourceKey, Optional<Resources>> { key ->
+        val res = try {
+            ThemeOverride.applyTheme(key.appContext.createPackageContext(key.packPackage, 0), key.appContext).resources
+        } catch (_: Exception) {
+            null
+        }
+        Optional.ofNullable(res)
+    }
+
+    /**
      * Resolves a pack's [Resources] once, for repeated [loadDrawableFromPack] calls;
      * Pack icons with night mode support follow the launcher's effective UI theme.
      */
-    fun getPackResources(context: Context, packPackage: String): Resources? = try {
-        ThemeOverride.applyTheme(context.createPackageContext(packPackage, 0), context).resources
-    } catch (_: Exception) {
-        null
+    fun getPackResources(context: Context, packPackage: String): Resources? {
+        // Transient: only kept while queries keep coming in (a pack being applied).
+        val now = SystemClock.uptimeMillis()
+        if (now - lastResourceQuery > IDLE_RESOURCE_MS) resourceMap.clear()
+        lastResourceQuery = now
+        val night = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        val key = PackResourceKey(packPackage, night, context.applicationContext)
+        return resourceMap.computeIfAbsent(key, RESOURCE_LOADER).orElse(null)
     }
 
     /** True when icon pack features affect any icon (global pack or per-app overrides). */
