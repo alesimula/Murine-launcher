@@ -30,9 +30,10 @@ languages:
   - code: fr
     name: French
     native: Français
-    status: partial
+    status: mostly
     strings: 148
     by: My mum
+    by_git: Valkyr2
 
   - code: es
     name: Spanish
