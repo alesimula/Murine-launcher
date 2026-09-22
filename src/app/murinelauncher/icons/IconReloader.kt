@@ -24,22 +24,22 @@ object IconReloader {
                 dataModel.itemsIdMap.mapNotNullTo(HashSet()) { i -> i.targetPackage?.let { it to i.user } }
             }
             val users = UserCache.INSTANCE.get(app).userProfiles
+            val pinned = users.associateWith { ShortcutRequest(app, it).query(ShortcutRequest.PINNED) }
             users.flatMap { user ->
-                launcherApps.getActivityList(null, user)
-                    .mapTo(LinkedHashSet()) { it.componentName.packageName to user }
+                // Shortcut packages too: their cached icons are only dropped by a package update
+                (launcherApps.getActivityList(null, user).map { it.componentName.packageName } +
+                    pinned.getValue(user).map { it.`package` })
+                    .mapTo(LinkedHashSet()) { it to user }
             }.sortedBy { it !in onHome }.forEach { (pkg, user) ->
                 model.enqueueModelUpdateTask(
                     PackageUpdatedTask(PackageUpdatedTask.OP_UPDATE, user, pkg))
             }
             // Pinned shortcut badges, last so they get the new icons
-            users.forEach { user ->
+            pinned.forEach { (user, shortcuts) ->
                 model.enqueueModelUpdateTask { controller, data, apps ->
-                    ShortcutRequest(app, user).query(ShortcutRequest.PINNED)
-                        .groupBy { it.`package` }
-                        .forEach { (pkg, shortcuts) ->
-                            ShortcutsChangedTask(pkg, shortcuts, user, false)
-                                .execute(controller, data, apps)
-                        }
+                    shortcuts.groupBy { it.`package` }.forEach { (pkg, list) ->
+                        ShortcutsChangedTask(pkg, list, user, false).execute(controller, data, apps)
+                    }
                 }
             }
         }
