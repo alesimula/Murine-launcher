@@ -74,8 +74,8 @@ public final class SettingsIconsFragment: AbstractSettingsFragment() {
             ThemeManager.KEY_THEMED_ICONS -> {
                 preference.setOnPreferenceChangeListener { _, _ ->
                     context?.let {
-                        app.murinelauncher.icons.IconPackProgress.start(it)
-                        LauncherAppState.getInstance(it).model.forceReload()
+                        //app.murinelauncher.icons.IconPackProgress.start(it)
+                        //LauncherAppState.getInstance(it).model.forceReload()
                     }
                     true
                 }
