@@ -181,6 +181,8 @@ public class FloatingSurfaceView extends AbstractFloatingView implements
                 lp.leftMargin = Math.round(mIconPosition.left);
                 lp.topMargin = Math.round(mIconPosition.top);
             }
+        } else if (icon == null) {
+            mIconPosition.set(0f, 0f, 0f, 0f);
         }
 
         sendIconInfo();
