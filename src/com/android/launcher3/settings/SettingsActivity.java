@@ -19,9 +19,12 @@ package com.android.launcher3.settings;
 import static androidx.preference.PreferenceFragmentCompat.ARG_PREFERENCE_ROOT;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.MenuItem;
+import android.widget.ImageButton;
+import android.widget.Toolbar;
 
 import androidx.core.view.WindowCompat;
 import androidx.fragment.app.DialogFragment;
@@ -82,6 +85,15 @@ public class SettingsActivity extends FragmentActivity
         //        || intent.hasExtra(EXTRA_FRAGMENT_HIGHLIGHT_KEY)) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
             getActionBar().setHomeAsUpIndicator(com.android.settingslib.widget.theme.R.drawable.settingslib_expressive_icon_back);
+            // The icon draws its own ripple now: drop the button's, which sits behind the circle, off-center
+            Toolbar toolbar = findViewById(R.id.action_bar);
+            Drawable navIcon = toolbar.getNavigationIcon();
+            for (int i = 0; i < toolbar.getChildCount(); i++) {
+                if (toolbar.getChildAt(i) instanceof ImageButton nav && nav.getDrawable() == navIcon) {
+                    nav.setBackground(null);
+                    break;
+                }
+            }
         //}
         if (savedInstanceState == null) {
             Bundle args = intent.getBundleExtra(EXTRA_FRAGMENT_ARGS);
