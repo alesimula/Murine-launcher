@@ -8,7 +8,6 @@ import app.murinelauncher.util.isResourceHackSupported
 import app.murinelauncher.settings.prefs.LabelVisibility
 import app.murinelauncher.widget.radio.RadioGroupPreference
 import com.android.launcher3.BuildConfig
-import com.android.launcher3.LauncherAppState
 import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.R
 import com.android.launcher3.graphics.ThemeManager
@@ -61,26 +60,16 @@ public final class SettingsIconsFragment: AbstractSettingsFragment() {
                     setEnabledProvider { _, mode ->
                         mode != AdaptiveIcons.FORCE_LEGACY || isResourceHackSupported()
                     }
-                    setOnPreferenceChangeListener { _ ->
+                    setOnSelected { _ ->
                         context?.let {
                             app.murinelauncher.icons.IconPackProgress.start(it)
-                            LauncherAppState.getInstance(it).model.forceReload()
+                            app.murinelauncher.icons.IconReloader.reloadAll(it)
                         }
-                        true
                     }
                 }
                 return true
             }
-            ThemeManager.KEY_THEMED_ICONS -> {
-                preference.setOnPreferenceChangeListener { _, _ ->
-                    context?.let {
-                        //app.murinelauncher.icons.IconPackProgress.start(it)
-                        //LauncherAppState.getInstance(it).model.forceReload()
-                    }
-                    true
-                }
-                return Utilities.ATLEAST_T
-            }
+            ThemeManager.KEY_THEMED_ICONS -> return Utilities.ATLEAST_T
             else -> return true
         }
     }
