@@ -332,7 +332,9 @@ dependencies {
     implementation libs.lsposed.hiddenapibypass
     //implementation libs.chickenhook.restrictionbypass
     implementation libs.rikka.refine.runtime
-    implementation libs.intuit.sdp
+
+    //implementation libs.intuit.sdp
+    implementation 'com.github.alesimula:murine-sdp:1.1.3' // fork of com.intuit.sdp, @fraction/_008sdp
 
     // Use the crash recovery library even for release (it's negligibly light)
     implementation 'com.github.alesimula.Recovery:recovery:1.0.7' // injected in LauncherApplication.java

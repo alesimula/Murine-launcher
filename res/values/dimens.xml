@@ -14,7 +14,7 @@
      limitations under the License.
 -->
 
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <dimen name="click_shadow_elevation">4dp</dimen>
 
@@ -580,14 +580,14 @@
     <dimen name="app_title_pill_round_rect_padding">2dp</dimen>
 
     <!-- Murine drawer paddings -->
-    <dimen name="murine_drawer_padding_phone">@dimen/_18sdp</dimen>
+    <dimen name="murine_drawer_padding_phone" tools:ignore="ReferenceType">@fraction/_018sdp</dimen>
 
     <!-- Murine search bar dimensions -->
-    <dimen name="murine_search_widget_height">@dimen/_42sdp</dimen> <!-- referenced by qsb_widget_height -->
-    <dimen name="murine_search_plate_height">@dimen/_34sdp</dimen>
-    <dimen name="murine_search_container_padding">@dimen/_4sdp</dimen>
-    <dimen name="murine_search_buttons_padding">@dimen/_4sdp</dimen>
-    <dimen name="murine_search_provider_icon_size">@dimen/_17sdp</dimen>
-    <dimen name="murine_search_bar_icons_size">@dimen/_17sdp</dimen>
+    <dimen name="murine_search_widget_height" tools:ignore="ReferenceType">@fraction/_042sdp</dimen> <!-- referenced by qsb_widget_height -->
+    <dimen name="murine_search_plate_height" tools:ignore="ReferenceType">@fraction/_034sdp</dimen>
+    <dimen name="murine_search_container_padding" tools:ignore="ReferenceType">@fraction/_004sdp</dimen>
+    <dimen name="murine_search_buttons_padding" tools:ignore="ReferenceType">@fraction/_004sdp</dimen>
+    <dimen name="murine_search_provider_icon_size" tools:ignore="ReferenceType">@fraction/_017sdp</dimen>
+    <dimen name="murine_search_bar_icons_size" tools:ignore="ReferenceType">@fraction/_017sdp</dimen>
     <dimen name="murine_search_text_size">14sp</dimen>
 </resources>
