@@ -172,7 +172,7 @@ public class AlphabeticalAppsList<T extends Context & ActivityContext> implement
     /**
      * Returns the current filtered list of applications broken down into their sections.
      */
-    public List<AdapterItem> getAdapterItems() {
+    public ArrayList<AdapterItem> getAdapterItems() {
         return mAdapterItems;
     }
 
