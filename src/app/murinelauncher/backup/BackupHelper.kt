@@ -32,7 +32,8 @@ object BackupHelper {
     private const val TMP_PREFS = "murine_backup_tmp_prefs"
     private const val DOWNGRADE_JSON = "downgrade_schema.json"
     private const val MAIN_PREFS_XML = LauncherFiles.SHARED_PREFERENCES_KEY + ".xml"
-    // Current implementation only supports level 1 to 4, default is 3
+    // Current implementation only supports level 1 to 4, default is 2
+    // NOTE: maybe set to 2 instead if backup grows bigger in the future (e.g. inserts a preview image) to execute faster
     private const val ZSTD_COMPRESSION_LEVEL = 3
 
     /** Backed up prefs; IMPORTANT: also check backupscheme.xml **/
