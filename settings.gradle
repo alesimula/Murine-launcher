@@ -78,8 +78,3 @@ MODULES_DIR.listFiles().findAll { it.isDirectory() }.sort { it.name }.each { Fil
     project(":${dir.name}").projectDir = dir // set before children resolve against it
     dir.listFiles().findAll(isProject).sort { it.name }.each { include ":${dir.name}:${it.name}" }
 }
-
-// Temporary: diagnostic app for the --enable-sparse-encoding experiment in build.gradle.
-// Remove this include and tools/sparse-test/ together with that flag (either way it goes).
-include ':sparse-test'
-project(':sparse-test').projectDir = new File(rootDir, 'tools/sparse-test')
