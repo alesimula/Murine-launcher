@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Privacy Policy
-subtitle: Effective May 10, 2026
+subtitle: Effective September 25, 2026
 ---
 
 ## Overview
@@ -24,12 +24,13 @@ This privacy policy explains what information the app accesses, how it is used, 
 
 Murine Launcher requests only the minimal permissions strictly necessary to function as a home screen launcher:
 
-- **Home screen launcher** - required to act as your device's default launcher.
-- **Wallpaper access** - required to display and set your wallpaper.
-- **App list access** - required to display your installed applications.
-- **Widget support** - required to host home screen widgets.
-- **Notification badge access** - used to display unread notification counts on app icons, if supported by your device.
-- **Private Space access** - required to show and manage your Private Space inside the launcher.
+- **Wallpaper hints** - tells Android what size your wallpaper should be, so it fits your home screen. Murine Launcher never changes your wallpaper; the Wallpapers option opens Android's own picker.
+- **App list access** - lets Murine Launcher see all installed apps, so they can appear in the app drawer and in search. The list is only used to display your apps and never leaves your device.
+- **Bind widget** - lets Murine Launcher place widgets on your home screen. Android may ask you to confirm the first time you add a widget from a given app.
+- **Uninstall apps** - lets you uninstall apps directly from the launcher. Android always asks you to confirm before an app is removed.
+- **Notification access** - optional, used only to show notification dots on app icons. Murine Launcher never stores or displays your notifications; it only keeps, in memory, which apps have notifications and how many.
+- **Private Space access** - lets Murine Launcher show your Private Space and its apps, and lock or unlock it from the app drawer. Available on Android 15 and above.
+- **App Lock** - lets you lock apps from the launcher, on Android 17 and above. The lock is handled by Android itself; Murine Launcher never sees your PIN, password, or biometrics.
 
 No permission is requested for internet access, location, camera, microphone, contacts, storage of personal files, or any other sensitive data.
 
