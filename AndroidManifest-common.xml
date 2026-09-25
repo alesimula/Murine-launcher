@@ -32,20 +32,21 @@
     -->
 
     <!--uses-permission android:name="android.permission.CALL_PHONE" /-->
-    <uses-permission android:name="android.permission.SET_WALLPAPER" />
+    <!--uses-permission android:name="android.permission.SET_WALLPAPER" /-->
     <uses-permission android:name="android.permission.SET_WALLPAPER_HINTS" />
     <uses-permission android:name="android.permission.BIND_APPWIDGET" />
     <!--uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /-->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
-    <uses-permission android:name="android.permission.READ_DEVICE_CONFIG" />
+    <!--uses-permission android:name="android.permission.READ_DEVICE_CONFIG" /-->
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
     <uses-permission android:name="android.permission.LOCK_APPS" />
     <uses-permission android:name="android.permission.VIBRATE"/>
     <!-- for rotating surface by arbitrary degree -->
-    <uses-permission android:name="android.permission.ROTATE_SURFACE_FLINGER" />
-    <uses-permission android:name="android.permission.WAKEUP_SURFACE_FLINGER" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!--uses-permission android:name="android.permission.ROTATE_SURFACE_FLINGER" /-->
+    <!--uses-permission android:name="android.permission.WAKEUP_SURFACE_FLINGER" /-->
+    <!-- Only used by the AOSP debug crash notifier though NotificationManager in Launcher.java (IS_DEBUG_DEVICE, always false) -->
+    <!--uses-permission android:name="android.permission.POST_NOTIFICATIONS" /-->
     <uses-permission android:name="android.permission.EXPAND_STATUS_BAR" />
     <uses-permission android:name="android.permission.ACCESS_HIDDEN_PROFILES" />
 
