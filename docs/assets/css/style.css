@@ -22,6 +22,7 @@ html, body, img, svg, picture, video {
   --md-on-tertiary: #FFFFFF;
   --md-tertiary-container: #FFDCE0;
   --md-on-tertiary-container: #400008;
+  --md-nav-pill-active: #FFDCE0; /* same as --md-tertiary-container */
   --md-error: #BA1A1A;
   --md-on-error: #FFFFFF;
   --md-surface: #FEF7FF;
@@ -62,16 +63,17 @@ html, body, img, svg, picture, video {
 [data-theme="dark"] {
   --md-primary: #ECC4F2;
   --md-on-primary: #520088;
-  --md-primary-container: #A52DAF;
+  --md-primary-container: #A52DAF; /* NOTE: #63236B might be less punchy, but feels less personal */
   --md-on-primary-container: #F8DDF8;
   --md-secondary: #F8B4DA;
   --md-on-secondary: #541D42;
-  --md-secondary-container: #7E4465;
+  --md-secondary-container: #322532; /* OLD: #7E4465 */
   --md-on-secondary-container: #FFD8EC;
   --md-tertiary: #FFB8B8;
   --md-on-tertiary: #5E1520;
-  --md-tertiary-container: #C1556A;
+  --md-tertiary-container: #C1556A; /* NOTE: #7F425A might be less punchy, but feels less personal */
   --md-on-tertiary-container: #FFDCE0;
+  --md-nav-pill-active: #35242B; /* pink-peach (was #33252E), as subtle as --md-secondary-container */
   --md-error: #FFB4AB;
   --md-on-error: #690005;
   --md-surface: #15121A;
@@ -264,7 +266,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .nav-pill.active {
-  background: var(--md-tertiary-container);
+  background: var(--md-nav-pill-active);
   color: var(--md-on-tertiary-container);
 }
 
