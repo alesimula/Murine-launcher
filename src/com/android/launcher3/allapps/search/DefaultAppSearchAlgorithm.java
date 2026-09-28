@@ -28,12 +28,16 @@ import com.android.launcher3.LauncherAppState;
 import com.android.launcher3.allapps.BaseAllAppsAdapter.AdapterItem;
 import com.android.launcher3.model.data.AppInfo;
 import com.android.launcher3.pm.UserCache;
+import com.android.launcher3.search.FuzzyAppMatcher;
 import com.android.launcher3.search.SearchAlgorithm;
 import com.android.launcher3.search.SearchCallback;
 import com.android.launcher3.search.StringMatcherUtility;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -83,21 +87,33 @@ public class DefaultAppSearchAlgorithm implements SearchAlgorithm<AdapterItem> {
     }
 
     /**
-     * Filters {@link AppInfo}s matching specified query;
+     * Filters and ranks {@link AppInfo}s by fuzzy title match quality.
      * @see {@link #getTitleMatchResult} for pre-wrapped {@link AdapterItem} list.
      */
     @AnyThread
     public static Stream<AppInfo> getTitleMatchApps(Context context, List<AppInfo> apps, String query) {
-        // Do an intersection of the words in the query and each title, and filter out all the
-        // apps that don't match all of the words in the query.
-        final String queryTextLower = query.toLowerCase();
+        final String queryTextLower = query.trim().toLowerCase(Locale.ROOT);
+        final FuzzyAppMatcher fuzzyMatcher = new FuzzyAppMatcher(query);
         final StringMatcherUtility.StringMatcher matcher = StringMatcherUtility.StringMatcher.getInstance();
         final UserManager userManager = context.getSystemService(UserManager.class);
         final UserCache userCache = UserCache.INSTANCE.get(context);
 
         return apps.stream()
                 .filter(info -> !(userCache.getUserInfo(info.user).isPrivate() && userManager.isQuietModeEnabled(info.user)))
-                .filter(info -> StringMatcherUtility.matches(queryTextLower, info.title.toString(), matcher));
+                .map(info -> {
+                    String title = info.title.toString();
+                    int score = fuzzyMatcher.score(title);
+                    // Preserve locale-sensitive matches, including Korean initial consonants.
+                    if ((score < 0 || score > 200)
+                            && StringMatcherUtility.matches(queryTextLower, title, matcher)) {
+                        score = 200;
+                    }
+                    return new AbstractMap.SimpleImmutableEntry<>(info, score);
+                })
+                .filter(entry -> entry.getValue() >= 0)
+                // Stream sorting is stable: equally good matches retain the app list's order.
+                .sorted(Comparator.comparingInt(entry -> entry.getValue()))
+                .map(entry -> entry.getKey());
     }
 
     /**
