@@ -51,7 +51,7 @@
     <string name="pref_adaptive_icons_title">Ícones adaptáveis</string>
     <string name="pref_adaptive_icons_summary">Remodelar ícones que não são adaptáveis</string>
     <string name="pref_adaptive_icons_except_system">Exceto apps do sistema</string>
-    <string name="pref_adaptive_icons_force_legacy">Forçar ícones legados</string>
+    <string name="pref_adaptive_icons_force_legacy">Forçar ícones legacy</string>
     <string name="pref_adaptive_icons_never">Nunca remodelar</string>
     <string name="pref_themed_icons_title">Ícones monocromáticos</string>
     <string name="pref_themed_icons_summary">Recolorir os ícones conforme o tema do sistema</string>
@@ -85,7 +85,7 @@
 
     <string name="pref_double_tap_to_sleep_title">Toque duplo para bloquear</string>
     <string name="pref_double_tap_to_sleep_summary">Toque duas vezes em um espaço vazio para bloquear a tela</string>
-    <string name="pref_swipe_down_notifications_title">Deslizar para notificações</string>
+    <string name="pref_swipe_down_notifications_title">Deslizar para ver notificações</string>
     <string name="pref_swipe_down_notifications_summary">Deslize para baixo na tela inicial para abrir a área de notificações</string>
 
     <!-- Murine search bar -->
@@ -108,7 +108,7 @@
     <string name="pref_qsb_box_alpha">Opacidade do balão de pesquisa</string>
     <string name="pref_qsb_custom_provider_title">URL de pesquisa personalizada</string>
     <string name="pref_qsb_history_size_title">Tamanho do histórico de pesquisa</string>
-    <string name="pref_qsb_history_size_summary">Máximo de entradas</string>
+    <string name="pref_qsb_history_size_summary">Numero máximo de entradas</string>
     <string name="pref_qsb_clear_history_title">Limpar histórico de pesquisa</string>
     <string name="pref_qsb_clear_history_summary">Remover todas as pesquisas salvas</string>
     <string name="pref_qsb_clear_history_confirm_title">Limpar histórico de pesquisa?</string>
@@ -119,10 +119,10 @@
     <string name="smartspace_mode_clock">Relógio</string>
     <string name="smartspace_mode_google">Google Smartspace</string>
     <string name="smartspace_mode_disabled">Desativado</string>
-    <string name="pref_smartspace_title">Widget da primeira tela</string>
+    <string name="pref_smartspace_title">Widget da tela inicial</string>
     <string name="pref_smartspace_summary_clock">Mostra um relógio com a data de hoje</string>
     <string name="pref_smartspace_summary_google">Mostra o widget Google Smartspace</string>
-    <string name="pref_smartspace_summary_disabled">Nenhum widget na primeira tela</string>
+    <string name="pref_smartspace_summary_disabled">Nenhum widget na tela inicial</string>
 
     <string name="pref_blur_unsupported_warning"><![CDATA[O desfoque do plano de fundo pode não ser totalmente compatível ou estar ativado neste OEM/ROM; se encontrar problemas, procure uma opção &quot;Permitir desfoques em nível de janela&quot; nas opções de tela ou nas opções do desenvolvedor.<br/>Como alternativa, tente ativar <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">este módulo Magisk</a> em dispositivos com root]]></string>
 
