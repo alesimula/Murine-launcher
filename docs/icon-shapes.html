@@ -196,10 +196,10 @@ noindex: true    # and out of search engines
 #se-add .contact-modal { max-width: 640px; }
 #se-add .contact-modal-desc { margin: 0 0 16px; }
 /* The dialog never grows past the screen: only the grid scrolls, so the buttons above it and the bar
-   under it stay in view (the whole dialog scrolls only if even a one-row grid doesn't fit). */
+   under it stay in view (the whole dialog scrolls only if even a two-row grid doesn't fit). */
 #se-add .contact-modal { max-height: 100%; display: flex; flex-direction: column; overflow-y: auto; }
 #se-add .contact-modal > * { flex: none; }
-#se-add .contact-modal > .se-presets { flex: 1 1 auto; min-height: 110px; margin: 0; overflow-y: auto; }
+#se-add .contact-modal > .se-presets { flex: 1 1 auto; min-height: 220px; margin: 0; overflow-y: auto; align-content: start; } /* two rows of tiles; extra height stays empty instead of stretching them */
 @media (max-width: 480px) { #se-add { padding: 12px; } }
 /* On a very short screen the whole dialog scrolls: the bar then sticks to its bottom edge. */
 #se-add .se-pick-bar { position: sticky; bottom: 0; padding: 8px 0; margin-top: 4px; background: var(--md-surface-container-low); }
@@ -216,7 +216,9 @@ noindex: true    # and out of search engines
 .se-seg button + button { border-left: 1px solid var(--md-outline-variant); }
 .se-seg button[aria-pressed="true"] { background: var(--md-primary-container); color: var(--md-on-primary-container); }
 .se-pick-bar { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-.se-pick-bar span { margin-right: auto; font-size: .85rem; color: var(--md-on-surface-variant); }
+#se-pick-count { margin-right: auto; font-size: .85rem; color: var(--md-on-surface-variant); }
+/* The buttons stay on one row together: if they don't fit next to the count, they move under it as a group. */
+.se-pick-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; margin-left: auto; }
 .se-btn-primary { background: var(--md-primary); color: var(--md-on-primary); border-color: var(--md-primary); }
 .se-btn-primary:hover:not(:disabled) { background: var(--md-primary); filter: brightness(1.08); }
 #se-measure { position: absolute; width: 0; height: 0; overflow: hidden; }
@@ -410,8 +412,8 @@ noindex: true    # and out of search engines
     <p id="se-add-desc" class="contact-modal-desc"></p>
     <div class="se-import">
       <div class="se-row">
-        <button id="se-import-btn" class="se-btn" type="button">Import an SVG file…</button>
-        <button id="se-import-unload" class="se-btn" type="button" hidden>Back to the presets</button>
+        <button id="se-import-btn" class="se-btn" type="button" title="Import the shapes of an SVG file">Import SVG…</button>
+        <button id="se-import-unload" class="se-btn" type="button" title="Unload the SVG file and show the presets again" hidden>Presets</button>
       </div>
       <input id="se-import-file" type="file" accept=".svg,image/svg+xml" hidden>
       <p id="se-import-msg" class="se-hint" role="status" hidden></p>
@@ -429,9 +431,11 @@ noindex: true    # and out of search engines
     <div id="se-add-grid" class="se-presets"></div>
     <div id="se-pick-bar" class="se-pick-bar" hidden>
       <span id="se-pick-count"></span>
-      <button id="se-pick-clear" class="se-btn" type="button">Cancel</button>
-      <button id="se-pick-merge" class="se-btn" type="button" hidden>Merge</button>
-      <button id="se-pick-add" class="se-btn se-btn-primary" type="button">Add</button>
+      <span class="se-pick-actions">
+        <button id="se-pick-clear" class="se-btn" type="button">Cancel</button>
+        <button id="se-pick-merge" class="se-btn" type="button" hidden>Merge</button>
+        <button id="se-pick-add" class="se-btn se-btn-primary" type="button">Add</button>
+      </span>
     </div>
   </div>
 </div>

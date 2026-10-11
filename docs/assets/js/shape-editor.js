@@ -1376,8 +1376,7 @@
       const on = picked.has(b.dataset.key);
       b.classList.toggle('picked', on); b.setAttribute('aria-pressed', on);
     }
-    $('se-add-desc').textContent = (loaded ? `Tap a${loaded.view === 'merged' ? ' merged group' : ' piece'} to add it where it sits in the file` : "Pick a starting point. It's added at full size")
-      + '. Long-press or Ctrl+click to pick several.';
+    $('se-add-desc').textContent = `Tap to add${loaded ? ' in place' : ' at full size'}. Long-press or Ctrl+click to pick several.`;
     $('se-import-btn').disabled = full;
     $('se-import-unload').hidden = !loaded;
     if (full) importMsg(`The icon already has the most shapes it can (${ROOM}): delete one to add more.`);
@@ -1393,11 +1392,16 @@
         b.setAttribute('aria-pressed', b.dataset.view === loaded.view);
         b.textContent = (b.dataset.view === 'merged' ? 'Merged' : 'Pieces') + ` (${b.dataset.view === 'merged' ? m : n})`;
       }
-      $('se-import-count').textContent = `${n} pieces` + (m === 1 ? ', which merge into one shape.' : `; not all of them touch, so merged they'd still be ${plural(m)}.`)
-        + (n > r || m > r ? ` There's room for ${Math.max(r, 0)} more shape${r === 1 ? '' : 's'} (${ROOM} at most).` : '');
-      $('se-import-separate').textContent = `Add all ${n} separately`;
+      // One short line; the full sentences are its tooltip.
+      const { holes, strokes } = loaded, tight = n > r || m > r, s = (k, w) => `${k} ${w}${k === 1 ? '' : 's'}`;
+      $('se-import-count').textContent = [`${n} pieces (${m} merged)`, holes && `${s(holes, 'hole')} filled`,
+        strokes && `${s(strokes, 'line')} skipped`, tight && `room for ${Math.max(r, 0)}`].filter(Boolean).join(' · ');
+      $('se-import-count').title = [`${n} pieces` + (m === 1 ? ', which merge into one shape.' : `; not all of them touch, so merged they'd still be ${plural(m)}.`),
+        holesNote(holes), strokes ? `${s(strokes, 'line-only element')} left out.` : '',
+        tight ? `There's room for ${Math.max(r, 0)} more shape${r === 1 ? '' : 's'} (${ROOM} at most).` : ''].filter(Boolean).join(' ');
+      $('se-import-separate').textContent = `Add all ${n}`;
       $('se-import-separate').disabled = n > r;
-      $('se-import-merge').textContent = m === 1 ? 'Merge all into one shape' : `Merge all into ${m} shapes`;
+      $('se-import-merge').textContent = m === 1 ? 'Merge all into one' : `Merge all (${m} shapes)`;
       $('se-import-merge').disabled = m > r;
     }
     // The bar for picked tiles.
@@ -1408,12 +1412,14 @@
       const sub = loaded && loaded.view === 'pieces' ? [...picked].map(Number).sort((a, b) => a - b).map((i) => loaded.pieces[i]) : null;
       const merged = sub && k > 1 ? mergedPieces(sub) : null;
       $('se-pick-count').textContent = `${k} picked` + (k > r ? `, room for ${Math.max(r, 0)}` : '');
-      $('se-pick-add').textContent = loaded ? `Add ${k} separately` : `Add ${plural(k)}`;
+      $('se-pick-add').textContent = `Add ${k}`;
+      $('se-pick-add').title = loaded && k > 1 ? `Add the ${k} picked as separate shapes` : `Add ${plural(k)}`;
       $('se-pick-add').disabled = k > r;
       $('se-pick-merge').hidden = !merged;
       if (merged) {
         const m = merged.pieces.length;
-        $('se-pick-merge').textContent = m === 1 ? 'Merge into one' : `Merge (${m} shapes)`;
+        $('se-pick-merge').textContent = m === 1 ? 'Merge' : `Merge (${m})`;
+        $('se-pick-merge').title = m === 1 ? 'Merge them into one shape' : `Merge them: not all of them touch, so they'd make ${m} shapes`;
         $('se-pick-merge').disabled = m > r;
         $('se-pick-merge').onclick = () => addMerged(merged);
       }
@@ -1465,9 +1471,8 @@
     const notes = [holesNote(res.holes), res.strokes ? `${res.strokes} line-only element${res.strokes > 1 ? 's were' : ' was'} left out.` : ''];
     if (res.pieces.length === 1) { loaded = null; picked.clear(); renderAddGrid(); return addShapes(asShapes(res.pieces), notes); } // nothing to choose
     // The merge is worked out now, so the buttons can say how many shapes it makes.
-    loaded = { pieces: res.pieces, merged: mergedPieces(res.pieces), notes, view: 'pieces' };
+    loaded = { pieces: res.pieces, merged: mergedPieces(res.pieces), notes, holes: res.holes, strokes: res.strokes, view: 'pieces' };
     picked.clear();
-    importMsg(notes.filter(Boolean).join(' '));
     renderAddGrid();
   };
   $('se-import-view').addEventListener('click', (e) => {
