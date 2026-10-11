@@ -1059,6 +1059,16 @@
     }
   });
   document.addEventListener('pointerdown', (e) => { if (!e.target.closest('.se-corner-wrap')) $('se-corner-pick').hidden = true; });
+  // "Hide tools" above the editor: the canvas without anything floating over it. Remembered on this browser.
+  const TOOLS = 'murine-shape-editor-bare';
+  const bare = (on) => {
+    document.querySelector('.se-stage').classList.toggle('se-bare', on);
+    $('se-tools-toggle').setAttribute('aria-pressed', on);
+    $('se-tools-toggle').textContent = on ? 'Show tools' : 'Hide tools';
+    try { if (on) localStorage.setItem(TOOLS, '1'); else localStorage.removeItem(TOOLS); } catch (e) { /* private mode */ }
+  };
+  $('se-tools-toggle').onclick = () => bare(!document.querySelector('.se-stage').classList.contains('se-bare'));
+  try { if (localStorage.getItem(TOOLS)) bare(true); } catch (e) { /* private mode */ }
   // The help bubble: the button toggles it; a press anywhere else or Esc closes it.
   const showHelp = (on) => { $('se-help').hidden = !on; $('se-help-btn').setAttribute('aria-expanded', on); };
   $('se-help-btn').onclick = () => showHelp($('se-help').hidden);

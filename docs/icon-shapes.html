@@ -136,6 +136,10 @@ noindex: true    # and out of search engines
 /* Canvas overlay (Move mode): fit this shape top right, mirroring bottom left. */
 .se-left { min-width: 0; }
 .se-stage { position: relative; }
+/* "Hide tools": everything floating over the canvas goes (the canvas is the stage's only svg child) */
+.se-stage.se-bare > :not(svg) { display: none !important; }
+.se-title-row { display: flex; align-items: center; gap: 16px; margin: 40px 0 16px; }
+.page-body .se-title-row h2 { margin: 0; }
 .se-shake { animation: se-shake .35s; }
 @keyframes se-shake { 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
 @media (prefers-reduced-motion: reduce) { .se-shake { animation: none; } }
@@ -244,7 +248,10 @@ noindex: true    # and out of search engines
 <h2>Presets</h2>
 <div id="se-presets" class="se-presets"></div>
 
-<h2>Editor</h2>
+<div class="se-title-row">
+  <h2>Editor</h2>
+  <button id="se-tools-toggle" class="se-btn" type="button" aria-pressed="false" title="Hide the buttons and pills floating over the canvas">Hide tools</button>
+</div>
 <div class="se-editor">
   <div class="se-left">
     <div class="se-stage">
