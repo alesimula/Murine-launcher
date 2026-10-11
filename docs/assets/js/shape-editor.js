@@ -785,7 +785,11 @@
       const reach = (i) => Math.min(dist(pts[i], pts[(i + pts.length - 1) % pts.length]), dist(pts[i], pts[(i + 1) % pts.length]));
       const maxSize = sel < 0 ? Math.max(...pts.map((_, i) => reach(i) / 2)) : Math.max(...group.map(reach));
       $('se-size').max = Math.max(0.1, Math.ceil(maxSize * 10) / 10); // set before value, which the browser clamps to it
-      $('se-size').value = cur.r; $('se-size-v').textContent = same('r') ? fmt(Math.min(cur.r, +$('se-size').max)) : 'mixed';
+      // A typed size past the slider's end shows as it is, in red: the rounding already stopped growing there.
+      const over = same('r') && cur.r > +$('se-size').max + 0.005;
+      $('se-size').value = cur.r; $('se-size-v').textContent = same('r') ? fmt(cur.r) : 'mixed';
+      $('se-size-v').classList.toggle('se-over', over);
+      $('se-size-v').title = over ? `More than the slider reaches: past ${fmt(+$('se-size').max)} the rounding doesn't grow any more` : '';
       const max = +$('se-size').max, zone = group.length === 1 && sel >= 0 ? squeezeStart(sel, max) : max, hasZone = zone < max - 0.05;
       $('se-size-track').classList.toggle('has-zone', hasZone);
       $('se-size-track').style.setProperty('--squeeze', zone / max);
@@ -795,8 +799,11 @@
       warn.style.visibility = hasZone ? '' : 'hidden'; // keeps its room: the Smoothing slider below must not jump around
       warn.classList.toggle('active', squeezed.size > 0);
       warn.textContent = squeezed.size ? 'Shrinking the highlighted neighbouring corners'
-        : 'Past the red mark it also shrinks the neighbouring corners';
+        : typedValues() ? `Above ${fmt(zone)} it also shrinks the neighbouring corners` : 'Past the red mark it also shrinks the neighbouring corners';
       $('se-smooth').value = Math.round(cur.s * 100); $('se-smooth-v').textContent = same('s') ? Math.round(cur.s * 100) + '%' : 'mixed';
+      // The same as number fields (empty, with "mixed" as placeholder, when they differ); left alone while typed in.
+      const num = (id, v) => { if (document.activeElement !== $(id)) $(id).value = v; };
+      num('se-size-n', same('r') ? fmt(cur.r) : ''); num('se-smooth-n', same('s') ? Math.round(cur.s * 100) : '');
       $('se-apply-all').disabled = sel < 0;
     }
     $('se-undo').disabled = undo.length === 0;
@@ -1227,6 +1234,28 @@
     (sel >= 0 ? selList().map((i) => pts[i]) : pts).forEach((p) => (p[key] = v));
     render();
   };
+  // The legend's toggle shows the two values as number fields instead of sliders. Remembered on this browser.
+  const TYPED = 'murine-shape-editor-typed';
+  const typedValues = () => $('se-corner-set').classList.contains('se-typed');
+  const typed = (on) => {
+    $('se-corner-set').classList.toggle('se-typed', on);
+    const t = on ? 'Use sliders instead' : 'Type the values instead';
+    $('se-corner-type').setAttribute('aria-pressed', on); $('se-corner-type').title = t; $('se-corner-type').setAttribute('aria-label', t);
+    try { if (on) localStorage.setItem(TYPED, '1'); else localStorage.removeItem(TYPED); } catch (e) { /* private mode */ }
+  };
+  $('se-corner-type').onclick = () => { typed(!typedValues()); render(); };
+  try { if (localStorage.getItem(TYPED)) typed(true); } catch (e) { /* private mode */ }
+  // A typed value: one undo step, for the selected corners or all of them; anything not a number puts the value back.
+  const typedCorner = (key, field, max, scale) => field.addEventListener('change', () => {
+    const v = clamp(+field.value, 0, max);
+    if (field.value === '' || !Number.isFinite(v)) { field.blur(); render(); return field.focus(); } // blurred, render refills it
+    checkpoint();
+    (sel >= 0 ? selList().map((i) => pts[i]) : pts).forEach((p) => (p[key] = v / scale));
+    field.value = key === 'r' ? fmt(v) : Math.round(v);
+    render();
+  });
+  typedCorner('r', $('se-size-n'), 500, 1);
+  typedCorner('s', $('se-smooth-n'), 100, 100);
   $('se-size').addEventListener('input', (e) => corner('r', +e.target.value));
   $('se-smooth').addEventListener('input', (e) => corner('s', e.target.value / 100));
   ['se-size', 'se-smooth'].forEach((id) => $(id).addEventListener('change', () => (sliding = false)));

@@ -63,6 +63,22 @@ noindex: true    # and out of search engines
 .se-panel fieldset { border: 1px solid var(--md-outline-variant); border-radius: var(--md-shape-md);
                      padding: 10px 14px 12px; margin: 0 0 12px; }
 .se-panel legend { padding: 0 6px; font-weight: 600; font-size: .85rem; }
+/* Corner size and smoothing as sliders, or (.se-typed, with the legend's toggle) as number fields */
+#se-corner-set legend { display: flex; align-items: center; gap: 6px; }
+.se-corner-type { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 30px; padding: 0;
+  border: 1px solid var(--md-outline-variant); border-radius: var(--md-shape-full); background: transparent; color: var(--md-primary);
+  font: inherit; font-size: .78rem; font-weight: 600; letter-spacing: -.02em; cursor: pointer; }
+.se-corner-type:hover { background: var(--md-surface-container); }
+.se-corner-type svg { width: 22px; height: 22px; }
+/* fingers: an invisible margin around it that still counts as the button */
+@media (pointer: coarse) { .se-corner-type::after { content: ''; position: absolute; inset: -8px -4px; } }
+.se-ct-slide, .se-typed .se-ct-num, .se-num { display: none; }
+.se-typed .se-ct-slide { display: block; }
+#se-corner-set.se-typed .se-num { display: inline-flex; align-items: center; gap: 4px; }
+#se-corner-set.se-typed :is(#se-size-v, #se-smooth-v, #se-size-track, #se-smooth, .se-scale) { display: none; }
+.se-panel .se-num, .se-panel .se-num input { user-select: text; -webkit-user-select: text; }
+.se-unit { min-width: 1.2em; } /* the same for both fields, so they line up */
+#se-size-v.se-over { color: var(--md-tertiary); cursor: help; }
 .se-panel label { display: flex; align-items: center; justify-content: space-between; gap: 8px; user-select: none; -webkit-user-select: none;
                   font-size: .88rem; margin: 4px 0; }
 .se-panel input[type=range] { width: 100%; accent-color: var(--md-primary); }
@@ -365,11 +381,12 @@ noindex: true    # and out of search engines
     <p id="se-fixed-note" class="se-hint se-note" hidden>This shape has a fixed outline (ready-made or imported): you can move, resize, stretch and
       mirror it, but not edit its points. Generate replaces it with an editable one.</p>
     <fieldset id="se-corner-set">
-      <legend id="se-corner-legend">All corners</legend>
-      <label for="se-size">Size <span id="se-size-v"></span></label>
+      <legend><span id="se-corner-legend">All corners</span>
+        <button id="se-corner-type" class="se-corner-type" type="button" aria-pressed="false" title="Type the values instead" aria-label="Type the values instead"><span class="se-ct-num" aria-hidden="true">123</span><svg class="se-ct-slide" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="12" r="4" fill="currentColor"/></svg></button></legend>
+      <label for="se-size">Size <span id="se-size-v"></span><span class="se-num"><input id="se-size-n" type="number" min="0" max="500" step="0.1" placeholder="mixed" aria-label="Corner size"><span class="se-unit"></span></span></label>
       <div id="se-size-track" class="se-size-track"><input id="se-size" type="range" min="0" max="50" step="0.1"></div>
       <p id="se-size-warn" class="se-size-warn" style="visibility: hidden"></p>
-      <label for="se-smooth">Smoothing <span id="se-smooth-v"></span></label>
+      <label for="se-smooth">Smoothing <span id="se-smooth-v"></span><span class="se-num"><input id="se-smooth-n" type="number" min="0" max="100" step="1" placeholder="mixed" aria-label="Smoothing, in percent"><span class="se-unit">%</span></span></label>
       <input id="se-smooth" type="range" min="0" max="100" step="1">
       <div class="se-scale"><span>Cut</span><span>Round</span><span>Squircle</span></div>
       <div class="se-row"><button id="se-apply-all" class="se-btn" type="button">Apply to all corners</button></div>
