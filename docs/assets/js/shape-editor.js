@@ -528,11 +528,14 @@
 
     // Each shape and mirrored copy is filled and outlined on its own. The selected one is drawn last: while
     // selected it sits on top, and clicks on it reach it first (see shapeAt).
-    const order = shapes.map((_, i) => i).filter((i) => i !== active).concat(active);
-    const strokes = order.flatMap((i) => lines[i].map((d, c) => ({ d, cls: 'se-line' + (i === active ? ' active' : '') + (c ? ' copy' : '') })));
-    const layer = $('se-lines');
-    resize(layer, strokes.length, () => el('path', {}));
-    strokes.forEach((s, k) => { layer.children[k].setAttribute('d', s.d); layer.children[k].setAttribute('class', s.cls); });
+    // The others go in two layers, fills (whose overlaps are capped, see #se-cap-*) and outlines.
+    const back = shapes.flatMap((_, i) => (i === active ? [] : lines[i].map((d, c) => ({ d, cls: 'se-line' + (c ? ' copy' : '') }))));
+    const front = lines[active].map((d, c) => ({ d, cls: 'se-line active' + (c ? ' copy' : '') }));
+    for (const [id, list] of [['se-back-fill', back], ['se-back-stroke', back], ['se-front', front]]) {
+      const layer = $(id);
+      resize(layer, list.length, () => el('path', {}));
+      list.forEach((s, k) => { layer.children[k].setAttribute('d', s.d); layer.children[k].setAttribute('class', s.cls); });
+    }
     $('se-outline').setAttribute('points', pts && mode === 'edit' ? pts.map(wpt).map((p) => p.x + ',' + p.y).join(' ') : '');
 
     // Neighbours whose rounding the selected corner is currently eating into.
@@ -691,19 +694,20 @@
     }).join('') + `<button type="button" class="se-card se-card-add" data-act="add" data-card="-1" title="Add a shape" aria-label="Add a shape">${icon('e145')}</button>`;
     if (refocus) cards.querySelector(`[data-act="${refocus.split(':')[0]}"][data-card="${refocus.split(':')[1]}"]`)?.focus();
   }
+  function deleteShape(i) {
+    if (!confirm(`Delete ${shapeName(shapes[i], i)}? Undo can still bring it back.`)) return;
+    checkpoint();
+    shapes.splice(i, 1);
+    if (active >= i && active > 0) active--;
+    sel = -1; sync(); render();
+  }
   $('se-cards').addEventListener('click', (e) => {
     const b = e.target.closest('[data-act]');
     if (!b) return;
     const i = +b.dataset.card;
     if (b.dataset.act === 'pick') { active = i; sel = -1; sync(); render(); } // keeps the mode, like a tap on the canvas
     else if (b.dataset.act === 'edit' || b.dataset.act === 'move') { mode = b.dataset.act; sel = -1; sync(); render(); }
-    else if (b.dataset.act === 'del') {
-      if (!confirm(`Delete ${shapeName(shapes[i], i)}? Undo can still bring it back.`)) return;
-      checkpoint();
-      shapes.splice(i, 1);
-      if (active >= i && active > 0) active--;
-      sel = -1; sync(); render();
-    } else if (b.dataset.act === 'add') { resetImport(); addDialog.open(); }
+    else if (b.dataset.act === 'del') deleteShape(i); else if (b.dataset.act === 'add') { picked.clear(); renderAddGrid(); addDialog.open(); }
   });
 
   // ---------- canvas interaction ----------
@@ -845,13 +849,17 @@
     // unless you're typing in a field or a dialog is open. Arrows still need the canvas focused, so elsewhere
     // they keep moving sliders and scrolling the page.
     const typing = e.target.matches('input:not([type=range]):not([type=checkbox]), textarea, select');
-    const pointKey = (sel >= 0 && mode === 'edit' && ['Delete', 'Backspace', 'Escape'].includes(e.key)
-      || pickedCorner >= 0 && e.key === 'Escape') && !typing && !e.target.closest('.contact-modal-overlay');
+    const del = e.key === 'Delete' || e.key === 'Backspace';
+    // In Move mode with no handle selected, Delete asks to delete the selected shape (like its card's bin).
+    const shapeKey = mode === 'move' && pickedCorner < 0 && del;
+    const pointKey = (sel >= 0 && mode === 'edit' && (del || e.key === 'Escape') || pickedCorner >= 0 && e.key === 'Escape' || shapeKey)
+      && !typing && !e.target.closest('.contact-modal-overlay');
     if (!pointKey && !svg.contains(document.activeElement)) return;
     const step = grid.snap ? grid.step : e.shiftKey ? 5 : 0.5;
     const mv = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
-    if (mode === 'move') { // arrows move the whole shape, Esc deselects the corner
+    if (mode === 'move') { // arrows move the whole shape, Esc deselects the corner, Delete deletes the shape
       if (e.key === 'Escape') { pickedCorner = -1; e.preventDefault(); return render(); }
+      if (shapeKey) { e.preventDefault(); return shapes.length > 1 ? deleteShape(active) : shake(); }
       if (!mv) return;
       checkpoint();
       pickedCorner = -1;
@@ -1068,27 +1076,14 @@
 
   // ---------- presets ----------
 
-  // A preset in the grid replaces the whole icon; picked from the "+" card it is added as new shapes,
-  // full canvas size and in Move mode, ready to be resized and placed.
-  const tile = (name) => {
+  // A preset in the page's grid replaces the whole icon; the Add dialog's grid (see renderAddGrid) adds shapes.
+  for (const name of [...Object.keys(PRESETS), ...Object.keys(FIXED)]) {
     const b = document.createElement('button');
     b.type = 'button';
     b.className = 'se-preset';
     b.innerHTML = `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="${presetShapes(name).map(shapePath).join(' ')}"/></svg><span>${name}</span>`;
-    return b;
-  };
-  for (const name of [...Object.keys(PRESETS), ...Object.keys(FIXED)]) {
-    const b = tile(name);
     b.onclick = () => { loadIcon(presetShapes(name)); svg.scrollIntoView({ behavior: 'smooth', block: 'center' }); };
     $('se-presets').append(b);
-    const a = tile(name);
-    a.onclick = () => {
-      checkpoint();
-      shapes.push(...presetShapes(name));
-      active = shapes.length - 1; sel = -1; mode = 'move';
-      sync(); addDialog.close(); render();
-    };
-    $('se-add-grid').append(a);
   }
 
   // ---------- SVG import ----------
@@ -1307,28 +1302,132 @@
   }
 
   let importNote = ''; // shown under the result until the next edit
-  let pending = null; // pieces waiting for "separate or merge"
+  // The Add dialog's grid shows the presets, or the pieces of a loaded SVG file until it's unloaded (closing
+  // the dialog keeps it). A tap adds one tile; a long press or Ctrl/Cmd+click starts picking several, after
+  // which taps toggle tiles until none are left picked, and the bar under the grid adds them.
+  let loaded = null; // { pieces, merged, notes, view }; view 'pieces' or 'merged' picks what the grid shows
+  const viewList = () => (loaded.view === 'merged' ? loaded.merged.pieces : loaded.pieces);
+  const picked = new Set(); // keys of picked tiles: preset names, or piece indices
+  const ROOM = 20; // most shapes an icon can have (restore() rejects more)
+  const room = () => ROOM - shapes.length;
+  const plural = (k) => (k === 1 ? 'one shape' : `${k} shapes`);
   const importMsg = (text) => { $('se-import-msg').textContent = text; $('se-import-msg').hidden = !text; };
-  const resetImport = () => {
-    pending = null; $('se-import-choice').hidden = true; $('se-import-file').value = '';
-    const full = shapes.length >= 20;
-    $('se-import-btn').disabled = full;
-    importMsg(full ? 'The icon already has the most shapes it can (20): delete one to import.' : '');
-  };
-  function addImported(pieces, notes) {
-    checkpoint();
-    const first = shapes.length;
-    shapes.push(...pieces.map((path) => ({ path, a: 1, x: 0, y: 0, ang: 0, mirror: 'none', rot: 0 })));
-    active = first; sel = -1; mode = 'move';
-    importNote = notes.filter(Boolean).join(' ');
-    sync(); addDialog.close(); resetImport(); render();
-  }
   const holesNote = (n) => (n ? `${n} hole${n > 1 ? 's were' : ' was'} filled in: the launcher needs outlines without holes.` : '');
+  const apartNote = (n) => (n > 1 ? `Not all pieces touch, so they became ${n} shapes instead of one.` : '');
+  function addShapes(list, notes = []) {
+    checkpoint();
+    active = shapes.length;
+    shapes.push(...list);
+    sel = -1; mode = 'move';
+    importNote = notes.filter(Boolean).join(' ');
+    picked.clear();
+    sync(); addDialog.close(); render();
+  }
+  const asShapes = (pieces) => pieces.map((path) => ({ path, a: 1, x: 0, y: 0, ang: 0, mirror: 'none', rot: 0 }));
+  const addPieces = (pieces) => addShapes(asShapes(pieces), loaded?.notes);
+  const addMerged = (m) => addShapes(asShapes(m.pieces), [...(loaded?.notes || []), holesNote(m.holes), apartNote(m.pieces.length)]);
+
+  const tileSvg = (inner) => `<svg viewBox="-4 -4 108 108" aria-hidden="true">${inner}</svg>`;
+  function renderAddGrid() {
+    const tiles = $('se-add-grid'), full = room() <= 0;
+    if (loaded) {
+      // Each piece shown in place, over the faded rest of the file, so it's clear which part it is.
+      const all = loaded.pieces.map((d) => `<path class="se-tile-ghost" d="${d}"/>`).join(''), name = loaded.view === 'merged' ? 'Merged' : 'Piece';
+      tiles.innerHTML = viewList().map((d, k) => `<button type="button" class="se-preset" data-key="${k}" aria-pressed="false">
+        ${tileSvg(all + `<path d="${d}"/>`)}<span>${name} ${k + 1}</span></button>`).join('');
+    } else {
+      tiles.innerHTML = [...Object.keys(PRESETS), ...Object.keys(FIXED)].map((name) => `<button type="button" class="se-preset" data-key="${name}" aria-pressed="false">
+        ${tileSvg(`<path d="${presetShapes(name).map(shapePath).join(' ')}"/>`)}<span>${name}</span></button>`).join('');
+    }
+    for (const b of tiles.children) b.disabled = full;
+    refreshAddUi();
+  }
+  // Everything around the grid that depends on what's loaded, what's picked and the room left.
+  function refreshAddUi() {
+    const r = room(), full = r <= 0;
+    for (const b of $('se-add-grid').children) {
+      const on = picked.has(b.dataset.key);
+      b.classList.toggle('picked', on); b.setAttribute('aria-pressed', on);
+    }
+    $('se-add-desc').textContent = (loaded ? `Tap a${loaded.view === 'merged' ? ' merged group' : ' piece'} to add it where it sits in the file` : "Pick a starting point. It's added at full size")
+      + '. Long-press or Ctrl+click to pick several.';
+    $('se-import-btn').disabled = full;
+    $('se-import-unload').hidden = !loaded;
+    if (full) importMsg(`The icon already has the most shapes it can (${ROOM}): delete one to add more.`);
+    else if ($('se-import-msg').dataset.full) importMsg('');
+    $('se-import-msg').dataset.full = full ? '1' : '';
+    // "Add all" and "merge all" for a loaded file.
+    $('se-import-choice').hidden = !loaded;
+    if (loaded) {
+      const n = loaded.pieces.length, m = loaded.merged.pieces.length;
+      // Only worth switching when merging changes something.
+      $('se-import-view').hidden = m >= n;
+      for (const b of $('se-import-view').children) {
+        b.setAttribute('aria-pressed', b.dataset.view === loaded.view);
+        b.textContent = (b.dataset.view === 'merged' ? 'Merged' : 'Pieces') + ` (${b.dataset.view === 'merged' ? m : n})`;
+      }
+      $('se-import-count').textContent = `${n} pieces` + (m === 1 ? ', which merge into one shape.' : `; not all of them touch, so merged they'd still be ${plural(m)}.`)
+        + (n > r || m > r ? ` There's room for ${Math.max(r, 0)} more shape${r === 1 ? '' : 's'} (${ROOM} at most).` : '');
+      $('se-import-separate').textContent = `Add all ${n} separately`;
+      $('se-import-separate').disabled = n > r;
+      $('se-import-merge').textContent = m === 1 ? 'Merge all into one shape' : `Merge all into ${m} shapes`;
+      $('se-import-merge').disabled = m > r;
+    }
+    // The bar for picked tiles.
+    const k = picked.size;
+    $('se-pick-bar').hidden = !k;
+    if (k) {
+      // Merging picked groups that are already merged wouldn't change anything.
+      const sub = loaded && loaded.view === 'pieces' ? [...picked].map(Number).sort((a, b) => a - b).map((i) => loaded.pieces[i]) : null;
+      const merged = sub && k > 1 ? mergedPieces(sub) : null;
+      $('se-pick-count').textContent = `${k} picked` + (k > r ? `, room for ${Math.max(r, 0)}` : '');
+      $('se-pick-add').textContent = loaded ? `Add ${k} separately` : `Add ${plural(k)}`;
+      $('se-pick-add').disabled = k > r;
+      $('se-pick-merge').hidden = !merged;
+      if (merged) {
+        const m = merged.pieces.length;
+        $('se-pick-merge').textContent = m === 1 ? 'Merge into one' : `Merge (${m} shapes)`;
+        $('se-pick-merge').disabled = m > r;
+        $('se-pick-merge').onclick = () => addMerged(merged);
+      }
+    }
+  }
+  $('se-pick-add').onclick = () => {
+    const keys = [...picked];
+    if (loaded) addPieces(keys.map(Number).sort((a, b) => a - b).map((i) => viewList()[i]));
+    else addShapes(Object.keys({ ...PRESETS, ...FIXED }).filter((n) => picked.has(n)).flatMap(presetShapes));
+  };
+  $('se-pick-clear').onclick = () => { picked.clear(); refreshAddUi(); };
+  // Taps, long presses and Ctrl+clicks on the tiles.
+  let press = null, longPressed = false;
+  const togglePick = (key) => { if (!picked.delete(key)) picked.add(key); refreshAddUi(); };
+  const addGrid = $('se-add-grid');
+  addGrid.addEventListener('pointerdown', (e) => {
+    const b = e.target.closest('.se-preset');
+    if (!b || b.disabled || e.button > 0) return;
+    longPressed = false;
+    press = { x: e.clientX, y: e.clientY, timer: setTimeout(() => { longPressed = true; navigator.vibrate?.(15); togglePick(b.dataset.key); }, 450) };
+  });
+  addGrid.addEventListener('pointermove', (e) => { if (press && Math.hypot(e.clientX - press.x, e.clientY - press.y) > 10) { clearTimeout(press.timer); press = null; } });
+  for (const t of ['pointerup', 'pointercancel', 'pointerleave']) addGrid.addEventListener(t, () => { if (press) clearTimeout(press.timer); press = null; });
+  addGrid.addEventListener('contextmenu', (e) => { if (e.target.closest('.se-preset')) e.preventDefault(); }); // a long press isn't a right-click here
+  addGrid.addEventListener('click', (e) => {
+    const b = e.target.closest('.se-preset');
+    if (!b) return;
+    if (longPressed) { longPressed = false; return; } // the long press already picked it
+    const key = b.dataset.key;
+    if (picked.size || e.ctrlKey || e.metaKey) return togglePick(key);
+    if (loaded) addPieces([viewList()[+key]]);
+    else addShapes(presetShapes(key));
+  });
+
   $('se-import-btn').onclick = () => $('se-import-file').click();
+  $('se-import-unload').onclick = () => { loaded = null; picked.clear(); importMsg(''); renderAddGrid(); };
   $('se-import-file').onchange = async (e) => {
     const file = e.target.files[0];
-    resetImport();
+    e.target.value = ''; // the same file can be picked again
     if (!file) return;
+    importMsg('');
     if (file.size > 2e6) return importMsg('That file is over 2 MB, too big for an icon.');
     let res;
     try { res = svgPieces(await file.text()); } catch (err) { return importMsg(err.message === 'bad path' ? "That file's paths couldn't be read." : err.message); }
@@ -1337,29 +1436,20 @@
         : 'No filled shapes were found in that file.');
     }
     const notes = [holesNote(res.holes), res.strokes ? `${res.strokes} line-only element${res.strokes > 1 ? 's were' : ' was'} left out.` : ''];
-    if (res.pieces.length === 1) return addImported(res.pieces, notes);
-    // The merge is worked out now, so the choice can say how many shapes each option makes.
-    const merged = mergedPieces(res.pieces);
-    pending = { ...res, notes, merged };
-    const room = 20 - shapes.length, n = res.pieces.length, m = merged?.pieces.length;
-    const plural = (k) => (k === 1 ? 'one shape' : `${k} shapes`);
-    $('se-import-count').textContent = `This file has ${n} separate pieces. Keep each one as its own shape, or merge them`
-      + (m === 1 ? ' into one?' : `? Not all of them touch, so merged they'd still be ${plural(m)}.`)
-      + (n > room || !(m <= room) ? ` There's room for ${room} more shape${room === 1 ? '' : 's'} (20 at most)`
-        + (n > room && !(m <= room) ? ', so neither fits.' : n > room ? ', so only merging fits.' : ', so only keeping them separate fits.') : '');
-    $('se-import-separate').disabled = n > room;
-    $('se-import-merge').disabled = !(m <= room);
-    $('se-import-merge').textContent = m === 1 ? 'Merge into one shape' : `Merge into ${m} shapes`;
-    $('se-import-separate').textContent = `Keep as ${n} separate shapes`;
-    $('se-import-choice').hidden = false;
+    if (res.pieces.length === 1) { loaded = null; picked.clear(); renderAddGrid(); return addShapes(asShapes(res.pieces), notes); } // nothing to choose
+    // The merge is worked out now, so the buttons can say how many shapes it makes.
+    loaded = { pieces: res.pieces, merged: mergedPieces(res.pieces), notes, view: 'pieces' };
+    picked.clear();
+    importMsg(notes.filter(Boolean).join(' '));
+    renderAddGrid();
   };
-  $('se-import-separate').onclick = () => pending && addImported(pending.pieces, pending.notes);
-  $('se-import-merge').onclick = () => {
-    const m = pending?.merged;
-    if (!m) return;
-    addImported(m.pieces, [...pending.notes, holesNote(m.holes),
-      m.pieces.length > 1 ? `Not all pieces touch, so they became ${m.pieces.length} shapes instead of one.` : '']);
-  };
+  $('se-import-view').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-view]');
+    if (!b || !loaded || b.dataset.view === loaded.view) return;
+    loaded.view = b.dataset.view; picked.clear(); renderAddGrid();
+  });
+  $('se-import-separate').onclick = () => loaded && addPieces(loaded.pieces);
+  $('se-import-merge').onclick = () => loaded && addMerged(loaded.merged);
 
   // ---------- start ----------
 

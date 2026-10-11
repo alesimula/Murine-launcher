@@ -38,6 +38,10 @@ noindex: true    # and out of search engines
 .se-line.copy { stroke-dasharray: .4 .8; }
 .se-line.active { stroke: var(--md-primary); stroke-width: .5; stroke-dasharray: none; }
 .se-line.active.copy { stroke-width: .35; stroke-dasharray: 1.2 1; }
+#se-back-fill { filter: url(#se-cap-light); }
+[data-theme="dark"] #se-back-fill { filter: url(#se-cap-dark); }
+#se-back-fill .se-line { stroke: none; }
+#se-back-stroke .se-line { fill: none; }
 .se-move-box { fill: transparent; stroke: var(--md-primary); stroke-width: .3; stroke-dasharray: 1 1; cursor: move; }
 .se-resize { fill: var(--md-surface-container-lowest); stroke: var(--md-primary); stroke-width: .5; }
 .se-resize.selected { fill: var(--md-primary); }
@@ -183,10 +187,30 @@ noindex: true    # and out of search engines
 #se-add h2 { margin: 0; }
 #se-add .contact-modal { max-width: 640px; }
 #se-add .contact-modal-desc { margin: 0 0 16px; }
-#se-add .se-presets { margin: 0; max-height: 60vh; overflow-y: auto; }
+/* The dialog never grows past the screen: only the grid scrolls, so the buttons above it and the bar
+   under it stay in view (the whole dialog scrolls only if even a one-row grid doesn't fit). */
+#se-add .contact-modal { max-height: 100%; display: flex; flex-direction: column; overflow-y: auto; }
+#se-add .contact-modal > * { flex: none; }
+#se-add .contact-modal > .se-presets { flex: 1 1 auto; min-height: 110px; margin: 0; overflow-y: auto; }
+@media (max-width: 480px) { #se-add { padding: 12px; } }
+/* On a very short screen the whole dialog scrolls: the bar then sticks to its bottom edge. */
+#se-add .se-pick-bar { position: sticky; bottom: 0; padding: 8px 0; margin-top: 4px; background: var(--md-surface-container-low); }
 .se-import { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin: 0 0 16px; }
 .se-import p { margin: 0; }
-#se-import-choice[hidden], #se-import-msg[hidden] { display: none; }
+#se-import-choice[hidden], #se-import-msg[hidden], #se-import-unload[hidden], .se-pick-bar[hidden] { display: none; }
+.se-preset.picked { border-color: var(--md-primary); background: var(--md-primary-container); box-shadow: inset 0 0 0 1px var(--md-primary); }
+.se-preset:disabled { opacity: .45; cursor: default; }
+.se-preset { -webkit-touch-callout: none; user-select: none; } /* long-press picks, it doesn't open the callout or select text */
+.se-preset .se-tile-ghost { opacity: .18; }
+.se-seg { display: inline-flex; margin: 8px 0; border: 1px solid var(--md-outline-variant); border-radius: var(--md-shape-full); overflow: hidden; }
+.se-seg[hidden] { display: none; }
+.se-seg button { font: inherit; font-size: .82rem; padding: 6px 14px; border: 0; background: transparent; color: var(--md-on-surface); cursor: pointer; }
+.se-seg button + button { border-left: 1px solid var(--md-outline-variant); }
+.se-seg button[aria-pressed="true"] { background: var(--md-primary-container); color: var(--md-on-primary-container); }
+.se-pick-bar { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.se-pick-bar span { margin-right: auto; font-size: .85rem; color: var(--md-on-surface-variant); }
+.se-btn-primary { background: var(--md-primary); color: var(--md-on-primary); border-color: var(--md-primary); }
+.se-btn-primary:hover:not(:disabled) { background: var(--md-primary); filter: brightness(1.08); }
 #se-measure { position: absolute; width: 0; height: 0; overflow: hidden; }
 </style>
 
@@ -200,7 +224,13 @@ noindex: true    # and out of search engines
       <svg id="se-canvas" viewBox="-20 -20 140 140" tabindex="0" aria-label="Shape editor. In Edit mode drag points to move them and the plus marks to add points; in Move mode drag the shape or its corners.">
         <g id="se-grid"></g>
         <rect class="se-bounds" x="0" y="0" width="100" height="100"/>
-        <g id="se-lines"></g>
+        <defs>
+          <!-- The other shapes' fills add up where they overlap, but only up to a cap, so a pile of them never
+               reaches the selected shape's colour: alpha becomes min(alpha, cap). -->
+          <filter id="se-cap-light" filterUnits="userSpaceOnUse" x="-1000" y="-1000" width="2200" height="2200"><feComponentTransfer><feFuncA type="table" tableValues="0 .1 .2 .3 .4 .5 .6 .7 .8 .9 .9"/></feComponentTransfer></filter>
+          <filter id="se-cap-dark" filterUnits="userSpaceOnUse" x="-1000" y="-1000" width="2200" height="2200"><feComponentTransfer><feFuncA type="table" tableValues="0 .5 .5"/></feComponentTransfer></filter>
+        </defs>
+        <g id="se-lines"><g id="se-back-fill"></g><g id="se-back-stroke"></g><g id="se-front"></g></g>
         <polygon id="se-outline" class="se-outline"/>
         <g id="se-stretch-mark" class="se-pivot-mark" style="display: none"><circle r=".8" fill="var(--md-primary)" stroke="none"/><path/></g>
         <g id="se-adders"></g>
@@ -358,20 +388,32 @@ noindex: true    # and out of search engines
         <span class="material-symbols-outlined">&#xE5CD;</span> <!-- close -->
       </button>
     </div>
-    <p class="contact-modal-desc">Pick a starting point. It's added at full size, ready to move and resize.</p>
+    <p id="se-add-desc" class="contact-modal-desc"></p>
     <div class="se-import">
-      <button id="se-import-btn" class="se-btn" type="button">Import an SVG file…</button>
+      <div class="se-row">
+        <button id="se-import-btn" class="se-btn" type="button">Import an SVG file…</button>
+        <button id="se-import-unload" class="se-btn" type="button" hidden>Back to the presets</button>
+      </div>
       <input id="se-import-file" type="file" accept=".svg,image/svg+xml" hidden>
       <p id="se-import-msg" class="se-hint" role="status" hidden></p>
       <div id="se-import-choice" hidden>
         <p id="se-import-count" class="se-hint"></p>
+        <div id="se-import-view" class="se-seg" role="group" aria-label="Show in the grid">
+          <button type="button" data-view="pieces">Pieces</button><button type="button" data-view="merged">Merged</button>
+        </div>
         <div class="se-row">
-          <button id="se-import-separate" class="se-btn" type="button">Keep as separate shapes</button>
-          <button id="se-import-merge" class="se-btn" type="button">Merge into one shape</button>
+          <button id="se-import-separate" class="se-btn" type="button">Add all separately</button>
+          <button id="se-import-merge" class="se-btn" type="button">Merge all</button>
         </div>
       </div>
     </div>
     <div id="se-add-grid" class="se-presets"></div>
+    <div id="se-pick-bar" class="se-pick-bar" hidden>
+      <span id="se-pick-count"></span>
+      <button id="se-pick-clear" class="se-btn" type="button">Cancel</button>
+      <button id="se-pick-merge" class="se-btn" type="button" hidden>Merge</button>
+      <button id="se-pick-add" class="se-btn se-btn-primary" type="button">Add</button>
+    </div>
   </div>
 </div>
 
