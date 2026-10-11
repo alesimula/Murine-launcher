@@ -449,6 +449,7 @@
   const snap = (v) => clamp(grid.snap ? Math.round(v / grid.step) * grid.step : +v.toFixed(2), view.lo, view.hi);
   const checkpoint = () => {
     importNote = '';
+    turnFrom = null; // any other edit ends a rotation-slider drag (see the slider's input handler)
     undo.push(JSON.stringify(snapshot()));
     if (undo.length > 100) undo.shift();
     redo.length = 0; // a new edit starts a new branch, so there's nothing left to redo
@@ -978,7 +979,7 @@
   );
   // Rotation slider: one undo step per drag, and every value is turned from the shape as it was when the
   // drag started, so the points don't pick up rounding from hundreds of small turns.
-  let turnFrom = null;
+  let turnFrom = null, turned = null, turnPivot = null;
   // Turning around the middle of the box: that middle moves as the shape turns, so a faded mark stays on
   // the point the turn pivots around, and fades out shortly after the turn.
   let ghostTimer = 0;
@@ -989,12 +990,18 @@
     $('se-pivot-ghost').classList.remove('off');
   };
   const ghostOff = () => { clearTimeout(ghostTimer); ghostTimer = setTimeout(() => $('se-pivot-ghost').classList.add('off'), 800); };
+  // A drag ends on change or blur, but some browsers (old Android ones) don't always send either after a touch
+  // drag. So a drag also ends on pointer/touch release, and is restarted whenever the shape is no longer the one
+  // this drag produced (it was moved, edited, undone, or another shape was picked); and the ghost fades a moment
+  // after the last movement whatever happens.
   $('se-turn').addEventListener('input', (e) => {
-    if (!turnFrom) { checkpoint(); turnFrom = shapes[active]; ghost(pivot(turnFrom)); }
-    shapes[active] = rotated(turnFrom, +e.target.value - (turnFrom.rot || 0));
+    if (!turnFrom || shapes[active] !== turned) { checkpoint(); turnFrom = shapes[active]; turnPivot = pivot(turnFrom); }
+    shapes[active] = turned = rotated(turnFrom, +e.target.value - (turnFrom.rot || 0));
+    ghost(turnPivot); ghostOff();
     sync(); render();
   });
-  ['change', 'blur'].forEach((t) => $('se-turn').addEventListener(t, () => { turnFrom = null; ghostOff(); }));
+  const endTurn = () => { turnFrom = null; ghostOff(); };
+  for (const t of ['change', 'blur', 'pointerup', 'pointercancel', 'touchend', 'touchcancel', 'keyup']) $('se-turn').addEventListener(t, endTurn);
   // The icon switches between the slider and typing the angle; any typed angle is wrapped into 0-359.
   // The rotation icon opens the rotation half of the pill; tapped again, it switches slider and typing.
   $('se-turn-mode').onclick = () => {
