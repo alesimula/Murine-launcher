@@ -184,6 +184,9 @@ noindex: true    # and out of search engines
 #se-add .contact-modal { max-width: 640px; }
 #se-add .contact-modal-desc { margin: 0 0 16px; }
 #se-add .se-presets { margin: 0; max-height: 60vh; overflow-y: auto; }
+.se-import { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin: 0 0 16px; }
+.se-import p { margin: 0; }
+#se-import-choice[hidden], #se-import-msg[hidden] { display: none; }
 #se-measure { position: absolute; width: 0; height: 0; overflow: hidden; }
 </style>
 
@@ -259,7 +262,7 @@ noindex: true    # and out of search engines
       <button id="se-fit" class="se-btn" type="button" title="Scale and centre the whole icon until its longest side touches the box">Fit to box</button>
       <button id="se-reset" class="se-btn" type="button">Reset</button>
     </div>
-    <p id="se-fixed-note" class="se-hint se-note" hidden>This is a ready-made shape: you can move, resize and
+    <p id="se-fixed-note" class="se-hint se-note" hidden>This shape has a fixed outline (ready-made or imported): you can move, resize, stretch and
       mirror it, but not edit its points. Generate replaces it with an editable one.</p>
     <fieldset id="se-corner-set">
       <legend id="se-corner-legend">All corners</legend>
@@ -356,6 +359,18 @@ noindex: true    # and out of search engines
       </button>
     </div>
     <p class="contact-modal-desc">Pick a starting point. It's added at full size, ready to move and resize.</p>
+    <div class="se-import">
+      <button id="se-import-btn" class="se-btn" type="button">Import an SVG file…</button>
+      <input id="se-import-file" type="file" accept=".svg,image/svg+xml" hidden>
+      <p id="se-import-msg" class="se-hint" role="status" hidden></p>
+      <div id="se-import-choice" hidden>
+        <p id="se-import-count" class="se-hint"></p>
+        <div class="se-row">
+          <button id="se-import-separate" class="se-btn" type="button">Keep as separate shapes</button>
+          <button id="se-import-merge" class="se-btn" type="button">Merge into one shape</button>
+        </div>
+      </div>
+    </div>
     <div id="se-add-grid" class="se-presets"></div>
   </div>
 </div>

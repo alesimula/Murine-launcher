@@ -2,7 +2,8 @@
 //
 // An icon is a list of shapes that get merged into one outline. A shape is either
 //   { pts: [{x, y, r, s}], mirror }      an editable polygon with rounded corners, or
-//   { fixed: name, a, x, y, mirror }     a ready-made FIXED path, scaled by a and then moved by (x, y).
+//   { fixed: name, a, x, y, mirror }     a ready-made FIXED path, scaled by a and then moved by (x, y), or
+//   { path: d, a, x, y, mirror }         the same for an outline imported from an SVG file.
 // mirror adds copies flipped across the canvas centre lines: 'none', 'h' (left/right), 'v' (top/bottom), 'both'.
 // Polygon points live in the launcher's 0..100 box:
 //   r = corner size (how far the rounding reaches along both edges)
@@ -153,12 +154,20 @@
     const [a, b, d, cx, cy] = sh.st, det = a * d - b * b, x = p.x - cx, y = p.y - cy;
     return { x: cx + (d * x - b * y) / det, y: cy + (a * y - b * x) / det };
   };
+  // Shapes with a fixed outline: a FIXED preset or an imported path, both in the 0-100 frame.
+  const outline = (sh) => (sh.fixed ? FIXED[sh.fixed] : sh.path);
+  const pathC = new Map(); // centroid of each imported path, worked out once
+  const outlineC = (sh) => {
+    if (sh.fixed) return FIXED_C[sh.fixed];
+    if (!pathC.has(sh.path)) pathC.set(sh.path, ringCentroid(flatten(sh.path)));
+    return pathC.get(sh.path);
+  };
   function basePath(sh) {
-    if (!sh.fixed) return buildPath(sh.pts);
-    if (!sh.ang) return mapPath(FIXED[sh.fixed], (x, y) => ({ x: x * sh.a + sh.x, y: y * sh.a + sh.y })); // exact, unturned
-    const c = FIXED_C[sh.fixed], t = sh.ang * Math.PI / 180, cos = Math.cos(t), sin = Math.sin(t);
+    if (sh.pts) return buildPath(sh.pts);
+    if (!sh.ang) return mapPath(outline(sh), (x, y) => ({ x: x * sh.a + sh.x, y: y * sh.a + sh.y })); // exact, unturned
+    const c = outlineC(sh), t = sh.ang * Math.PI / 180, cos = Math.cos(t), sin = Math.sin(t);
     const ox = c.x * sh.a + sh.x, oy = c.y * sh.a + sh.y;
-    return mapPath(FIXED[sh.fixed], (x, y) => {
+    return mapPath(outline(sh), (x, y) => {
       const dx = (x - c.x) * sh.a, dy = (y - c.y) * sh.a;
       return { x: ox + dx * cos - dy * sin, y: oy + dx * sin + dy * cos };
     });
@@ -194,8 +203,8 @@
     // pill should still read the shape's real angle, so that 0 brings it back upright.
     const out = { ...sh, rot: wrap((sh.rot || 0) + th * 180 / Math.PI) };
     if (none) delete out.st; else out.st = [sxx, sxy, syy, nx, ny];
-    if (sh.fixed) {
-      const f = FIXED_C[sh.fixed], o = T(f.x * sh.a + sh.x, f.y * sh.a + sh.y), na = sh.a * k;
+    if (!sh.pts) {
+      const f = outlineC(sh), o = T(f.x * sh.a + sh.x, f.y * sh.a + sh.y), na = sh.a * k;
       return Object.assign(out, { a: r6(na), ang: r6(((((sh.ang || 0) + th * 180 / Math.PI) % 360) + 360) % 360), x: r6(o.x - f.x * na), y: r6(o.y - f.y * na) });
     }
     out.pts = sh.pts.map((p) => { const q = T(p.x, p.y); return { x: r6(q.x), y: r6(q.y), r: r6(p.r * k), s: p.s }; });
@@ -238,7 +247,7 @@
   const presetShapes = (name) => (Object.hasOwn(FIXED, name)
     ? [{ fixed: name, a: 1, x: 0, y: 0, mirror: 'none' }]
     : [{ pts: fit(PRESETS[name]()), mirror: 'none' }]);
-  const shapeName = (sh, i) => sh.fixed || `Shape ${i + 1}`;
+  const shapeName = (sh, i) => sh.fixed || `${sh.path ? 'Imported' : 'Shape'} ${i + 1}`;
 
   // ---------- merging ----------
 
@@ -329,12 +338,12 @@
   let shapes, active = 0, mode = 'edit', sel = -1, drag = null, sliding = false;
   let turnTyping = false; // the rotation pill shows a number field instead of the slider
   let pickedCorner = -1; // Move mode: the selected resize corner (0 top left, clockwise), -1 for none
-  let pts = null, fixed = null; // shortcuts into shapes[active]: its points, or its FIXED name
+  let pts = null, fixed = false; // shortcuts into shapes[active]: its points, or whether its outline is fixed
   let synced = '';
   const sync = () => {
     active = clamp(active, 0, shapes.length - 1);
     pts = shapes[active].pts || null;
-    fixed = shapes[active].fixed || null;
+    fixed = !shapes[active].pts;
     if (fixed) mode = 'move';
     if (synced !== active + mode) pickedCorner = -1; // another shape or mode: the corner selection goes
     synced = active + mode;
@@ -363,9 +372,30 @@
       const sh = { fixed: s.fixed, a: clamp(+(s.a ?? 1), 0.01, 20), x: clamp(+(s.x ?? 0), -1000, 1000), y: clamp(+(s.y ?? 0), -1000, 1000), ang, mirror, rot, ...extra };
       return [sh.a, sh.x, sh.y, sh.ang].every(Number.isFinite) ? sh : null;
     }
+    if (typeof s?.path === 'string') {
+      const d = cleanPath(s.path), ang = ((+(s.ang ?? 0) % 360) + 360) % 360;
+      const sh = { path: d, a: clamp(+(s.a ?? 1), 0.01, 20), x: clamp(+(s.x ?? 0), -1000, 1000), y: clamp(+(s.y ?? 0), -1000, 1000), ang, mirror, rot, ...extra };
+      return d && [sh.a, sh.x, sh.y, sh.ang].every(Number.isFinite) ? sh : null;
+    }
     if (!Array.isArray(s?.pts) || s.pts.length < 3 || s.pts.length > 200) return null;
     const p = s.pts.map((q) => ({ x: clamp(+q?.x, -500, 600), y: clamp(+q?.y, -500, 600), r: clamp(+q?.r, 0, 500), s: clamp(+q?.s, 0, 1) }));
     return p.every((q) => [q.x, q.y, q.r, q.s].every(Number.isFinite)) ? { pts: p, mirror, rot, ...extra } : null;
+  }
+  // An imported outline as it's stored: one contour of absolute M/L/C, single spaces, closed with Z. Anything
+  // else (or anything huge) is rejected; returns the path rebuilt from its parsed numbers, or null.
+  function cleanPath(d) {
+    if (d.length > 30000) return null;
+    const t = d.trim().split(' '), out = [];
+    if (t[0] !== 'M' || t[t.length - 1] !== 'Z') return null;
+    for (let i = 0; i < t.length - 1;) {
+      const c = t[i++], n = { M: 2, L: 2, C: 6 }[c];
+      if (!n || (c === 'M') !== (i === 1)) return null;
+      const v = t.slice(i, i + n).map(Number);
+      if (v.length < n || !v.every((x) => Number.isFinite(x) && Math.abs(x) <= 1000)) return null;
+      out.push(c, ...v.map(fmt));
+      i += n;
+    }
+    return out.length > 3 ? out.join(' ') + ' Z' : null;
   }
   function restore(o) {
     // Saves and links from before multiple shapes held one shape: { pts } or { pts, fixed }.
@@ -383,10 +413,24 @@
   // Links carry their data deflated (raw DEFLATE, built into every current browser as CompressionStream)
   // and base64url-encoded. The app reads the import link with java.util.zip.Inflater(true) + Base64.URL_SAFE.
   const pipe = (bytes, stream) => new Response(new Blob([bytes]).stream().pipeThrough(stream)).arrayBuffer();
-  const pack = async (str) => btoa(String.fromCharCode(...new Uint8Array(await pipe(str, new CompressionStream('deflate-raw')))))
-    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-  const unpack = async (b64) => new TextDecoder().decode(await pipe(
-    Uint8Array.from(atob(b64.replace(/-/g, '+').replace(/_/g, '/')), (c) => c.charCodeAt(0)), new DecompressionStream('deflate-raw')));
+  const pack = async (str) => {
+    const bytes = new Uint8Array(await pipe(str, new CompressionStream('deflate-raw')));
+    let bin = '';
+    for (let i = 0; i < bytes.length; i += 8192) bin += String.fromCharCode(...bytes.subarray(i, i + 8192)); // spread has a size limit
+    return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  };
+  // Stops at 2 MB of output: a crafted link can't inflate into more than that.
+  async function unpack(b64) {
+    const bytes = Uint8Array.from(atob(b64.replace(/-/g, '+').replace(/_/g, '/')), (c) => c.charCodeAt(0));
+    const reader = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw')).getReader(), parts = [];
+    for (let n = 0; ;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      if ((n += value.length) > 2e6) { reader.cancel(); throw new Error('too big'); }
+      parts.push(value);
+    }
+    return new TextDecoder().decode(await new Blob(parts).arrayBuffer());
+  }
   // Same path with the separators the launcher's parser also accepts: "M9.38,59.57L.5,-.97Z".
   const compactPath = (d) => d.replace(/ ?([MLCZ]) ?/g, '$1').replace(/ /g, ',').replace(/(^|[^\d])0\./g, '$1.');
   const IMPORT = 'murine-home://icon-shape?shape='; // the app side doesn't exist yet; it must validate the path
@@ -403,6 +447,7 @@
   const grid = { show: true, snap: true, step: 5 };
   const snap = (v) => clamp(grid.snap ? Math.round(v / grid.step) * grid.step : +v.toFixed(2), view.lo, view.hi);
   const checkpoint = () => {
+    importNote = '';
     undo.push(JSON.stringify(snapshot()));
     if (undo.length > 100) undo.shift();
     redo.length = 0; // a new edit starts a new branch, so there's nothing left to redo
@@ -610,8 +655,9 @@
     $('se-warn').hidden = !bad;
     $('se-warn').textContent = out.error || (crossed < 0 ? '' : (shapes.length > 1 ? shapeName(shapes[crossed], crossed) + ': e' : 'E')
       + "dges cross each other. The launcher needs a shape that doesn't overlap itself.");
-    $('se-note').hidden = !out.note;
-    $('se-note').textContent = out.note || '';
+    const note = [importNote, out.note].filter(Boolean).join(' ');
+    $('se-note').hidden = !note;
+    $('se-note').textContent = note;
     $('se-use').classList.toggle('se-disabled', bad);
     refreshLinks(out.d, bad);
     $('se-share-import').disabled = bad;
@@ -638,7 +684,7 @@
         </button>
         ${shapes.length > 1 ? `<button type="button" class="se-card-del" data-act="del" data-card="${i}" title="Delete ${name}" aria-label="Delete ${name}">${icon('e92e')}</button>` : ''}
         ${on ? `<div class="se-card-modes" role="group" aria-label="Mode">
-          <button type="button" data-act="edit" data-card="${i}" aria-pressed="${mode === 'edit'}" title="Edit points" ${sh.fixed ? 'disabled' : ''}>${icon('f097')}</button>
+          <button type="button" data-act="edit" data-card="${i}" aria-pressed="${mode === 'edit'}" title="Edit points" ${sh.pts ? '' : 'disabled'}>${icon('f097')}</button>
           <button type="button" data-act="move" data-card="${i}" aria-pressed="${mode === 'move'}" title="Move and resize">${icon('e89f')}</button>
         </div>` : ''}
       </div>`;
@@ -657,7 +703,7 @@
       shapes.splice(i, 1);
       if (active >= i && active > 0) active--;
       sel = -1; sync(); render();
-    } else if (b.dataset.act === 'add') addDialog.open();
+    } else if (b.dataset.act === 'add') { resetImport(); addDialog.open(); }
   });
 
   // ---------- canvas interaction ----------
@@ -711,7 +757,7 @@
   // deselects the point when it lands on empty space.
   svg.addEventListener('click', () => {
     if (tap === null) return;
-    if (tap >= 0 && tap !== active) { active = tap; sel = -1; mode = shapes[tap].fixed ? 'move' : mode; sync(); render(); }
+    if (tap >= 0 && tap !== active) { active = tap; sel = -1; mode = shapes[tap].pts ? mode : 'move'; sync(); render(); }
     else if (sel >= 0 || pickedCorner >= 0) { sel = -1; pickedCorner = -1; render(); }
     tap = null;
   });
@@ -1045,6 +1091,276 @@
     $('se-add-grid').append(a);
   }
 
+  // ---------- SVG import ----------
+
+  // An SVG file's filled shapes become shapes with a fixed outline: every path command (relative, H/V, S, Q/T,
+  // arcs) is rewritten as absolute M/L/C, transforms are applied, and each closed contour is one piece. Only
+  // the file's geometry is read: nothing from it is ever put on the page.
+  const NUMRE = /[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?/y;
+  // Endpoint-parameterised arc (SVG spec, appendix B.2.4) as cubics of at most 90° each.
+  function arcCubics(x1, y1, rx, ry, phi, large, sweep, x2, y2) {
+    if (x1 === x2 && y1 === y2) return [];
+    rx = Math.abs(rx); ry = Math.abs(ry);
+    if (!rx || !ry) return [[x2, y2]];
+    const p = phi * Math.PI / 180, cp = Math.cos(p), sp = Math.sin(p), dx = (x1 - x2) / 2, dy = (y1 - y2) / 2;
+    const xp = cp * dx + sp * dy, yp = -sp * dx + cp * dy, lam = (xp * xp) / (rx * rx) + (yp * yp) / (ry * ry);
+    if (lam > 1) { rx *= Math.sqrt(lam); ry *= Math.sqrt(lam); }
+    const num = rx * rx * ry * ry - rx * rx * yp * yp - ry * ry * xp * xp, den = rx * rx * yp * yp + ry * ry * xp * xp;
+    const co = (large === sweep ? -1 : 1) * Math.sqrt(Math.max(0, num / den));
+    const cxp = (co * rx * yp) / ry, cyp = (-co * ry * xp) / rx;
+    const cx = cp * cxp - sp * cyp + (x1 + x2) / 2, cy = sp * cxp + cp * cyp + (y1 + y2) / 2;
+    const ang = (ux, uy, vx, vy) => Math.atan2(ux * vy - uy * vx, ux * vx + uy * vy);
+    const ux = (xp - cxp) / rx, uy = (yp - cyp) / ry;
+    let t = ang(1, 0, ux, uy), dt = ang(ux, uy, (-xp - cxp) / rx, (-yp - cyp) / ry);
+    if (!sweep && dt > 0) dt -= 2 * Math.PI; else if (sweep && dt < 0) dt += 2 * Math.PI;
+    const n = Math.max(1, Math.ceil(Math.abs(dt) / (Math.PI / 2) - 1e-9)), h = dt / n, k = (4 / 3) * Math.tan(h / 4);
+    const pt = (a) => [cx + rx * Math.cos(a) * cp - ry * Math.sin(a) * sp, cy + rx * Math.cos(a) * sp + ry * Math.sin(a) * cp];
+    const dv = (a) => [-rx * Math.sin(a) * cp - ry * Math.cos(a) * sp, -rx * Math.sin(a) * sp + ry * Math.cos(a) * cp];
+    const out = [];
+    for (let i = 0; i < n; i++, t += h) {
+      const a = pt(t), da = dv(t), b = i === n - 1 ? [x2, y2] : pt(t + h), db = dv(t + h);
+      out.push([a[0] + k * da[0], a[1] + k * da[1], b[0] - k * db[0], b[1] - k * db[1], b[0], b[1]]);
+    }
+    return out;
+  }
+  // Path data as contours { x, y, segs }, each segment [x, y] (line) or [x1, y1, x2, y2, x, y] (cubic), absolute.
+  function parseD(d) {
+    const subs = [], bad = () => { throw new Error('bad path'); };
+    let i = 0, cmd = '', cx = 0, cy = 0, sx = 0, sy = 0, sub = null, last = null; // last: the previous C/Q control point, for S/T
+    const ws = () => { while (i < d.length && ' \t\n\r\f,'.includes(d[i])) i++; };
+    const num = () => { ws(); NUMRE.lastIndex = i; const m = NUMRE.exec(d); if (!m) bad(); i = NUMRE.lastIndex; return +m[0]; };
+    const flag = () => { ws(); const c = d[i++]; if (c !== '0' && c !== '1') bad(); return c === '1'; };
+    const seg = (s) => { if (!sub) subs.push(sub = { x: cx, y: cy, segs: [] }); sub.segs.push(s); };
+    for (;;) {
+      ws();
+      if (i >= d.length) break;
+      if (/[a-zA-Z]/.test(d[i])) cmd = d[i++]; else if (!cmd || cmd === 'z' || cmd === 'Z') bad();
+      const C = cmd.toUpperCase(), ox = cmd === C ? 0 : cx, oy = cmd === C ? 0 : cy;
+      if (C === 'M') {
+        cx = num() + ox; cy = num() + oy; sx = cx; sy = cy;
+        subs.push(sub = { x: cx, y: cy, segs: [] });
+        cmd = cmd === 'm' ? 'l' : 'L'; last = null;
+      } else if (C === 'Z') {
+        if (sub && (cx !== sx || cy !== sy)) sub.segs.push([sx, sy]);
+        cx = sx; cy = sy; sub = null; last = null;
+      } else if (C === 'L' || C === 'H' || C === 'V') {
+        const x = C === 'V' ? cx : num() + ox, y = C === 'H' ? cy : num() + oy;
+        seg([x, y]); cx = x; cy = y; last = null;
+      } else if (C === 'C' || C === 'S') {
+        const [x1, y1] = C === 'C' ? [num() + ox, num() + oy] : last?.[0] === 'C' ? [2 * cx - last[1], 2 * cy - last[2]] : [cx, cy];
+        const x2 = num() + ox, y2 = num() + oy, x = num() + ox, y = num() + oy;
+        seg([x1, y1, x2, y2, x, y]); last = ['C', x2, y2]; cx = x; cy = y;
+      } else if (C === 'Q' || C === 'T') {
+        const [qx, qy] = C === 'Q' ? [num() + ox, num() + oy] : last?.[0] === 'Q' ? [2 * cx - last[1], 2 * cy - last[2]] : [cx, cy];
+        const x = num() + ox, y = num() + oy; // a quadratic is exactly a cubic with these control points
+        seg([cx + (2 / 3) * (qx - cx), cy + (2 / 3) * (qy - cy), x + (2 / 3) * (qx - x), y + (2 / 3) * (qy - y), x, y]);
+        last = ['Q', qx, qy]; cx = x; cy = y;
+      } else if (C === 'A') {
+        const rx = num(), ry = num(), ph = num(), large = flag(), sweep = flag(), x = num() + ox, y = num() + oy;
+        for (const s of arcCubics(cx, cy, rx, ry, ph, large, sweep, x, y)) seg(s);
+        cx = x; cy = y; last = null;
+      } else bad();
+    }
+    return subs;
+  }
+  // Basic shapes as path data.
+  function elementD(e) {
+    const n = (a) => parseFloat(e.getAttribute(a)) || 0;
+    switch (e.localName) {
+      case 'path': return e.getAttribute('d') || '';
+      case 'rect': {
+        const x = n('x'), y = n('y'), w = n('width'), h = n('height');
+        if (!(w > 0 && h > 0)) return '';
+        const rx = clamp(e.hasAttribute('rx') ? n('rx') : n('ry'), 0, w / 2), ry = clamp(e.hasAttribute('ry') ? n('ry') : n('rx'), 0, h / 2);
+        if (!rx || !ry) return `M${x} ${y}H${x + w}V${y + h}H${x}Z`;
+        const a = `A${rx} ${ry} 0 0 1`;
+        return `M${x + rx} ${y}H${x + w - rx}${a} ${x + w} ${y + ry}V${y + h - ry}${a} ${x + w - rx} ${y + h}H${x + rx}${a} ${x} ${y + h - ry}V${y + ry}${a} ${x + rx} ${y}Z`;
+      }
+      case 'circle': case 'ellipse': {
+        const c = e.localName === 'circle', cx = n('cx'), cy = n('cy'), rx = c ? n('r') : n('rx'), ry = c ? n('r') : n('ry');
+        return rx > 0 && ry > 0 ? `M${cx - rx} ${cy}A${rx} ${ry} 0 1 0 ${cx + rx} ${cy}A${rx} ${ry} 0 1 0 ${cx - rx} ${cy}Z` : '';
+      }
+      case 'polygon': case 'polyline': {
+        const v = (e.getAttribute('points') || '').match(/[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?/g) || [];
+        return v.length >= 6 ? 'M' + v.slice(0, v.length & ~1).join(' ') + 'Z' : ''; // after M, extra pairs are lines
+      }
+    }
+    return '';
+  }
+  // A presentation property as it applies to e: its style attribute, then its own attribute, then its parents'.
+  function prop(e, name) {
+    const re = new RegExp('(?:^|;)\\s*' + name + '\\s*:\\s*([^;!]+)');
+    for (let n = e; n?.nodeType === 1; n = n.parentNode) {
+      const m = re.exec(n.getAttribute('style') || '');
+      if (m) return m[1].trim();
+      if (n.hasAttribute(name)) return n.getAttribute(name).trim();
+    }
+    return null;
+  }
+  const hiddenEl = (e) => {
+    for (let n = e; n?.nodeType === 1; n = n.parentNode) {
+      if (n.getAttribute('display') === 'none' || /(^|;)\s*display\s*:\s*none/.test(n.getAttribute('style') || '')) return true;
+    }
+    return /^(hidden|collapse)$/.test(prop(e, 'visibility') || '');
+  };
+  // The element's transform, its parents' included, read through a <g> of our own (only the attribute's text is copied).
+  const scratchG = document.createElementNS(NS, 'g');
+  function ctm(e) {
+    let m = new DOMMatrix();
+    const chain = [];
+    for (let n = e; n?.nodeType === 1; n = n.parentNode) chain.unshift(n);
+    for (const n of chain) {
+      const t = n.getAttribute('transform');
+      if (!t) continue;
+      scratchG.setAttribute('transform', t);
+      const k = scratchG.transform.baseVal.consolidate()?.matrix;
+      if (k) m = m.multiply(new DOMMatrix([k.a, k.b, k.c, k.d, k.e, k.f]));
+    }
+    return m;
+  }
+  const ringArea = (r) => r.reduce((s, [x0, y0], i) => { const [x1, y1] = r[(i + 1) % r.length]; return s + x0 * y1 - x1 * y0; }, 0) / 2;
+  const insideRing = ([x, y], r) => {
+    let inside = false;
+    for (let i = 0, j = r.length - 1; i < r.length; j = i++) {
+      const [xi, yi] = r[i], [xj, yj] = r[j];
+      if ((yi > y) !== (yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) inside = !inside;
+    }
+    return inside;
+  };
+  // A contour as a polygon, curves sampled.
+  const sampled = (sp) => {
+    const r = [[sp.x, sp.y]];
+    let [px, py] = [sp.x, sp.y];
+    for (const s of sp.segs) {
+      if (s.length === 2) r.push(s);
+      else for (let k = 1; k <= 8; k++) {
+        const t = k / 8, u = 1 - t;
+        r.push([u * u * u * px + 3 * u * u * t * s[0] + 3 * u * t * t * s[2] + t * t * t * s[4], u * u * u * py + 3 * u * u * t * s[1] + 3 * u * t * t * s[3] + t * t * t * s[5]]);
+      }
+      [px, py] = s.slice(-2);
+    }
+    return r;
+  };
+  // The file's pieces, scaled together into the 0-100 box: { pieces: [d], holes, strokes }.
+  function svgPieces(text) {
+    const doc = new DOMParser().parseFromString(text, 'image/svg+xml'), root = doc.documentElement;
+    if (doc.getElementsByTagName('parsererror').length || root.localName !== 'svg') throw new Error("That file isn't a readable SVG.");
+    const subs = [];
+    let holes = 0, strokes = 0;
+    for (const e of root.querySelectorAll('path, rect, circle, ellipse, polygon, polyline')) {
+      if (e.closest('defs, clipPath, mask, symbol, pattern, marker') || hiddenEl(e)) continue;
+      const fill = prop(e, 'fill');
+      if (fill === 'none' || fill === 'transparent' || prop(e, 'fill-opacity') === '0') {
+        if ((prop(e, 'stroke') || 'none') !== 'none') strokes++;
+        continue;
+      }
+      let own;
+      try { own = parseD(elementD(e)); } catch (err) { continue; } // a broken path is skipped, the rest still imports
+      const m = ctm(e), tp = ([x, y]) => [m.a * x + m.c * y + m.e, m.b * x + m.d * y + m.f];
+      own = own.filter((sp) => sp.segs.length).map((sp) => {
+        const [x, y] = tp([sp.x, sp.y]);
+        return { x, y, segs: sp.segs.map((s) => (s.length === 2 ? tp(s) : [...tp(s.slice(0, 2)), ...tp(s.slice(2, 4)), ...tp(s.slice(4))])) };
+      });
+      // Within one element, a contour inside an odd number of the others is a hole: the launcher can't
+      // have holes, so it's dropped (and the area filled).
+      const rings = own.map(sampled);
+      own.forEach((sp, k) => {
+        if (Math.abs(ringArea(rings[k])) < 1e-9) return;
+        const depth = rings.filter((r, j) => j !== k && insideRing(rings[k][0], r)).length;
+        if (depth % 2) holes++; else subs.push(sp);
+      });
+    }
+    if (!subs.length) return { pieces: [], holes, strokes };
+    // Scale and centre everything together, keeping how the pieces sit relative to each other.
+    const raw = (sp) => `M ${sp.x} ${sp.y} ` + sp.segs.map((s) => (s.length === 2 ? 'L ' : 'C ') + s.join(' ')).join(' ') + ' Z';
+    const bb = measure(subs.map(raw).join(' ')), k = 100 / Math.max(bb.width, bb.height, 1e-9);
+    const ox = (100 - bb.width * k) / 2 - bb.x * k, oy = (100 - bb.height * k) / 2 - bb.y * k;
+    const P = (x, y) => fmt(x * k + ox) + ' ' + fmt(y * k + oy);
+    const pieces = subs.map((sp) => {
+      const out = ['M ' + P(sp.x, sp.y)];
+      let px = sp.x, py = sp.y;
+      sp.segs.forEach((s, n) => {
+        const [x, y] = s.slice(-2), chord = Math.hypot(x - px, y - py) * k;
+        // A cubic whose handles sit on its chord is a line: written as one, like buildPath does.
+        const flat = s.length === 6 && [0, 2].every((j) => Math.abs((x - px) * (s[j + 1] - py) - (y - py) * (s[j] - px)) * k * k <= 0.01 * Math.max(chord, 1e-9));
+        const closing = n === sp.segs.length - 1 && Math.hypot(x - sp.x, y - sp.y) * k < 0.05;
+        if (s.length === 2 || flat) { if (chord >= 0.05 && !closing) out.push('L ' + P(x, y)); }
+        else out.push('C ' + P(s[0], s[1]) + ' ' + P(s[2], s[3]) + ' ' + P(x, y));
+        px = x; py = y;
+      });
+      return cleanPath(out.join(' ') + ' Z');
+    }).filter(Boolean);
+    return { pieces, holes, strokes };
+  }
+  // Pieces merged into as few outlines as they make (one when they all touch), as straight segments.
+  // polygon-clipping can give up on unlucky geometry: then the pieces are merged one at a time, and any
+  // piece it still can't take is kept as it is, as a shape of its own.
+  function mergedPieces(pieces) {
+    let holes = 0, merged;
+    const polys = pieces.map((d) => [flatten(d)]), loose = [];
+    try { merged = polygonClipping.union(...polys); } catch (err) {
+      merged = [];
+      polys.forEach((p, k) => { try { merged = polygonClipping.union(merged, p); } catch (e) { loose.push(pieces[k]); } });
+    }
+    const out = merged.map((poly) => { holes += poly.length - 1; return 'M ' + simplify(poly[0].slice(0, -1), 0.05).map(([x, y]) => fmt(x) + ' ' + fmt(y)).join(' L ') + ' Z'; });
+    return { pieces: [...out, ...loose], holes };
+  }
+
+  let importNote = ''; // shown under the result until the next edit
+  let pending = null; // pieces waiting for "separate or merge"
+  const importMsg = (text) => { $('se-import-msg').textContent = text; $('se-import-msg').hidden = !text; };
+  const resetImport = () => {
+    pending = null; $('se-import-choice').hidden = true; $('se-import-file').value = '';
+    const full = shapes.length >= 20;
+    $('se-import-btn').disabled = full;
+    importMsg(full ? 'The icon already has the most shapes it can (20): delete one to import.' : '');
+  };
+  function addImported(pieces, notes) {
+    checkpoint();
+    const first = shapes.length;
+    shapes.push(...pieces.map((path) => ({ path, a: 1, x: 0, y: 0, ang: 0, mirror: 'none', rot: 0 })));
+    active = first; sel = -1; mode = 'move';
+    importNote = notes.filter(Boolean).join(' ');
+    sync(); addDialog.close(); resetImport(); render();
+  }
+  const holesNote = (n) => (n ? `${n} hole${n > 1 ? 's were' : ' was'} filled in: the launcher needs outlines without holes.` : '');
+  $('se-import-btn').onclick = () => $('se-import-file').click();
+  $('se-import-file').onchange = async (e) => {
+    const file = e.target.files[0];
+    resetImport();
+    if (!file) return;
+    if (file.size > 2e6) return importMsg('That file is over 2 MB, too big for an icon.');
+    let res;
+    try { res = svgPieces(await file.text()); } catch (err) { return importMsg(err.message === 'bad path' ? "That file's paths couldn't be read." : err.message); }
+    if (!res.pieces.length) {
+      return importMsg(res.strokes ? 'This icon is drawn with lines (strokes) only, with nothing filled in, so there is no outline to import.'
+        : 'No filled shapes were found in that file.');
+    }
+    const notes = [holesNote(res.holes), res.strokes ? `${res.strokes} line-only element${res.strokes > 1 ? 's were' : ' was'} left out.` : ''];
+    if (res.pieces.length === 1) return addImported(res.pieces, notes);
+    // The merge is worked out now, so the choice can say how many shapes each option makes.
+    const merged = mergedPieces(res.pieces);
+    pending = { ...res, notes, merged };
+    const room = 20 - shapes.length, n = res.pieces.length, m = merged?.pieces.length;
+    const plural = (k) => (k === 1 ? 'one shape' : `${k} shapes`);
+    $('se-import-count').textContent = `This file has ${n} separate pieces. Keep each one as its own shape, or merge them`
+      + (m === 1 ? ' into one?' : `? Not all of them touch, so merged they'd still be ${plural(m)}.`)
+      + (n > room || !(m <= room) ? ` There's room for ${room} more shape${room === 1 ? '' : 's'} (20 at most)`
+        + (n > room && !(m <= room) ? ', so neither fits.' : n > room ? ', so only merging fits.' : ', so only keeping them separate fits.') : '');
+    $('se-import-separate').disabled = n > room;
+    $('se-import-merge').disabled = !(m <= room);
+    $('se-import-merge').textContent = m === 1 ? 'Merge into one shape' : `Merge into ${m} shapes`;
+    $('se-import-separate').textContent = `Keep as ${n} separate shapes`;
+    $('se-import-choice').hidden = false;
+  };
+  $('se-import-separate').onclick = () => pending && addImported(pending.pieces, pending.notes);
+  $('se-import-merge').onclick = () => {
+    const m = pending?.merged;
+    if (!m) return;
+    addImported(m.pieces, [...pending.notes, holesNote(m.holes),
+      m.pieces.length > 1 ? `Not all pieces touch, so they became ${m.pieces.length} shapes instead of one.` : '']);
+  };
+
   // ---------- start ----------
 
   let saved = null;
@@ -1057,8 +1373,8 @@
     const data = location.hash.slice(6);
     history.replaceState(null, '', location.pathname + location.search); // a reload then keeps later edits
     let link = null;
-    // Real states are a few KB packed at most; the cap keeps a crafted link from inflating into megabytes.
-    if (data.length < 16000) try { link = JSON.parse(await unpack(data)); } catch (e) { /* malformed link */ }
+    // Drawn shapes pack into a few KB; imported outlines can take more. unpack() caps what a link inflates to.
+    if (data.length < 200000) try { link = JSON.parse(await unpack(data)); } catch (e) { /* malformed link */ }
     const before = JSON.stringify(snapshot());
     if (restore(link)) { undo.push(before); redo.length = 0; }
     render();
