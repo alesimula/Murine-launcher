@@ -125,6 +125,14 @@
       [80, 70, 27.2, 0.6], [50, 97.53, 2.92, 0.5], [20, 70, 27.2, 0.6], [-4.9, 33.32, 17.04, 0.5], [10.32, 2.82, 17.05, 0.5],
       [44.36, 4.94, 17.05, 0.5]].map(([x, y, r, s]) => ({ x, y, r, s })),
   };
+  // More presets: in the page's grid only after "More shapes" (the first rows stay as they were), in the Add
+  // dialog with the rest.
+  const MORE = {
+    Cat: () => [[9.191863, -1.723864, 5.667797], [36.397288, 20.947324, 6.801356], [63.602714, 20.947324, 6.801356],
+      [90.80814, -1.723864, 5.667797], [96.475937, 36.817156, 13.602713], [103.277293, 66.2897, 27.205426],
+      [72.671189, 99.162923, 24.938307], [27.328813, 99.162923, 24.938307], [-3.277291, 66.2897, 27.205426],
+      [3.524066, 36.817156, 13.602713]].map(([x, y, r]) => ({ x, y, r, s: 0.6 })),
+  };
 
   // Ready-made paths that can't be expressed as one rounded polygon, so they aren't editable point by point.
   const FIXED = {
@@ -246,7 +254,8 @@
   }
   const presetShapes = (name) => (Object.hasOwn(FIXED, name)
     ? [{ fixed: name, a: 1, x: 0, y: 0, mirror: 'none' }]
-    : [{ pts: fit(PRESETS[name]()), mirror: 'none' }]);
+    : [{ pts: fit((PRESETS[name] ?? MORE[name])()), mirror: 'none' }]);
+  const presetNames = [...Object.keys(PRESETS), ...Object.keys(FIXED), ...Object.keys(MORE)];
   const shapeName = (sh, i) => sh.fixed || `${sh.path ? 'Imported' : 'Shape'} ${i + 1}`;
 
   // ---------- merging ----------
@@ -1258,14 +1267,21 @@
   // ---------- presets ----------
 
   // A preset in the page's grid replaces the whole icon; the Add dialog's grid (see renderAddGrid) adds shapes.
-  for (const name of [...Object.keys(PRESETS), ...Object.keys(FIXED)]) {
+  for (const name of presetNames) {
     const b = document.createElement('button');
     b.type = 'button';
     b.className = 'se-preset';
+    if (Object.hasOwn(MORE, name)) b.hidden = b.dataset.more = true;
     b.innerHTML = `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="${presetShapes(name).map(shapePath).join(' ')}"/></svg><span>${name}</span>`;
     b.onclick = () => { loadIcon(presetShapes(name)); svg.scrollIntoView({ behavior: 'smooth', block: 'center' }); };
     $('se-presets').append(b);
   }
+  $('se-presets-more').onclick = (e) => {
+    const open = e.currentTarget.getAttribute('aria-expanded') !== 'true';
+    for (const b of $('se-presets').querySelectorAll('[data-more]')) b.hidden = !open;
+    e.currentTarget.setAttribute('aria-expanded', open);
+    e.currentTarget.textContent = open ? 'Fewer shapes' : 'More shapes';
+  };
 
   // ---------- SVG import ----------
 
@@ -1517,7 +1533,7 @@
       tiles.innerHTML = viewList().map((d, k) => `<button type="button" class="se-preset" data-key="${k}" aria-pressed="false">
         ${tileSvg(all + `<path d="${d}"/>`)}<span>${name} ${k + 1}</span></button>`).join('');
     } else {
-      tiles.innerHTML = [...Object.keys(PRESETS), ...Object.keys(FIXED)].map((name) => `<button type="button" class="se-preset" data-key="${name}" aria-pressed="false">
+      tiles.innerHTML = presetNames.map((name) => `<button type="button" class="se-preset" data-key="${name}" aria-pressed="false">
         ${tileSvg(`<path d="${presetShapes(name).map(shapePath).join(' ')}"/>`)}<span>${name}</span></button>`).join('');
     }
     for (const b of tiles.children) b.disabled = full;
@@ -1582,7 +1598,7 @@
   $('se-pick-add').onclick = () => {
     const keys = [...picked];
     if (loaded) addPieces(keys.map(Number).sort((a, b) => a - b).map((i) => viewList()[i]));
-    else addShapes(Object.keys({ ...PRESETS, ...FIXED }).filter((n) => picked.has(n)).flatMap(presetShapes));
+    else addShapes(presetNames.filter((n) => picked.has(n)).flatMap(presetShapes));
   };
   $('se-pick-clear').onclick = () => { picked.clear(); refreshAddUi(); };
   // Taps, long presses and Ctrl+clicks on the tiles.

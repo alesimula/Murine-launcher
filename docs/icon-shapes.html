@@ -16,6 +16,9 @@ noindex: true    # and out of search engines
              font: inherit; font-size: .78rem; line-height: 1.2; }
 .se-preset:hover { background: var(--md-surface-container-high); }
 .se-preset svg { width: 48px; height: 48px; fill: var(--md-primary); }
+.se-preset[hidden] { display: none; }
+#se-presets { margin-bottom: 12px; }
+.se-presets-more { display: block; margin: 0 auto 2rem; }
 
 .se-editor { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 24px; align-items: start; }
 @media (max-width: 760px) { .se-editor { grid-template-columns: 1fr; } }
@@ -250,6 +253,7 @@ noindex: true    # and out of search engines
 
 <h2>Presets</h2>
 <div id="se-presets" class="se-presets"></div>
+<button id="se-presets-more" class="se-btn se-presets-more" type="button" aria-expanded="false" aria-controls="se-presets">More shapes</button>
 
 <div class="se-title-row">
   <h2>Editor</h2>
