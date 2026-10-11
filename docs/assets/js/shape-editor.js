@@ -1059,6 +1059,11 @@
     }
   });
   document.addEventListener('pointerdown', (e) => { if (!e.target.closest('.se-corner-wrap')) $('se-corner-pick').hidden = true; });
+  // The help bubble: the button toggles it; a press anywhere else or Esc closes it.
+  const showHelp = (on) => { $('se-help').hidden = !on; $('se-help-btn').setAttribute('aria-expanded', on); };
+  $('se-help-btn').onclick = () => showHelp($('se-help').hidden);
+  document.addEventListener('pointerdown', (e) => { if (!e.target.closest('#se-help, #se-help-btn')) showHelp(false); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('se-help').hidden) showHelp(false); });
   $('se-mirror').addEventListener('click', (e) => {
     const b = e.target.closest('[data-mirror]');
     if (!b || b.dataset.mirror === shapes[active].mirror) return;
