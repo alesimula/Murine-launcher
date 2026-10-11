@@ -792,7 +792,7 @@
       // Only the text changes while the slider is dragged (the zone depends on the neighbours, not on this
       // corner's size): showing or hiding an element under the thumb makes Chrome drop the drag.
       const warn = $('se-size-warn');
-      warn.hidden = !hasZone;
+      warn.style.visibility = hasZone ? '' : 'hidden'; // keeps its room: the Smoothing slider below must not jump around
       warn.classList.toggle('active', squeezed.size > 0);
       warn.textContent = squeezed.size ? 'Shrinking the highlighted neighbouring corners'
         : 'Past the red mark it also shrinks the neighbouring corners';
@@ -1141,6 +1141,31 @@
   };
   // Moves the shape's pivot to the canvas centre. A mirrored axis uses the middle of the half the
   // shape is in instead (25 or 75), so the shape and its copy stay balanced on each side.
+  // Flip: turns the selection over left to right, across the vertical line x = c through the pivot (not the
+  // mirror buttons, which add mirrored copies). Applied to the shapes themselves, with nothing remembering it,
+  // and exact: flipping again across the same line gives the same numbers back. A shape's corners (or outline)
+  // flip, its stretch flips into its mirror image around the flipped centre, and its angle turns the other way.
+  // An outline gets its path text flipped (x -> 100 - x, exact at 2 decimals), so a built-in one becomes an
+  // imported path. Mirrored copies just follow the flipped shape.
+  const flipSt = (st, c) => [st[0], -st[1], st[2], r6(2 * c - st[3]), st[4]];
+  function flipped(sh, c) {
+    const out = { ...sh, ...(sh.rot && { rot: wrap(-sh.rot) }), ...(sh.st && { st: flipSt(sh.st, c) }) };
+    if (sh.pts) return { ...out, pts: sh.pts.map((q) => ({ ...q, x: r6(2 * c - q.x) })) };
+    // The outline turns around its centre f, drawn at o; flipped, it turns the other way around the flipped
+    // centre, drawn at o flipped.
+    const f = outlineC(sh), ox = f.x * sh.a + sh.x, oy = f.y * sh.a + sh.y;
+    const path = mapPath(outline(sh), (x, y) => ({ x: 100 - x, y })), f2 = outlineC({ path }), { fixed, ...rest } = out;
+    return { ...rest, path, ang: r6(wrap(-(sh.ang || 0))), x: r6(2 * c - ox - f2.x * sh.a), y: r6(oy - f2.y * sh.a) };
+  }
+  $('se-flip').onclick = () => {
+    checkpoint();
+    const c = Math.round(selPivot().x * 1000) / 1000; // rounded, so the flipped selection gives the same line back
+    selIdx().forEach((i) => (shapes[i] = flipped(shapes[i], c)));
+    const g = groupRec(false);
+    if (g) { if (g.st) g.st = flipSt(g.st, c); g.rot = wrap(-g.rot); }
+    if (pivotMode === 'corner') pivotCorner = [1, 0, 3, 2][pivotCorner]; // the corner flips sides with the shape
+    sync(); render();
+  };
   $('se-center').onclick = () => {
     const sh = shapes[active], c = selPivot(); // a group has no mirroring, so it goes to the canvas middle
     if (!Number.isFinite(c.x + c.y)) return;

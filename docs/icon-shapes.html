@@ -63,7 +63,7 @@ noindex: true    # and out of search engines
 .se-panel fieldset { border: 1px solid var(--md-outline-variant); border-radius: var(--md-shape-md);
                      padding: 10px 14px 12px; margin: 0 0 12px; }
 .se-panel legend { padding: 0 6px; font-weight: 600; font-size: .85rem; }
-.se-panel label { display: flex; align-items: center; justify-content: space-between; gap: 8px;
+.se-panel label { display: flex; align-items: center; justify-content: space-between; gap: 8px; user-select: none; -webkit-user-select: none;
                   font-size: .88rem; margin: 4px 0; }
 .se-panel input[type=range] { width: 100%; accent-color: var(--md-primary); }
 /* Tinted end of the size slider: past it, the selected corner shrinks its neighbours' rounding.
@@ -191,9 +191,9 @@ noindex: true    # and out of search engines
 .se-help strong { color: var(--md-on-surface); font-weight: 500; }
 .se-touch { display: none; }
 @media (hover: none) { .se-kb { display: none; } .se-touch { display: inline; } }
-@media (max-width: 365px) { /* no room beside the mirror pill (267px wide): above it */
-  .se-help-btn { bottom: 56px; }
-  .se-help { bottom: 100px; max-height: calc(100% - 110px); }
+@media (max-width: 365px) { /* no room beside the mirror pill (267px wide), nor under the right-hand column: above the pill */
+  .se-help-btn { bottom: 56px; right: auto; left: 10px; }
+  .se-help { bottom: 100px; right: auto; left: 10px; max-height: calc(100% - 110px); }
 }
 .se-stage-btn svg { width: 22px; height: 22px; }
 /* Shape cards under the canvas. */
@@ -317,6 +317,7 @@ noindex: true    # and out of search engines
         <button id="se-fit-shape" class="se-stage-btn" type="button" title="Fit this shape to the box" aria-label="Fit this shape to the box"><span class="material-symbols-outlined" aria-hidden="true">&#xea10;</span></button>
         <button id="se-fit-quarter" class="se-stage-btn" type="button" title="Fit this shape into the top-left quarter" aria-label="Fit this shape into the top-left quarter"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-dasharray="3 2"/><rect x="5.5" y="5.5" width="6.5" height="6.5" rx="1.5" fill="currentColor"/></svg></button>
         <button id="se-center" class="se-stage-btn" type="button" title="Centre this shape" aria-label="Centre this shape"><span class="material-symbols-outlined" aria-hidden="true">&#xe3dc;</span></button>
+        <button id="se-flip" class="se-stage-btn" type="button" title="Flip left to right, around the pivot" aria-label="Flip left to right"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-dasharray="2.5 2.5"/><path d="M9.5 6 3.5 18h6z" fill="currentColor"/><path d="M14.5 6l6 12h-6z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
         <button id="se-unstretch" class="se-stage-btn" type="button" title="Remove the stretch (shrinks the long side)" aria-label="Remove the stretch" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18" stroke-dasharray="2.5 2.5"/><path d="M3 12h6M6.5 9.5 9 12l-2.5 2.5M21 12h-6M17.5 9.5 15 12l2.5 2.5"/></svg></button>
       </div>
       <div id="se-mirror" class="se-mirror" role="group" aria-label="Mirror" hidden>
@@ -367,7 +368,7 @@ noindex: true    # and out of search engines
       <legend id="se-corner-legend">All corners</legend>
       <label for="se-size">Size <span id="se-size-v"></span></label>
       <div id="se-size-track" class="se-size-track"><input id="se-size" type="range" min="0" max="50" step="0.1"></div>
-      <p id="se-size-warn" class="se-size-warn" hidden></p>
+      <p id="se-size-warn" class="se-size-warn" style="visibility: hidden"></p>
       <label for="se-smooth">Smoothing <span id="se-smooth-v"></span></label>
       <input id="se-smooth" type="range" min="0" max="100" step="1">
       <div class="se-scale"><span>Cut</span><span>Round</span><span>Squircle</span></div>
