@@ -136,6 +136,9 @@ noindex: true    # and out of search engines
 /* Canvas overlay (Move mode): fit this shape top right, mirroring bottom left. */
 .se-left { min-width: 0; }
 .se-stage { position: relative; }
+.se-docs { margin-top: 40px; font-size: .9rem; }
+.se-docs summary { cursor: pointer; font-weight: 500; color: var(--md-primary); }
+.se-docs-links a { overflow-wrap: anywhere; }
 /* "Hide tools": everything floating over the canvas goes (the canvas is the stage's only svg child) */
 .se-stage.se-bare > :not(svg) { display: none !important; }
 .se-title-row { display: flex; align-items: center; gap: 16px; margin: 40px 0 16px; }
@@ -404,6 +407,71 @@ noindex: true    # and out of search engines
   </div>
 </div>
 
+<details class="se-docs">
+  <summary>Link format</summary>
+  <p>An edit link opens an icon in this editor. It's the editor's URL with the icon in its fragment, in one of two forms:</p>
+  <ul>
+    <li><code>https://www.murinelauncher.app/icon-shapes/#edit=DATA</code>: the icon's JSON (below), compressed with raw
+      DEFLATE (no zlib header or checksum: <code>zlib.compressobj(9, zlib.DEFLATED, -15)</code> in Python,
+      <code>new CompressionStream('deflate-raw')</code> in JavaScript), then base64url-encoded without <code>=</code> padding.
+      This is the preferred form: it's what <strong>Share</strong> produces and it keeps links short.</li>
+    <li><code>https://www.murinelauncher.app/icon-shapes/#edit-raw=JSON</code>: the same JSON, uncompressed and
+      percent-encoded (<code>encodeURIComponent</code> in JavaScript, <code>urllib.parse.quote(json, safe='')</code> in
+      Python). Use it when compressing isn't possible.</li>
+  </ul>
+  <p>Opening either one loads the icon (the previous one stays a step back in Undo); <strong>Share</strong> then gives the
+    short link and the link that sends the shape to Murine. A link that doesn't follow the format below is ignored, and
+    the editor keeps the icon it had.</p>
+  <h3>Checking a link</h3>
+  <p>A link written by hand or by a script is worth opening before it's shared: the canvas shows the shape, and anything the
+    launcher can't use (shapes that don't touch, crossing edges) is reported in red under <strong>Result</strong>, which
+    also disables <strong>Use in Murine</strong>. Other messages are just information: a corner whose size shrinks its
+    neighbours, for instance, is fine if the shape looks as intended. Small fixes can be made right there. <strong>Share</strong> then has the finished links: the address of its <strong>Edit link</strong> entry is the
+    compressed edit link (clicking the entry copies it), and <strong>Use in Murine</strong> points to the import link.</p>
+  <h3>The JSON</h3>
+<pre><code>{"shapes": [
+  {"pts": [{"x": 50, "y": 4, "r": 12, "s": 0.6}, {"x": 97.6, "y": 38.5, "r": 12, "s": 0.6}, …],
+   "mirror": "none"}
+]}</code></pre>
+  <ul>
+    <li>The icon is drawn in a 100 × 100 box: <code>x</code> grows to the right, <code>y</code> grows <em>down</em>, and
+      <code>(0, 0)</code> is the top-left corner. The launcher scales this box to the icon's size, so the shape should fill it
+      and stay inside it.</li>
+    <li><code>shapes</code>: 1 to 20 shapes. The icon is all of them together, so they must overlap or touch and make a single
+      outline; gaps they enclose are filled in.</li>
+    <li><code>pts</code>: the corners of one shape, 3 to 200, in order around it (either direction). Its edges must not cross
+      each other.</li>
+    <li><code>r</code> (optional, default 0): how far along each edge the corner's rounding reaches, in box units; 0 is a sharp
+      corner. Where edges are too short for it, it's reduced automatically (along with its neighbours'), which is fine
+      as long as the result looks right.</li>
+    <li><code>s</code> (optional, default 0): the rounding's profile, 0 to 1: 0 cuts the corner straight, 0.5 is a circular
+      arc, 1 is the smoothest (squircle-like).</li>
+    <li><code>mirror</code> (optional, default <code>"none"</code>): <code>"h"</code> adds a copy mirrored left to right
+      (around <code>x = 50</code>), <code>"v"</code> one mirrored top to bottom (around <code>y = 50</code>),
+      <code>"both"</code> three copies, one per quarter.</li>
+  </ul>
+  <p>A shape can also be an SVG outline instead of corners, for free-form curves. It can be mixed with corner shapes in the
+    same icon, and takes <code>mirror</code> too:</p>
+<pre><code>{"path": "M 50 0 C 77.6 0 100 22.4 100 50 C 100 77.6 77.6 100 50 100 C 22.4 100 0 77.6 0 50 C 0 22.4 22.4 0 50 0 Z"}</code></pre>
+  <ul>
+    <li><code>path</code>: one closed outline in the same 100 × 100 box, written in a strict form: it starts with
+      <code>M x y</code>, continues with <code>L x y</code> (lines) and <code>C x1 y1 x2 y2 x y</code> (cubic curves) only,
+      and ends with <code>Z</code>; absolute coordinates, every command letter and number separated by a single space, no
+      commas. Other commands (relative ones, <code>H</code>/<code>V</code>, <code>S</code>, <code>Q</code>, <code>A</code>)
+      and holes or extra outlines aren't accepted, and the outline must not cross itself. To use an existing SVG file,
+      <strong>Add a shape → Import SVG</strong> converts it, and <strong>Share</strong> then gives the link.</li>
+    <li><code>a</code>, <code>x</code>, <code>y</code> (optional): the outline is drawn scaled by <code>a</code> (default 1)
+      and then moved by <code>x</code>, <code>y</code> (default 0).</li>
+    <li><code>ang</code> (optional, default 0): a turn in degrees, clockwise, around the outline's centre.</li>
+  </ul>
+  <h3>Example</h3>
+  <p>A rounded pentagon: <code>{"shapes":[{"pts":[{"x":50,"y":4,"r":12,"s":0.6},{"x":97.6,"y":38.5,"r":12,"s":0.6},{"x":79.4,"y":94.5,"r":12,"s":0.6},{"x":20.6,"y":94.5,"r":12,"s":0.6},{"x":2.4,"y":38.5,"r":12,"s":0.6}]}]}</code></p>
+  <ul class="se-docs-links">
+    <li>Compressed: <a href="#edit=q1YqzkgsSC1WsoquVioogdAVSlamBnoGOkqVSlYmILpIycrQSEcJKGugZ1arA1Zhaa5nBlZhbKFnil2JuaWeCViJpQkuJUYGUFPwKIEags2eWCAEAA">https://www.murinelauncher.app/icon-shapes/#edit=q1YqzkgsSC1WsoquVioogdAVSlamBnoGOkqVSlYmILpIycrQSEcJKGugZ1arA1Zhaa5nBlZhbKFnil2JuaWeCViJpQkuJUYGUFPwKIEags2eWCAEAA</a></li>
+    <li>Raw: <a href="#edit-raw=%7B%22shapes%22%3A%5B%7B%22pts%22%3A%5B%7B%22x%22%3A50.0%2C%22y%22%3A4.0%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%2C%7B%22x%22%3A97.6%2C%22y%22%3A38.5%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%2C%7B%22x%22%3A79.4%2C%22y%22%3A94.5%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%2C%7B%22x%22%3A20.6%2C%22y%22%3A94.5%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%2C%7B%22x%22%3A2.4%2C%22y%22%3A38.5%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%5D%7D%5D%7D">https://www.murinelauncher.app/icon-shapes/#edit-raw=%7B%22shapes%22%3A%5B%7B%22pts%22%3A%5B%7B%22x%22%3A50.0%2C%22y%22%3A4.0%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%2C%7B%22x%22%3A97.6%2C%22y%22%3A38.5%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%2C%7B%22x%22%3A79.4%2C%22y%22%3A94.5%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%2C%7B%22x%22%3A20.6%2C%22y%22%3A94.5%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%2C%7B%22x%22%3A2.4%2C%22y%22%3A38.5%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%5D%7D%5D%7D</a></li>
+  </ul>
+</details>
+
 <div class="contact-modal-overlay" id="se-share" aria-hidden="true">
   <div class="contact-modal" role="dialog" aria-modal="true" aria-labelledby="se-share-title">
     <div class="contact-modal-header">
@@ -414,10 +482,11 @@ noindex: true    # and out of search engines
     </div>
     <p class="contact-modal-desc">Copy the shape in the form you need.</p>
     <div class="contact-cards">
-      <button class="contact-card se-share-card" type="button" data-copy="edit">
+      <!-- a link, so its address is the edit link itself (copy link address works too); a click copies it -->
+      <a class="contact-card se-share-card" id="se-share-edit" href="#" data-copy="edit">
         <span class="contact-card-icon"><span class="material-symbols-outlined">&#xE40A;</span></span> <!-- palette -->
         <span class="contact-card-info"><span class="se-card-title">Edit link</span><span class="se-card-sub">Reopen this shape in the editor, on any device</span></span>
-      </button>
+      </a>
       <button class="contact-card se-share-card" type="button" data-copy="import" id="se-share-import">
         <span class="contact-card-icon"><span class="material-symbols-outlined">&#xE32C;</span></span> <!-- smartphone -->
         <span class="contact-card-info"><span class="se-card-title">Import link</span><span class="se-card-sub">Open it on your phone to apply the shape in Murine</span></span>

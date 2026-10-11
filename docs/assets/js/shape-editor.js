@@ -388,7 +388,8 @@
       return d && [sh.a, sh.x, sh.y, sh.ang].every(Number.isFinite) ? sh : null;
     }
     if (!Array.isArray(s?.pts) || s.pts.length < 3 || s.pts.length > 200) return null;
-    const p = s.pts.map((q) => ({ x: clamp(+q?.x, -500, 600), y: clamp(+q?.y, -500, 600), r: clamp(+q?.r, 0, 500), s: clamp(+q?.s, 0, 1) }));
+    // r and s may be left out of hand-written links (see "Link format" on the page): sharp corners.
+    const p = s.pts.map((q) => ({ x: clamp(+q?.x, -500, 600), y: clamp(+q?.y, -500, 600), r: clamp(+(q?.r ?? 0), 0, 500), s: clamp(+(q?.s ?? 0), 0, 1) }));
     return p.every((q) => [q.x, q.y, q.r, q.s].every(Number.isFinite)) ? { pts: p, mirror, rot, ...extra } : null;
   }
   // A stretch: a symmetric matrix brought back to determinant 1, and its centre; undefined for none, null if broken.
@@ -469,6 +470,7 @@
     if (run !== linkRun) return; // a newer change already started its own
     links = { edit: location.origin + location.pathname + '#edit=' + e, import: bad ? '' : IMPORT + i };
     $('se-use').href = links.import || '#';
+    $('se-share-edit').href = links.edit;
   }
   const grid = { show: true, snap: true, step: 5 };
   const snap = (v) => clamp(grid.snap ? Math.round(v / grid.step) * grid.step : +v.toFixed(2), view.lo, view.hi);
@@ -1239,7 +1241,8 @@
   const shareTexts = { edit: () => links.edit, import: () => links.import, path: () => $('se-out').value };
   $('se-share').querySelectorAll('[data-copy]').forEach((card) => {
     const label = card.querySelector('.se-card-sub'), text = label.textContent;
-    card.onclick = async () => {
+    card.onclick = async (e) => {
+      e.preventDefault(); // the Edit link entry is a link: copy, don't follow it
       await copyText(shareTexts[card.dataset.copy]());
       label.textContent = 'Copied to the clipboard';
       setTimeout(() => (label.textContent = text), 1500);
@@ -1642,12 +1645,15 @@
   // An edit link replaces the current work, which stays one Undo away. Pasting a link into a tab that
   // already has the editor open only changes the hash, hence the hashchange listener.
   async function openEditLink() {
-    if (!location.hash.startsWith('#edit=')) return;
-    const data = location.hash.slice(6);
+    // #edit= is what Share makes (deflated, base64url); #edit-raw= is the same JSON, just percent-encoded,
+    // for links written by hand (see "Link format" on the page).
+    const raw = location.hash.startsWith('#edit-raw=');
+    if (!raw && !location.hash.startsWith('#edit=')) return;
+    const data = location.hash.slice(raw ? 10 : 6);
     history.replaceState(null, '', location.pathname + location.search); // a reload then keeps later edits
     let link = null;
     // Drawn shapes pack into a few KB; imported outlines can take more. unpack() caps what a link inflates to.
-    if (data.length < 200000) try { link = JSON.parse(await unpack(data)); } catch (e) { /* malformed link */ }
+    if (data.length < 200000) try { link = JSON.parse(raw ? decodeURIComponent(data) : await unpack(data)); } catch (e) { /* malformed link */ }
     const before = JSON.stringify(snapshot());
     if (restore(link)) { undo.push(before); redo.length = 0; }
     render();
