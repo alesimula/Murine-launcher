@@ -286,22 +286,25 @@
   // corners, or its centre of mass. Only the centre of mass stays put as the shape turns.
   let pivotMode = 'box', pivotCorner = 0; // 'box', 'mass' or 'corner'; the corner as in boxCorners()
   // Measured from the outline at 6 decimals: at 2, turning a shape and turning it back would pivot around
-  // two slightly different points and not land exactly where it started.
-  const pivot = (sh) => {
+  // two slightly different points and not land exactly where it started. For several shapes: their combined
+  // box, or the area-weighted average of their centres of mass (exact where they don't overlap).
+  const pivotOf = (list) => {
     digits = 6;
     try {
-      if (pivotMode === 'mass') return centroid(sh);
-      const b = measure(shapePath(sh));
+      if (pivotMode === 'mass') {
+        if (list.length === 1) return centroid(list[0]);
+        let a = 0, x = 0, y = 0;
+        for (const sh of list) {
+          const r = flatten(shapePath(sh)), w = Math.abs(ringArea(r)), c = ringCentroid(r);
+          a += w; x += c.x * w; y += c.y * w;
+        }
+        return { x: x / a, y: y / a };
+      }
+      const b = measure(list.map(shapePath).join(' '));
       return pivotMode === 'corner' ? boxCorners(b)[pivotCorner] : { x: b.x + b.width / 2, y: b.y + b.height / 2 };
     } finally { digits = 2; }
   };
-  // Turns a shape by deg (clockwise) around its pivot; a stretch turns with it. rot is the running total the
-  // rotation pill shows, kept unrounded.
-  function rotated(sh, deg) {
-    const rot = wrap((sh.rot || 0) + deg); // exact, rather than the same turn read back from the matrix
-    const c = pivot(sh), t = deg * Math.PI / 180, cos = Math.cos(t), sin = Math.sin(t);
-    return { ...applyWorld(sh, [cos, -sin, sin, cos], c.x - cos * c.x + sin * c.y, c.y - sin * c.x - cos * c.y), rot };
-  }
+  const pivot = (sh) => pivotOf([sh]);
   // Ramer–Douglas–Peucker: drops points closer than tol to the line between their neighbours.
   function simplify(pts, tol) {
     if (pts.length < 4) return pts;
@@ -340,9 +343,21 @@
   let pillView = 'pos'; // which half of the Move pill is open: the centre point's position, or 'rot'ation
   let pickedCorner = -1; // Move mode: the selected resize corner (0 top left, clockwise), -1 for none
   let pts = null, fixed = false; // shortcuts into shapes[active]: its points, or whether its outline is fixed
+  // Several shapes picked from their cards (long press or Ctrl+click) are moved, resized, stretched and turned
+  // together, in Move mode only. groups remembers each picked set's own stretch and angle, by the shapes' ids,
+  // until one of them is deleted; each shape still stores its full stretch and angle itself.
+  let multi = new Set(), groups = [];
   let synced = '';
   const sync = () => {
     active = clamp(active, 0, shapes.length - 1);
+    let next = Math.max(0, ...shapes.map((sh) => (Number.isInteger(sh.id) ? sh.id + 1 : 0)));
+    const seen = new Set();
+    for (const sh of shapes) { if (!Number.isInteger(sh.id) || seen.has(sh.id)) sh.id = next++; seen.add(sh.id); }
+    // A deleted or mirrored member can't be picked with the others again, so the group's record goes.
+    const plain = new Set(shapes.filter((sh) => sh.mirror === 'none').map((sh) => sh.id));
+    groups = groups.filter((g) => g.ids.every((id) => plain.has(id)));
+    if ([...multi].some((i) => i >= shapes.length || shapes[i].mirror !== 'none') || multi.size < 2) multi = new Set();
+    if (multi.size) mode = 'move';
     pts = shapes[active].pts || null;
     fixed = !shapes[active].pts;
     if (fixed) mode = 'move';
@@ -353,20 +368,14 @@
 
   // Everything needed to resume editing. Undo, localStorage and edit links all go through this pair,
   // so a new piece of state only has to be added to snapshot() and restore().
-  const snapshot = () => ({ shapes, active });
+  const snapshot = () => ({ shapes, active, groups, ...(multi.size > 1 && { multi: [...multi] }) });
   // Also reads edit links, i.e. anything anyone can type into a URL: rebuild every field, keep nothing unchecked.
   function cleanShape(s) {
     const mirror = Object.hasOwn(MIRRORS, s?.mirror) ? s.mirror : 'none', rot = wrap(+(s?.rot ?? 0));
     if (!Number.isFinite(rot)) return null;
-    // The stretch: a symmetric matrix brought back to determinant 1, and its centre.
-    let st;
-    if (s?.st !== undefined) {
-      const [a, b, d, cx, cy] = Array.isArray(s.st) ? s.st.map(Number) : [], det = a * d - b * b;
-      if (!(a > 0 && det > 1e-6 && Math.abs(b) < 1e3 && a < 1e3 && Math.abs(cx) < 1e3 && Math.abs(cy) < 1e3)) return null;
-      const k = Math.sqrt(det);
-      st = [a / k, b / k, d / k, cx, cy];
-    }
-    const extra = st ? { st } : {};
+    const st = cleanSt(s?.st);
+    if (st === null) return null;
+    const extra = { ...(st ? { st } : {}), ...(Number.isInteger(s?.id) && s.id >= 0 && s.id < 1e6 ? { id: s.id } : {}) };
     if (typeof s?.fixed === 'string' && Object.hasOwn(FIXED, s.fixed)) {
       // Saves from before stretching drew the head at its pill angle (rot); now that's ang.
       const ang = ((+(s.ang ?? s.rot ?? 0) % 360) + 360) % 360;
@@ -381,6 +390,21 @@
     if (!Array.isArray(s?.pts) || s.pts.length < 3 || s.pts.length > 200) return null;
     const p = s.pts.map((q) => ({ x: clamp(+q?.x, -500, 600), y: clamp(+q?.y, -500, 600), r: clamp(+q?.r, 0, 500), s: clamp(+q?.s, 0, 1) }));
     return p.every((q) => [q.x, q.y, q.r, q.s].every(Number.isFinite)) ? { pts: p, mirror, rot, ...extra } : null;
+  }
+  // A stretch: a symmetric matrix brought back to determinant 1, and its centre; undefined for none, null if broken.
+  function cleanSt(st) {
+    if (st === undefined) return undefined;
+    const [a, b, d, cx, cy] = Array.isArray(st) ? st.map(Number) : [], det = a * d - b * b;
+    if (!(a > 0 && det > 1e-6 && Math.abs(b) < 1e3 && a < 1e3 && Math.abs(cx) < 1e3 && Math.abs(cy) < 1e3)) return null;
+    const k = Math.sqrt(det);
+    return [a / k, b / k, d / k, cx, cy];
+  }
+  // A group's record: { ids (2 or more, sorted), st?, rot }. Broken ones are just dropped.
+  function cleanGroup(g) {
+    const ids = Array.isArray(g?.ids) ? [...new Set(g.ids)].filter((i) => Number.isInteger(i) && i >= 0 && i < 1e6).sort((a, b) => a - b) : [];
+    const st = cleanSt(g?.st), rot = wrap(+(g?.rot ?? 0));
+    if (ids.length < 2 || st === null || !Number.isFinite(rot)) return null;
+    return { ids, rot, ...(st ? { st } : {}) };
   }
   // An imported outline as it's stored: one contour of absolute M/L/C, single spaces, closed with Z. Anything
   // else (or anything huge) is rejected; returns the path rebuilt from its parsed numbers, or null.
@@ -405,9 +429,10 @@
     const list = o.shapes.map(cleanShape);
     if (list.includes(null)) return false;
     shapes = list;
+    groups = (Array.isArray(o.groups) ? o.groups.slice(0, 50) : []).map(cleanGroup).filter(Boolean);
     active = Number.isInteger(o.active) ? o.active : 0;
-    sel = -1;
-    sync();
+    sel = -1; multi = new Set(Array.isArray(o.multi) ? o.multi.filter((i) => Number.isInteger(i) && i >= 0) : []);
+    sync(); // drops a multi that doesn't fit the shapes
     return true;
   }
 
@@ -455,8 +480,45 @@
     redo.length = 0; // a new edit starts a new branch, so there's nothing left to redo
   };
   // Whole icon (presets, Reset) or just the selected shape (Generate).
-  const loadIcon = (list) => { checkpoint(); shapes = list; active = 0; sel = -1; mode = 'edit'; sync(); render(); };
-  const replaceShape = (sh) => { checkpoint(); shapes[active] = sh; sel = -1; mode = 'edit'; sync(); render(); };
+  const loadIcon = (list) => { checkpoint(); shapes = list; active = 0; sel = -1; multi = new Set(); mode = 'edit'; sync(); render(); };
+  const replaceShape = (sh) => { checkpoint(); shapes[active] = sh; sel = -1; multi = new Set(); mode = 'edit'; sync(); render(); };
+
+  // ---------- Move mode's selection: the picked group, or the selected shape ----------
+
+  const selIdx = () => (multi.size > 1 ? [...multi].sort((a, b) => a - b) : [active]);
+  const selShapes = () => selIdx().map((i) => shapes[i]);
+  const selPivot = () => pivotOf(selShapes());
+  // The picked group's record (made on first use when make is set), or null for a single shape.
+  function groupRec(make) {
+    if (multi.size < 2) return null;
+    const ids = selShapes().map((sh) => sh.id).sort((a, b) => a - b), key = ids.join();
+    let g = groups.find((r) => r.ids.join() === key);
+    if (!g && make) groups.push(g = { ids, rot: 0 });
+    return g || null;
+  }
+  // What the selection's angle and stretch read as: the shape's own, or the group's record.
+  const selState = () => (multi.size > 1 ? groupRec(false) || { rot: 0 } : shapes[active]);
+  // The selection as it is now, for drags that apply each step to where they started.
+  const selBase = () => ({ shapes: selShapes(), group: (({ st, rot }) => ({ st, rot }))(selState()) });
+  // Applies w -> A w + t to the selected shapes (as they were in base, when given) and to the group's record,
+  // which follows the same maths as a shape with no outline of its own.
+  function applySel(A, tx, ty, base = null) {
+    selIdx().forEach((i, k) => { shapes[i] = applyWorld(base ? base.shapes[k] : shapes[i], A, tx, ty); });
+    const g = groupRec(true);
+    if (g) {
+      const r = applyWorld({ pts: [], ...(base ? base.group : { st: g.st, rot: g.rot }) }, A, tx, ty);
+      if (r.st) g.st = r.st; else delete g.st;
+      g.rot = r.rot;
+    }
+  }
+  // Turns the selection by deg (clockwise) around c; the angle shown is then set exactly, rather than read back
+  // from the matrix.
+  function turnSel(deg, c, base = null) {
+    const t = deg * Math.PI / 180, cos = Math.cos(t), sin = Math.sin(t), from = base ? base.group.rot : selState().rot;
+    applySel([cos, -sin, sin, cos], c.x - cos * c.x + sin * c.y, c.y - sin * c.x - cos * c.y, base);
+    const rot = wrap((from || 0) + deg);
+    if (multi.size > 1) groupRec(true).rot = rot; else shapes[active].rot = rot;
+  }
   const withSize = (i, r) => pts.map((p, k) => (k === i ? { ...p, r } : p));
   const neighbours = (i) => [(i + pts.length - 1) % pts.length, (i + 1) % pts.length];
   // Largest size corner i can take before it starts shrinking a neighbour's rounding. Neighbours only
@@ -531,8 +593,9 @@
     // Each shape and mirrored copy is filled and outlined on its own. The selected one is drawn last: while
     // selected it sits on top, and clicks on it reach it first (see shapeAt).
     // The others go in two layers, fills (whose overlaps are capped, see #se-cap-*) and outlines.
-    const back = shapes.flatMap((_, i) => (i === active ? [] : lines[i].map((d, c) => ({ d, cls: 'se-line' + (c ? ' copy' : '') }))));
-    const front = lines[active].map((d, c) => ({ d, cls: 'se-line active' + (c ? ' copy' : '') }));
+    const picks = selIdx(), on = new Set(picks);
+    const back = shapes.flatMap((_, i) => (on.has(i) ? [] : lines[i].map((d, c) => ({ d, cls: 'se-line' + (c ? ' copy' : '') }))));
+    const front = picks.flatMap((i) => lines[i].map((d, c) => ({ d, cls: 'se-line active' + (c ? ' copy' : '') })));
     for (const [id, list] of [['se-back-fill', back], ['se-back-stroke', back], ['se-front', front]]) {
       const layer = $(id);
       resize(layer, list.length, () => el('path', {}));
@@ -577,7 +640,7 @@
     const moving = mode === 'move';
     $('se-move').style.display = moving ? '' : 'none';
     if (moving) {
-      activeBox = measure(lines[active][0]);
+      activeBox = measure(picks.map((i) => lines[i][0]).join(' '));
       const r = $('se-move-box'), b = activeBox;
       r.setAttribute('x', b.x); r.setAttribute('y', b.y); r.setAttribute('width', b.width); r.setAttribute('height', b.height);
       boxHandles(b).forEach((c, i) => {
@@ -587,17 +650,21 @@
       });
     }
     $('se-fit-tools').hidden = $('se-mirror').hidden = !moving;
-    $('se-unstretch').hidden = !shapes[active].st;
-    for (const b of $('se-mirror').querySelectorAll('[data-mirror]')) b.setAttribute('aria-pressed', b.dataset.mirror === shapes[active].mirror);
+    const many = picks.length > 1, state = selState();
+    $('se-unstretch').hidden = !state.st;
+    for (const b of $('se-mirror').querySelectorAll('[data-mirror]')) {
+      b.setAttribute('aria-pressed', b.dataset.mirror === shapes[active].mirror);
+      b.disabled = many; // a group's shapes have no mirroring (see toggleMulti)
+    }
     for (const b of $('se-mirror').querySelectorAll('[data-pivot]')) b.setAttribute('aria-pressed', b.dataset.pivot === pivotMode);
     const [cx, cy] = [[6, 6], [18, 6], [18, 18], [6, 18]][pivotCorner];
     $('se-corner-dot').setAttribute('cx', cx); $('se-corner-dot').setAttribute('cy', cy);
     for (const b of $('se-corner-pick').children) b.setAttribute('aria-pressed', +b.dataset.corner === pivotCorner);
     if (!moving) $('se-corner-pick').hidden = true;
-    if (moving) { const c = pivot(shapes[active]); $('se-pivot-mark').setAttribute('transform', `translate(${c.x} ${c.y})`); }
-    // The stretch marks: in Move mode on the pivot cross, past the end of its arms; in Edit mode from the
-    // centre of mass, around a dot.
-    const info = stretchInfo(shapes[active]);
+    if (moving) { const c = selPivot(); $('se-pivot-mark').setAttribute('transform', `translate(${c.x} ${c.y})`); }
+    // The stretch marks: in Move mode on the pivot cross, past the end of its arms (for a group, its own
+    // remembered stretch); in Edit mode from the centre of mass, around a dot.
+    const info = stretchInfo(state);
     $('se-stretch-arrows').setAttribute('d', moving ? stretchArrows(info, 4) : '');
     const editMark = !moving && info && pts;
     $('se-stretch-mark').style.display = editMark ? '' : 'none';
@@ -618,14 +685,14 @@
     // In its place, with no corner selected in Move mode: the shape's rotation.
     $('se-rot-pill').hidden = !moving || !!at;
     if (moving && !at) {
-      const rot = shapes[active].rot || 0;
+      const rot = state.rot || 0;
       $('se-turn').value = rot; $('se-turn-val').value = Math.round(rot) % 360 + '°'; $('se-turn-num').value = fmt(r2(rot) % 360);
       const rotOpen = pillView === 'rot';
       $('se-turn').hidden = $('se-turn-val').hidden = !rotOpen || turnTyping; $('se-turn-type').hidden = !rotOpen || !turnTyping;
       $('se-turn-mode').setAttribute('aria-pressed', rotOpen);
       $('se-pos-mode').setAttribute('aria-pressed', !rotOpen);
       $('se-pos-fields').hidden = rotOpen;
-      if (!rotOpen) { const c = pivot(shapes[active]); $('se-px').value = fmt(c.x); $('se-py').value = fmt(c.y); }
+      if (!rotOpen) { const c = selPivot(); $('se-px').value = fmt(c.x); $('se-py').value = fmt(c.y); }
     }
     if (at) {
       $('se-x').value = fmt(at.x); $('se-y').value = fmt(at.y);
@@ -682,13 +749,14 @@
   const icon = (cp) => `<span class="material-symbols-outlined" aria-hidden="true">&#x${cp};</span>`;
   let cardsKey = '';
   function renderCards() {
-    const key = JSON.stringify([shapes, active, mode]);
+    const key = JSON.stringify([shapes, active, mode, [...multi]]);
     if (key === cardsKey) return;
     cardsKey = key;
     const cards = $('se-cards'), focus = document.activeElement?.closest?.('#se-cards [data-act]');
     const refocus = focus && focus.dataset.act + ':' + focus.dataset.card;
+    const many = multi.size > 1;
     cards.innerHTML = shapes.map((sh, i) => {
-      const on = i === active, name = shapeName(sh, i);
+      const on = many ? multi.has(i) : i === active, name = shapeName(sh, i);
       return `<div class="se-card${on ? ' active' : ''}" role="listitem">
         <button type="button" class="se-card-pick" data-act="pick" data-card="${i}" aria-pressed="${on}" aria-label="Select ${name}">
           <svg viewBox="-10 -10 120 120" aria-hidden="true"><rect class="se-card-box" x="0" y="0" width="100" height="100"/>
@@ -696,7 +764,7 @@
           <span>${name}</span>
         </button>
         ${shapes.length > 1 ? `<button type="button" class="se-card-del" data-act="del" data-card="${i}" title="Delete ${name}" aria-label="Delete ${name}">${icon('e92e')}</button>` : ''}
-        ${on ? `<div class="se-card-modes" role="group" aria-label="Mode">
+        ${on && !many ? `<div class="se-card-modes" role="group" aria-label="Mode">
           <button type="button" data-act="edit" data-card="${i}" aria-pressed="${mode === 'edit'}" title="Edit points" ${sh.pts ? '' : 'disabled'}>${icon('f097')}</button>
           <button type="button" data-act="move" data-card="${i}" aria-pressed="${mode === 'move'}" title="Move and resize">${icon('e89f')}</button>
         </div>` : ''}
@@ -704,18 +772,52 @@
     }).join('') + `<button type="button" class="se-card se-card-add" data-act="add" data-card="-1" title="Add a shape" aria-label="Add a shape">${icon('e145')}</button>`;
     if (refocus) cards.querySelector(`[data-act="${refocus.split(':')[0]}"][data-card="${refocus.split(':')[1]}"]`)?.focus();
   }
-  function deleteShape(i) {
-    if (!confirm(`Delete ${shapeName(shapes[i], i)}? Undo can still bring it back.`)) return;
+  // Deleting a shape also drops the remembered groups it was in (sync() does that, by id).
+  function deleteShapes(list) {
+    const n = list.length, what = n > 1 ? `these ${n} shapes` : shapeName(shapes[list[0]], list[0]);
+    if (!confirm(`Delete ${what}? Undo can still bring ${n > 1 ? 'them' : 'it'} back.`)) return;
     checkpoint();
-    shapes.splice(i, 1);
-    if (active >= i && active > 0) active--;
+    for (const i of [...list].sort((a, b) => b - a)) shapes.splice(i, 1);
+    active = Math.min(...list); multi = new Set();
     sel = -1; sync(); render();
   }
+  const deleteShape = (i) => deleteShapes([i]);
+  // Picking several cards: a long press or Ctrl/Cmd+click starts (with the selected shape, unless
+  // that one is mirrored), then plain taps toggle cards until one is left. Mirrored shapes can't join:
+  // the canvas shakes instead.
+  function toggleMulti(i) {
+    if (multi.size < 2) {
+      if (i === active) return;
+      if (shapes[i].mirror !== 'none') return shake();
+      if (shapes[active].mirror !== 'none') active = i; // starts from the pressed shape instead
+      else multi = new Set([active, i]);
+    } else if (multi.has(i)) {
+      multi.delete(i);
+      if (multi.size < 2) { active = [...multi][0] ?? i; multi = new Set(); }
+      else if (active === i) active = Math.min(...multi);
+    } else {
+      if (shapes[i].mirror !== 'none') return shake();
+      multi.add(i);
+    }
+    sel = -1; pickedCorner = -1; sync(); render();
+  }
+  let cardPress = null, cardLong = false;
+  $('se-cards').addEventListener('pointerdown', (e) => {
+    const b = e.target.closest('[data-act="pick"]');
+    if (!b || e.button > 0) return;
+    cardLong = false;
+    cardPress = { x: e.clientX, y: e.clientY, timer: setTimeout(() => { cardLong = true; navigator.vibrate?.(15); toggleMulti(+b.dataset.card); }, 450) };
+  });
+  $('se-cards').addEventListener('pointermove', (e) => { if (cardPress && Math.hypot(e.clientX - cardPress.x, e.clientY - cardPress.y) > 10) { clearTimeout(cardPress.timer); cardPress = null; } });
+  for (const t of ['pointerup', 'pointercancel', 'pointerleave']) $('se-cards').addEventListener(t, () => { if (cardPress) clearTimeout(cardPress.timer); cardPress = null; });
+  $('se-cards').addEventListener('contextmenu', (e) => { if (e.target.closest('[data-act="pick"]')) e.preventDefault(); });
   $('se-cards').addEventListener('click', (e) => {
     const b = e.target.closest('[data-act]');
     if (!b) return;
     const i = +b.dataset.card;
-    if (b.dataset.act === 'pick') { active = i; sel = -1; sync(); render(); } // keeps the mode, like a tap on the canvas
+    if (b.dataset.act === 'pick' && cardLong) { cardLong = false; return; } // the long press already picked it
+    if (b.dataset.act === 'pick' && (multi.size > 1 || e.ctrlKey || e.metaKey)) toggleMulti(i);
+    else if (b.dataset.act === 'pick') { active = i; sel = -1; sync(); render(); } // keeps the mode, like a tap on the canvas
     else if (b.dataset.act === 'edit' || b.dataset.act === 'move') { mode = b.dataset.act; sel = -1; sync(); render(); }
     else if (b.dataset.act === 'del') deleteShape(i); else if (b.dataset.act === 'add') { picked.clear(); renderAddGrid(); addDialog.open(); }
   });
@@ -769,8 +871,11 @@
   }, { passive: false });
   // A tap (not a scroll, which ends in pointercancel instead of click) selects the shape under it, or
   // deselects the point when it lands on empty space.
-  svg.addEventListener('click', () => {
+  svg.addEventListener('click', (e) => {
     if (tap === null) return;
+    if (e.ctrlKey || e.metaKey) { if (tap >= 0) toggleMulti(tap); tap = null; return; } // like on the cards
+    // Outside the group's box, a tap ends picking several: back to the tapped shape, or to the selected one.
+    if (multi.size > 1) { multi = new Set(); if (tap >= 0) active = tap; sel = -1; sync(); tap = null; return render(); }
     if (tap >= 0 && tap !== active) { active = tap; sel = -1; mode = shapes[tap].pts ? mode : 'move'; sync(); render(); }
     else if (sel >= 0 || pickedCorner >= 0) { sel = -1; pickedCorner = -1; render(); }
     tap = null;
@@ -779,9 +884,23 @@
   // Clicks and taps focus the canvas too; this keeps Chrome from showing its keyboard focus ring for it.
   svg.addEventListener('pointerdown', () => svg.setAttribute('data-pointer', ''), true);
   svg.addEventListener('blur', () => svg.removeAttribute('data-pointer'));
+  // A long press on a shape picks it too (or drops it from the group), as on the cards; one that started
+  // moving the selection takes that back first.
+  let hold = null;
+  const letGo = () => { if (hold) clearTimeout(hold.timer); hold = null; };
   svg.addEventListener('pointerdown', (e) => {
-    const g = grabAt(e.clientX, e.clientY, e.pointerType === 'touch');
+    const pick = e.ctrlKey || e.metaKey, g = pick ? null : grabAt(e.clientX, e.clientY, e.pointerType === 'touch');
     tap = g ? null : shapeAt(e);
+    letGo();
+    const under = g ? (g.move ? shapeAt(e) : -1) : tap;
+    if (!pick && under >= 0 && (multi.size > 1 || under !== active)) {
+      hold = { x: e.clientX, y: e.clientY, timer: setTimeout(() => {
+        hold = null; tap = null;
+        if (drag) { drag = null; restore(JSON.parse(undo.pop())); render(); }
+        navigator.vibrate?.(15);
+        toggleMulti(under);
+      }, 450) };
+    }
     if (!g) return;
     checkpoint();
     const at = toSvg(e);
@@ -796,13 +915,13 @@
       drag = { kind: 'point', dx: w.x - at.x, dy: w.y - at.y }; // the point keeps its distance from the finger
     } else if (g.move) {
       pickedCorner = -1; // grabbing the shape itself lets go of the handle, back to the rotation pill
-      drag = { kind: 'move', from: at, orig: shapes[active] };
+      drag = { kind: 'move', from: at, base: selBase() };
     } else {
       const c = boxHandles(activeBox), anchor = c[opposite(g.resize)];
-      if (g.resize < 4) drag = { kind: 'resize', anchor, d0: dist(anchor, c[g.resize]), orig: shapes[active] };
+      if (g.resize < 4) drag = { kind: 'resize', anchor, d0: dist(anchor, c[g.resize]), base: selBase() };
       else {
         const axis = sideAxis(g.resize);
-        drag = { kind: 'stretch', axis, at: anchor[axis], d0: c[g.resize][axis] - anchor[axis], from: at[axis], orig: shapes[active] };
+        drag = { kind: 'stretch', axis, at: anchor[axis], d0: c[g.resize][axis] - anchor[axis], from: at[axis], base: selBase() };
       }
       pickedCorner = g.resize; // a tap selects the handle; a drag resizes too
     }
@@ -812,6 +931,7 @@
     render();
   });
   svg.addEventListener('pointermove', (e) => {
+    if (hold && Math.hypot(e.clientX - hold.x, e.clientY - hold.y) > 10) letGo();
     if (!drag) return;
     const p = toSvg(e);
     if (drag.kind === 'point') {
@@ -820,22 +940,23 @@
       // The side moves by whole grid steps when snapping (like a moved shape), so dragging it back to where
       // it started gives exactly the shape it started as.
       const moved = p[drag.axis] - drag.from, k = Math.max(0.05, 1 + (grid.snap ? Math.round(moved / grid.step) * grid.step : moved) / drag.d0);
-      shapes[active] = stretched(drag.orig, drag.axis, k, drag.at);
+      const x = drag.axis === 'x';
+      applySel(x ? [k, 0, 0, 1] : [1, 0, 0, k], x ? drag.at - k * drag.at : 0, x ? 0 : drag.at - k * drag.at, drag.base);
       sync();
     } else if (drag.kind === 'move') {
       const step = (v) => (grid.snap ? Math.round(v / grid.step) * grid.step : v);
-      shapes[active] = transform(drag.orig, 1, 0, 0, step(p.x - drag.from.x), step(p.y - drag.from.y));
+      applySel([1, 0, 0, 1], step(p.x - drag.from.x), step(p.y - drag.from.y), drag.base);
       sync();
     } else {
       const k = Math.max(0.05, dist(drag.anchor, p) / drag.d0), a = drag.anchor;
-      shapes[active] = transform(drag.orig, k, a.x, a.y, a.x, a.y);
+      applySel([k, 0, 0, k], a.x - k * a.x, a.y - k * a.y, drag.base);
       sync();
     }
     render();
   });
   const endDrag = () => { if (drag) { drag = null; render(); } };
-  svg.addEventListener('pointerup', endDrag);
-  svg.addEventListener('pointercancel', endDrag);
+  for (const t of ['pointerup', 'pointercancel']) svg.addEventListener(t, () => { letGo(); endDrag(); });
+  svg.addEventListener('contextmenu', (e) => { if (shapeAt(e) >= 0) e.preventDefault(); });
   svg.addEventListener('focusin', (e) => {
     const h = e.target.closest('[data-i]');
     if (h && +h.dataset.i !== sel) { sel = +h.dataset.i; render(); }
@@ -862,18 +983,21 @@
     const del = e.key === 'Delete' || e.key === 'Backspace';
     // In Move mode with no handle selected, Delete asks to delete the selected shape (like its card's bin).
     const shapeKey = mode === 'move' && pickedCorner < 0 && del;
-    const pointKey = (sel >= 0 && mode === 'edit' && (del || e.key === 'Escape') || pickedCorner >= 0 && e.key === 'Escape' || shapeKey)
+    const pointKey = (sel >= 0 && mode === 'edit' && (del || e.key === 'Escape') || (pickedCorner >= 0 || multi.size > 1) && e.key === 'Escape' || shapeKey)
       && !typing && !e.target.closest('.contact-modal-overlay');
     if (!pointKey && !svg.contains(document.activeElement)) return;
     const step = grid.snap ? grid.step : e.shiftKey ? 5 : 0.5;
     const mv = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
     if (mode === 'move') { // arrows move the whole shape, Esc deselects the corner, Delete deletes the shape
-      if (e.key === 'Escape') { pickedCorner = -1; e.preventDefault(); return render(); }
-      if (shapeKey) { e.preventDefault(); return shapes.length > 1 ? deleteShape(active) : shake(); }
+      if (e.key === 'Escape') { // the handle first, then the picked group
+        if (pickedCorner >= 0) pickedCorner = -1; else { multi = new Set(); sync(); }
+        e.preventDefault(); return render();
+      }
+      if (shapeKey) { e.preventDefault(); return shapes.length > selIdx().length ? deleteShapes(selIdx()) : shake(); }
       if (!mv) return;
       checkpoint();
       pickedCorner = -1;
-      shapes[active] = transform(shapes[active], 1, 0, 0, mv[0] * step, mv[1] * step);
+      applySel([1, 0, 0, 1], mv[0] * step, mv[1] * step);
       sync();
     } else if (sel < 0) return;
     else if (mv) {
@@ -893,34 +1017,36 @@
   });
 
   // Move mode's buttons on the canvas: fit this shape, and mirroring.
-  $('se-fit-shape').onclick = () => { checkpoint(); shapes[active] = fitted([shapes[active]])[0]; sync(); render(); };
+  $('se-fit-shape').onclick = () => { checkpoint(); fitted(selShapes()).forEach((sh, k) => (shapes[selIdx()[k]] = sh)); sync(); render(); };
   // The shape's own outline (not its mirrored copies) into the top-left quarter, centred there: an ear
   // mirrored left/right or both ways then fills the other quarters.
   $('se-fit-quarter').onclick = () => {
-    const bb = measure(shapePath(shapes[active])), k = 50 / Math.max(bb.width, bb.height, 0.01);
+    const bb = measure(selShapes().map(shapePath).join(' ')), k = 50 / Math.max(bb.width, bb.height, 0.01);
     checkpoint();
-    shapes[active] = transform(shapes[active], k, bb.x + bb.width / 2, bb.y + bb.height / 2, 25, 25);
+    applySel([k, 0, 0, k], 25 - k * (bb.x + bb.width / 2), 25 - k * (bb.y + bb.height / 2));
     sync(); render();
   };
   // Moves the shape's pivot to the canvas centre. A mirrored axis uses the middle of the half the
   // shape is in instead (25 or 75), so the shape and its copy stay balanced on each side.
   $('se-center').onclick = () => {
-    const sh = shapes[active], c = pivot(sh);
+    const sh = shapes[active], c = selPivot(); // a group has no mirroring, so it goes to the canvas middle
     if (!Number.isFinite(c.x + c.y)) return;
     const h = sh.mirror === 'h' || sh.mirror === 'both', v = sh.mirror === 'v' || sh.mirror === 'both';
     const tx = h ? (c.x <= 50 ? 25 : 75) : 50, ty = v ? (c.y <= 50 ? 25 : 75) : 50;
     checkpoint();
-    shapes[active] = transform(sh, 1, c.x, c.y, tx, ty);
+    applySel([1, 0, 0, 1], tx - c.x, ty - c.y);
     sync(); render();
   };
   // Shrinks the shape along the long side of its stretch until there's none left, around the pivot.
   $('se-unstretch').onclick = () => {
-    const sh = shapes[active], info = stretchInfo(sh);
+    const info = stretchInfo(selState()); // a group's own remembered stretch, or the shape's
     if (!info) return;
-    const c = pivot(sh), f = 1 / info.ratio - 1, { ux, uy } = info;
+    const c = selPivot(), f = 1 / info.ratio - 1, { ux, uy } = info;
     const A = [1 + f * ux * ux, f * ux * uy, f * ux * uy, 1 + f * uy * uy];
     checkpoint();
-    shapes[active] = applyWorld(sh, A, c.x - A[0] * c.x - A[1] * c.y, c.y - A[2] * c.x - A[3] * c.y);
+    applySel(A, c.x - A[0] * c.x - A[1] * c.y, c.y - A[2] * c.x - A[3] * c.y);
+    // A shape unstretched on its own also ends the stretch its groups remember.
+    if (multi.size < 2) for (const g of groups) if (g.ids.includes(shapes[active].id)) delete g.st;
     sync(); render();
   };
   $('se-mirror').addEventListener('click', (e) => {
@@ -968,7 +1094,8 @@
         const c = boxHandles(activeBox), a = c[opposite(pickedCorner)], k0 = (v - a[k]) / (c[pickedCorner][k] - a[k]);
         if (!(k0 > 0.05)) return render(); // not past the opposite corner, nor down to nothing
         checkpoint();
-        shapes[active] = pickedCorner < 4 ? transform(shapes[active], k0, a.x, a.y, a.x, a.y) : stretched(shapes[active], k, k0, a[k]);
+        if (pickedCorner < 4) applySel([k0, 0, 0, k0], a.x - k0 * a.x, a.y - k0 * a.y);
+        else applySel(k === 'x' ? [k0, 0, 0, 1] : [1, 0, 0, k0], k === 'x' ? a.x - k0 * a.x : 0, k === 'x' ? 0 : a.y - k0 * a.y);
         sync();
       } else if (pts && sel >= 0) {
         checkpoint();
@@ -995,8 +1122,9 @@
   // this drag produced (it was moved, edited, undone, or another shape was picked); and the ghost fades a moment
   // after the last movement whatever happens.
   $('se-turn').addEventListener('input', (e) => {
-    if (!turnFrom || shapes[active] !== turned) { checkpoint(); turnFrom = shapes[active]; turnPivot = pivot(turnFrom); }
-    shapes[active] = turned = rotated(turnFrom, +e.target.value - (turnFrom.rot || 0));
+    if (!turnFrom || shapes[selIdx()[0]] !== turned) { checkpoint(); turnFrom = selBase(); turnPivot = pivotOf(turnFrom.shapes); }
+    turnSel(+e.target.value - (turnFrom.group.rot || 0), turnPivot, turnFrom);
+    turned = shapes[selIdx()[0]];
     ghost(turnPivot); ghostOff();
     sync(); render();
   });
@@ -1014,21 +1142,22 @@
   ['x', 'y'].forEach((k) => $('se-p' + k).addEventListener('change', (e) => {
     const v = clamp(+e.target.value, view.lo, view.hi), sh = shapes[active];
     if (e.target.value === '' || !Number.isFinite(v)) return render(); // puts the current value back
-    const d = v - pivot(sh)[k];
+    const d = v - selPivot()[k];
     if (Math.abs(d) < 1e-9) return render();
     checkpoint();
-    shapes[active] = transform(sh, 1, 0, 0, k === 'x' ? d : 0, k === 'y' ? d : 0);
+    applySel([1, 0, 0, 1], k === 'x' ? d : 0, k === 'y' ? d : 0);
     sync(); render();
   }));
   $('se-turn-num').addEventListener('change', (e) => {
-    const v = +e.target.value, sh = shapes[active];
+    const v = +e.target.value;
     if (e.target.value === '' || !Number.isFinite(v)) return render(); // puts the current value back
-    const deg = ((v - (sh.rot || 0)) % 360 + 360) % 360;
+    const deg = ((v - (selState().rot || 0)) % 360 + 360) % 360;
     if (deg < 0.005 || deg > 359.995) return render();
     checkpoint();
-    ghost(pivot(sh));
+    const c = selPivot();
+    ghost(c);
     ghostOff();
-    shapes[active] = rotated(sh, deg);
+    turnSel(deg, c);
     sync(); render();
   });
   // Greyed out at 3 points; should it get clicked anyway (re-enabled from the dev tools, say), it shakes like Delete.

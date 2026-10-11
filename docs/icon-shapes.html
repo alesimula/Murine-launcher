@@ -149,6 +149,7 @@ noindex: true    # and out of search engines
   border-radius: var(--md-shape-full); border: 1px solid var(--md-outline-variant);
   background: var(--md-surface-container-low); box-shadow: var(--md-shadow); }
 .se-mirror button { width: 34px; height: 34px; border: 0; background: transparent; }
+.se-mirror button:disabled { opacity: .35; cursor: default; pointer-events: none; }
 .se-mirror button[aria-pressed="true"] { background: var(--md-primary-container); color: var(--md-on-primary-container); }
 .se-mirror svg { width: 20px; height: 20px; }
 .se-corner-wrap { position: relative; display: flex; }
@@ -170,7 +171,7 @@ noindex: true    # and out of search engines
 .se-card.active { border-color: var(--md-primary); box-shadow: 0 0 0 1px var(--md-primary); }
 .se-card-pick { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 100%; padding: 12px 6px 8px;
   border: 0; background: transparent; color: var(--md-on-surface); font: inherit; font-size: .75rem; cursor: pointer;
-  border-radius: var(--md-shape-md); }
+  border-radius: var(--md-shape-md); user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
 .se-card-pick svg { width: 56px; height: 56px; }
 .se-card-pick path { fill: var(--md-primary); }
 .se-card-pick path.copy { fill-opacity: .35; }
@@ -303,7 +304,7 @@ noindex: true    # and out of search engines
     <div id="se-cards" class="se-cards" role="list" aria-label="Shapes"></div>
     <p class="se-hint se-canvas-hint">Edit mode: drag a point to move it, drag a <strong>+</strong> to add one; with a point
       selected, arrow keys nudge it, Delete removes it, Esc deselects. Move mode: drag the shape, or a corner to resize it;
-      tap a corner to set its position.</p>
+      tap a corner to set its position. Long-press a shape or its card (or Ctrl+click it) to move several shapes together.</p>
   </div>
 
   <div class="se-panel">
