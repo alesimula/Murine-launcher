@@ -282,9 +282,9 @@
     });
     return { x: x / (3 * a), y: y / (3 * a) };
   }
-  // The point a shape rotates and centres around, as picked in the Move pill: the middle of its box, or its
-  // centre of mass. Only the box one moves as the shape turns.
-  let pivotMode = 'box';
+  // The point a shape rotates and centres around, as picked in the Move pill: the middle of its box, one of its
+  // corners, or its centre of mass. Only the centre of mass stays put as the shape turns.
+  let pivotMode = 'box', pivotCorner = 0; // 'box', 'mass' or 'corner'; the corner as in boxCorners()
   // Measured from the outline at 6 decimals: at 2, turning a shape and turning it back would pivot around
   // two slightly different points and not land exactly where it started.
   const pivot = (sh) => {
@@ -292,7 +292,7 @@
     try {
       if (pivotMode === 'mass') return centroid(sh);
       const b = measure(shapePath(sh));
-      return { x: b.x + b.width / 2, y: b.y + b.height / 2 };
+      return pivotMode === 'corner' ? boxCorners(b)[pivotCorner] : { x: b.x + b.width / 2, y: b.y + b.height / 2 };
     } finally { digits = 2; }
   };
   // Turns a shape by deg (clockwise) around its pivot; a stretch turns with it. rot is the running total the
@@ -337,6 +337,7 @@
   const STORE = 'murine-shape-editor';
   let shapes, active = 0, mode = 'edit', sel = -1, drag = null, sliding = false;
   let turnTyping = false; // the rotation pill shows a number field instead of the slider
+  let pillView = 'pos'; // which half of the Move pill is open: the centre point's position, or 'rot'ation
   let pickedCorner = -1; // Move mode: the selected resize corner (0 top left, clockwise), -1 for none
   let pts = null, fixed = false; // shortcuts into shapes[active]: its points, or whether its outline is fixed
   let synced = '';
@@ -588,6 +589,10 @@
     $('se-unstretch').hidden = !shapes[active].st;
     for (const b of $('se-mirror').querySelectorAll('[data-mirror]')) b.setAttribute('aria-pressed', b.dataset.mirror === shapes[active].mirror);
     for (const b of $('se-mirror').querySelectorAll('[data-pivot]')) b.setAttribute('aria-pressed', b.dataset.pivot === pivotMode);
+    const [cx, cy] = [[6, 6], [18, 6], [18, 18], [6, 18]][pivotCorner];
+    $('se-corner-dot').setAttribute('cx', cx); $('se-corner-dot').setAttribute('cy', cy);
+    for (const b of $('se-corner-pick').children) b.setAttribute('aria-pressed', +b.dataset.corner === pivotCorner);
+    if (!moving) $('se-corner-pick').hidden = true;
     if (moving) { const c = pivot(shapes[active]); $('se-pivot-mark').setAttribute('transform', `translate(${c.x} ${c.y})`); }
     // The stretch marks: in Move mode on the pivot cross, past the end of its arms; in Edit mode from the
     // centre of mass, around a dot.
@@ -614,8 +619,12 @@
     if (moving && !at) {
       const rot = shapes[active].rot || 0;
       $('se-turn').value = rot; $('se-turn-val').value = Math.round(rot) % 360 + '°'; $('se-turn-num').value = fmt(r2(rot) % 360);
-      $('se-turn').hidden = $('se-turn-val').hidden = turnTyping; $('se-turn-type').hidden = !turnTyping;
-      $('se-turn-mode').setAttribute('aria-pressed', turnTyping);
+      const rotOpen = pillView === 'rot';
+      $('se-turn').hidden = $('se-turn-val').hidden = !rotOpen || turnTyping; $('se-turn-type').hidden = !rotOpen || !turnTyping;
+      $('se-turn-mode').setAttribute('aria-pressed', rotOpen);
+      $('se-pos-mode').setAttribute('aria-pressed', !rotOpen);
+      $('se-pos-fields').hidden = rotOpen;
+      if (!rotOpen) { const c = pivot(shapes[active]); $('se-px').value = fmt(c.x); $('se-py').value = fmt(c.y); }
     }
     if (at) {
       $('se-x').value = fmt(at.x); $('se-y').value = fmt(at.y);
@@ -914,9 +923,15 @@
     sync(); render();
   };
   $('se-mirror').addEventListener('click', (e) => {
-    const p = e.target.closest('[data-pivot]');
-    if (p) { pivotMode = p.dataset.pivot; render(); }
+    const p = e.target.closest('[data-pivot]'), c = e.target.closest('[data-corner]');
+    // The corner mode opens a small picker of the four corners above it (and again when tapped again).
+    if (c) { pivotCorner = +c.dataset.corner; $('se-corner-pick').hidden = true; render(); }
+    else if (p) {
+      $('se-corner-pick').hidden = p.dataset.pivot !== 'corner' || (pivotMode === 'corner' && !$('se-corner-pick').hidden);
+      pivotMode = p.dataset.pivot; render();
+    }
   });
+  document.addEventListener('pointerdown', (e) => { if (!e.target.closest('.se-corner-wrap')) $('se-corner-pick').hidden = true; });
   $('se-mirror').addEventListener('click', (e) => {
     const b = e.target.closest('[data-mirror]');
     if (!b || b.dataset.mirror === shapes[active].mirror) return;
@@ -969,7 +984,7 @@
   let ghostTimer = 0;
   const ghost = (c) => {
     clearTimeout(ghostTimer);
-    if (pivotMode !== 'box') return;
+    if (pivotMode === 'mass') return;
     $('se-pivot-ghost').setAttribute('transform', `translate(${c.x} ${c.y})`);
     $('se-pivot-ghost').classList.remove('off');
   };
@@ -981,11 +996,23 @@
   });
   ['change', 'blur'].forEach((t) => $('se-turn').addEventListener(t, () => { turnFrom = null; ghostOff(); }));
   // The icon switches between the slider and typing the angle; any typed angle is wrapped into 0-359.
+  // The rotation icon opens the rotation half of the pill; tapped again, it switches slider and typing.
   $('se-turn-mode').onclick = () => {
-    turnTyping = !turnTyping;
+    if (pillView !== 'rot') pillView = 'rot'; else turnTyping = !turnTyping;
     render();
     if (turnTyping) $('se-turn-num').select();
   };
+  $('se-pos-mode').onclick = () => { pillView = 'pos'; render(); };
+  // Typing a position moves the shape so its centre point (as picked in the bottom pill) lands there.
+  ['x', 'y'].forEach((k) => $('se-p' + k).addEventListener('change', (e) => {
+    const v = clamp(+e.target.value, view.lo, view.hi), sh = shapes[active];
+    if (e.target.value === '' || !Number.isFinite(v)) return render(); // puts the current value back
+    const d = v - pivot(sh)[k];
+    if (Math.abs(d) < 1e-9) return render();
+    checkpoint();
+    shapes[active] = transform(sh, 1, 0, 0, k === 'x' ? d : 0, k === 'y' ? d : 0);
+    sync(); render();
+  }));
   $('se-turn-num').addEventListener('change', (e) => {
     const v = +e.target.value, sh = shapes[active];
     if (e.target.value === '' || !Number.isFinite(v)) return render(); // puts the current value back

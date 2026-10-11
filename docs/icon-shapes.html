@@ -92,6 +92,9 @@ noindex: true    # and out of search engines
   background: var(--md-surface-container-low); box-shadow: var(--md-shadow); font-size: .82rem; }
 .se-pill:has(#se-remove[hidden]) { padding-right: 8px; }
 #se-rot-pill { padding: 3px 10px 3px 3px; }
+#se-rot-pill:has(#se-turn-mode:last-of-type[aria-pressed="false"]) { padding-right: 3px; }
+.se-pill-part { display: flex; align-items: center; gap: 8px; }
+.se-pill svg { width: 20px; height: 20px; }
 .se-pill[hidden], .se-pill [hidden] { display: none; }
 .se-pill label { display: flex; align-items: center; gap: 4px; color: var(--md-on-surface-variant); }
 .se-pill input { width: 4.2em; height: 28px; padding: 0 6px; font: inherit; color: var(--md-on-surface);
@@ -148,6 +151,11 @@ noindex: true    # and out of search engines
 .se-mirror button { width: 34px; height: 34px; border: 0; background: transparent; }
 .se-mirror button[aria-pressed="true"] { background: var(--md-primary-container); color: var(--md-on-primary-container); }
 .se-mirror svg { width: 20px; height: 20px; }
+.se-corner-wrap { position: relative; display: flex; }
+.se-corner-pick { position: absolute; left: 50%; bottom: calc(100% + 10px); transform: translateX(-50%); display: grid;
+  grid-template-columns: 34px 34px; gap: 2px; padding: 3px; border-radius: 18px; border: 1px solid var(--md-outline-variant);
+  background: var(--md-surface-container-low); box-shadow: var(--md-shadow); }
+.se-corner-pick[hidden] { display: none; }
 .se-pivot { display: flex; gap: 2px; padding-left: 5px; margin-left: 3px; border-left: 1px solid var(--md-outline-variant); }
 .se-pivot-ghost { pointer-events: none; fill: none; stroke: var(--md-primary); stroke-width: .55; stroke-linecap: round; opacity: .8; transition: opacity .6s; }
 .se-pivot-ghost.off { opacity: 0; }
@@ -265,11 +273,22 @@ noindex: true    # and out of search engines
         <button type="button" data-mirror="both" title="Mirror both ways" aria-label="Mirror both ways"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 2v16M2 10h16" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2 1.6" fill="none"/><path d="M2 2h5l-5 5zM18 2h-5l5 5zM2 18h5l-5-5zM18 18h-5l5-5z"/></svg></button>
         <span class="se-pivot" role="group" aria-label="Centre point, for rotating and centring">
           <button type="button" data-pivot="box" title="Rotate and centre around the middle of the box" aria-label="Middle of the box"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-dasharray="3 2"/><circle cx="12" cy="12" r="2.4" fill="currentColor"/></svg></button>
+          <span class="se-corner-wrap">
+            <button type="button" data-pivot="corner" title="Rotate and centre around a corner of the box" aria-label="A corner of the box"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-dasharray="3 2"/><circle id="se-corner-dot" cx="6" cy="6" r="2.6" fill="currentColor"/></svg></button>
+            <span id="se-corner-pick" class="se-corner-pick" role="group" aria-label="Which corner" hidden>
+              <button type="button" data-corner="0" aria-label="Top left corner"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-dasharray="3 2"/><circle cx="6" cy="6" r="2.6" fill="currentColor"/></svg></button><button type="button" data-corner="1" aria-label="Top right corner"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-dasharray="3 2"/><circle cx="18" cy="6" r="2.6" fill="currentColor"/></svg></button><button type="button" data-corner="3" aria-label="Bottom left corner"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-dasharray="3 2"/><circle cx="6" cy="18" r="2.6" fill="currentColor"/></svg></button><button type="button" data-corner="2" aria-label="Bottom right corner"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-dasharray="3 2"/><circle cx="18" cy="18" r="2.6" fill="currentColor"/></svg></button>
+            </span>
+          </span>
           <button type="button" data-pivot="mass" title="Rotate and centre around the centre of mass" aria-label="Centre of mass"><svg viewBox="0 0 24 24"><path d="M12 3.5 21 19.5H3Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="14.2" r="1.6" fill="currentColor"/><path d="M12 10.6v1.6M12 16.2v1.6M8.4 14.2h1.6M14 14.2h1.6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
         </span>
       </div>
-      <div id="se-rot-pill" class="se-pill" role="group" aria-label="Rotation" hidden>
-        <button id="se-turn-mode" type="button" aria-pressed="false" title="Type the angle" aria-label="Type the angle"><span class="material-symbols-outlined" aria-hidden="true">&#xe41a;</span></button>
+      <div id="se-rot-pill" class="se-pill" role="group" aria-label="Position and rotation" hidden>
+        <button id="se-pos-mode" type="button" aria-pressed="true" title="Position of the centre point" aria-label="Position"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v4M12 17.5v4M2.5 12h4M17.5 12h4"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/></svg></button>
+        <span id="se-pos-fields" class="se-pill-part">
+          <label>X <input id="se-px" type="number" step="0.5" inputmode="decimal" aria-label="Centre point X"></label>
+          <label>Y <input id="se-py" type="number" step="0.5" inputmode="decimal" aria-label="Centre point Y"></label>
+        </span>
+        <button id="se-turn-mode" type="button" aria-pressed="false" title="Rotation (tap again to type the angle)" aria-label="Rotation"><span class="material-symbols-outlined" aria-hidden="true">&#xe41a;</span></button>
         <input id="se-turn" type="range" min="0" max="359" step="1" aria-label="Rotation in degrees, clockwise"><output id="se-turn-val" for="se-turn"></output>
         <label id="se-turn-type" hidden><input id="se-turn-num" type="number" step="1" aria-label="Rotation in degrees, clockwise">°</label>
       </div>
