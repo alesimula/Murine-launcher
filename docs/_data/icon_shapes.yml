@@ -1,0 +1,116 @@
+# Presets on the icon shapes page (/icon-shapes/), in this order.
+#
+# visible: how many show in the page's grid straight away; the rest appear with "More shapes".
+#          The Add a shape dialog always lists all of them.
+#
+# Each entry has a name and is either one shape or several, listed under `shapes`. A shape is one of:
+#   box:     [top-left, top-right, bottom-right, bottom-left corner size, smoothing]
+#            a rounded rectangle; smoothing is optional (default 0.5)
+#   polygon: [sides, inner, angle, corner size, inner corner size, smoothing]
+#            a regular polygon (inner 1) or a star (inner < 1: its inner points sit at that
+#            fraction of the radius); angle turns it, in degrees. The last two are optional
+#            (inner corner size defaults to the corner size, smoothing to 0.5)
+#   pts:     corners in order around the shape, each [x, y, corner size, smoothing], in the
+#            0-100 box (y grows down); corner size and smoothing are optional (default 0)
+#   path:    a fixed outline, not editable point by point: absolute M/L/C only, single
+#            spaces, closed with Z (see "Link format" on the page)
+#
+# Or, for an icon made in the editor, `icon` holds the editor's own data exactly as an edit
+# link carries it (JSON, which is also valid YAML): {"shapes": [...]}, see "Link format" on
+# the page. It's checked the same way as a link and used as stored; `fit: true` fits it to
+# the box instead. If the editor's shape format changes, see the note above snapshot() in
+# assets/js/shape-editor.js on keeping the readable forms here in step.
+# Corner size: how far the rounding reaches along both edges. Smoothing: 0 cuts the corner
+# straight, 0.5 is a circular arc, 1 is squircle-like.
+#
+# Any shape can also have:
+#   at:      [x, y, width, height] stretches the shape onto this rectangle like an image,
+#            instead of the whole 0-100 box: whatever it draws in the 0-100 box (rounding
+#            included) lands in the rectangle, so a circle in a wide one becomes an ellipse.
+#            In the editor it opens with that stretch (Unstretch undoes it). Mostly useful
+#            with `shapes`, to place each one.
+#   angle:   degrees, turns the shape clockwise (as the editor's rotation slider) after `at`,
+#            around the centre of its rectangle (or of the box, without `at`). A shape
+#            stretched and then turned (a diagonal stretch) is written as unturned corners,
+#            `at` and `angle`.
+#   mirror:  h (adds a copy mirrored left to right, across x = 50), v (top to bottom, across
+#            y = 50) or both (three copies)
+#
+#   - name: Cloud
+#     shapes:
+#       - box: [20, 20, 20, 20]
+#         at: [4, 48, 92, 34]
+#       - box: [50, 50, 50, 50]
+#         at: [24, 18, 50, 50]
+#
+# Fitting: a single editable shape (box, polygon, pts) is scaled and centred to fill the box,
+# mirrored copies included; a single path is used as written. Several shapes are scaled and
+# centred together, keeping their places relative to each other. In the editor they open as
+# separate shapes, in the order listed. `fit: false` on an entry keeps everything exactly
+# where it's written instead (parts may reach outside the box).
+#
+# An entry that doesn't make a valid icon is left out: a broken shape, crossing edges, or
+# shapes (and mirrored copies) that don't all touch. Squircle is the editor's default icon
+# (and what Reset goes back to), so keep it.
+
+visible: 18
+
+shapes:
+  - name: Circle
+    box: [50, 50, 50, 50]
+  - name: Squircle
+    box: [50, 50, 50, 50, 1]
+  - name: Rounded square
+    box: [24, 24, 24, 24, 0.6]
+  - name: Square
+    box: [8, 8, 8, 8]
+  - name: Arch
+    box: [50, 50, 14, 14]
+  - name: Teardrop
+    box: [50, 10, 50, 50]
+  - name: Leaf
+    box: [50, 12, 50, 12]
+  - name: Cut
+    box: [22, 22, 22, 22, 0]
+  - name: Triangle
+    polygon: [3, 1, 0, 18]
+  - name: Hexagon
+    polygon: [6, 1, 0, 14]
+  - name: Octagon
+    polygon: [8, 1, 22.5, 8]
+  - name: Cookie 4
+    polygon: [4, 0.62, 45, 45, 14]
+  - name: Cookie 7
+    polygon: [7, 0.8, 0, 20, 8]
+  - name: Flower
+    polygon: [6, 0.62, 0, 30, 2]
+  - name: Burst
+    polygon: [12, 0.86, 0, 4, 2]
+  - name: Diamond
+    polygon: [4, 1, 0, 16]
+  - name: Heart
+    pts: [[50, 21.02, 0, 0], [55.64, 4.94, 17.05, 0.5], [89.68, 2.82, 17.05, 0.5], [104.9, 33.32, 17.04, 0.5],
+          [80, 70, 27.2, 0.6], [50, 97.53, 2.92, 0.5], [20, 70, 27.2, 0.6], [-4.9, 33.32, 17.04, 0.5],
+          [10.32, 2.82, 17.05, 0.5], [44.36, 4.94, 17.05, 0.5]]
+  # App icon head: outer silhouette + forehead + goatee fused into one contour (the launcher only
+  # reads the first contour), eye/whisker cut-outs dropped, simplified to 0.05 units.
+  - name: Murine
+    path: "M 9.38 59.57 L 10.34 60.94 L 11.76 62.66 L 13.13 64.1 L 14.6 65.44 L 14.91 65.86 L 15.1 66.52 L 15.08 67.03 L 14.82 67.67 L 14.38 68.15 L 15.92 69.39 L 17.76 70.65 L 19.7 71.81 L 22.13 73.01 L 24.4 74.01 L 28.59 75.67 L 32.42 78.33 L 34.36 79.44 L 36.36 80.43 L 37.27 80.84 L 37.71 80.54 L 38.2 80.38 L 38.72 80.38 L 39.36 80.6 L 39.88 81.05 L 40.21 81.62 L 40.97 82.54 L 42.8 84.45 L 44.66 86.14 L 46.74 87.76 L 47.54 87.52 L 48.25 87.62 L 48.73 87.87 L 49.92 88.77 L 51.22 87.83 L 51.68 87.58 L 52.36 87.48 L 53.26 87.7 L 55.15 86.26 L 56.9 84.65 L 58.61 82.8 L 59.67 81.51 L 60.04 80.87 L 60.45 80.53 L 60.93 80.32 L 61.63 80.28 L 62.14 80.43 L 62.64 80.78 L 64.15 80.17 L 67.84 78.1 L 71.36 75.7 L 77.07 73.41 L 80.63 71.67 L 83.17 70.11 L 84.98 68.81 L 85.74 68.16 L 85.3 67.67 L 85.02 67.03 L 85.02 66.33 L 85.19 65.84 L 85.49 65.41 L 86.97 64.07 L 88.32 62.63 L 89.42 61.29 L 90.59 59.67 L 90.48 59.53 L 85.59 57.99 L 85.14 57.72 L 84.9 57.47 L 84.63 57.03 L 84.51 56.52 L 84.53 56 L 84.71 55.51 L 86.56 53.36 L 87.65 51.76 L 84.31 51.74 L 83.64 51.54 L 83.11 51.1 L 82.84 50.65 L 82.7 49.96 L 82.78 49.45 L 83.17 48.5 L 83.53 48.1 L 83.82 47.91 L 86.26 47.22 L 88.31 46.38 L 90.26 45.29 L 92.07 43.96 L 93.54 42.63 L 95.04 40.98 L 96.35 39.19 L 97.49 37.26 L 98.5 35.01 L 99.27 32.65 L 99.72 30.45 L 99.97 27.99 L 99.95 25.51 L 99.67 23.3 L 99.13 21.14 L 98.41 19.28 L 97.46 17.53 L 96.1 15.78 L 94.66 14.4 L 92.83 13.12 L 90.84 12.15 L 88.94 11.57 L 86.96 11.27 L 84.73 11.28 L 82.53 11.64 L 80.18 12.4 L 77.94 13.47 L 75.65 14.93 L 73.69 16.46 L 71.85 18.13 L 69.18 21.06 L 66.81 24.13 L 66.41 24.48 L 65.92 24.69 L 65.4 24.74 L 65.05 24.69 L 64.56 24.49 L 64.27 24.28 L 63.94 23.87 L 63.79 23.55 L 63.7 22.83 L 62.22 23.17 L 58.96 24.1 L 55.59 25.25 L 52.37 24.93 L 49.72 24.84 L 47.44 24.92 L 44.26 25.26 L 41.24 24.21 L 36.13 22.81 L 35.93 23.6 L 35.5 24.14 L 34.9 24.48 L 34.21 24.56 L 33.7 24.44 L 33.12 24.07 L 31.48 21.93 L 30.05 20.22 L 27.44 17.58 L 26.51 16.75 L 24.97 15.5 L 23.55 14.49 L 22.07 13.58 L 20.74 12.89 L 19.14 12.22 L 17.48 11.7 L 15.79 11.37 L 14.31 11.24 L 12.8 11.27 L 11.35 11.47 L 9.91 11.85 L 8.5 12.38 L 6.57 13.45 L 4.99 14.68 L 3.45 16.3 L 2.18 18.13 L 1.22 20.14 L 0.48 22.5 L 0.11 24.71 L 0 27.18 L 0.1 28.91 L 0.33 30.63 L 0.75 32.56 L 1.27 34.23 L 2 36.07 L 2.77 37.62 L 3.68 39.1 L 4.7 40.53 L 5.8 41.85 L 6.83 42.93 L 9.11 44.85 L 10.77 45.91 L 12.33 46.68 L 13.96 47.29 L 16.14 47.92 L 16.56 48.25 L 16.79 48.53 L 17.21 49.53 L 17.26 50.06 L 17.09 50.75 L 16.65 51.32 L 16.2 51.6 L 15.51 51.76 L 12.27 51.78 L 12.29 51.93 L 13.3 53.26 L 15.22 55.55 L 15.39 56.04 L 15.42 56.56 L 15.29 57.06 L 15.02 57.51 L 14.78 57.75 L 14.34 58.02 Z"
+  - name: Cat
+    pts: [[9.19, -1.72, 5.67, 0.6], [36.4, 20.95, 6.8, 0.6],
+          [63.6, 20.95, 6.8, 0.6], [90.81, -1.72, 5.67, 0.6],
+          [96.48, 36.82, 13.6, 0.6], [103.28, 66.29, 27.21, 0.6],
+          [72.67, 99.16, 24.94, 0.6], [27.33, 99.16, 24.94, 0.6],
+          [-3.28, 66.29, 27.21, 0.6], [3.52, 36.82, 13.6, 0.6]]
+  # Just a funny bunny head.
+  - name: Abstract bunny
+    fit: false
+    shapes:
+      - pts: [[9.64, 24.37, 40.36, 0.5], [90.36, 24.37, 40.36, 0.5],
+              [90.36, 105.1, 40.36, 0.5], [9.64, 105.1, 40.36, 0.5]]
+        at: [-7.23, 8.176, 114.46, 87.37]
+      - pts: [[21.01, -10.57, 10.85, 0.6], [36.36, -7.6, 9.04, 0.6],
+              [35.27, 16.58, 6.1, 0.18], [38.84, 31.92, 0, 0],
+              [27.31, 38.25, 0, 0], [27.31, 11.93, 9.7, 0.33]]
+        at: [1.038, 1.399, 87.73, 113.99]
+        mirror: h

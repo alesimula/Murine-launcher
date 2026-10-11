@@ -101,45 +101,18 @@
   const box = (tl, tr, br, bl, s = 0.5) =>
     [[0, 0, tl], [100, 0, tr], [100, 100, br], [0, 100, bl]].map(([x, y, r]) => ({ x, y, r, s }));
 
-  const PRESETS = {
-    Circle: () => box(50, 50, 50, 50),
-    Squircle: () => box(50, 50, 50, 50, 1),
-    'Rounded square': () => box(24, 24, 24, 24, 0.6),
-    Square: () => box(8, 8, 8, 8),
-    Arch: () => box(50, 50, 14, 14),
-    Teardrop: () => box(50, 10, 50, 50),
-    Leaf: () => box(50, 12, 50, 12),
-    Cut: () => box(22, 22, 22, 22, 0),
-    Triangle: () => polygon(3, 1, 0, 18),
-    Hexagon: () => polygon(6, 1, 0, 14),
-    Octagon: () => polygon(8, 1, 22.5, 8),
-    'Cookie 4': () => polygon(4, 0.62, 45, 45, 14),
-    'Cookie 7': () => polygon(7, 0.8, 0, 20, 8),
-    Flower: () => polygon(6, 0.62, 0, 30, 2),
-    Burst: () => polygon(12, 0.86, 0, 4, 2),
-    Diamond: () => polygon(4, 1, 0, 16),
-    // Two circular lobes meeting at a sharp notch, slightly rounded sides and a softened tip. Each lobe is three
-    // corners of a polygon around its circle, rounded (at s 0.5) exactly into arcs of that circle. The side corners
-    // take all the room the lobes leave (27.2), so no straight piece is left between a lobe and its side.
-    Heart: () => [[50, 21.02, 0, 0], [55.64, 4.94, 17.05, 0.5], [89.68, 2.82, 17.05, 0.5], [104.9, 33.32, 17.04, 0.5],
-      [80, 70, 27.2, 0.6], [50, 97.53, 2.92, 0.5], [20, 70, 27.2, 0.6], [-4.9, 33.32, 17.04, 0.5], [10.32, 2.82, 17.05, 0.5],
-      [44.36, 4.94, 17.05, 0.5]].map(([x, y, r, s]) => ({ x, y, r, s })),
-  };
-  // More presets: in the page's grid only after "More shapes" (the first rows stay as they were), in the Add
-  // dialog with the rest.
-  const MORE = {
-    Cat: () => [[9.191863, -1.723864, 5.667797], [36.397288, 20.947324, 6.801356], [63.602714, 20.947324, 6.801356],
-      [90.80814, -1.723864, 5.667797], [96.475937, 36.817156, 13.602713], [103.277293, 66.2897, 27.205426],
-      [72.671189, 99.162923, 24.938307], [27.328813, 99.162923, 24.938307], [-3.277291, 66.2897, 27.205426],
-      [3.524066, 36.817156, 13.602713]].map(([x, y, r]) => ({ x, y, r, s: 0.6 })),
-  };
-
-  // Ready-made paths that can't be expressed as one rounded polygon, so they aren't editable point by point.
-  const FIXED = {
-    // App icon head: outer silhouette + forehead + goatee fused into one contour (the launcher
-    // only reads the first contour), eye/whisker cut-outs dropped, simplified to 0.05 units.
-    Murine: 'M 9.38 59.57 L 10.34 60.94 L 11.76 62.66 L 13.13 64.1 L 14.6 65.44 L 14.91 65.86 L 15.1 66.52 L 15.08 67.03 L 14.82 67.67 L 14.38 68.15 L 15.92 69.39 L 17.76 70.65 L 19.7 71.81 L 22.13 73.01 L 24.4 74.01 L 28.59 75.67 L 32.42 78.33 L 34.36 79.44 L 36.36 80.43 L 37.27 80.84 L 37.71 80.54 L 38.2 80.38 L 38.72 80.38 L 39.36 80.6 L 39.88 81.05 L 40.21 81.62 L 40.97 82.54 L 42.8 84.45 L 44.66 86.14 L 46.74 87.76 L 47.54 87.52 L 48.25 87.62 L 48.73 87.87 L 49.92 88.77 L 51.22 87.83 L 51.68 87.58 L 52.36 87.48 L 53.26 87.7 L 55.15 86.26 L 56.9 84.65 L 58.61 82.8 L 59.67 81.51 L 60.04 80.87 L 60.45 80.53 L 60.93 80.32 L 61.63 80.28 L 62.14 80.43 L 62.64 80.78 L 64.15 80.17 L 67.84 78.1 L 71.36 75.7 L 77.07 73.41 L 80.63 71.67 L 83.17 70.11 L 84.98 68.81 L 85.74 68.16 L 85.3 67.67 L 85.02 67.03 L 85.02 66.33 L 85.19 65.84 L 85.49 65.41 L 86.97 64.07 L 88.32 62.63 L 89.42 61.29 L 90.59 59.67 L 90.48 59.53 L 85.59 57.99 L 85.14 57.72 L 84.9 57.47 L 84.63 57.03 L 84.51 56.52 L 84.53 56 L 84.71 55.51 L 86.56 53.36 L 87.65 51.76 L 84.31 51.74 L 83.64 51.54 L 83.11 51.1 L 82.84 50.65 L 82.7 49.96 L 82.78 49.45 L 83.17 48.5 L 83.53 48.1 L 83.82 47.91 L 86.26 47.22 L 88.31 46.38 L 90.26 45.29 L 92.07 43.96 L 93.54 42.63 L 95.04 40.98 L 96.35 39.19 L 97.49 37.26 L 98.5 35.01 L 99.27 32.65 L 99.72 30.45 L 99.97 27.99 L 99.95 25.51 L 99.67 23.3 L 99.13 21.14 L 98.41 19.28 L 97.46 17.53 L 96.1 15.78 L 94.66 14.4 L 92.83 13.12 L 90.84 12.15 L 88.94 11.57 L 86.96 11.27 L 84.73 11.28 L 82.53 11.64 L 80.18 12.4 L 77.94 13.47 L 75.65 14.93 L 73.69 16.46 L 71.85 18.13 L 69.18 21.06 L 66.81 24.13 L 66.41 24.48 L 65.92 24.69 L 65.4 24.74 L 65.05 24.69 L 64.56 24.49 L 64.27 24.28 L 63.94 23.87 L 63.79 23.55 L 63.7 22.83 L 62.22 23.17 L 58.96 24.1 L 55.59 25.25 L 52.37 24.93 L 49.72 24.84 L 47.44 24.92 L 44.26 25.26 L 41.24 24.21 L 36.13 22.81 L 35.93 23.6 L 35.5 24.14 L 34.9 24.48 L 34.21 24.56 L 33.7 24.44 L 33.12 24.07 L 31.48 21.93 L 30.05 20.22 L 27.44 17.58 L 26.51 16.75 L 24.97 15.5 L 23.55 14.49 L 22.07 13.58 L 20.74 12.89 L 19.14 12.22 L 17.48 11.7 L 15.79 11.37 L 14.31 11.24 L 12.8 11.27 L 11.35 11.47 L 9.91 11.85 L 8.5 12.38 L 6.57 13.45 L 4.99 14.68 L 3.45 16.3 L 2.18 18.13 L 1.22 20.14 L 0.48 22.5 L 0.11 24.71 L 0 27.18 L 0.1 28.91 L 0.33 30.63 L 0.75 32.56 L 1.27 34.23 L 2 36.07 L 2.77 37.62 L 3.68 39.1 L 4.7 40.53 L 5.8 41.85 L 6.83 42.93 L 9.11 44.85 L 10.77 45.91 L 12.33 46.68 L 13.96 47.29 L 16.14 47.92 L 16.56 48.25 L 16.79 48.53 L 17.21 49.53 L 17.26 50.06 L 17.09 50.75 L 16.65 51.32 L 16.2 51.6 L 15.51 51.76 L 12.27 51.78 L 12.29 51.93 L 13.3 53.26 L 15.22 55.55 L 15.39 56.04 L 15.42 56.56 L 15.29 57.06 L 15.02 57.51 L 14.78 57.75 L 14.34 58.02 Z',
-  };
+  // Presets come from _data/icon_shapes.yml, which the page embeds as JSON (see the comments there): an entry is
+  // one shape, or several under `shapes`. Kept as written and turned into shapes when used (see presetShapes);
+  // a single fixed outline also goes into FIXED, which saved icons refer to by name. Broken entries are
+  // dropped when the list is checked (see presetNames).
+  const presetData = (() => { try { return JSON.parse($('se-presets-data').textContent); } catch (e) { return {}; } })();
+  const PRESETS = {}, FIXED = {};
+  for (const p of Array.isArray(presetData.shapes) ? presetData.shapes : []) {
+    const name = typeof p?.name === 'string' ? p.name.trim() : '';
+    if (!name || Object.hasOwn(PRESETS, name)) continue;
+    if (!Array.isArray(p.shapes) && typeof p.path === 'string') { const d = cleanPath(p.path); if (!d) continue; FIXED[name] = d; }
+    PRESETS[name] = p;
+  }
 
   // ---------- shapes ----------
 
@@ -252,10 +225,62 @@
     const k = Math.min(kx, ky), cx = lockX ? 50 : bb.x + bb.width / 2, cy = lockY ? 50 : bb.y + bb.height / 2;
     return list.map((s) => transform(s, k, cx, cy, 50, 50));
   }
-  const presetShapes = (name) => (Object.hasOwn(FIXED, name)
-    ? [{ fixed: name, a: 1, x: 0, y: 0, mirror: 'none' }]
-    : [{ pts: fit((PRESETS[name] ?? MORE[name])()), mirror: 'none' }]);
-  const presetNames = [...Object.keys(PRESETS), ...Object.keys(FIXED), ...Object.keys(MORE)];
+  // One shape of a preset entry in the readable forms (an `icon:` entry is the editor's own format instead, read
+  // by cleanShape; see snapshot() on keeping the formats in step), as written: its corners (box, polygon or pts)
+  // or outline (path), in the 0-100 box or stretched onto the rectangle `at` = [x, y, width, height] like an
+  // image: scaled evenly to its area, then given a stretch (st) for its proportions, the same the editor's
+  // stretch handles make. A circle in a wide rectangle comes out an ellipse. Then turned by `angle`, if any.
+  // null if it's none of those.
+  function presetItem(p) {
+    const mirror = Object.hasOwn(MIRRORS, p.mirror) ? p.mirror : 'none';
+    const [ax, ay, w, h] = Array.isArray(p.at) ? p.at.map(Number) : [0, 0, 100, 100];
+    const g = Math.sqrt(w * h) / 100, cx = ax + w / 2, cy = ay + h / 2;
+    const extra = { mirror, ...(Math.abs(w - h) > 1e-9 ? { st: [w / (100 * g), 0, h / (100 * g), cx, cy] } : {}) };
+    let sh = null;
+    if (typeof p.path === 'string') {
+      const d = cleanPath(p.path);
+      sh = d && { path: d, a: g, x: cx - 50 * g, y: cy - 50 * g, ...extra };
+    } else {
+      const pts = Array.isArray(p.box) ? box(...p.box.map(Number)) : Array.isArray(p.polygon) ? polygon(...p.polygon.map(Number))
+        : Array.isArray(p.pts) ? p.pts.map(([x, y, r = 0, s = 0]) => ({ x: +x, y: +y, r: +r, s: +s })) : null;
+      sh = pts && { pts: pts.map((q) => ({ x: cx + (q.x - 50) * g, y: cy + (q.y - 50) * g, r: q.r * g, s: q.s })), ...extra };
+    }
+    // angle: then turned, in degrees clockwise (as the rotation slider), around the rectangle's centre.
+    const t = (+p.angle || 0) * Math.PI / 180, co = Math.cos(t), si = Math.sin(t);
+    return sh && t ? applyWorld(sh, [co, -si, si, co], cx - co * cx + si * cy, cy - si * cx - co * cy) : sh;
+  }
+  // A preset's shapes, ready to use. A single shape's corners are fitted to the box (with its mirrored copies and
+  // stretch, if any), a single outline stays as written; several shapes are fitted to the box together, keeping their
+  // places relative to each other. With fit: false, nothing is fitted. An icon (the editor's format) is used as stored.
+  function presetShapes(name) {
+    const p = PRESETS[name], keep = p.fit === false; // fit: false keeps every shape where it's written
+    if (p.icon) { // the editor's own data, as an edit link holds it: checked the same way, used as stored unless fit: true
+      const list = (Array.isArray(p.icon.shapes) ? p.icon.shapes : []).map(cleanShape);
+      if (!list.length || list.includes(null)) throw new Error('broken icon');
+      return p.fit === true ? fitted(list) : list;
+    }
+    if (Array.isArray(p.shapes)) return keep ? p.shapes.map(presetItem) : fitted(p.shapes.map(presetItem));
+    const sh = presetItem(p);
+    if (keep && sh.pts) return [sh];
+    if (sh.path) { const { path, ...rest } = sh; return [{ ...rest, fixed: name }]; }
+    return sh.mirror === 'none' && !sh.st ? [{ pts: fit(sh.pts), mirror: 'none' }] : fitted([sh]);
+  }
+  // A preset's picture: one path per outline (mirrored copies wind the other way, so one path would leave holes).
+  // Same scale as the canvas and cut off at the 0-100 box, as the launcher draws the icon: parts reaching outside
+  // it don't show (the inner svg clips them), and nothing draws over the tile.
+  function presetSvg(name, pad = 0) {
+    const paths = presetShapes(name).flatMap(copies).map((d) => `<path d="${d}"/>`).join('');
+    return `<svg viewBox="${-pad} ${-pad} ${100 + 2 * pad} ${100 + 2 * pad}" aria-hidden="true"><svg width="100" height="100" viewBox="0 0 100 100">${paths}</svg></svg>`;
+  }
+  // The presets in the data file's order, minus any that don't make a valid icon.
+  const presetNames = Object.keys(PRESETS).filter((name) => {
+    try {
+      const list = presetShapes(name);
+      return list.length > 0 && list.length <= 20 && list.every((sh) => cleanShape(sh) && (!sh.pts || !selfIntersects(sh.pts)))
+        && !iconPath(list).error;
+    } catch (e) { return false; }
+  });
+  const presetsShown = Number.isInteger(presetData.visible) ? presetData.visible : presetNames.length;
   const shapeName = (sh, i) => sh.fixed || `${sh.path ? 'Imported' : 'Shape'} ${i + 1}`;
 
   // ---------- merging ----------
@@ -332,8 +357,8 @@
   }
   // The icon as one outline for the launcher: { d, error, note }. A lone shape keeps its exact path
   // (curves included); anything else is flattened, merged and simplified to straight segments.
-  function iconPath() {
-    const all = shapes.flatMap(copies);
+  function iconPath(list = shapes) {
+    const all = list.flatMap(copies);
     if (all.length === 1) return { d: all[0] };
     let merged;
     try { merged = polygonClipping.union(...all.map((d) => [flatten(d)])); } catch (e) { return { d: all.join(' '), error: "These shapes couldn't be merged." }; }
@@ -377,6 +402,13 @@
 
   // Everything needed to resume editing. Undo, localStorage and edit links all go through this pair,
   // so a new piece of state only has to be added to snapshot() and restore().
+  // The shape format (what cleanShape accepts) is written in two more places. Presets in
+  // _data/icon_shapes.yml use it as is under `icon:`, read by cleanShape too, so they keep up on their
+  // own; but when a shape field changes, also check:
+  //  - the readable preset forms (box, polygon, pts, path, at, angle: see presetItem, its reverse readable()
+  //    for the YAML export, and the comments at the top of _data/icon_shapes.yml), if the change should be
+  //    writable there too;
+  //  - "Link format" in icon-shapes.html, which documents this JSON for hand-written links.
   const snapshot = () => ({ shapes, active, groups, ...(multi.size > 1 && { multi: [...multi] }) });
   // Also reads edit links, i.e. anything anyone can type into a URL: rebuild every field, keep nothing unchecked.
   function cleanShape(s) {
@@ -1217,7 +1249,7 @@
 
   // ---------- dialogs (same markup and styles as the site's contact dialog) ----------
 
-  function dialog(id) {
+  function dialog(id, onClose) {
     const box = $(id);
     document.body.append(box); // out of <main>, so it covers the nav bar like the contact dialog does
     let opener = null;
@@ -1229,6 +1261,7 @@
         box.querySelector('button:not(:disabled):not([hidden]):not([data-close])')?.focus();
       },
       close() {
+        onClose?.();
         box.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
         opener?.focus();
@@ -1238,22 +1271,124 @@
     box.addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.stopPropagation(); d.close(); } });
     return d;
   }
-  const shareDialog = dialog('se-share'), addDialog = dialog('se-add');
-  $('se-share-open').onclick = shareDialog.open;
+  // Easter egg: typing "devmode" while Share is open shows a row that copies the icon as data. The key listener
+  // only exists while the dialog is open. Matching is KMP: on a wrong key, devAt falls back to the longest part of
+  // the word that's still typed (devFail), so "devmdevmode" works, at O(1) amortised per key.
+  const DEV = [68, 69, 86, 77, 79, 68, 69]; // keyCodes of d e v m o d e
+  const devFail = DEV.map(() => 0);
+  for (let i = 1, k = 0; i < DEV.length; i++) {
+    while (k && DEV[i] !== DEV[k]) k = devFail[k - 1];
+    if (DEV[i] === DEV[k]) k++;
+    devFail[i] = k;
+  }
+  let devAt = 0;
+  const devKeys = (e) => {
+    if (e.repeat) return;
+    while (devAt && e.keyCode !== DEV[devAt]) devAt = devFail[devAt - 1];
+    if (e.keyCode === DEV[devAt]) devAt++;
+    if (devAt === DEV.length) { devAt = 0; $('se-dev').hidden = false; }
+  };
+  const shareDialog = dialog('se-share', () => document.removeEventListener('keydown', devKeys)), addDialog = dialog('se-add');
+  $('se-share-open').onclick = () => { devAt = 0; document.addEventListener('keydown', devKeys); shareDialog.open(); };
 
+  // What the devmode row copies: the icon's shapes in the editor's format (what edit links and `icon:` presets
+  // hold), rounded the way presets want them (corners 2 decimals, stretches 4) and without the editor's ids.
+  const rd = (v, d) => +(+v).toFixed(d);
+  const iconData = () => ({ shapes: shapes.map(({ id, ...sh }) => ({
+    ...sh,
+    ...(sh.pts && { pts: sh.pts.map((q) => ({ x: rd(q.x, 2), y: rd(q.y, 2), r: rd(q.r, 2), s: rd(q.s, 2) })) }),
+    ...(sh.a !== undefined && { a: rd(sh.a, 4), x: rd(sh.x, 2), y: rd(sh.y, 2), ang: rd(sh.ang, 2) }),
+    ...(sh.st && { st: sh.st.map((v) => rd(v, 4)) }),
+    rot: rd(sh.rot || 0, 2),
+  })) });
+  // YAML, block style, with anything holding only plain values (a corner, a stretch) on one line in flow style.
+  const plain = (v) => v === null || typeof v !== 'object';
+  const yScalar = (v) => (typeof v !== 'string' ? String(v)
+    : /^[a-z]+$/i.test(v) && !/^(yes|no|on|off|true|false|null|y|n)$/i.test(v) ? v : JSON.stringify(v));
+  const yFlow = (v) => (Array.isArray(v) ? `[${v.map(yScalar).join(', ')}]` : `{${Object.entries(v).map(([k, x]) => `${k}: ${yScalar(x)}`).join(', ')}}`);
+  const yaml = (v, pad) => {
+    if (plain(v)) return ' ' + yScalar(v);
+    if (Object.values(v).every(plain)) return ' ' + yFlow(v);
+    if (Array.isArray(v)) return v.map((x) => `\n${pad}-` + yaml(x, pad + '  ').replace(/^\n\s*/, ' ')).join('');
+    return Object.entries(v).map(([k, x]) => `\n${pad}${k}:` + yaml(x, pad + '  ')).join('');
+  };
+  const json = (v) => JSON.stringify(v).replace(/":|,(?=["\d-])/g, (m) => m + ' '); // paths hold neither : nor ,
+  const PRESET = '  - name: My shape\n    icon:';
+  // The YAML button: the readable form the other entries use (pts or path per shape, with `at` and `angle` for a
+  // stretch or turn, `fit: false` only if the icon doesn't already fill the box the way presets get fitted), or
+  // the `icon:` form, which holds anything, for the one case the readable form can't: an outline stretched along
+  // other directions than its own turn.
+  // A shape in the readable form, the reverse of presetItem: its stretch st (symmetric) is a stretch d1 x d2 along
+  // axes turned by phi, so the shape is the same corners or outline turned back by phi, stretched onto the
+  // rectangle `at`, then turned by `angle` = phi. at is left out when it's the box itself. null if only `icon:`
+  // can hold the shape.
+  function readable(sh) {
+    const [sxx = 1, sxy = 0, syy = 1, cx = 50, cy = 50] = sh.st || [];
+    // Corners can be turned back freely, so phi is the stretch's own direction (0 along the axes); an outline's
+    // path is fixed, so phi has to be its angle, and its stretch has to run along that.
+    const phi = sh.pts ? (Math.abs(sxy) < 1e-9 ? 0 : (Math.atan((2 * sxy) / (sxx - syy)) / 2) * 180 / Math.PI) : sh.ang || 0;
+    const t = phi * Math.PI / 180, co = Math.cos(t), si = Math.sin(t);
+    const d1 = sxx * co * co + 2 * sxy * si * co + syy * si * si, d2 = sxx * si * si - 2 * sxy * si * co + syy * co * co;
+    if (Math.abs((syy - sxx) * si * co + sxy * (co * co - si * si)) > 1e-6) return null;
+    const turn = (x, y) => [co * x - si * y, si * x + co * y];
+    // Where the 0-100 box's centre lands: the rectangle's centre. For corners (drawn at scale 1, unturned around
+    // the stretch's centre), c + R D (50 - c); for an outline (scale a, turned around its own centre f at o),
+    // c + S (o - c) + R D a (50 - f).
+    let g = 1, mx, my, item;
+    if (sh.pts) {
+      const [ux, uy] = turn(d1 * (50 - cx), d2 * (50 - cy));
+      [mx, my] = [cx + ux, cy + uy];
+      item = { pts: sh.pts.map((q) => { const dx = q.x - cx, dy = q.y - cy;
+        return { x: cx + co * dx + si * dy, y: cy - si * dx + co * dy, r: q.r, s: q.s }; }) };
+    } else {
+      g = sh.a;
+      const f = outlineC(sh), ox = f.x * g + sh.x - cx, oy = f.y * g + sh.y - cy, [ux, uy] = turn(d1 * g * (50 - f.x), d2 * g * (50 - f.y));
+      [mx, my] = [cx + sxx * ox + sxy * oy + ux, cy + sxy * ox + syy * oy + uy];
+      item = { path: sh.path ?? FIXED[sh.fixed] };
+    }
+    const w = 100 * g * d1, h = 100 * g * d2, at = [mx - w / 2, my - h / 2, w, h].map((v) => rd(v, 3));
+    const angle = rd(((phi % 360) + 540) % 360 - 180, 2);
+    return { ...item, at: at.join() === '0,0,100,100' ? null : at, angle: angle || null, mirror: sh.mirror };
+  }
+  function presetYaml() {
+    const items = shapes.map(readable);
+    if (items.includes(null)) return PRESET + yaml(iconData(), '      ') + '\n';
+    // Presets get fitted to the box, except a single outline: say fit: false if that would move this icon.
+    const b = measure(shapes.flatMap(copies).join(' '));
+    const fits = (items.length === 1 && items[0].path) || (Math.abs(Math.max(b.width, b.height) - 100) < 0.1
+      && Math.abs(b.x + b.width / 2 - 50) < 0.1 && Math.abs(b.y + b.height / 2 - 50) < 0.1);
+    // One shape's lines; corners as [x, y, size, smoothing], two per line, lined up under the first.
+    const lines = (it, pad) => {
+      const rows = [];
+      if (it.pts) for (let i = 0; i < it.pts.length; i += 2) rows.push(it.pts.slice(i, i + 2).map((q) => `[${[rd(q.x, 2), rd(q.y, 2), rd(q.r, 2), rd(q.s, 2)].join(', ')}]`).join(', '));
+      return (it.pts ? `${pad}pts: [${rows.join(',\n' + ' '.repeat(pad.length + 6))}]\n` : `${pad}path: "${it.path}"\n`)
+        + (it.at ? `${pad}at: [${it.at.join(', ')}]\n` : '') + (it.angle ? `${pad}angle: ${it.angle}\n` : '')
+        + (it.mirror !== 'none' ? `${pad}mirror: ${it.mirror}\n` : '');
+    };
+    return '  - name: My shape\n' + (fits ? '' : '    fit: false\n') + (items.length === 1 ? lines(items[0], '    ')
+      : '    shapes:\n' + items.map((it) => '      -' + lines(it, '        ').slice(7)).join(''));
+  }
   const copyText = async (text) => {
     try { await navigator.clipboard.writeText(text); } catch (e) {
       const t = Object.assign(document.createElement('textarea'), { value: text });
       document.body.append(t); t.select(); document.execCommand('copy'); t.remove();
     }
   };
-  const shareTexts = { edit: () => links.edit, import: () => links.import, path: () => $('se-out').value };
+  const shareTexts = {
+    edit: () => links.edit, import: () => links.import, path: () => $('se-out').value,
+    json: () => JSON.stringify(iconData()),
+    yaml: presetYaml,
+    // One shape per line group, its corners one per line, like the entries in _data/icon_shapes.yml.
+    yamljson: () => `${PRESET} {"shapes": [\n` + iconData().shapes.map(({ pts, ...rest }) => (pts
+      ? `      {"pts": [${pts.map(json).join(',\n               ')}],\n       ${json(rest).slice(1, -1)}}`
+      : `      ${json(rest)}`)).join(',\n') + ']}\n',
+  };
   $('se-share').querySelectorAll('[data-copy]').forEach((card) => {
     const label = card.querySelector('.se-card-sub'), text = label.textContent;
     card.onclick = async (e) => {
       e.preventDefault(); // the Edit link entry is a link: copy, don't follow it
       await copyText(shareTexts[card.dataset.copy]());
-      label.textContent = 'Copied to the clipboard';
+      label.textContent = card.dataset.done || 'Copied to the clipboard';
       setTimeout(() => (label.textContent = text), 1500);
     };
   });
@@ -1267,15 +1402,16 @@
   // ---------- presets ----------
 
   // A preset in the page's grid replaces the whole icon; the Add dialog's grid (see renderAddGrid) adds shapes.
-  for (const name of presetNames) {
+  presetNames.forEach((name, k) => {
     const b = document.createElement('button');
     b.type = 'button';
     b.className = 'se-preset';
-    if (Object.hasOwn(MORE, name)) b.hidden = b.dataset.more = true;
-    b.innerHTML = `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="${presetShapes(name).map(shapePath).join(' ')}"/></svg><span>${name}</span>`;
+    if (k >= presetsShown) b.hidden = b.dataset.more = true;
+    b.innerHTML = `${presetSvg(name)}<span>${name}</span>`;
     b.onclick = () => { loadIcon(presetShapes(name)); svg.scrollIntoView({ behavior: 'smooth', block: 'center' }); };
     $('se-presets').append(b);
-  }
+  });
+  $('se-presets-more').hidden = presetNames.length <= presetsShown;
   $('se-presets-more').onclick = (e) => {
     const open = e.currentTarget.getAttribute('aria-expanded') !== 'true';
     for (const b of $('se-presets').querySelectorAll('[data-more]')) b.hidden = !open;
@@ -1534,7 +1670,7 @@
         ${tileSvg(all + `<path d="${d}"/>`)}<span>${name} ${k + 1}</span></button>`).join('');
     } else {
       tiles.innerHTML = presetNames.map((name) => `<button type="button" class="se-preset" data-key="${name}" aria-pressed="false">
-        ${tileSvg(`<path d="${presetShapes(name).map(shapePath).join(' ')}"/>`)}<span>${name}</span></button>`).join('');
+        ${presetSvg(name, 4)}<span>${name}</span></button>`).join('');
     }
     for (const b of tiles.children) b.disabled = full;
     refreshAddUi();
@@ -1683,7 +1819,7 @@
   openEditLink();
 
   // one self-check, runs on every load; the console says if the output format ever regresses
-  for (const sample of [buildPath(fit(PRESETS['Cookie 7']())), ...Object.values(FIXED), iconPath().d]) {
+  for (const sample of [...presetNames.flatMap((n) => presetShapes(n).map(shapePath)), iconPath().d]) {
     console.assert(/^M [\d. -]+( [LC] [\d. -]+)* Z$/.test(sample) && !/[eE]|--|\.\d+\./.test(sample),
       'shape-editor: path not in launcher-safe format', sample);
   }
