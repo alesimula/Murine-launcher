@@ -77,6 +77,8 @@ noindex: true    # and out of search engines
 .se-panel .se-size-warn.active { color: var(--md-tertiary); }
 .se-handle.squeezed circle:not(.se-hit) { stroke: var(--md-tertiary);
   fill: color-mix(in srgb, var(--md-tertiary) 35%, var(--md-surface-container-lowest)); }
+/* filled means selected (as above), red means a warning: both, a solid red dot */
+.se-handle.squeezed.selected circle:not(.se-hit), .se-handle.squeezed:focus-visible circle:not(.se-hit) { fill: var(--md-tertiary); }
 .se-panel input[type=number], .se-panel select { width: 5.5em; font: inherit; padding: 2px 6px;
   color: var(--md-on-surface); background: var(--md-surface-container); border: 1px solid var(--md-outline-variant);
   border-radius: var(--md-shape-xs); }
@@ -301,8 +303,10 @@ noindex: true    # and out of search engines
       <div id="se-help" class="se-help" role="note" hidden>
         <!-- Keys and Ctrl only where there's likely a keyboard: a primary pointer that can hover (mouse, trackpad). -->
         <p><strong>Edit mode:</strong> drag a point to move it, drag a <strong>+</strong> to add one.
-          <span class="se-kb">With a point selected, arrow keys nudge it, Delete removes it, Esc deselects.</span>
-          <span class="se-touch">Tap a point to type its position or remove it; tap empty space to deselect.</span></p>
+          <span class="se-kb">With a point selected, arrow keys nudge it, Delete removes it, Esc deselects.
+            Ctrl+click (or long-press) more points to select several: they move, nudge and delete together.</span>
+          <span class="se-touch">Tap a point to type its position or remove it; tap empty space to deselect.
+            Long-press more points to select several: they move together.</span></p>
         <p><strong>Move mode:</strong> drag the shape, or a corner to resize it; <span class="se-kb">click a corner to type its
           position. Arrow keys move the shape, Delete removes it.</span><span class="se-touch">tap a corner to type its position.</span></p>
         <p><strong>Several shapes:</strong> <span class="se-kb">Ctrl+click (or long-press) a shape or its card to move them

@@ -376,6 +376,24 @@
   let turnTyping = false; // the rotation pill shows a number field instead of the slider
   let pillView = 'pos'; // which half of the Move pill is open: the centre point's position, or 'rot'ation
   let pickedCorner = -1; // Move mode: the selected resize corner (0 top left, clockwise), -1 for none
+  // Edit mode's selected corners: sel is the last one picked (the one the pill and keyboard focus follow), selSet
+  // all of them, sel included. A tap selects one corner; Ctrl/Cmd+click or a long press adds or drops one.
+  let selSet = new Set();
+  const selectOnly = (i) => { sel = i; selSet = new Set(i >= 0 ? [i] : []); };
+  const selList = () => [...selSet].sort((a, b) => a - b);
+  function toggleCorner(i) {
+    if (selSet.has(i)) { selSet.delete(i); if (sel === i) sel = selSet.size ? selList()[selSet.size - 1] : -1; }
+    else { selSet.add(i); sel = i; }
+  }
+  // The middle of the selected corners' box, as drawn: what the X/Y pill shows and sets for several corners.
+  const selCentre = () => { const w = selList().map((i) => wpt(pts[i])), xs = w.map((q) => q.x), ys = w.map((q) => q.y);
+    return { x: (Math.min(...xs) + Math.max(...xs)) / 2, y: (Math.min(...ys) + Math.max(...ys)) / 2 }; };
+  // Moves every selected corner by (dx, dy), as drawn, from where `from` (index -> drawn point) says it started.
+  const startOf = () => new Map(selList().map((i) => [i, { ...wpt(pts[i]) }])); // a copy: wpt may hand back the point itself
+  const moveCorners = (dx, dy, from = startOf()) => {
+    for (const [i, w] of from) setPoint(i, { x: clamp(w.x + dx, view.lo, view.hi), y: clamp(w.y + dy, view.lo, view.hi) });
+  };
+  const removeCorners = () => { for (const i of selList().reverse()) pts.splice(i, 1); };
   let pts = null, fixed = false; // shortcuts into shapes[active]: its points, or whether its outline is fixed
   // Several shapes picked from their cards (long press or Ctrl+click) are moved, resized, stretched and turned
   // together, in Move mode only. groups remembers each picked set's own stretch and angle, by the shapes' ids,
@@ -473,8 +491,11 @@
     shapes = list;
     groups = (Array.isArray(o.groups) ? o.groups.slice(0, 50) : []).map(cleanGroup).filter(Boolean);
     active = Number.isInteger(o.active) ? o.active : 0;
-    sel = -1; multi = new Set(Array.isArray(o.multi) ? o.multi.filter((i) => Number.isInteger(i) && i >= 0) : []);
+    selectOnly(-1); multi = new Set(Array.isArray(o.multi) ? o.multi.filter((i) => Number.isInteger(i) && i >= 0) : []);
     sync(); // drops a multi that doesn't fit the shapes
+    // Undo steps also carry the selected corners (see undoState): back in Edit mode with them selected.
+    const cs = Array.isArray(o.corners) && pts && !multi.size ? o.corners.filter((i) => Number.isInteger(i) && i >= 0 && i < pts.length) : [];
+    if (cs.length) { mode = 'edit'; selSet = new Set(cs); sel = cs.includes(o.sel) ? o.sel : cs[cs.length - 1]; sync(); }
     return true;
   }
 
@@ -515,16 +536,19 @@
   }
   const grid = { show: true, snap: true, step: 5 };
   const snap = (v) => clamp(grid.snap ? Math.round(v / grid.step) * grid.step : +v.toFixed(2), view.lo, view.hi);
+  // An undo step: the icon plus the selected corners, so undo and redo bring the selection back too. Only undo
+  // keeps those; saves and edit links don't.
+  const undoState = () => JSON.stringify({ ...snapshot(), ...(sel >= 0 && mode === 'edit' && { corners: selList(), sel }) });
   const checkpoint = () => {
     importNote = '';
     turnFrom = null; // any other edit ends a rotation-slider drag (see the slider's input handler)
-    undo.push(JSON.stringify(snapshot()));
+    undo.push(undoState());
     if (undo.length > 100) undo.shift();
     redo.length = 0; // a new edit starts a new branch, so there's nothing left to redo
   };
   // Whole icon (presets, Reset) or just the selected shape (Generate).
-  const loadIcon = (list) => { checkpoint(); shapes = list; active = 0; sel = -1; multi = new Set(); mode = 'edit'; sync(); render(); };
-  const replaceShape = (sh) => { checkpoint(); shapes[active] = sh; sel = -1; multi = new Set(); mode = 'edit'; sync(); render(); };
+  const loadIcon = (list) => { checkpoint(); shapes = list; active = 0; selectOnly(-1); multi = new Set(); mode = 'edit'; sync(); render(); };
+  const replaceShape = (sh) => { checkpoint(); shapes[active] = sh; selectOnly(-1); multi = new Set(); mode = 'edit'; sync(); render(); };
 
   // ---------- Move mode's selection: the picked group, or the selected shape ----------
 
@@ -649,8 +673,11 @@
     // Neighbours whose rounding the selected corner is currently eating into.
     const squeezed = new Set();
     if (pts && sel >= 0) {
-      const now = cornerSizes(pts), alone = cornerSizes(withSize(sel, 0));
-      for (const j of neighbours(sel)) if (now[j] < alone[j] - 0.01) squeezed.add(j);
+      const now = cornerSizes(pts);
+      for (const i of selSet) {
+        const alone = cornerSizes(withSize(i, 0));
+        for (const j of neighbours(i)) if (now[j] < alone[j] - 0.01) squeezed.add(j);
+      }
     }
 
     const handles = $('se-handles'), adders = $('se-adders'), shown = pts && mode === 'edit' ? pts.map(wpt) : [];
@@ -674,7 +701,7 @@
       a.querySelector('path').setAttribute('d', `M${m.x - 1.4} ${m.y}h2.8M${m.x} ${m.y - 1.4}v2.8`);
       h.dataset.i = i;
       h.setAttribute('aria-label', `Point ${i + 1}`);
-      h.setAttribute('class', 'se-handle' + (i === sel ? ' selected' : '') + (squeezed.has(i) ? ' squeezed' : ''));
+      h.setAttribute('class', 'se-handle' + (selSet.has(i) ? ' selected' : '') + (squeezed.has(i) ? ' squeezed' : ''));
       for (const c of h.children) { c.setAttribute('cx', p.x); c.setAttribute('cy', p.y); }
     });
     if (focused && sel >= 0 && document.activeElement !== handles.children[sel]) handles.children[sel]?.focus();
@@ -723,7 +750,7 @@
     const editable = !!pts;
     $('se-corner-set').disabled = !editable;
     // Top-left pill: the selected point (Edit mode) or the selected corner (Move mode).
-    const at = moving ? (pickedCorner >= 0 && activeBox ? boxHandles(activeBox)[pickedCorner] : null) : (pts && sel >= 0 ? wpt(pts[sel]) : null);
+    const at = moving ? (pickedCorner >= 0 && activeBox ? boxHandles(activeBox)[pickedCorner] : null) : (pts && sel >= 0 ? (selSet.size > 1 ? selCentre() : wpt(pts[sel])) : null);
     $('se-point-pill').hidden = !at;
     // In its place, with no corner selected in Move mode: the shape's rotation.
     $('se-rot-pill').hidden = !moving || !!at;
@@ -739,24 +766,27 @@
     }
     if (at) {
       $('se-x').value = fmt(at.x); $('se-y').value = fmt(at.y);
-      $('se-point-pill').setAttribute('aria-label', moving ? (pickedCorner < 4 ? 'Corner' : 'Side') : `Point ${sel + 1}`);
+      $('se-point-pill').setAttribute('aria-label', moving ? (pickedCorner < 4 ? 'Corner' : 'Side') : (selSet.size > 1 ? `${selSet.size} points` : `Point ${sel + 1}`));
       // A side handle only has the one coordinate it stretches.
       $('se-x').parentElement.hidden = moving && pickedCorner >= 4 && sideAxis(pickedCorner) !== 'x';
       $('se-y').parentElement.hidden = moving && pickedCorner >= 4 && sideAxis(pickedCorner) !== 'y';
       $('se-remove').hidden = moving;
-      $('se-remove').disabled = moving || pts.length <= 3;
+      $('se-remove').disabled = moving || pts.length - selSet.size < 3;
     }
     $('se-fixed-note').hidden = editable;
     if (editable) {
-      const cur = pts[Math.max(sel, 0)];
-      $('se-corner-legend').textContent = sel >= 0 ? `Corner ${sel + 1}` : 'All corners';
+      // The corners the sliders set: the selected ones, or all. Values they don't share read "mixed", with the
+      // slider at the first one's; moving it gives them all that value.
+      const group = sel >= 0 ? selList() : pts.map((_, i) => i), cur = pts[group[0]];
+      const same = (k) => group.every((i) => Math.abs(pts[i][k] - cur[k]) < 0.005);
+      $('se-corner-legend').textContent = sel < 0 ? 'All corners' : group.length > 1 ? `${group.length} corners` : `Corner ${sel + 1}`;
       // The slider ends where the shape stops changing: two corners sharing an edge split it, so with every
       // corner the same size each one saturates at half its shorter edge; a lone corner can take more.
       const reach = (i) => Math.min(dist(pts[i], pts[(i + pts.length - 1) % pts.length]), dist(pts[i], pts[(i + 1) % pts.length]));
-      const maxSize = sel >= 0 ? reach(sel) : Math.max(...pts.map((_, i) => reach(i) / 2));
+      const maxSize = sel < 0 ? Math.max(...pts.map((_, i) => reach(i) / 2)) : Math.max(...group.map(reach));
       $('se-size').max = Math.max(0.1, Math.ceil(maxSize * 10) / 10); // set before value, which the browser clamps to it
-      $('se-size').value = cur.r; $('se-size-v').textContent = fmt(Math.min(cur.r, +$('se-size').max));
-      const max = +$('se-size').max, zone = sel >= 0 ? squeezeStart(sel, max) : max, hasZone = zone < max - 0.05;
+      $('se-size').value = cur.r; $('se-size-v').textContent = same('r') ? fmt(Math.min(cur.r, +$('se-size').max)) : 'mixed';
+      const max = +$('se-size').max, zone = group.length === 1 && sel >= 0 ? squeezeStart(sel, max) : max, hasZone = zone < max - 0.05;
       $('se-size-track').classList.toggle('has-zone', hasZone);
       $('se-size-track').style.setProperty('--squeeze', zone / max);
       // Only the text changes while the slider is dragged (the zone depends on the neighbours, not on this
@@ -766,7 +796,7 @@
       warn.classList.toggle('active', squeezed.size > 0);
       warn.textContent = squeezed.size ? 'Shrinking the highlighted neighbouring corners'
         : 'Past the red mark it also shrinks the neighbouring corners';
-      $('se-smooth').value = Math.round(cur.s * 100); $('se-smooth-v').textContent = Math.round(cur.s * 100) + '%';
+      $('se-smooth').value = Math.round(cur.s * 100); $('se-smooth-v').textContent = same('s') ? Math.round(cur.s * 100) + '%' : 'mixed';
       $('se-apply-all').disabled = sel < 0;
     }
     $('se-undo').disabled = undo.length === 0;
@@ -822,7 +852,7 @@
     checkpoint();
     for (const i of [...list].sort((a, b) => b - a)) shapes.splice(i, 1);
     active = Math.min(...list); multi = new Set();
-    sel = -1; sync(); render();
+    selectOnly(-1); sync(); render();
   }
   const deleteShape = (i) => deleteShapes([i]);
   // Picking several cards: a long press or Ctrl/Cmd+click starts (with the selected shape, unless
@@ -842,7 +872,7 @@
       if (shapes[i].mirror !== 'none') return shake();
       multi.add(i);
     }
-    sel = -1; pickedCorner = -1; sync(); render();
+    selectOnly(-1); pickedCorner = -1; sync(); render();
   }
   let cardPress = null, cardLong = false;
   $('se-cards').addEventListener('pointerdown', (e) => {
@@ -860,8 +890,8 @@
     const i = +b.dataset.card;
     if (b.dataset.act === 'pick' && cardLong) { cardLong = false; return; } // the long press already picked it
     if (b.dataset.act === 'pick' && (multi.size > 1 || e.ctrlKey || e.metaKey)) toggleMulti(i);
-    else if (b.dataset.act === 'pick') { active = i; sel = -1; sync(); render(); } // keeps the mode, like a tap on the canvas
-    else if (b.dataset.act === 'edit' || b.dataset.act === 'move') { mode = b.dataset.act; sel = -1; sync(); render(); }
+    else if (b.dataset.act === 'pick') { active = i; selectOnly(-1); sync(); render(); } // keeps the mode, like a tap on the canvas
+    else if (b.dataset.act === 'edit' || b.dataset.act === 'move') { mode = b.dataset.act; selectOnly(-1); sync(); render(); }
     else if (b.dataset.act === 'del') deleteShape(i); else if (b.dataset.act === 'add') { picked.clear(); renderAddGrid(); addDialog.open(); }
   });
 
@@ -918,9 +948,9 @@
     if (tap === null) return;
     if (e.ctrlKey || e.metaKey) { if (tap >= 0) toggleMulti(tap); tap = null; return; } // like on the cards
     // Outside the group's box, a tap ends picking several: back to the tapped shape, or to the selected one.
-    if (multi.size > 1) { multi = new Set(); if (tap >= 0) active = tap; sel = -1; sync(); tap = null; return render(); }
-    if (tap >= 0 && tap !== active) { active = tap; sel = -1; mode = shapes[tap].pts ? mode : 'move'; sync(); render(); }
-    else if (sel >= 0 || pickedCorner >= 0) { sel = -1; pickedCorner = -1; render(); }
+    if (multi.size > 1) { multi = new Set(); if (tap >= 0) active = tap; selectOnly(-1); sync(); tap = null; return render(); }
+    if (tap >= 0 && tap !== active) { active = tap; selectOnly(-1); mode = shapes[tap].pts ? mode : 'move'; sync(); render(); }
+    else if (sel >= 0 || pickedCorner >= 0) { selectOnly(-1); pickedCorner = -1; render(); }
     tap = null;
   });
 
@@ -932,9 +962,13 @@
   let hold = null;
   const letGo = () => { if (hold) clearTimeout(hold.timer); hold = null; };
   svg.addEventListener('pointerdown', (e) => {
-    const pick = e.ctrlKey || e.metaKey, g = pick ? null : grabAt(e.clientX, e.clientY, e.pointerType === 'touch');
-    tap = g ? null : shapeAt(e);
+    const pick = e.ctrlKey || e.metaKey, g0 = grabAt(e.clientX, e.clientY, e.pointerType === 'touch'), g = pick ? null : g0;
     letGo();
+    if (pick && mode === 'edit' && g0?.point !== undefined) { // Ctrl/Cmd+click on a corner adds or drops it
+      e.preventDefault(); svg.focus({ preventScroll: true });
+      tap = null; toggleCorner(g0.point); return render();
+    }
+    tap = g ? null : shapeAt(e);
     const under = g ? (g.move ? shapeAt(e) : -1) : tap;
     if (!pick && under >= 0 && (multi.size > 1 || under !== active)) {
       hold = { x: e.clientX, y: e.clientY, timer: setTimeout(() => {
@@ -945,6 +979,7 @@
       }, 450) };
     }
     if (!g) return;
+    const redoKept = redo.slice(); // a press that changes nothing gives it back (see endDrag)
     checkpoint();
     const at = toSvg(e);
     if (g.point !== undefined || g.add !== undefined) {
@@ -952,10 +987,24 @@
         const a = pts[g.add], m = lerp(wpt(a), wpt(pts[(g.add + 1) % pts.length]), 0.5);
         pts.splice(g.add + 1, 0, { x: 0, y: 0, r: a.r, s: a.s });
         setPoint(g.add + 1, { x: snap(m.x), y: snap(m.y) });
-        sel = g.add + 1;
-      } else sel = g.point;
-      const w = wpt(pts[sel]);
-      drag = { kind: 'point', dx: w.x - at.x, dy: w.y - at.y }; // the point keeps its distance from the finger
+        selectOnly(g.add + 1);
+        drag = { kind: 'point', i: sel };
+      } else {
+        // A press leaves the selection as it is until it's clear what it does: a tap without moving selects just
+        // this corner (see endDrag), a drag selects it once it starts moving (or, on one of several selected
+        // corners, moves them all), and a long press adds or drops it.
+        const i = g.point, before = { sel, set: new Set(selSet) }, keep = selSet.has(i) && selSet.size > 1;
+        drag = { kind: 'point', i, from: at, start: keep ? startOf() : null, pending: !selSet.has(i) };
+        hold = { x: e.clientX, y: e.clientY, timer: setTimeout(() => {
+          hold = null; drag = null;
+          restore(JSON.parse(undo.pop())); // takes back the press (and any small move it made)
+          sel = before.sel; selSet = before.set;
+          navigator.vibrate?.(15);
+          toggleCorner(i); render();
+        }, 450) };
+      }
+      const w = wpt(pts[drag.i]);
+      Object.assign(drag, { dx: w.x - at.x, dy: w.y - at.y, px: e.clientX, py: e.clientY }); // the point keeps its distance from the finger
     } else if (g.move) {
       pickedCorner = -1; // grabbing the shape itself lets go of the handle, back to the rotation pill
       drag = { kind: 'move', from: at, base: selBase() };
@@ -968,6 +1017,7 @@
       }
       pickedCorner = g.resize; // a tap selects the handle; a drag resizes too
     }
+    drag.redoKept = redoKept;
     svg.setPointerCapture(e.pointerId);
     e.preventDefault(); // this also stops the browser focusing the canvas, so do it here:
     svg.focus({ preventScroll: true }); // Delete, arrows and Esc then act on what was just grabbed
@@ -978,7 +1028,18 @@
     if (!drag) return;
     const p = toSvg(e);
     if (drag.kind === 'point') {
-      setPoint(sel, { x: snap(p.x + drag.dx), y: snap(p.y + drag.dy) });
+      if (Math.hypot(e.clientX - drag.px, e.clientY - drag.py) > 4) drag.moved = true;
+      if (drag.pending) {
+        if (!drag.moved) return;
+        selectOnly(drag.i); drag.pending = false;
+        // The undo step was taken at the press, before this corner got selected: undo should come back to it.
+        const top = JSON.parse(undo[undo.length - 1]);
+        undo[undo.length - 1] = JSON.stringify({ ...top, corners: [drag.i], sel: drag.i });
+      }
+      // Several move by whole grid steps from where they started, keeping their places relative to each other.
+      const step = (v) => (grid.snap ? Math.round(v / grid.step) * grid.step : v);
+      if (drag.start) moveCorners(step(p.x - drag.from.x), step(p.y - drag.from.y), drag.start);
+      else setPoint(sel, { x: snap(p.x + drag.dx), y: snap(p.y + drag.dy) });
     } else if (drag.kind === 'stretch') {
       // The side moves by whole grid steps when snapping (like a moved shape), so dragging it back to where
       // it started gives exactly the shape it started as.
@@ -997,12 +1058,20 @@
     }
     render();
   });
-  const endDrag = () => { if (drag) { drag = null; render(); } };
+  const endDrag = () => {
+    if (!drag) return;
+    if (drag.kind === 'point' && (drag.start || drag.pending) && !drag.moved) selectOnly(drag.i); // a tap: just this corner
+    // A press that changed nothing (a tap, or a drag back to where it started) leaves no undo step behind.
+    if (undo.length && JSON.stringify(JSON.parse(undo[undo.length - 1]).shapes) === JSON.stringify(shapes)) {
+      undo.pop(); redo.push(...drag.redoKept);
+    }
+    drag = null; render();
+  };
   for (const t of ['pointerup', 'pointercancel']) svg.addEventListener(t, () => { letGo(); endDrag(); });
-  svg.addEventListener('contextmenu', (e) => { if (shapeAt(e) >= 0) e.preventDefault(); });
+  svg.addEventListener('contextmenu', (e) => { if (shapeAt(e) >= 0 || grabAt(e.clientX, e.clientY, true)) e.preventDefault(); });
   svg.addEventListener('focusin', (e) => {
     const h = e.target.closest('[data-i]');
-    if (h && +h.dataset.i !== sel) { sel = +h.dataset.i; render(); }
+    if (h && +h.dataset.i !== sel) { selectOnly(+h.dataset.i); render(); }
   });
 
   // A shape can't go below 3 points: shake the canvas rather than silently ignore the key.
@@ -1045,15 +1114,16 @@
     } else if (sel < 0) return;
     else if (mv) {
       checkpoint();
-      const w = wpt(pts[sel]);
-      setPoint(sel, { x: snap(w.x + mv[0] * step), y: snap(w.y + mv[1] * step) });
+      if (selSet.size > 1) moveCorners(mv[0] * step, mv[1] * step); // several keep their places relative to each other
+      else { const w = wpt(pts[sel]); setPoint(sel, { x: snap(w.x + mv[0] * step), y: snap(w.y + mv[1] * step) }); }
     } else if (e.key === 'Delete' || e.key === 'Backspace') {
-      if (pts.length <= 3) return shake();
+      if (pts.length - selSet.size < 3) return shake();
       checkpoint();
-      pts.splice(sel, 1);
-      sel = Math.min(sel, pts.length - 1);
+      const first = selList()[0];
+      removeCorners();
+      selectOnly(Math.min(first, pts.length - 1));
     } else if (e.key === 'Escape') {
-      sel = -1;
+      selectOnly(-1);
     } else return;
     e.preventDefault();
     render();
@@ -1129,7 +1199,7 @@
 
   const corner = (key, v) => {
     if (!sliding) { checkpoint(); sliding = true; }
-    (sel >= 0 ? [pts[sel]] : pts).forEach((p) => (p[key] = v));
+    (sel >= 0 ? selList().map((i) => pts[i]) : pts).forEach((p) => (p[key] = v));
     render();
   };
   $('se-size').addEventListener('input', (e) => corner('r', +e.target.value));
@@ -1157,7 +1227,8 @@
         sync();
       } else if (pts && sel >= 0) {
         checkpoint();
-        setPoint(sel, { ...wpt(pts[sel]), [k]: v });
+        if (selSet.size > 1) { const c = selCentre(); moveCorners(k === 'x' ? v - c.x : 0, k === 'y' ? v - c.y : 0); }
+        else setPoint(sel, { ...wpt(pts[sel]), [k]: v });
       } else return;
       render();
     })
@@ -1221,14 +1292,14 @@
   // Greyed out at 3 points; should it get clicked anyway (re-enabled from the dev tools, say), it shakes like Delete.
   $('se-remove').onclick = () => {
     if (!pts || sel < 0) return;
-    if (pts.length <= 3) return shake();
-    checkpoint(); pts.splice(sel, 1); sel = -1; render();
+    if (pts.length - selSet.size < 3) return shake();
+    checkpoint(); removeCorners(); selectOnly(-1); render();
   };
   $('se-fit').onclick = () => { checkpoint(); shapes = fitted(shapes); sync(); render(); };
   // Undo and redo each move the current state onto the other stack.
   const travel = (from, to) => {
     if (!from.length) return;
-    const now = JSON.stringify(snapshot());
+    const now = undoState();
     if (restore(JSON.parse(from.pop()))) { to.push(now); render(); }
   };
   $('se-undo').onclick = () => travel(undo, redo);
@@ -1651,7 +1722,7 @@
     checkpoint();
     active = shapes.length;
     shapes.push(...list);
-    sel = -1; mode = 'move';
+    selectOnly(-1); mode = 'move';
     importNote = notes.filter(Boolean).join(' ');
     picked.clear();
     sync(); addDialog.close(); render();
@@ -1806,7 +1877,7 @@
     let link = null;
     // Drawn shapes pack into a few KB; imported outlines can take more. unpack() caps what a link inflates to.
     if (data.length < 200000) try { link = JSON.parse(raw ? decodeURIComponent(data) : await unpack(data)); } catch (e) { /* malformed link */ }
-    const before = JSON.stringify(snapshot());
+    const before = undoState();
     if (restore(link)) { undo.push(before); redo.length = 0; }
     render();
   }
