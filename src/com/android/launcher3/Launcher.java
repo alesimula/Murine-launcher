@@ -43,7 +43,7 @@ import static com.android.launcher3.LauncherConstants.ActivityCodes.REQUEST_CREA
 import static com.android.launcher3.LauncherConstants.ActivityCodes.REQUEST_HOME_ROLE;
 import static com.android.launcher3.LauncherConstants.ActivityCodes.REQUEST_PICK_APPWIDGET;
 import static com.android.launcher3.LauncherConstants.ActivityCodes.REQUEST_RECONFIGURE_APPWIDGET;
-import static com.android.launcher3.LauncherConstants.ActivityCodes.REQUEST_TTS_WEB_SEARCH;
+import static com.android.launcher3.LauncherConstants.ActivityCodes.REQUEST_SYSTEM_VOICE_SEARCH;
 import static com.android.launcher3.LauncherConstants.SavedInstanceKeys.RUNTIME_STATE;
 import static com.android.launcher3.LauncherConstants.SavedInstanceKeys.RUNTIME_STATE_CURRENT_SCREEN_IDS;
 import static com.android.launcher3.LauncherConstants.SavedInstanceKeys.RUNTIME_STATE_PENDING_ACTIVITY_RESULT;
@@ -139,7 +139,6 @@ import android.os.Parcelable;
 import android.os.StrictMode;
 import android.os.SystemClock;
 import android.os.UserHandle;
-import android.speech.RecognizerIntent;
 import android.text.TextUtils;
 import android.text.method.TextKeyListener;
 import android.util.FloatProperty;
@@ -300,6 +299,7 @@ import java.util.stream.Stream;
 
 import app.murinelauncher.graphics.WorkspaceBlurUtils;
 import app.murinelauncher.widget.search.MurineSearchBoxView;
+import app.murinelauncher.widget.search.voice.VoiceSearch;
 import app.murinelauncher.widget.smartspace.SmartspaceMode;
 
 /**
@@ -930,15 +930,8 @@ public class Launcher extends StatefulActivity<LauncherState>
         }
         mPendingActivityResult = null;
 
-        if (requestCode == REQUEST_TTS_WEB_SEARCH) {
-            if (resultCode == RESULT_OK) {
-                ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                if (results != null && !results.isEmpty()) {
-                    // Result with highest confidence
-                    String query = results.get(0);
-                    MurineSearchBoxView.performDetachedWebSearch(this, query);
-                }
-            }
+        if (requestCode == REQUEST_SYSTEM_VOICE_SEARCH) {
+            if (resultCode == RESULT_OK) VoiceSearch.onSystemRecognizerResult(this, data);
             return;
         }
 
@@ -1078,6 +1071,14 @@ public class Launcher extends StatefulActivity<LauncherState>
             final int requestCode, final int resultCode, final Intent data) {
         mPendingActivityRequestCode = -1;
         handleActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+            @NonNull int[] grantResults) {
+        if (!VoiceSearch.onRequestPermissionsResult(this, requestCode, grantResults)) {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
     /**
@@ -1382,6 +1383,7 @@ public class Launcher extends StatefulActivity<LauncherState>
     protected void onPause() {
         // Ensure that items added to Launcher are queued until Launcher returns
         ItemInstallQueue.INSTANCE.get(this).pauseModelPush(FLAG_ACTIVITY_PAUSED);
+        MurineSearchBoxView.cancelVoiceInput(this);
 
         super.onPause();
         mDragController.cancelDrag();

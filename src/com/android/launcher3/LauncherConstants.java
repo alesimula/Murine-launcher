@@ -43,7 +43,8 @@ public class LauncherConstants {
         public static final int REQUEST_BIND_PENDING_APPWIDGET = 12;
         public static final int REQUEST_RECONFIGURE_APPWIDGET = 13;
         public static final int REQUEST_HOME_ROLE = 14;
-        public static final int REQUEST_TTS_WEB_SEARCH = 775_738_753;
+        public static final int REQUEST_SYSTEM_VOICE_SEARCH = 775_738_753;
+        public static final int REQUEST_RECORD_AUDIO = 30_651;
         static final int REQUEST_CREATE_SHORTCUT = 1;
         static final int REQUEST_CREATE_APPWIDGET = 5;
         static final int REQUEST_PICK_APPWIDGET = 9;

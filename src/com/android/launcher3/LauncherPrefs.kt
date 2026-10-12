@@ -27,8 +27,10 @@ import app.murinelauncher.settings.SettingsGeneralFragment
 import app.murinelauncher.settings.SettingsHomeFragment
 import app.murinelauncher.settings.SettingsIconsFragment
 import app.murinelauncher.settings.SettingsQsbFragment
+import app.murinelauncher.settings.SettingsVoiceSearchFragment
 import app.murinelauncher.theme.ThemeOverride
 import app.murinelauncher.widget.search.SearchProvider
+import app.murinelauncher.widget.search.voice.VoiceSearchMode
 import app.murinelauncher.widget.smartspace.SmartspaceMode
 import com.android.launcher3.BuildConfig.WIDGET_ON_FIRST_SCREEN
 import com.android.launcher3.GridType.Companion.GRID_TYPE_ANY
@@ -426,6 +428,14 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
         val QSB_ALPHA = backedUpItem(SettingsQsbFragment.SEARCH_BAR_ALPHA, 100)
         @JvmField
         val QSB_BUBBLE_ALPHA = backedUpItem(SettingsQsbFragment.SEARCH_BUBBLE_ALPHA, 90)
+        @JvmField
+        val VOICE_SEARCH_MODE = backedUpItem(SettingsVoiceSearchFragment.VOICE_SEARCH_MODE, VoiceSearchMode.OFFLINE)
+        @JvmField
+        val VOICE_SEARCH_MODEL = nonRestorableItem(SettingsVoiceSearchFragment.VOICE_SEARCH_MODEL, "")
+        @JvmField
+        val VOICE_SEARCH_LANGUAGE = backedUpItem(SettingsVoiceSearchFragment.VOICE_SEARCH_LANGUAGE, "")
+        @JvmField
+        val VOICE_SEARCH_MIC_ASKED = nonRestorableItem("voice_search_mic_asked", false)
         @JvmField
         val SMARTSPACE_MODE = backedUpItem("pref_smartspace_mode", SmartspaceMode.MURINE_CLOCK, EncryptionType.ENCRYPTED)
         @JvmField

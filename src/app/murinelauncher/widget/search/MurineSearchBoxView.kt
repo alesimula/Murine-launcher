@@ -20,17 +20,23 @@ import android.view.View.MeasureSpec
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.FrameLayout
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.graphics.ColorUtils
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import app.murinelauncher.graphics.WorkspaceBlurUtils
 import app.murinelauncher.graphics.WorkspaceBlurUtils.Companion.isBlurDrawable
+import app.murinelauncher.voice.VoiceRecognizer
+import app.murinelauncher.voice.VoiceSearchPresenter
+import app.murinelauncher.voice.VoiceSearchPresenter.MicState
 import app.murinelauncher.widget.search.MurineSearchBarView.Companion.TAG
+import app.murinelauncher.widget.search.voice.VoiceSearch
 import com.android.launcher3.AbstractFloatingView
 import com.android.launcher3.BubbleTextView
 import com.android.launcher3.DragSource
@@ -55,7 +61,8 @@ import java.util.stream.Collectors
 import org.json.JSONArray
 
 class MurineSearchBoxView(context: Context, attrs: AttributeSet?) :
-    AbstractFloatingView(context, attrs), DragSource, DragController.DragListener {
+    AbstractFloatingView(context, attrs), DragSource, DragController.DragListener,
+    VoiceSearchPresenter.SearchBox {
 
     private lateinit var searchInput: ExtendedEditText
     private lateinit var historyList: RecyclerView
@@ -71,11 +78,23 @@ class MurineSearchBoxView(context: Context, attrs: AttributeSet?) :
     private var dragView: DragView<*>? = null
     private val lastTouch = Point()
 
+    private lateinit var voiceContainer: View
+    private lateinit var voiceButton: ImageButton
+    private lateinit var voiceProgress: View
+    private lateinit var voiceLevel: View
+    private var defaultHint: CharSequence? = null
+    private var voice: VoiceSearchPresenter? = null
+    private var startWithVoice = false
+    private var initialQuery: String? = null
+    private var fillingInTranscript = false
+
     override fun onFinishInflate() {
         super.onFinishInflate()
         container = findViewById(R.id.search_box_container)
         searchInput = findViewById(R.id.search_input)
         historyList = findViewById(R.id.search_history_list)
+        defaultHint = searchInput.hint
+        setupVoice()
 
         searchInput.setOnEditorActionListener { _, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH ||
@@ -101,7 +120,10 @@ class MurineSearchBoxView(context: Context, attrs: AttributeSet?) :
         })
 
         searchInput.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) = onQueryChanged(s?.toString().orEmpty())
+            override fun afterTextChanged(s: Editable?) {
+                if (!fillingInTranscript && voice?.state == MicState.LISTENING) voice?.cancel()
+                onQueryChanged(s?.toString().orEmpty())
+            }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
@@ -109,10 +131,81 @@ class MurineSearchBoxView(context: Context, attrs: AttributeSet?) :
         setupHistory()
     }
 
+    private fun setupVoice() {
+        voiceContainer = findViewById(R.id.search_voice_container)
+        voiceButton = findViewById(R.id.search_voice_button)
+        voiceProgress = findViewById(R.id.search_voice_progress)
+        voiceLevel = findViewById(R.id.search_voice_level)
+        if (!VoiceSearch.isOfflineEnabled(context)) return
+        voiceContainer.visibility = View.VISIBLE
+        searchInput.setPaddingRelative(searchInput.paddingStart, searchInput.paddingTop,
+            resources.getDimensionPixelSize(R.dimen.murine_search_input_mic_clearance), searchInput.paddingBottom)
+        voiceButton.setOnClickListener {
+            val presenter = voicePresenter()
+            if (presenter.state == MicState.IDLE) VoiceSearch.onMicTapped(launcher)
+            else presenter.onMicTapped()
+        }
+    }
+
+    private fun voicePresenter(): VoiceSearchPresenter = voice
+        ?: VoiceSearchPresenter(this) { listener -> VoiceSearch.newRecognizer(context, listener) }
+            .also { voice = it }
+
+    override fun setMicState(state: MicState) {
+        voiceLevel.animate().cancel()
+        when (state) {
+            MicState.IDLE -> {
+                voiceProgress.visibility = View.GONE
+                voiceButton.imageAlpha = 255
+                voiceLevel.alpha = 0f
+                searchInput.hint = defaultHint
+                voiceButton.contentDescription = context.getString(R.string.murine_voice_search_desc)
+            }
+            MicState.LISTENING -> {
+                searchInput.hideKeyboard()
+                voiceProgress.visibility = View.GONE
+                voiceButton.imageAlpha = 255
+                voiceLevel.alpha = LEVEL_MIN_ALPHA
+                searchInput.hint = context.getString(R.string.voice_search_listening)
+                voiceButton.contentDescription = context.getString(R.string.voice_search_stop_desc)
+            }
+            MicState.PROCESSING -> {
+                voiceProgress.visibility = View.VISIBLE
+                voiceButton.imageAlpha = 0
+                voiceLevel.alpha = 0f
+                searchInput.hint = context.getString(R.string.voice_search_transcribing)
+                voiceButton.contentDescription = context.getString(R.string.voice_search_cancel_desc)
+            }
+        }
+        ViewCompat.setStateDescription(voiceButton, if (state == MicState.IDLE) null else searchInput.hint)
+    }
+
+    override fun setLevel(level: Float) {
+        voiceLevel.animate()
+            .alpha(LEVEL_MIN_ALPHA + (LEVEL_MAX_ALPHA - LEVEL_MIN_ALPHA) * level)
+            .scaleX(0.75f + 0.45f * level)
+            .scaleY(0.75f + 0.45f * level)
+            .setDuration(80)
+            .start()
+    }
+
+    override fun setQuery(text: String) {
+        fillingInTranscript = true
+        searchInput.setText(text)
+        searchInput.setSelection(searchInput.length())
+        fillingInTranscript = false
+    }
+
+    override fun showFailure(failure: VoiceRecognizer.Failure) {
+        Toast.makeText(context, VoiceSearch.failureMessage(failure), Toast.LENGTH_SHORT).show()
+    }
+
     /**
      * Enter / the IME search key. With a web provider this searches the web as before;
      * in [SearchProvider.APPS_ONLY] it opens the first app result, like the drawer search does.
      */
+    override fun submit() = onSubmit()
+
     private fun onSubmit() {
         val query = searchInput.text.toString()
         if (SearchProvider.current.searchesWeb) performSearch(query)
@@ -277,6 +370,7 @@ class MurineSearchBoxView(context: Context, attrs: AttributeSet?) :
     }
 
     override fun handleClose(animate: Boolean) {
+        voice?.cancel()
         searchInput.hideKeyboard()
         if (animate) {
             var animator = container.animate().translationY(-container.height.toFloat())
@@ -311,6 +405,7 @@ class MurineSearchBoxView(context: Context, attrs: AttributeSet?) :
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
+        voice?.cancel()
         launcher.dragController.removeDragListener(this)
     }
 
@@ -332,9 +427,15 @@ class MurineSearchBoxView(context: Context, attrs: AttributeSet?) :
             }
         }
 
-        searchInput.postDelayed({
-            searchInput.showKeyboard()
-        }, 100)
+        val query = initialQuery
+        initialQuery = null
+        when {
+            query != null -> setQuery(query)
+            startWithVoice -> post { if (isOpen) voicePresenter().start() }
+            else -> searchInput.postDelayed({
+                searchInput.showKeyboard()
+            }, 100)
+        }
     }
 
     private fun startEnterAnimation() {
@@ -442,16 +543,50 @@ class MurineSearchBoxView(context: Context, attrs: AttributeSet?) :
     companion object {
         /** How far up-left of the finger the dragged icon spawns, as a fraction of icon size. */
         private const val DRAG_ICON_SHIFT_RATIO = 0.42f
-
+        private const val LEVEL_MIN_ALPHA = 0.2f
+        private const val LEVEL_MAX_ALPHA = 0.6f
 
         fun show(launcher: Launcher) {
+            show(launcher) {}
+        }
+
+        private fun show(launcher: Launcher, setup: (MurineSearchBoxView) -> Unit) {
             val view = launcher.layoutInflater.inflate(
                 R.layout.murine_search_box,
                 launcher.dragLayer,
                 false
             ) as MurineSearchBoxView
+            setup(view)
             launcher.dragLayer.addView(view)
             view.mIsOpen = true
+        }
+
+        private fun openBox(launcher: Launcher): MurineSearchBoxView? {
+            val dragLayer = launcher.dragLayer ?: return null
+            return (0 until dragLayer.childCount).map(dragLayer::getChildAt)
+                .filterIsInstance<MurineSearchBoxView>()
+                .firstOrNull { it.isOpen }
+        }
+
+        @JvmStatic
+        fun showForVoice(launcher: Launcher) {
+            val open = openBox(launcher)
+            if (open != null) {
+                if (open.voiceContainer.visibility == View.VISIBLE) open.voicePresenter().start()
+                return
+            }
+            show(launcher) { it.startWithVoice = true }
+        }
+
+        @JvmStatic
+        fun showWithQuery(launcher: Launcher, query: String) {
+            val open = openBox(launcher)
+            if (open != null) open.setQuery(query) else show(launcher) { it.initialQuery = query }
+        }
+
+        @JvmStatic
+        fun cancelVoiceInput(launcher: Launcher) {
+            openBox(launcher)?.voice?.cancel()
         }
 
         private fun getLauncherPrefs(context: Context) = LauncherPrefs.get(context)
@@ -526,9 +661,5 @@ class MurineSearchBoxView(context: Context, attrs: AttributeSet?) :
             }
         }
 
-        @JvmStatic
-        public fun performDetachedWebSearch(context: Context, query: String) {
-            performSearchImpl(context, LauncherPrefs.get(context), query)
-        }
     }
 }

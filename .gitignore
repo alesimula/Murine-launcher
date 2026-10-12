@@ -16,3 +16,4 @@ gradle/
 build/
 gradlew*
 .DS_Store
+.cxx/

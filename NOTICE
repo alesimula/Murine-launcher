@@ -3,3 +3,6 @@ licensed under the Apache License 2.0. Modifications made by alesimula.
 
 This project includes code fonts by The Gantari Project Authors (https://github.com/Lafontype/Gantari),
 licensed under the SIL Open Font License 1.1. Modifications made by alesimula.
+
+This project includes whisper.cpp (https://github.com/ggml-org/whisper.cpp) as a git submodule in
+modules/voicelib/whisper.cpp, licensed under the MIT License (see its LICENSE file).

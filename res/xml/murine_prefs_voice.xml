@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <app.murinelauncher.widget.radio.RadioGroupPreference
+        android:key="voice_search_mode"
+        android:title="@string/pref_voice_mode_title"
+        android:persistent="true"
+        app:showPreviewIcon="false" />
+
+    <PreferenceCategory
+        android:key="voice_search_models"
+        android:title="@string/pref_voice_models_title">
+
+        <Preference
+            android:key="voice_search_import"
+            android:order="10000"
+            android:title="@string/pref_voice_import_title"
+            android:summary="@string/pref_voice_import_summary"
+            app:iconSpaceReserved="true" />
+    </PreferenceCategory>
+
+    <ListPreference
+        android:key="voice_search_language"
+        android:title="@string/pref_voice_language_title"
+        android:persistent="true" />
+
+    <PreferenceCategory android:title="@string/pref_voice_about_title">
+        <Preference
+            android:key="voice_search_about"
+            android:selectable="false"
+            android:summary="@string/pref_voice_about_summary" />
+
+        <Preference
+            android:key="voice_search_models_page"
+            android:title="@string/pref_voice_models_page_title"
+            android:summary="keyboard.futo.tech/voice-input-models" />
+
+        <Preference
+            android:key="voice_search_licenses"
+            android:title="@string/pref_voice_licenses_title" />
+    </PreferenceCategory>
+</androidx.preference.PreferenceScreen>

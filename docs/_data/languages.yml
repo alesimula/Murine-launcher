@@ -8,14 +8,14 @@
 #          both accept several names separated by ', ' and are shown together,
 #          in that order. Omit both if nobody has reviewed it
 
-total: 148
+total: 225
 
 languages:
   - code: en
     name: English
     native: English
     status: reviewed
-    strings: 148
+    strings: 225
     by_git: alesimula
     note: Source language
 
@@ -23,7 +23,7 @@ languages:
     name: Italian
     native: Italiano
     status: reviewed
-    strings: 148
+    strings: 225
     by_git: alesimula
     note: Dev's language
 

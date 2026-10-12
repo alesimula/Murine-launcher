@@ -17,9 +17,9 @@ import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import app.murinelauncher.widget.search.voice.VoiceSearch
 import com.android.app.animation.Interpolators
 import com.android.launcher3.Launcher
-import com.android.launcher3.LauncherConstants
 import com.android.launcher3.LauncherPrefChangeListener
 import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.R
@@ -40,7 +40,6 @@ class MurineSearchBarView @JvmOverloads constructor(
     private val lensButton: ImageButton
     private val assistantSearchButton: ImageButton
     private val searchPlate: View
-    private val searchPrompt: String
 
     private val containerBg: View
     private val barBg: View
@@ -51,7 +50,6 @@ class MurineSearchBarView @JvmOverloads constructor(
         clipChildren = false
         clipToPadding = false
         LayoutInflater.from(context).inflate(R.layout.murine_search_bar, this, true)
-        searchPrompt = context.resources.getString(R.string.murine_voice_search_prompt)
 
         containerBg = findViewById<View>(R.id.murine_search_container_bg)
         barBg = findViewById<View>(R.id.murine_search_bar_bg)
@@ -96,19 +94,8 @@ class MurineSearchBarView @JvmOverloads constructor(
     }
 
     private fun openVoiceSearch() {
-        if (SearchBarConfig.SEARCH_MICBUTTON_TTS) {
-            val launcher = ActivityContext.lookupContext<Launcher>(context)
-            // Use system voice recognizer (TTS default) instead of Google Assistant
-            try {
-                val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-                    putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-                    putExtra(RecognizerIntent.EXTRA_PROMPT, searchPrompt);
-                    //addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                }
-                launcher.startActivityForResult(intent, LauncherConstants.ActivityCodes.REQUEST_TTS_WEB_SEARCH)
-            } catch (e: ActivityNotFoundException) {
-                Log.w(TAG, "No speech recognizer found", e)
-            }
+        if (SearchBarConfig.SEARCH_MICBUTTON_VOICE_SEARCH) {
+            VoiceSearch.onMicTapped(ActivityContext.lookupContext(context))
         } else {
             openAssistant()
         }

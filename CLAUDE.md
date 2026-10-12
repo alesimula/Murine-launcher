@@ -46,6 +46,7 @@ Launcher3Aosp13/
 │   ├── hidden-api/              # Hidden API stubs module
 │   ├── SettingsLib/             # Partial SettingsLib port (11 preference modules)
 │   ├── compatLib/               # Per-API-level compat shims (VQ..VBaklava)
+│   ├── voicelib/                # Offline voice search: whisper.cpp submodule + JNI (CMake/NDK)
 │   ├── systemUIPluginCore/      # SystemUI plugin core
 │   └── androidx-lib/            # AndroidX overrides
 ├── compose/                     # Jetpack Compose integration

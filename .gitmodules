@@ -1,0 +1,3 @@
+[submodule "modules/voicelib/whisper.cpp"]
+	path = modules/voicelib/whisper.cpp
+	url = https://github.com/ggml-org/whisper.cpp

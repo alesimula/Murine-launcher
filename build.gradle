@@ -376,6 +376,8 @@ dependencies {
     implementation project(':compatLib:compatLibVBaklava')
 
     implementation project(':systemUIPluginCore')
+
+    implementation project(':voicelib')
 }
 
 dependencies {

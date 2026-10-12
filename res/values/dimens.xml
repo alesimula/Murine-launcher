@@ -590,4 +590,5 @@
     <dimen name="murine_search_provider_icon_size" tools:ignore="ReferenceType">@fraction/_017sdp</dimen>
     <dimen name="murine_search_bar_icons_size" tools:ignore="ReferenceType">@fraction/_017sdp</dimen>
     <dimen name="murine_search_text_size">14sp</dimen>
+    <dimen name="murine_search_input_mic_clearance">48dp</dimen>
 </resources>

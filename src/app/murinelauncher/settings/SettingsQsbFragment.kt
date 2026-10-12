@@ -32,6 +32,7 @@ public final class SettingsQsbFragment: AbstractSettingsFragment() {
         const val SEARCH_HISTORY_SIZE: String = "qsb_history_size"
         const val CLEAR_HISTORY: String = "qsb_clear_history"
         const val BLUR_WARNING: String = "pref_blur_warning"
+        const val VOICE_SEARCH: String = "qsb_voice_search"
 
         const val CUSTOM_SEARCH_EXAMPLE = "https://test.com?q=%s"
     }
@@ -133,6 +134,10 @@ public final class SettingsQsbFragment: AbstractSettingsFragment() {
                 preference.setDefaultValue(LauncherPrefs.QSB_HISTORY_SIZE.defaultValue)
                 return true
             }
+            VOICE_SEARCH -> {
+                preference.summary = SettingsVoiceSearchFragment.summary(requireContext())
+                return true
+            }
             CLEAR_HISTORY -> {
                 preference.setOnPreferenceClickListener {
                     AlertDialog.Builder(requireContext())
@@ -150,6 +155,11 @@ public final class SettingsQsbFragment: AbstractSettingsFragment() {
             }
             else -> return true
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        findPreference<Preference>(VOICE_SEARCH)?.summary = SettingsVoiceSearchFragment.summary(requireContext())
     }
 
     override fun initAnonymousPreference(preference: Preference, info: DisplayController.Info): Boolean {

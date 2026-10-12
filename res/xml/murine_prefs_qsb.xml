@@ -37,6 +37,11 @@
         android:title="@string/pref_qsb_custom_provider_title"
         android:persistent="false" />
 
+    <Preference
+        android:key="qsb_voice_search"
+        android:title="@string/pref_voice_title"
+        android:fragment="app.murinelauncher.settings.SettingsVoiceSearchFragment" />
+
     <PreferenceCategory android:title="@string/pref_subcategory_appearance">
         <SwitchPreferenceCompat
             android:key="qsb_enable_lens"

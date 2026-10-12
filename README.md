@@ -16,6 +16,14 @@ Blur effects are supported on Android 12 and above.<br/>
 Some OEM/ROMs may hide or disable window-level blurs; if that's your case try to check for an &quot;Allow window-level blurs&quot; option in Display Options or Developer Options.<br/>
 Alternatively, try enabling <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">this Magisk module</a> on rooted devices
 
+## Voice search
+
+The search bar's microphone can transcribe speech on the device, with no network access: tap it, speak, and the words land in the search field with the matching apps. The web is only searched if you submit the query yourself.
+
+Speech recognition runs [whisper.cpp](https://github.com/ggml-org/whisper.cpp) with the speech models published by FUTO for its voice input: OpenAI Whisper fine-tuned for short dictations, released under the Apache 2.0 license. Murine does not include or redistribute the models. From *Settings → Search → Voice search*, the model is downloaded by your browser from FUTO's server, then imported; Murine itself has no internet permission. The model is loaded only while transcribing, and the audio is never stored.
+
+The system speech recognizer is still available as an option, for those who prefer it.
+
 ## Screenshots
 <img width="320" src="/fastlane/metadata/android/en-US/images/phoneScreenshots/1.png"/>    <img width="320" src="/fastlane/metadata/android/en-US/images/phoneScreenshots/2.png"/>
 <img width="320" src="/fastlane/metadata/android/en-US/images/phoneScreenshots/3.png"/>    <img width="320" src="/fastlane/metadata/android/en-US/images/phoneScreenshots/4.png"/>
@@ -65,6 +73,8 @@ Last tested on:
 
  - Android Studio: Quail 4 (2026.1.4)
  - Gradle: 9.7.1 (bundled)
+
+whisper.cpp is a git submodule built from source, so clone with `git clone --recurse-submodules` (or run `git submodule update --init` in an existing checkout). Building it needs the Android NDK (28.2.13676358) and CMake 3.22.1 from the SDK manager.
 
 ## Buy me a beer
 
