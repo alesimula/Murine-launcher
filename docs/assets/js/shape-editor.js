@@ -298,10 +298,12 @@
   // A preset's picture: one path per outline (mirrored copies wind the other way, so one path would leave holes).
   // Same scale as the canvas and cut off at the 0-100 box, as the launcher draws the icon: parts reaching outside
   // it don't show (the inner svg clips them), and nothing draws over the tile.
-  function presetSvg(name, pad = 0) {
-    const w = presetWhole(name), paths = presetShapes(name).flatMap(copies).map((d) => `<path d="${wholeMap(d, w)}"/>`).join('');
+  // Saved shapes (see library) are drawn the same way. w is the list's whole-icon transform, null for none.
+  function iconSvg(list, w, pad = 0) {
+    const paths = list.flatMap(copies).map((d) => `<path d="${wholeMap(d, w)}"/>`).join('');
     return `<svg viewBox="${-pad} ${-pad} ${100 + 2 * pad} ${100 + 2 * pad}" aria-hidden="true"><svg width="100" height="100" viewBox="0 0 100 100">${paths}</svg></svg>`;
   }
+  const presetSvg = (name, pad = 0) => iconSvg(presetShapes(name), presetWhole(name), pad);
   // The presets in the data file's order, minus any that don't make a valid icon.
   const presetNames = Object.keys(PRESETS).filter((name) => {
     try {
@@ -893,6 +895,7 @@
             <path d="${wholeMap(iconPath().d)}"/></svg>
           <span>Global</span>
         </button>
+        <button type="button" class="se-card-del se-card-save" data-act="save" data-card="-1" title="Save the whole shape to Custom" aria-label="Save the whole shape">${icon('e161')}</button>
         ${whole ? `<button type="button" class="se-card-del" data-act="reset-whole" data-card="-1" title="Reset Global (undo can bring it back)" aria-label="Reset Global">${icon('e889')}</button>` : ''}
       </div>`;
     cards.innerHTML = wholeCard + shapes.map((sh, i) => {
@@ -903,6 +906,7 @@
             ${copies(sh).map((d, c) => `<path class="${c ? 'copy' : ''}" d="${d}"/>`).join('')}</svg>
           <span>${name}</span>
         </button>
+        <button type="button" class="se-card-del se-card-save" data-act="save" data-card="${i}" title="Save ${name} to Custom" aria-label="Save ${name}">${icon('e161')}</button>
         ${shapes.length > 1 ? `<button type="button" class="se-card-del" data-act="del" data-card="${i}" title="Delete ${name} (undo can bring it back)" aria-label="Delete ${name}">${icon('e92e')}</button>` : ''}
         ${on && !many ? `<div class="se-card-modes" role="group" aria-label="Mode">
           <button type="button" data-act="edit" data-card="${i}" aria-pressed="${mode === 'edit'}" title="Edit points" ${sh.pts ? '' : 'disabled'}>${icon('f097')}</button>
@@ -961,6 +965,7 @@
     else if (b.dataset.act === 'whole') { mode = 'move'; sync(); wholeOn = true; multi = new Set(); pickedCorner = -1; selectOnly(-1); render(); }
     else if (b.dataset.act === 'reset-whole') { checkpoint(); whole = null; render(); }
     else if (b.dataset.act === 'edit' || b.dataset.act === 'move') { mode = b.dataset.act; selectOnly(-1); sync(); render(); }
+    else if (b.dataset.act === 'save') saveItem(i);
     else if (b.dataset.act === 'del') deleteShape(i); else if (b.dataset.act === 'add') { picked.clear(); renderAddGrid(); addDialog.open(); }
   });
 
@@ -1608,13 +1613,19 @@
     b.onclick = () => { loadIcon(presetShapes(name), presetWhole(name)); svg.scrollIntoView({ behavior: 'smooth', block: 'center' }); };
     $('se-presets').append(b);
   });
-  $('se-presets-more').hidden = presetNames.length <= presetsShown;
-  $('se-presets-more').onclick = (e) => {
-    const open = e.currentTarget.getAttribute('aria-expanded') !== 'true';
-    for (const b of $('se-presets').querySelectorAll('[data-more]')) b.hidden = !open;
-    e.currentTarget.setAttribute('aria-expanded', open);
-    e.currentTarget.textContent = open ? 'Fewer shapes' : 'More shapes';
-  };
+  // Both grids (Presets and Custom, see renderCustom) show the first `visible` tiles; one button shows the
+  // rest of whichever grid is open, and the other grid follows when switched to.
+  let moreOpen = false;
+  function showMore() {
+    const grid = $('se-presets').hidden ? $('se-custom') : $('se-presets'), more = $('se-presets-more');
+    for (const b of document.querySelectorAll('#se-presets [data-more], #se-custom [data-more]')) b.hidden = !moreOpen;
+    more.hidden = grid.children.length <= presetsShown;
+    more.setAttribute('aria-controls', grid.id);
+    more.setAttribute('aria-expanded', moreOpen);
+    more.textContent = moreOpen ? 'Fewer shapes' : 'More shapes';
+  }
+  $('se-presets-more').onclick = () => { moreOpen = !moreOpen; showMore(); };
+  showMore();
 
   // ---------- SVG import ----------
 
@@ -1832,12 +1843,18 @@
   }
 
   let importNote = ''; // shown under the result until the next edit
-  // The Add dialog's grid shows the presets, or the pieces of a loaded SVG file until it's unloaded (closing
-  // the dialog keeps it). A tap adds one tile; a long press or Ctrl/Cmd+click starts picking several, after
-  // which taps toggle tiles until none are left picked, and the bar under the grid adds them.
+  // The Add dialog's grid shows the presets or the saved shapes (Custom, see library), or the pieces of a loaded
+  // SVG file until it's unloaded with that switch (closing the dialog keeps it). A tap adds one tile; a long press
+  // or Ctrl/Cmd+click starts picking several, after which taps toggle tiles until none are left picked, and the
+  // bar under the grid adds them.
   let loaded = null; // { pieces, merged, notes, view }; view 'pieces' or 'merged' picks what the grid shows
+  let addLib = 'presets'; // what the grid shows without a loaded file: 'presets' or 'custom'
   const viewList = () => (loaded.view === 'merged' ? loaded.merged.pieces : loaded.pieces);
-  const picked = new Set(); // keys of picked tiles: preset names, or piece indices
+  const picked = new Set(); // keys of picked tiles: preset names, or saved shape or piece indices
+  // A tile's shapes and whole-icon transform (null for none), and the picked tiles' keys in grid order.
+  const tileShapes = (key) => (addLib === 'custom' ? clone(library[+key].shapes) : presetShapes(key));
+  const tileWhole = (key) => (addLib === 'custom' ? library[+key].whole ?? null : presetWhole(key));
+  const pickedKeys = () => (addLib === 'custom' ? [...picked].sort((a, b) => a - b) : presetNames.filter((n) => picked.has(n)));
   const ROOM = 20; // most shapes an icon can have (restore() rejects more)
   const room = () => ROOM - shapes.length;
   const plural = (k) => (k === 1 ? 'one shape' : `${k} shapes`);
@@ -1855,10 +1872,13 @@
   }
   const asShapes = (pieces) => pieces.map((path) => ({ path, a: 1, x: 0, y: 0, ang: 0, mirror: 'none', rot: 0 }));
   const addPieces = (pieces) => addShapes(asShapes(pieces), loaded?.notes);
-  // Baked: each preset's shapes and mirrored copies merged into one plain outline, as drawn (stretch and turn
-  // included), the way an imported SVG's pieces merge (parts that don't touch stay apart). A lone outline keeps
-  // its exact curves. Corners can't be edited any more.
-  const baked = (names) => asShapes(names.flatMap((n) => { const ds = presetShapes(n).flatMap(copies); return ds.length > 1 ? mergedPieces(ds).pieces : ds; }));
+  // Baked: each tile's shapes and mirrored copies merged into one plain outline, as its picture draws it (stretch,
+  // turn and whole-icon transform included), the way an imported SVG's pieces merge (parts that don't touch stay
+  // apart). A lone outline keeps its exact curves. Corners can't be edited any more.
+  const baked = (keys) => asShapes(keys.flatMap((k) => {
+    const w = tileWhole(k), ds = tileShapes(k).flatMap(copies).map((d) => wholeMap(d, w));
+    return ds.length > 1 ? mergedPieces(ds).pieces : ds;
+  }));
   const addMerged = (m) => addShapes(asShapes(m.pieces), [...(loaded?.notes || []), holesNote(m.holes), apartNote(m.pieces.length)]);
 
   const tileSvg = (inner) => `<svg viewBox="-4 -4 108 108" aria-hidden="true">${inner}</svg>`;
@@ -1869,6 +1889,9 @@
       const all = loaded.pieces.map((d) => `<path class="se-tile-ghost" d="${d}"/>`).join(''), name = loaded.view === 'merged' ? 'Merged' : 'Piece';
       tiles.innerHTML = viewList().map((d, k) => `<button type="button" class="se-preset" data-key="${k}" aria-pressed="false">
         ${tileSvg(all + `<path d="${d}"/>`)}<span>${name} ${k + 1}</span></button>`).join('');
+    } else if (addLib === 'custom') {
+      tiles.innerHTML = library.length ? library.map((it, k) => `<button type="button" class="se-preset" data-key="${k}" aria-pressed="false">
+        ${iconSvg(it.shapes, it.whole ?? null, 4)}<span>${esc(it.name)}</span></button>`).join('') : `<p class="se-hint">${EMPTY}</p>`;
     } else {
       tiles.innerHTML = presetNames.map((name) => `<button type="button" class="se-preset" data-key="${name}" aria-pressed="false">
         ${presetSvg(name, 4)}<span>${name}</span></button>`).join('');
@@ -1883,9 +1906,9 @@
       const on = picked.has(b.dataset.key);
       b.classList.toggle('picked', on); b.setAttribute('aria-pressed', on);
     }
-    $('se-add-desc').textContent = `Tap to add${loaded ? ' in place' : ' at full size'}. Long-press or Ctrl+click to pick several or see more options.`;
+    $('se-add-desc').textContent = `Tap to add${loaded || addLib === 'custom' ? ' in place' : ' at full size'}. Long-press or Ctrl+click to pick several or see more options.`;
     $('se-import-btn').disabled = full;
-    $('se-import-unload').hidden = !loaded;
+    for (const b of $('se-add-lib').children) b.setAttribute('aria-pressed', !loaded && b.dataset.lib === addLib);
     if (full) importMsg(`The icon already has the most shapes it can (${ROOM}): delete one to add more.`);
     else if ($('se-import-msg').dataset.full) importMsg('');
     $('se-import-msg').dataset.full = full ? '1' : '';
@@ -1919,7 +1942,7 @@
       const sub = loaded && loaded.view === 'pieces' ? [...picked].map(Number).sort((a, b) => a - b).map((i) => loaded.pieces[i]) : null;
       const merged = sub && k > 1 ? mergedPieces(sub) : null;
       // A preset can hold several shapes: the count is of the shapes added, not of the picks.
-      const n = loaded ? k : presetNames.filter((name) => picked.has(name)).flatMap(presetShapes).length;
+      const n = loaded ? k : pickedKeys().flatMap(tileShapes).length;
       $('se-pick-count').textContent = `${k} picked` + (n > r ? `, room for ${Math.max(r, 0)}` : '');
       $('se-pick-add').textContent = `Add ${n}`;
       $('se-pick-add').title = loaded && k > 1 ? `Add the ${k} picked as separate shapes` : `Add ${plural(n)}`;
@@ -1932,8 +1955,8 @@
         $('se-pick-merge').disabled = m > r;
         $('se-pick-merge').onclick = () => addMerged(merged);
       }
-      // Presets only: a loaded file's pieces are outlines already.
-      const bake = !loaded && baked(presetNames.filter((n) => picked.has(n)));
+      // Not for a loaded file: its pieces are outlines already.
+      const bake = !loaded && baked(pickedKeys());
       $('se-pick-bake').hidden = !bake;
       if (bake) {
         $('se-pick-bake').textContent = `Bake ${bake.length}`;
@@ -1946,7 +1969,7 @@
   $('se-pick-add').onclick = () => {
     const keys = [...picked];
     if (loaded) addPieces(keys.map(Number).sort((a, b) => a - b).map((i) => viewList()[i]));
-    else addShapes(presetNames.filter((n) => picked.has(n)).flatMap(presetShapes));
+    else addShapes(pickedKeys().flatMap(tileShapes));
   };
   $('se-pick-clear').onclick = () => { picked.clear(); refreshAddUi(); };
   // Taps, long presses and Ctrl+clicks on the tiles.
@@ -1969,11 +1992,16 @@
     const key = b.dataset.key;
     if (picked.size || e.ctrlKey || e.metaKey) return togglePick(key);
     if (loaded) addPieces([viewList()[+key]]);
-    else addShapes(presetShapes(key));
+    else addShapes(tileShapes(key));
   });
 
   $('se-import-btn').onclick = () => $('se-import-file').click();
-  $('se-import-unload').onclick = () => { loaded = null; picked.clear(); importMsg(''); renderAddGrid(); };
+  // Presets or Custom; with a file loaded, either one unloads it.
+  $('se-add-lib').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-lib]');
+    if (!b || (!loaded && b.dataset.lib === addLib)) return;
+    addLib = b.dataset.lib; loaded = null; picked.clear(); importMsg(''); renderAddGrid();
+  });
   $('se-import-file').onchange = async (e) => {
     const file = e.target.files[0];
     e.target.value = ''; // the same file can be picked again
@@ -2000,6 +2028,118 @@
   });
   $('se-import-separate').onclick = () => loaded && addPieces(loaded.pieces);
   $('se-import-merge').onclick = () => loaded && addMerged(loaded.merged);
+
+  // ---------- saved shapes (Custom) ----------
+
+  // Kept in this browser only (localStorage), in the editor's own JSON, the same an edit link holds:
+  // [{ name, shapes, whole? }], checked with cleanShape and cleanWhole when read back, like a link. A built-in
+  // outline is saved as a plain path, so a saved shape doesn't depend on the presets staying as they are.
+  const SAVED = 'murine-shape-editor-saved';
+  const EMPTY = 'Nothing saved yet. Save a shape, or the whole shape, from its card under the editor: it stays in this browser.';
+  const clone = (o) => JSON.parse(JSON.stringify(o));
+  const esc = (t) => t.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+  const library = (() => {
+    let list = null;
+    try { list = JSON.parse(localStorage.getItem(SAVED)); } catch (e) { /* private mode or garbage */ }
+    return (Array.isArray(list) ? list : []).map((it) => {
+      const name = typeof it?.name === 'string' ? it.name.trim().slice(0, 40) : '';
+      const got = Array.isArray(it?.shapes) && it.shapes.length && it.shapes.length <= ROOM ? it.shapes.map(cleanShape) : [null];
+      const w = it?.whole === undefined ? null : cleanWhole(it.whole);
+      if (!name || got.includes(null) || (it.whole !== undefined && !w)) return null;
+      return { name, shapes: got, ...(w && { whole: w }) };
+    }).filter(Boolean);
+  })();
+  const storeLibrary = () => { try { localStorage.setItem(SAVED, JSON.stringify(library)); return true; } catch (e) { return false; } };
+  const plainShape = ({ id, fixed, ...sh }) => (fixed ? { path: FIXED[fixed], ...sh } : sh);
+  const moved = (w) => w && (w.a !== 1 || w.x || w.y || w.ang || w.flip || w.st);
+
+  // The name dialog, for saving and renaming. done(name) stores it and says whether that worked.
+  const nameDialog = dialog('se-name');
+  let named = null;
+  function askName(title, value, button, done) {
+    $('se-name-title').textContent = title;
+    $('se-name-ok').textContent = button;
+    $('se-name-input').value = value;
+    $('se-name-msg').hidden = true;
+    named = done;
+    nameDialog.open();
+    $('se-name-input').select();
+  }
+  $('se-name-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = $('se-name-input').value.trim();
+    if (!name) return;
+    if (!named(name)) {
+      $('se-name-msg').textContent = "Couldn't save: this browser's storage is full or turned off for this site.";
+      $('se-name-msg').hidden = false;
+      return;
+    }
+    nameDialog.close(); renderCustom();
+  });
+  const freeName = () => { let k = library.length + 1; while (library.some((it) => it.name === `Custom ${k}`)) k++; return `Custom ${k}`; };
+  // A shape card saves that shape as it is; Global (i = -1) saves the whole shape, with its whole-icon
+  // transform kept as such (not baked in) when it changes anything.
+  function saveItem(i) {
+    const item = clone(i < 0 ? { shapes: shapes.map(plainShape), ...(moved(whole) && { whole }) } : { shapes: [plainShape(shapes[i])] });
+    askName(i < 0 ? 'Save the whole shape' : `Save ${shapeName(shapes[i], i)}`, freeName(), 'Save', (name) => {
+      library.push({ name, ...item });
+      if (storeLibrary()) return true;
+      library.pop(); return false;
+    });
+  }
+
+  // The page's grid: Presets or Custom. A saved shape replaces the icon, like a preset; its corners rename
+  // and delete it. A deletion can be taken back until the next one.
+  let lastDeleted = null;
+  const customMsg = (text, undo = false) => {
+    $('se-custom-msg').hidden = !text; $('se-custom-msg').firstChild.textContent = text; $('se-custom-undo').hidden = !undo;
+  };
+  function renderCustom() {
+    $('se-custom').innerHTML = library.length ? library.map((it, k) => `<div class="se-saved"${k >= presetsShown ? ' data-more' : ''}>
+        <button type="button" class="se-preset" data-k="${k}" title="${esc(it.name)}">${iconSvg(it.shapes, it.whole ?? null)}<span>${esc(it.name)}</span></button>
+        <button type="button" class="se-tile-btn se-tile-edit" data-rename="${k}" title="Rename" aria-label="Rename ${esc(it.name)}">${icon('e3c9')}</button>
+        <button type="button" class="se-tile-btn se-tile-del" data-del="${k}" title="Delete" aria-label="Delete ${esc(it.name)}">${icon('e92e')}</button>
+      </div>`).join('') : `<p class="se-hint">${EMPTY}</p>`;
+    showMore();
+  }
+  $('se-custom').addEventListener('click', (e) => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    if (b.dataset.k) {
+      const it = library[+b.dataset.k];
+      loadIcon(clone(it.shapes), it.whole ? clone(it.whole) : null);
+      svg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else if (b.dataset.rename) {
+      const it = library[+b.dataset.rename];
+      askName('Rename', it.name, 'Rename', (name) => {
+        const old = it.name;
+        it.name = name;
+        if (storeLibrary()) return true;
+        it.name = old; return false;
+      });
+    } else if (b.dataset.del) {
+      const k = +b.dataset.del;
+      lastDeleted = { k, it: library.splice(k, 1)[0] };
+      storeLibrary(); renderCustom();
+      customMsg(`Deleted “${lastDeleted.it.name}”.`, true);
+    }
+  });
+  $('se-custom-undo').onclick = () => {
+    if (!lastDeleted) return;
+    library.splice(lastDeleted.k, 0, lastDeleted.it);
+    lastDeleted = null;
+    storeLibrary(); renderCustom(); customMsg('');
+  };
+  $('se-lib').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-lib]');
+    if (!b) return;
+    const custom = b.dataset.lib === 'custom';
+    for (const x of $('se-lib').children) x.setAttribute('aria-pressed', x === b);
+    $('se-presets').hidden = custom; $('se-custom').hidden = !custom;
+    showMore();
+    customMsg(''); lastDeleted = null;
+  });
+  renderCustom();
 
   // ---------- start ----------
 

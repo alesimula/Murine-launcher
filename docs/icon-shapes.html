@@ -270,11 +270,43 @@ noindex: true    # and out of search engines
 .se-pick-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; margin-left: auto; }
 .se-btn-primary { background: var(--md-primary); color: var(--md-on-primary); border-color: var(--md-primary); }
 .se-btn-primary:hover:not(:disabled) { background: var(--md-primary); filter: brightness(1.08); }
+/* Saved shapes: the Presets / Custom switch is the section's title; custom tiles get rename and delete corners. */
+.page-body h2.se-lib-title { margin: 40px 0 0; }
+.se-seg-title { margin: 0; }
+.se-seg-title button { font: inherit; padding: 4px 18px; } /* the size of the other section titles */
+.se-seg-title button[aria-pressed="false"] { color: var(--md-on-surface-variant); }
+.se-presets[hidden], .se-presets-more[hidden], .se-saved[hidden] { display: none; }
+#se-add-lib { margin: 0; }
+.se-saved { position: relative; display: flex; }
+.se-saved > .se-preset { flex: 1; min-width: 0; padding-top: 22px; }
+.se-saved > .se-preset span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.se-tile-btn { position: absolute; top: 2px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+  padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--md-on-surface-variant); cursor: pointer; }
+.se-tile-btn .material-symbols-outlined { font-size: 18px; }
+.se-tile-edit { left: 2px; }
+.se-tile-del { right: 2px; }
+.se-tile-btn:hover { background: var(--md-surface-container-highest); color: var(--md-primary); }
+.se-tile-del:hover { color: var(--md-error); }
+.se-card-save { right: auto; left: 2px; }
+.se-card-save:hover { color: var(--md-primary); }
+.se-presets > .se-hint { grid-column: 1 / -1; margin: 0; }
+.se-custom-msg { display: flex; align-items: center; gap: 8px; margin: -4px 0 16px; }
+.se-custom-msg[hidden] { display: none; }
+.se-name-modal { max-width: 400px; }
+.se-name-input { display: block; width: 100%; box-sizing: border-box; margin: 4px 0 4px; padding: 10px 12px; font: inherit;
+  color: var(--md-on-surface); background: var(--md-surface-container-lowest); border: 1px solid var(--md-outline);
+  border-radius: var(--md-shape-sm, 8px); }
+.se-name-input:focus { outline: 2px solid var(--md-primary); outline-offset: -1px; }
+#se-name .se-pick-actions { margin-top: 16px; }
 #se-measure { position: absolute; width: 0; height: 0; overflow: hidden; }
 </style>
 
-<h2>Presets</h2>
+<h2 class="se-lib-title"><span id="se-lib" class="se-seg se-seg-title" role="group" aria-label="Shapes to start from">
+  <button type="button" data-lib="presets" aria-pressed="true">Presets</button><button type="button" data-lib="custom" aria-pressed="false" title="Shapes you saved, kept in this browser">Custom</button>
+</span></h2>
 <div id="se-presets" class="se-presets"></div>
+<div id="se-custom" class="se-presets" hidden></div>
+<p id="se-custom-msg" class="se-hint se-custom-msg" role="status" hidden><span></span> <button type="button" class="se-btn" id="se-custom-undo" hidden>Undo</button></p>
 <button id="se-presets-more" class="se-btn se-presets-more" type="button" aria-expanded="false" aria-controls="se-presets">More shapes</button>
 
 <div class="se-title-row">
@@ -330,6 +362,8 @@ noindex: true    # and out of search engines
         <p><strong>Several shapes:</strong> <span class="se-kb">Ctrl+click (or long-press) a shape or its card to move them
           together; Esc stops.</span><span class="se-touch">long-press a shape or its card to move them together, then tap
           cards to add or remove more. Tap outside the group to stop.</span></p>
+        <p><strong>Saving:</strong> the save button on a card keeps that shape (on Global, the whole shape) under
+          Custom, above the editor and in Add a shape. It stays in this browser.</p>
       </div>
       <div id="se-fit-tools" class="se-stage-tools" hidden>
         <button id="se-fit-shape" class="se-stage-btn" type="button" title="Fit this shape to the box" aria-label="Fit this shape to the box"><span class="material-symbols-outlined" aria-hidden="true">&#xea10;</span></button>
@@ -567,8 +601,10 @@ noindex: true    # and out of search engines
     <p id="se-add-desc" class="contact-modal-desc"></p>
     <div class="se-import">
       <div class="se-row">
+        <span id="se-add-lib" class="se-seg" role="group" aria-label="Show in the grid">
+          <button type="button" data-lib="presets">Presets</button><button type="button" data-lib="custom" title="Shapes you saved, kept in this browser">Custom</button>
+        </span>
         <button id="se-import-btn" class="se-btn" type="button" title="Import the shapes of an SVG file">Import SVG…</button>
-        <button id="se-import-unload" class="se-btn" type="button" title="Unload the SVG file and show the presets again" hidden>Presets</button>
       </div>
       <input id="se-import-file" type="file" accept=".svg,image/svg+xml" hidden>
       <p id="se-import-msg" class="se-hint" role="status" hidden></p>
@@ -593,6 +629,26 @@ noindex: true    # and out of search engines
         <button id="se-pick-add" class="se-btn se-btn-primary" type="button">Add</button>
       </span>
     </div>
+  </div>
+</div>
+
+<div class="contact-modal-overlay" id="se-name" aria-hidden="true">
+  <div class="contact-modal se-name-modal" role="dialog" aria-modal="true" aria-labelledby="se-name-title">
+    <div class="contact-modal-header">
+      <h2 id="se-name-title">Save shape</h2>
+      <button class="contact-modal-close" type="button" aria-label="Close" data-close>
+        <span class="material-symbols-outlined">&#xE5CD;</span> <!-- close -->
+      </button>
+    </div>
+    <form id="se-name-form">
+      <label for="se-name-input" class="se-hint">Name</label>
+      <input id="se-name-input" class="se-name-input" type="text" maxlength="40" required autocomplete="off">
+      <p id="se-name-msg" class="se-hint" role="status" hidden></p>
+      <div class="se-pick-actions">
+        <button class="se-btn" type="button" data-close>Cancel</button>
+        <button id="se-name-ok" class="se-btn se-btn-primary" type="submit">Save</button>
+      </div>
+    </form>
   </div>
 </div>
 
