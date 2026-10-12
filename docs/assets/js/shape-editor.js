@@ -808,7 +808,7 @@
 
     // controls
     const editable = !!pts;
-    $('se-corner-set').disabled = !editable;
+    $('se-corner-set').disabled = !editable || wholeOn; // Global has no corners of its own
     // Top-left pill: the selected point (Edit mode) or the selected corner (Move mode).
     const at = moving ? (pickedCorner >= 0 && activeBox ? boxHandles(activeBox)[pickedCorner] : null) : (pts && sel >= 0 ? (selSet.size > 1 ? selCentre() : wpt(pts[sel])) : null);
     $('se-point-pill').hidden = !at;
