@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Debug build only (see sourceSets in build.gradle): recolors the launcher icon so it's told apart
+     from the release one. Overrides the colors in res/values/ic_launcher.xml -->
+<resources>
+    <color name="ic_launcher_gradient_start">#1A1A2E</color>
+    <color name="ic_launcher_gradient_end">#4A4E69</color>
+    <color name="ic_launcher_eye">#4C000E</color>
+</resources>

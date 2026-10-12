@@ -3,6 +3,8 @@
     <!-- Background gradient, shared by ic_launcher_background and ic_launcher_legacy -->
     <color name="ic_launcher_gradient_start">#960EFC</color>
     <color name="ic_launcher_gradient_end">#FF804A</color>
+    <!-- Eyes, shared by ic_launcher_foreground and ic_launcher_legacy -->
+    <color name="ic_launcher_eye">#000000</color>
 
     <!-- Head outline plus brow and muzzle, shared by ic_launcher_foreground, ic_launcher_monochrome and ic_launcher_legacy -->
     <!-- See below for (commented) decoupled version -->

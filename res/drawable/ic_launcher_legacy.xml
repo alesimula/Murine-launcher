@@ -61,11 +61,11 @@
     <!-- eye, left -->
     <path
         android:pathData="m230.1,535 l54.9,-57.1 227.2,188.5 -197,2.7z"
-        android:fillColor="#000000"/>
+        android:fillColor="@color/ic_launcher_eye"/>
     <!-- eye, right -->
     <path
         android:pathData="m794.4,535.2 l-54.9,-57.1 -227.2,188.5 197,2.7z"
-        android:fillColor="#000000"/>
+        android:fillColor="@color/ic_launcher_eye"/>
     <!-- eye highlight, right -->
     <path
         android:pathData="m727.2,558.1c-11.1,6.4 -22.1,13 -33.1,19.5 -3.3,1.9 -7.2,4.4 -6.5,8.9 0.4,13.4 -2.5,26.9 -9.6,38.3 -9.9,17.8 -41,31.4 -61,33.8l32,4.6 12.9,-6.5c8.6,-3.8 17.1,-7.9 24.6,-13.7 8.3,-6.4 15.4,-14.4 21.1,-23.1 11.8,-18.5 16.9,-40.2 19.5,-61.7z"

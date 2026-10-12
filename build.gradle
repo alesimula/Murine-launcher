@@ -136,6 +136,11 @@ android {
     }
 
     sourceSets {
+        // Debug-only resource overrides (e.g. the launcher icon colors), merged over res/
+        debug {
+            res.srcDirs = ['res_debug']
+        }
+
         main {
             res.srcDirs = ['res']
             java.srcDirs = ['src', 'src_plugins' /*, 'tests/shared', 'system_ext', 'tests/multivalentTests/shared', 'systemui_core/shared'*/]
