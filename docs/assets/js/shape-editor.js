@@ -431,8 +431,15 @@
     return { x: (Math.min(...xs) + Math.max(...xs)) / 2, y: (Math.min(...ys) + Math.max(...ys)) / 2 }; };
   // Moves every selected corner by (dx, dy), as drawn, from where `from` (index -> drawn point) says it started.
   const startOf = () => new Map(selList().map((i) => [i, { ...wpt(pts[i]) }])); // a copy: wpt may hand back the point itself
+  // The selected corners move as one: the move is cut short, per axis, where the first of them would cross the
+  // edge of the drawing area, so they keep their places relative to each other (and stop together).
   const moveCorners = (dx, dy, from = startOf()) => {
-    for (const [i, w] of from) setPoint(i, { x: clamp(w.x + dx, view.lo, view.hi), y: clamp(w.y + dy, view.lo, view.hi) });
+    const ws = [...from.values()], lim = (d, k) => {
+      const lo = Math.min(...ws.map((w) => w[k])), hi = Math.max(...ws.map((w) => w[k]));
+      return clamp(d, Math.min(0, view.lo - lo), Math.max(0, view.hi - hi));
+    };
+    dx = lim(dx, 'x'); dy = lim(dy, 'y');
+    for (const [i, w] of from) setPoint(i, { x: w.x + dx, y: w.y + dy });
   };
   const removeCorners = () => { for (const i of selList().reverse()) pts.splice(i, 1); };
   let pts = null, fixed = false; // shortcuts into shapes[active]: its points, or whether its outline is fixed
