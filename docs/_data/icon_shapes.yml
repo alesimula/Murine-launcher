@@ -49,6 +49,11 @@
 # separate shapes, in the order listed. `fit: false` on an entry keeps everything exactly
 # where it's written instead (parts may reach outside the box).
 #
+# whole:    the Global card's transform, applied to the merged icon without changing its shapes,
+#           e.g. whole: {a: 0.9, x: 5, y: 5, ang: 30, flip: true}. In order: flip mirrors it left to
+#           right, a scales, x, y move, ang turns it clockwise around the moved box's middle, st
+#           stretches. rot is only the slider's reading. An `icon` entry holds it in its data instead.
+#
 # An entry that doesn't make a valid icon is left out: a broken shape, crossing edges, or
 # shapes (and mirrored copies) that don't all touch. Squircle is the editor's default icon
 # (and what Reset goes back to), so keep it.

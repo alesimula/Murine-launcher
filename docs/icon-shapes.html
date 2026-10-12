@@ -324,7 +324,9 @@ noindex: true    # and out of search engines
           <span class="se-touch">Tap a point to type its position or remove it; tap empty space to deselect.
             Long-press more points to select several: they move together.</span></p>
         <p><strong>Move mode:</strong> drag the shape, or a corner to resize it; <span class="se-kb">click a corner to type its
-          position. Arrow keys move the shape, Delete removes it.</span><span class="se-touch">tap a corner to type its position.</span></p>
+          position. Arrow keys move the shape, Delete removes it.</span><span class="se-touch">tap a corner to type its position.</span>
+          The first card, <strong>Global</strong>, moves, turns, resizes or flips the whole shape at once; its reset button
+          takes that back.</p>
         <p><strong>Several shapes:</strong> <span class="se-kb">Ctrl+click (or long-press) a shape or its card to move them
           together; Esc stops.</span><span class="se-touch">long-press a shape or its card to move them together, then tap
           cards to add or remove more. Tap outside the group to stop.</span></p>
@@ -375,7 +377,7 @@ noindex: true    # and out of search engines
     <div class="se-row se-toolbar">
       <button id="se-undo" class="se-btn" type="button" title="Undo (Ctrl+Z)">Undo</button>
       <button id="se-redo" class="se-btn" type="button" title="Redo (Ctrl+Y or Ctrl+Shift+Z)">Redo</button>
-      <button id="se-fit" class="se-btn" type="button" title="Scale and centre the whole icon until its longest side touches the box">Fit to box</button>
+      <button id="se-fit" class="se-btn" type="button" title="Scale and centre the shapes until their longest side touches the box (the Global card has its own Fit)">Fit to box</button>
       <button id="se-reset" class="se-btn" type="button">Reset</button>
     </div>
     <p id="se-fixed-note" class="se-hint se-note" hidden>This shape has a fixed outline (ready-made or imported): you can move, resize, stretch and
@@ -494,6 +496,12 @@ noindex: true    # and out of search engines
       and then moved by <code>x</code>, <code>y</code> (default 0).</li>
     <li><code>ang</code> (optional, default 0): a turn in degrees, clockwise, around the outline's centre.</li>
   </ul>
+  <p>Next to <code>shapes</code>, an optional <code>whole</code> transforms the icon as a whole, after its shapes are
+    merged (mirrored copies included), without changing them: <code>{"shapes": [...], "whole": {"a": 0.9, "x": 5, "y": 5,
+    "ang": 30, "flip": true}}</code>. In order: <code>flip</code> (optional, default false) turns the icon over left to
+    right within the 100 × 100 box; <code>a</code> (default 1) scales it and <code>x</code>, <code>y</code> (default 0)
+    move it; <code>ang</code> (default 0) turns it clockwise, in degrees, around the middle of where the box now is.
+    In the editor it's the <strong>Global</strong> card.</p>
   <h3>Example</h3>
   <p>A rounded pentagon: <code>{"shapes":[{"pts":[{"x":50,"y":4,"r":12,"s":0.6},{"x":97.6,"y":38.5,"r":12,"s":0.6},{"x":79.4,"y":94.5,"r":12,"s":0.6},{"x":20.6,"y":94.5,"r":12,"s":0.6},{"x":2.4,"y":38.5,"r":12,"s":0.6}]}]}</code></p>
   <ul class="se-docs-links">

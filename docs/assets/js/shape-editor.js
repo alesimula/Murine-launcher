@@ -139,6 +139,7 @@
   const outline = (sh) => (sh.fixed ? FIXED[sh.fixed] : sh.path);
   const pathC = new Map(); // centroid of each imported path, worked out once
   const outlineC = (sh) => {
+    if (sh.whole) return { x: 50, y: 50 }; // the whole icon turns around the middle of its box
     if (sh.fixed) return FIXED_C[sh.fixed];
     if (!pathC.has(sh.path)) pathC.set(sh.path, ringCentroid(flatten(sh.path)));
     return pathC.get(sh.path);
@@ -154,7 +155,34 @@
     });
   }
   // Curves are Béziers, which a stretch maps exactly: the same as stretching the drawn image.
-  const shapePath = (sh) => (sh.st ? mapPath(basePath(sh), (x, y) => toWorld(sh, { x, y })) : basePath(sh));
+  const shapePath = (sh) => (sh.whole ? wholeMap(iconPath().d, sh) : sh.st ? mapPath(basePath(sh), (x, y) => toWorld(sh, { x, y })) : basePath(sh));
+  // ---------- the whole icon ----------
+  // A transform of the icon as a whole, on top of its shapes (which it never changes): the merged outline,
+  // mirrored copies included, is treated as one outline shape whose centre is the box's middle (see outlineC), so
+  // the Move-mode maths (applyWorld) works on it unchanged. { a, x, y, ang, flip, st?, rot }: flipped left to right
+  // in its box first (flip), then scaled by a and moved by (x, y), turned by ang around its middle, and stretched
+  // (st) like any outline. null when there's none.
+  const WHOLE0 = { a: 1, x: 0, y: 0, ang: 0, flip: false, rot: 0 };
+  const wholeShape = () => ({ whole: true, mirror: 'none', ...WHOLE0, ...whole });
+  function wholePoint(w, x, y) {
+    if (w.flip) x = 100 - x;
+    const t = (w.ang || 0) * Math.PI / 180, co = Math.cos(t), si = Math.sin(t), dx = (x - 50) * w.a, dy = (y - 50) * w.a;
+    let px = 50 * w.a + w.x + dx * co - dy * si, py = 50 * w.a + w.y + dx * si + dy * co;
+    if (w.st) { const [a, b, d, cx, cy] = w.st, X = px - cx, Y = py - cy; px = cx + a * X + b * Y; py = cy + b * X + d * Y; }
+    return { x: px, y: py };
+  }
+  // A path of the icon (Béziers map exactly) as the whole-icon transform w draws it.
+  const wholeMap = (d, w = whole) => (w ? mapPath(d, (x, y) => wholePoint(w, x, y)) : d);
+  const setWhole = (sh) => { const { whole: _, mirror, ...w } = sh; whole = w; };
+  // The stored transform, checked like a shape's: null if it's broken.
+  function cleanWhole(w) {
+    if (!w || typeof w !== 'object') return null;
+    const st = cleanSt(w.st);
+    if (st === null) return null;
+    const out = { a: clamp(+(w.a ?? 1), 0.01, 20), x: clamp(+(w.x ?? 0), -1000, 1000), y: clamp(+(w.y ?? 0), -1000, 1000),
+      ang: ((+(w.ang ?? 0) % 360) + 360) % 360, flip: w.flip === true, rot: wrap(+(w.rot ?? 0)), ...(st ? { st } : {}) };
+    return [out.a, out.x, out.y, out.ang, out.rot].every(Number.isFinite) ? out : null;
+  }
   // A shape's own outline followed by its mirrored copies.
   const copies = (sh) => {
     const d = shapePath(sh);
@@ -265,18 +293,20 @@
     if (sh.path) { const { path, ...rest } = sh; return [{ ...rest, fixed: name }]; }
     return sh.mirror === 'none' && !sh.st ? [{ pts: fit(sh.pts), mirror: 'none' }] : fitted([sh]);
   }
+  // An entry's whole-icon transform (`whole`, or the `icon` data's own): null for none, false if it's broken.
+  const presetWhole = (name) => { const w = PRESETS[name].whole ?? PRESETS[name].icon?.whole; return w === undefined ? null : cleanWhole(w) || false; };
   // A preset's picture: one path per outline (mirrored copies wind the other way, so one path would leave holes).
   // Same scale as the canvas and cut off at the 0-100 box, as the launcher draws the icon: parts reaching outside
   // it don't show (the inner svg clips them), and nothing draws over the tile.
   function presetSvg(name, pad = 0) {
-    const paths = presetShapes(name).flatMap(copies).map((d) => `<path d="${d}"/>`).join('');
+    const w = presetWhole(name), paths = presetShapes(name).flatMap(copies).map((d) => `<path d="${wholeMap(d, w)}"/>`).join('');
     return `<svg viewBox="${-pad} ${-pad} ${100 + 2 * pad} ${100 + 2 * pad}" aria-hidden="true"><svg width="100" height="100" viewBox="0 0 100 100">${paths}</svg></svg>`;
   }
   // The presets in the data file's order, minus any that don't make a valid icon.
   const presetNames = Object.keys(PRESETS).filter((name) => {
     try {
       const list = presetShapes(name);
-      return list.length > 0 && list.length <= 20 && list.every((sh) => cleanShape(sh) && (!sh.pts || !selfIntersects(sh.pts)))
+      return presetWhole(name) !== false && list.length > 0 && list.length <= 20 && list.every((sh) => cleanShape(sh) && (!sh.pts || !selfIntersects(sh.pts)))
         && !iconPath(list).error;
     } catch (e) { return false; }
   });
@@ -357,7 +387,16 @@
   }
   // The icon as one outline for the launcher: { d, error, note }. A lone shape keeps its exact path
   // (curves included); anything else is flattened, merged and simplified to straight segments.
-  function iconPath(list = shapes) {
+  // Without a list, the icon itself, remembered until its shapes change (the whole icon's box and pivot measure
+  // it again and again). A list (a preset being checked) is merged as it is.
+  let iconCache = { key: '', out: null };
+  function iconPath(list) {
+    if (list) return mergedIcon(list);
+    const key = JSON.stringify(shapes);
+    if (key !== iconCache.key) iconCache = { key, out: mergedIcon(shapes) };
+    return iconCache.out;
+  }
+  function mergedIcon(list) {
     const all = list.flatMap(copies);
     if (all.length === 1) return { d: all[0] };
     let merged;
@@ -399,6 +438,7 @@
   // together, in Move mode only. groups remembers each picked set's own stretch and angle, by the shapes' ids,
   // until one of them is deleted; each shape still stores its full stretch and angle itself.
   let multi = new Set(), groups = [];
+  let whole = null, wholeOn = false; // the whole-icon transform (see wholeShape), and whether its card is picked
   let synced = '';
   const sync = () => {
     active = clamp(active, 0, shapes.length - 1);
@@ -410,6 +450,7 @@
     groups = groups.filter((g) => g.ids.every((id) => plain.has(id)));
     if ([...multi].some((i) => i >= shapes.length || shapes[i].mirror !== 'none') || multi.size < 2) multi = new Set();
     if (multi.size) mode = 'move';
+    if (mode !== 'move' || multi.size) wholeOn = false; // the Global card is picked in Move mode only
     pts = shapes[active].pts || null;
     fixed = !shapes[active].pts;
     if (fixed) mode = 'move';
@@ -427,7 +468,8 @@
   //    for the YAML export, and the comments at the top of _data/icon_shapes.yml), if the change should be
   //    writable there too;
   //  - "Link format" in icon-shapes.html, which documents this JSON for hand-written links.
-  const snapshot = () => ({ shapes, active, groups, ...(multi.size > 1 && { multi: [...multi] }) });
+  // The whole-icon transform (whole, see wholeShape) is written in those same places, and read for presets too.
+  const snapshot = () => ({ shapes, active, groups, ...(multi.size > 1 && { multi: [...multi] }), ...(whole && { whole }) });
   // Also reads edit links, i.e. anything anyone can type into a URL: rebuild every field, keep nothing unchecked.
   function cleanShape(s) {
     const mirror = Object.hasOwn(MIRRORS, s?.mirror) ? s.mirror : 'none', rot = wrap(+(s?.rot ?? 0));
@@ -490,12 +532,14 @@
     if (list.includes(null)) return false;
     shapes = list;
     groups = (Array.isArray(o.groups) ? o.groups.slice(0, 50) : []).map(cleanGroup).filter(Boolean);
+    whole = cleanWhole(o.whole); wholeOn = false;
     active = Number.isInteger(o.active) ? o.active : 0;
     selectOnly(-1); multi = new Set(Array.isArray(o.multi) ? o.multi.filter((i) => Number.isInteger(i) && i >= 0) : []);
     sync(); // drops a multi that doesn't fit the shapes
     // Undo steps also carry the selected corners (see undoState): back in Edit mode with them selected.
     const cs = Array.isArray(o.corners) && pts && !multi.size ? o.corners.filter((i) => Number.isInteger(i) && i >= 0 && i < pts.length) : [];
     if (cs.length) { mode = 'edit'; selSet = new Set(cs); sel = cs.includes(o.sel) ? o.sel : cs[cs.length - 1]; sync(); }
+    if (o.wholeSel && !multi.size) { mode = 'move'; wholeOn = true; } // undo steps also remember the Global card
     return true;
   }
 
@@ -538,7 +582,7 @@
   const snap = (v) => clamp(grid.snap ? Math.round(v / grid.step) * grid.step : +v.toFixed(2), view.lo, view.hi);
   // An undo step: the icon plus the selected corners, so undo and redo bring the selection back too. Only undo
   // keeps those; saves and edit links don't.
-  const undoState = () => JSON.stringify({ ...snapshot(), ...(sel >= 0 && mode === 'edit' && { corners: selList(), sel }) });
+  const undoState = () => JSON.stringify({ ...snapshot(), ...(sel >= 0 && mode === 'edit' && { corners: selList(), sel }), ...(wholeOn && { wholeSel: true }) });
   const checkpoint = () => {
     importNote = '';
     turnFrom = null; // any other edit ends a rotation-slider drag (see the slider's input handler)
@@ -547,13 +591,15 @@
     redo.length = 0; // a new edit starts a new branch, so there's nothing left to redo
   };
   // Whole icon (presets, Reset) or just the selected shape (Generate).
-  const loadIcon = (list) => { checkpoint(); shapes = list; active = 0; selectOnly(-1); multi = new Set(); mode = 'edit'; sync(); render(); };
+  const loadIcon = (list, w = null) => { checkpoint(); shapes = list; whole = w; active = 0; selectOnly(-1); multi = new Set(); mode = 'edit'; sync(); render(); };
   const replaceShape = (sh) => { checkpoint(); shapes[active] = sh; selectOnly(-1); multi = new Set(); mode = 'edit'; sync(); render(); };
 
   // ---------- Move mode's selection: the picked group, or the selected shape ----------
 
   const selIdx = () => (multi.size > 1 ? [...multi].sort((a, b) => a - b) : [active]);
-  const selShapes = () => selIdx().map((i) => shapes[i]);
+  const selShapes = () => (wholeOn ? [wholeShape()] : selIdx().map((i) => shapes[i]));
+  // Puts back shapes made from selShapes(): into the icon, or into the whole-icon transform.
+  const setSelShapes = (list) => (wholeOn ? setWhole(list[0]) : list.forEach((sh, k) => (shapes[selIdx()[k]] = sh)));
   const selPivot = () => pivotOf(selShapes());
   // The picked group's record (made on first use when make is set), or null for a single shape.
   function groupRec(make) {
@@ -564,12 +610,13 @@
     return g || null;
   }
   // What the selection's angle and stretch read as: the shape's own, or the group's record.
-  const selState = () => (multi.size > 1 ? groupRec(false) || { rot: 0 } : shapes[active]);
+  const selState = () => (wholeOn ? wholeShape() : multi.size > 1 ? groupRec(false) || { rot: 0 } : shapes[active]);
   // The selection as it is now, for drags that apply each step to where they started.
   const selBase = () => ({ shapes: selShapes(), group: (({ st, rot }) => ({ st, rot }))(selState()) });
   // Applies w -> A w + t to the selected shapes (as they were in base, when given) and to the group's record,
   // which follows the same maths as a shape with no outline of its own.
   function applySel(A, tx, ty, base = null) {
+    if (wholeOn) return setWhole(applyWorld(base ? base.shapes[0] : wholeShape(), A, tx, ty));
     selIdx().forEach((i, k) => { shapes[i] = applyWorld(base ? base.shapes[k] : shapes[i], A, tx, ty); });
     const g = groupRec(true);
     if (g) {
@@ -584,7 +631,7 @@
     const t = deg * Math.PI / 180, cos = Math.cos(t), sin = Math.sin(t), from = base ? base.group.rot : selState().rot;
     applySel([cos, -sin, sin, cos], c.x - cos * c.x + sin * c.y, c.y - sin * c.x - cos * c.y, base);
     const rot = wrap((from || 0) + deg);
-    if (multi.size > 1) groupRec(true).rot = rot; else shapes[active].rot = rot;
+    if (wholeOn) whole.rot = rot; else if (multi.size > 1) groupRec(true).rot = rot; else shapes[active].rot = rot;
   }
   const withSize = (i, r) => pts.map((p, k) => (k === i ? { ...p, r } : p));
   const neighbours = (i) => [(i + pts.length - 1) % pts.length, (i + 1) % pts.length];
@@ -642,7 +689,8 @@
   const setPoint = (i, w) => { const q = bpt(w); pts[i].x = r6(q.x); pts[i].y = r6(q.y); };
 
   function render() {
-    const lines = shapes.map(copies); // per shape: own outline, then its mirrored copies
+    // Per shape: own outline, then its mirrored copies. With the Global card picked, as its transform draws them.
+    const lines = shapes.map(copies).map((ls) => (wholeOn ? ls.map((d) => wholeMap(d)) : ls));
     if (!drag) {
       const bb = measure(lines.flat().join(' '));
       const xy = [bb.x, bb.y, bb.x + bb.width, bb.y + bb.height, ...(pts ? pts.map(wpt).flatMap((p) => [p.x, p.y]) : [])];
@@ -653,16 +701,19 @@
         drawGrid();
       }
     }
-    const out = iconPath();
+    const base = iconPath(), out = whole ? { ...base, d: wholeMap(base.d) } : base; // the icon as the launcher gets it
     const crossed = shapes.findIndex((sh) => sh.pts && selfIntersects(sh.pts));
     const bad = !!out.error || crossed >= 0;
 
     // Each shape and mirrored copy is filled and outlined on its own. The selected one is drawn last: while
     // selected it sits on top, and clicks on it reach it first (see shapeAt).
     // The others go in two layers, fills (whose overlaps are capped, see #se-cap-*) and outlines.
-    const picks = selIdx(), on = new Set(picks);
+    const picks = wholeOn ? shapes.map((_, i) => i) : selIdx(), on = new Set(picks);
     const back = shapes.flatMap((_, i) => (on.has(i) ? [] : lines[i].map((d, c) => ({ d, cls: 'se-line' + (c ? ' copy' : '') }))));
-    const front = picks.flatMap((i) => lines[i].map((d, c) => ({ d, cls: 'se-line active' + (c ? ' copy' : '') })));
+    let front = picks.flatMap((i) => lines[i].map((d, c) => ({ d, cls: 'se-line active' + (c ? ' copy' : '') })));
+    // The Global card draws the icon as the launcher gets it: one merged outline, holes filled. It's the same
+    // (remembered) merge as the output below, so this costs nothing; the shapes themselves stay as they are.
+    if (wholeOn && out.d) front = [{ d: out.d, cls: 'se-line active' }];
     for (const [id, list] of [['se-back-fill', back], ['se-back-stroke', back], ['se-front', front]]) {
       const layer = $(id);
       resize(layer, list.length, () => el('path', {}));
@@ -710,7 +761,7 @@
     const moving = mode === 'move';
     $('se-move').style.display = moving ? '' : 'none';
     if (moving) {
-      activeBox = measure(picks.map((i) => lines[i][0]).join(' '));
+      activeBox = measure((wholeOn ? lines.flat() : picks.map((i) => lines[i][0])).join(' '));
       const r = $('se-move-box'), b = activeBox;
       r.setAttribute('x', b.x); r.setAttribute('y', b.y); r.setAttribute('width', b.width); r.setAttribute('height', b.height);
       boxHandles(b).forEach((c, i) => {
@@ -723,8 +774,8 @@
     const many = picks.length > 1, state = selState();
     $('se-unstretch').hidden = !state.st;
     for (const b of $('se-mirror').querySelectorAll('[data-mirror]')) {
-      b.setAttribute('aria-pressed', b.dataset.mirror === shapes[active].mirror);
-      b.disabled = many; // a group's shapes have no mirroring (see toggleMulti)
+      b.setAttribute('aria-pressed', !wholeOn && b.dataset.mirror === shapes[active].mirror);
+      b.disabled = many || wholeOn; // a group's shapes have no mirroring (see toggleMulti), nor has the whole icon
     }
     for (const b of $('se-mirror').querySelectorAll('[data-pivot]')) b.setAttribute('aria-pressed', b.dataset.pivot === pivotMode);
     const [cx, cy] = [[6, 6], [18, 6], [18, 18], [6, 18]][pivotCorner];
@@ -829,14 +880,23 @@
   const icon = (cp) => `<span class="material-symbols-outlined" aria-hidden="true">&#x${cp};</span>`;
   let cardsKey = '';
   function renderCards() {
-    const key = JSON.stringify([shapes, active, mode, [...multi]]);
+    const key = JSON.stringify([shapes, active, mode, [...multi], whole, wholeOn]);
     if (key === cardsKey) return;
     cardsKey = key;
     const cards = $('se-cards'), focus = document.activeElement?.closest?.('#se-cards [data-act]');
     const refocus = focus && focus.dataset.act + ':' + focus.dataset.card;
     const many = multi.size > 1;
-    cards.innerHTML = shapes.map((sh, i) => {
-      const on = many ? multi.has(i) : i === active, name = shapeName(sh, i);
+    // First, always: the Global card, the whole icon as its transform draws it, with a button putting it back as it was.
+    const wholeCard = `<div class="se-card se-card-whole${wholeOn ? ' active' : ''}" role="listitem">
+        <button type="button" class="se-card-pick" data-act="whole" data-card="-1" aria-pressed="${wholeOn}" aria-label="Select Global: the whole icon shape at once">
+          <svg viewBox="-10 -10 120 120" aria-hidden="true"><rect class="se-card-box" x="0" y="0" width="100" height="100"/>
+            <path d="${wholeMap(iconPath().d)}"/></svg>
+          <span>Global</span>
+        </button>
+        ${whole ? `<button type="button" class="se-card-del" data-act="reset-whole" data-card="-1" title="Reset Global (undo can bring it back)" aria-label="Reset Global">${icon('e889')}</button>` : ''}
+      </div>`;
+    cards.innerHTML = wholeCard + shapes.map((sh, i) => {
+      const on = !wholeOn && (many ? multi.has(i) : i === active), name = shapeName(sh, i);
       return `<div class="se-card${on ? ' active' : ''}" role="listitem">
         <button type="button" class="se-card-pick" data-act="pick" data-card="${i}" aria-pressed="${on}" aria-label="Select ${name}">
           <svg viewBox="-10 -10 120 120" aria-hidden="true"><rect class="se-card-box" x="0" y="0" width="100" height="100"/>
@@ -866,6 +926,7 @@
   // that one is mirrored), then plain taps toggle cards until one is left. Mirrored shapes can't join:
   // the canvas shakes instead.
   function toggleMulti(i) {
+    wholeOn = false;
     if (multi.size < 2) {
       if (i === active) return;
       if (shapes[i].mirror !== 'none') return shake();
@@ -897,7 +958,9 @@
     const i = +b.dataset.card;
     if (b.dataset.act === 'pick' && cardLong) { cardLong = false; return; } // the long press already picked it
     if (b.dataset.act === 'pick' && (multi.size > 1 || e.ctrlKey || e.metaKey)) toggleMulti(i);
-    else if (b.dataset.act === 'pick') { active = i; selectOnly(-1); sync(); render(); } // keeps the mode, like a tap on the canvas
+    else if (b.dataset.act === 'pick') { active = i; wholeOn = false; selectOnly(-1); sync(); render(); } // keeps the mode, like a tap on the canvas
+    else if (b.dataset.act === 'whole') { mode = 'move'; sync(); wholeOn = true; multi = new Set(); pickedCorner = -1; selectOnly(-1); render(); }
+    else if (b.dataset.act === 'reset-whole') { checkpoint(); whole = null; render(); }
     else if (b.dataset.act === 'edit' || b.dataset.act === 'move') { mode = b.dataset.act; selectOnly(-1); sync(); render(); }
     else if (b.dataset.act === 'del') deleteShape(i); else if (b.dataset.act === 'add') { picked.clear(); renderAddGrid(); addDialog.open(); }
   });
@@ -975,9 +1038,9 @@
       e.preventDefault(); svg.focus({ preventScroll: true });
       tap = null; toggleCorner(g0.point); return render();
     }
-    tap = g ? null : shapeAt(e);
+    tap = g ? null : wholeOn ? -1 : shapeAt(e);
     const under = g ? (g.move ? shapeAt(e) : -1) : tap;
-    if (!pick && under >= 0 && (multi.size > 1 || under !== active)) {
+    if (!pick && !wholeOn && under >= 0 && (multi.size > 1 || under !== active)) {
       hold = { x: e.clientX, y: e.clientY, timer: setTimeout(() => {
         hold = null; tap = null;
         if (drag) { drag = null; restore(JSON.parse(undo.pop())); render(); }
@@ -1101,15 +1164,15 @@
     const typing = e.target.matches('input:not([type=range]):not([type=checkbox]), textarea, select');
     const del = e.key === 'Delete' || e.key === 'Backspace';
     // In Move mode with no handle selected, Delete asks to delete the selected shape (like its card's bin).
-    const shapeKey = mode === 'move' && pickedCorner < 0 && del;
-    const pointKey = (sel >= 0 && mode === 'edit' && (del || e.key === 'Escape') || (pickedCorner >= 0 || multi.size > 1) && e.key === 'Escape' || shapeKey)
+    const shapeKey = mode === 'move' && pickedCorner < 0 && del && !wholeOn;
+    const pointKey = (sel >= 0 && mode === 'edit' && (del || e.key === 'Escape') || (pickedCorner >= 0 || multi.size > 1 || wholeOn) && e.key === 'Escape' || shapeKey)
       && !typing && !e.target.closest('.contact-modal-overlay');
     if (!pointKey && !svg.contains(document.activeElement)) return;
     const step = grid.snap ? grid.step : e.shiftKey ? 5 : 0.5;
     const mv = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
     if (mode === 'move') { // arrows move the whole shape, Esc deselects the corner, Delete deletes the shape
       if (e.key === 'Escape') { // the handle first, then the picked group
-        if (pickedCorner >= 0) pickedCorner = -1; else { multi = new Set(); sync(); }
+        if (pickedCorner >= 0) pickedCorner = -1; else { multi = new Set(); wholeOn = false; sync(); }
         e.preventDefault(); return render();
       }
       if (shapeKey) { e.preventDefault(); return shapes.length > selIdx().length ? deleteShapes(selIdx()) : shake(); }
@@ -1137,7 +1200,7 @@
   });
 
   // Move mode's buttons on the canvas: fit this shape, and mirroring.
-  $('se-fit-shape').onclick = () => { checkpoint(); fitted(selShapes()).forEach((sh, k) => (shapes[selIdx()[k]] = sh)); sync(); render(); };
+  $('se-fit-shape').onclick = () => { checkpoint(); setSelShapes(fitted(selShapes())); sync(); render(); };
   // The shape's own outline (not its mirrored copies) into the top-left quarter, centred there: an ear
   // mirrored left/right or both ways then fills the other quarters.
   $('se-fit-quarter').onclick = () => {
@@ -1167,14 +1230,18 @@
   $('se-flip').onclick = () => {
     checkpoint();
     const c = Math.round(selPivot().x * 1000) / 1000; // rounded, so the flipped selection gives the same line back
-    selIdx().forEach((i) => (shapes[i] = flipped(shapes[i], c)));
+    if (wholeOn) { // turned over in its own box (flip), then mirrored around c like an outline whose centre is (50, 50)
+      const w = wholeShape();
+      setWhole({ ...w, flip: !w.flip, ang: r6(wrap(-w.ang)), ...(w.rot && { rot: wrap(-w.rot) }), ...(w.st && { st: flipSt(w.st, c) }),
+        x: r6(2 * c - (50 * w.a + w.x) - 50 * w.a) });
+    } else selIdx().forEach((i) => (shapes[i] = flipped(shapes[i], c)));
     const g = groupRec(false);
     if (g) { if (g.st) g.st = flipSt(g.st, c); g.rot = wrap(-g.rot); }
     if (pivotMode === 'corner') pivotCorner = [1, 0, 3, 2][pivotCorner]; // the corner flips sides with the shape
     sync(); render();
   };
   $('se-center').onclick = () => {
-    const sh = shapes[active], c = selPivot(); // a group has no mirroring, so it goes to the canvas middle
+    const sh = selState().whole ? wholeShape() : shapes[active], c = selPivot(); // a group (or the whole icon) has no mirroring
     if (!Number.isFinite(c.x + c.y)) return;
     const h = sh.mirror === 'h' || sh.mirror === 'both', v = sh.mirror === 'v' || sh.mirror === 'both';
     const tx = h ? (c.x <= 50 ? 25 : 75) : 50, ty = v ? (c.y <= 50 ? 25 : 75) : 50;
@@ -1191,7 +1258,7 @@
     checkpoint();
     applySel(A, c.x - A[0] * c.x - A[1] * c.y, c.y - A[2] * c.x - A[3] * c.y);
     // A shape unstretched on its own also ends the stretch its groups remember.
-    if (multi.size < 2) for (const g of groups) if (g.ids.includes(shapes[active].id)) delete g.st;
+    if (multi.size < 2 && !wholeOn) for (const g of groups) if (g.ids.includes(shapes[active].id)) delete g.st;
     sync(); render();
   };
   $('se-mirror').addEventListener('click', (e) => {
@@ -1305,9 +1372,10 @@
   // this drag produced (it was moved, edited, undone, or another shape was picked); and the ghost fades a moment
   // after the last movement whatever happens.
   $('se-turn').addEventListener('input', (e) => {
-    if (!turnFrom || shapes[selIdx()[0]] !== turned) { checkpoint(); turnFrom = selBase(); turnPivot = pivotOf(turnFrom.shapes); }
+    const now = () => (wholeOn ? whole : shapes[selIdx()[0]]);
+    if (!turnFrom || now() !== turned) { checkpoint(); turnFrom = selBase(); turnPivot = pivotOf(turnFrom.shapes); }
     turnSel(+e.target.value - (turnFrom.group.rot || 0), turnPivot, turnFrom);
-    turned = shapes[selIdx()[0]];
+    turned = now();
     ghost(turnPivot); ghostOff();
     sync(); render();
   });
@@ -1425,7 +1493,10 @@
     ...(sh.a !== undefined && { a: rd(sh.a, 4), x: rd(sh.x, 2), y: rd(sh.y, 2), ang: rd(sh.ang, 2) }),
     ...(sh.st && { st: sh.st.map((v) => rd(v, 4)) }),
     rot: rd(sh.rot || 0, 2),
-  })) });
+  })), ...(whole && { whole: wholeData() }) });
+  // The whole-icon transform, rounded the same way (flip only when it's on).
+  const wholeData = () => ({ a: rd(whole.a, 4), x: rd(whole.x, 3), y: rd(whole.y, 3), ang: rd(whole.ang, 2),
+    ...(whole.flip && { flip: true }), ...(whole.st && { st: whole.st.map((v) => rd(v, 4)) }), rot: rd(whole.rot || 0, 2) });
   // YAML, block style, with anything holding only plain values (a corner, a stretch) on one line in flow style.
   const plain = (v) => v === null || typeof v !== 'object';
   const yScalar = (v) => (typeof v !== 'string' ? String(v)
@@ -1490,7 +1561,9 @@
         + (it.at ? `${pad}at: [${it.at.join(', ')}]\n` : '') + (it.angle ? `${pad}angle: ${it.angle}\n` : '')
         + (it.mirror !== 'none' ? `${pad}mirror: ${it.mirror}\n` : '');
     };
-    return '  - name: My shape\n' + (fits ? '' : '    fit: false\n') + (items.length === 1 ? lines(items[0], '    ')
+    // The whole-icon transform stays its own entry, on one line: {a: 1, x: 0, ..., st: [...]}.
+    const w = whole ? `    whole: {${Object.entries(wholeData()).map(([k, v]) => `${k}: ${Array.isArray(v) ? `[${v.join(', ')}]` : v}`).join(', ')}}\n` : '';
+    return '  - name: My shape\n' + (fits ? '' : '    fit: false\n') + w + (items.length === 1 ? lines(items[0], '    ')
       : '    shapes:\n' + items.map((it) => '      -' + lines(it, '        ').slice(7)).join(''));
   }
   const copyText = async (text) => {
@@ -1506,7 +1579,7 @@
     // One shape per line group, its corners one per line, like the entries in _data/icon_shapes.yml.
     yamljson: () => `${PRESET} {"shapes": [\n` + iconData().shapes.map(({ pts, ...rest }) => (pts
       ? `      {"pts": [${pts.map(json).join(',\n               ')}],\n       ${json(rest).slice(1, -1)}}`
-      : `      ${json(rest)}`)).join(',\n') + ']}\n',
+      : `      ${json(rest)}`)).join(',\n') + ']' + (whole ? `,\n    "whole": ${json(wholeData())}` : '') + '}\n',
   };
   $('se-share').querySelectorAll('[data-copy]').forEach((card) => {
     const label = card.querySelector('.se-card-sub'), text = label.textContent;
@@ -1533,7 +1606,7 @@
     b.className = 'se-preset';
     if (k >= presetsShown) b.hidden = b.dataset.more = true;
     b.innerHTML = `${presetSvg(name)}<span>${name}</span>`;
-    b.onclick = () => { loadIcon(presetShapes(name)); svg.scrollIntoView({ behavior: 'smooth', block: 'center' }); };
+    b.onclick = () => { loadIcon(presetShapes(name), presetWhole(name)); svg.scrollIntoView({ behavior: 'smooth', block: 'center' }); };
     $('se-presets').append(b);
   });
   $('se-presets-more').hidden = presetNames.length <= presetsShown;
