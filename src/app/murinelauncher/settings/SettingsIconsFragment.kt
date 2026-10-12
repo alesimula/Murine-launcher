@@ -3,6 +3,7 @@ package app.murinelauncher.settings
 import androidx.preference.Preference
 import app.murinelauncher.graphics.IconShapeDrawables
 import app.murinelauncher.settings.common.AbstractSettingsFragment
+import app.murinelauncher.settings.icons.CustomIconShape
 import app.murinelauncher.settings.prefs.AdaptiveIcons
 import app.murinelauncher.util.isResourceHackSupported
 import app.murinelauncher.settings.prefs.LabelVisibility

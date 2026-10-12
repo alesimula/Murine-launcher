@@ -171,7 +171,7 @@ constructor(
         const val KEY_THEMED_ICONS = "themed_icons"
         @JvmField val THEMED_ICONS = backedUpItem(KEY_THEMED_ICONS, false, EncryptionType.ENCRYPTED)
         @JvmField val PREF_ICON_SHAPE = backedUpItem(SettingsIconsFragment.ICON_SHAPE_KEY, ShapesProvider.IconShape.IOS, EncryptionType.ENCRYPTED)
-        /** Path of the CUSTOM shape, kept when another shape is picked; only written once validated (see [app.murinelauncher.settings.CustomIconShape]) */
+        /** Path of the CUSTOM shape, kept when another shape is picked; only written once validated (see [app.murinelauncher.settings.icons.CustomIconShape]) */
         @JvmField val PREF_CUSTOM_ICON_SHAPE = backedUpItem("pref_icon_shape_custom", "", EncryptionType.ENCRYPTED)
 
         private const val ACTION_OVERLAY_CHANGED = "android.intent.action.OVERLAY_CHANGED"

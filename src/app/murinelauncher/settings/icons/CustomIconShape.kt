@@ -1,4 +1,4 @@
-package app.murinelauncher.settings
+package app.murinelauncher.settings.icons
 
 import android.app.Activity
 import android.content.Context
@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Base64
 import androidx.core.graphics.PathParser
+import app.murinelauncher.settings.SettingsIconsFragment
 import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.graphics.ThemeManager
 import com.android.launcher3.settings.SettingsActivity
@@ -14,6 +15,7 @@ import com.android.launcher3.shapes.ShapesProvider
 import java.io.ByteArrayOutputStream
 import java.util.zip.Inflater
 import java.util.zip.InflaterInputStream
+import kotlin.to
 
 /**
  * The Custom icon shape: made on the website's editor, sent back with murine-home://icon-shape?shape=...

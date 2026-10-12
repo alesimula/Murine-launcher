@@ -194,7 +194,7 @@
 
         <!-- A shape from the website's icon shape editor (see CustomIconShape) -->
         <activity
-            android:name="app.murinelauncher.settings.CustomIconShape$ImportActivity"
+            android:name="app.murinelauncher.settings.icons.CustomIconShape$ImportActivity"
             android:theme="@android:style/Theme.NoDisplay"
             android:taskAffinity=""
             android:excludeFromRecents="true"
