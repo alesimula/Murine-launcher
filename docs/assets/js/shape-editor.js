@@ -903,7 +903,7 @@
             ${copies(sh).map((d, c) => `<path class="${c ? 'copy' : ''}" d="${d}"/>`).join('')}</svg>
           <span>${name}</span>
         </button>
-        ${shapes.length > 1 ? `<button type="button" class="se-card-del" data-act="del" data-card="${i}" title="Delete ${name}" aria-label="Delete ${name}">${icon('e92e')}</button>` : ''}
+        ${shapes.length > 1 ? `<button type="button" class="se-card-del" data-act="del" data-card="${i}" title="Delete ${name} (undo can bring it back)" aria-label="Delete ${name}">${icon('e92e')}</button>` : ''}
         ${on && !many ? `<div class="se-card-modes" role="group" aria-label="Mode">
           <button type="button" data-act="edit" data-card="${i}" aria-pressed="${mode === 'edit'}" title="Edit points" ${sh.pts ? '' : 'disabled'}>${icon('f097')}</button>
           <button type="button" data-act="move" data-card="${i}" aria-pressed="${mode === 'move'}" title="Move and resize">${icon('e89f')}</button>
@@ -914,8 +914,7 @@
   }
   // Deleting a shape also drops the remembered groups it was in (sync() does that, by id).
   function deleteShapes(list) {
-    const n = list.length, what = n > 1 ? `these ${n} shapes` : shapeName(shapes[list[0]], list[0]);
-    if (!confirm(`Delete ${what}? Undo can still bring ${n > 1 ? 'them' : 'it'} back.`)) return;
+    // No confirmation: undo brings them back.
     checkpoint();
     for (const i of [...list].sort((a, b) => b - a)) shapes.splice(i, 1);
     active = Math.min(...list); multi = new Set();
@@ -1856,6 +1855,10 @@
   }
   const asShapes = (pieces) => pieces.map((path) => ({ path, a: 1, x: 0, y: 0, ang: 0, mirror: 'none', rot: 0 }));
   const addPieces = (pieces) => addShapes(asShapes(pieces), loaded?.notes);
+  // Baked: each preset's shapes and mirrored copies merged into one plain outline, as drawn (stretch and turn
+  // included), the way an imported SVG's pieces merge (parts that don't touch stay apart). A lone outline keeps
+  // its exact curves. Corners can't be edited any more.
+  const baked = (names) => asShapes(names.flatMap((n) => { const ds = presetShapes(n).flatMap(copies); return ds.length > 1 ? mergedPieces(ds).pieces : ds; }));
   const addMerged = (m) => addShapes(asShapes(m.pieces), [...(loaded?.notes || []), holesNote(m.holes), apartNote(m.pieces.length)]);
 
   const tileSvg = (inner) => `<svg viewBox="-4 -4 108 108" aria-hidden="true">${inner}</svg>`;
@@ -1880,7 +1883,7 @@
       const on = picked.has(b.dataset.key);
       b.classList.toggle('picked', on); b.setAttribute('aria-pressed', on);
     }
-    $('se-add-desc').textContent = `Tap to add${loaded ? ' in place' : ' at full size'}. Long-press or Ctrl+click to pick several.`;
+    $('se-add-desc').textContent = `Tap to add${loaded ? ' in place' : ' at full size'}. Long-press or Ctrl+click to pick several or see more options.`;
     $('se-import-btn').disabled = full;
     $('se-import-unload').hidden = !loaded;
     if (full) importMsg(`The icon already has the most shapes it can (${ROOM}): delete one to add more.`);
@@ -1915,10 +1918,12 @@
       // Merging picked groups that are already merged wouldn't change anything.
       const sub = loaded && loaded.view === 'pieces' ? [...picked].map(Number).sort((a, b) => a - b).map((i) => loaded.pieces[i]) : null;
       const merged = sub && k > 1 ? mergedPieces(sub) : null;
-      $('se-pick-count').textContent = `${k} picked` + (k > r ? `, room for ${Math.max(r, 0)}` : '');
-      $('se-pick-add').textContent = `Add ${k}`;
-      $('se-pick-add').title = loaded && k > 1 ? `Add the ${k} picked as separate shapes` : `Add ${plural(k)}`;
-      $('se-pick-add').disabled = k > r;
+      // A preset can hold several shapes: the count is of the shapes added, not of the picks.
+      const n = loaded ? k : presetNames.filter((name) => picked.has(name)).flatMap(presetShapes).length;
+      $('se-pick-count').textContent = `${k} picked` + (n > r ? `, room for ${Math.max(r, 0)}` : '');
+      $('se-pick-add').textContent = `Add ${n}`;
+      $('se-pick-add').title = loaded && k > 1 ? `Add the ${k} picked as separate shapes` : `Add ${plural(n)}`;
+      $('se-pick-add').disabled = n > r;
       $('se-pick-merge').hidden = !merged;
       if (merged) {
         const m = merged.pieces.length;
@@ -1926,6 +1931,15 @@
         $('se-pick-merge').title = m === 1 ? 'Merge them into one shape' : `Merge them: not all of them touch, so they'd make ${m} shapes`;
         $('se-pick-merge').disabled = m > r;
         $('se-pick-merge').onclick = () => addMerged(merged);
+      }
+      // Presets only: a loaded file's pieces are outlines already.
+      const bake = !loaded && baked(presetNames.filter((n) => picked.has(n)));
+      $('se-pick-bake').hidden = !bake;
+      if (bake) {
+        $('se-pick-bake').textContent = `Bake ${bake.length}`;
+        $('se-pick-bake').title = `Add each pick merged into one fixed outline (a path)${bake.length > picked.size ? `, ${bake.length} shapes in all as not all parts touch` : ''}: they move, turn and resize, but their corners can't be edited`;
+        $('se-pick-bake').disabled = bake.length > r;
+        $('se-pick-bake').onclick = () => addShapes(bake);
       }
     }
   }
