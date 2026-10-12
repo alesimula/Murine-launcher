@@ -932,16 +932,16 @@
     selectOnly(-1); sync(); render();
   }
   const deleteShape = (i) => deleteShapes([i]);
-  // Picking several cards: a long press or Ctrl/Cmd+click starts (with the selected shape, unless
-  // that one is mirrored), then plain taps toggle cards until one is left. Mirrored shapes can't join:
-  // the canvas shakes instead.
+  // Picking several cards: a long press or Ctrl/Cmd+click starts (with the selected shape), then plain
+  // taps toggle cards until one is left. Mirrored shapes can't join, the selected one included: the
+  // canvas shakes instead.
   function toggleMulti(i) {
     wholeOn = false;
     if (multi.size < 2) {
       if (i === active) return;
       if (shapes[i].mirror !== 'none') return shake();
-      if (shapes[active].mirror !== 'none') active = i; // starts from the pressed shape instead
-      else multi = new Set([active, i]);
+      if (shapes[active].mirror !== 'none') return shake(); // the selected shape can't join either
+      multi = new Set([active, i]);
     } else if (multi.has(i)) {
       multi.delete(i);
       if (multi.size < 2) { active = [...multi][0] ?? i; multi = new Set(); }
@@ -2130,6 +2130,8 @@
       });
     } else if (b.dataset.del) {
       const k = +b.dataset.del;
+      // Saved shapes live only here, outside undo: ask first (the Undo under the grid stays as a second chance).
+      if (!confirm(`Delete the saved shape “${library[k].name}”?`)) return;
       lastDeleted = { k, it: library.splice(k, 1)[0] };
       storeLibrary(); renderCustom();
       customMsg(`Deleted “${lastDeleted.it.name}”.`, true);
