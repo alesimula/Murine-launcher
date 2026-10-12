@@ -117,6 +117,16 @@ public class DeviceGridState implements Comparable<DeviceGridState> {
                 DEVICE_TYPE.to(mDeviceType),
                 DB_FILE.to(mDbFile),
                 GRID_TYPE.to(mGridType));
+    }
+
+    @androidx.annotation.WorkerThread
+    public void writeToPrefsSync(Context context) {
+        LauncherPrefs.get(context).putSyncChecked(
+                WORKSPACE_SIZE.to(mGridSizeString),
+                HOTSEAT_COUNT.to(mNumHotseat),
+                DEVICE_TYPE.to(mDeviceType),
+                DB_FILE.to(mDbFile),
+                GRID_TYPE.to(mGridType));
 
     }
 

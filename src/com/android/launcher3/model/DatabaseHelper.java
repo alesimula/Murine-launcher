@@ -89,7 +89,10 @@ public class DatabaseHelper extends NoLocaleSQLiteHelper implements
      */
     public DatabaseHelper(Context context, String dbName,
             ToLongFunction<UserHandle> userSerialProvider, Runnable onEmptyDbCreateCallback) {
-        super(context, dbName, SCHEMA_VERSION);
+        super(context, dbName, SCHEMA_VERSION, db -> {
+            throw new android.database.sqlite.SQLiteException(
+                    "Launcher database corruption; preserving files for recovery");
+        });
         mContext = context;
         mUserSerialProvider = userSerialProvider;
         mOnEmptyDbCreateCallback = onEmptyDbCreateCallback;
@@ -128,6 +131,9 @@ public class DatabaseHelper extends NoLocaleSQLiteHelper implements
     @Override
     public void onOpen(SQLiteDatabase db) {
         super.onOpen(db);
+        if (!LauncherDbUtils.tableExists(db, Favorites.TABLE_NAME)) {
+            return;
+        }
 
         File schemaFile = mContext.getFileStreamPath(DOWNGRADE_SCHEMA_FILE);
         if (!schemaFile.exists()) {
@@ -280,8 +286,7 @@ public class DatabaseHelper extends NoLocaleSQLiteHelper implements
         }
 
         // DB was not upgraded
-        Log.w(TAG, "Destroying all old data.");
-        createEmptyDB(db);
+        throw new android.database.sqlite.SQLiteException("Unable to upgrade launcher database");
     }
 
     @Override
@@ -290,9 +295,8 @@ public class DatabaseHelper extends NoLocaleSQLiteHelper implements
             DbDowngradeHelper.parse(mContext.getFileStreamPath(DOWNGRADE_SCHEMA_FILE))
                     .onDowngrade(db, oldVersion, newVersion);
         } catch (Exception e) {
-            Log.d(TAG, "Unable to downgrade from: " + oldVersion + " to " + newVersion
-                    + ". Wiping database.", e);
-            createEmptyDB(db);
+            throw new android.database.sqlite.SQLiteException(
+                    "Unable to downgrade launcher database", e);
         }
     }
 
@@ -300,6 +304,9 @@ public class DatabaseHelper extends NoLocaleSQLiteHelper implements
      * Clears all the data for a fresh start.
      */
     public void createEmptyDB(SQLiteDatabase db) {
+        if (app.murinelauncher.backup.BackupHelper.isRestoreActive()) {
+            throw new IllegalStateException("Cannot reset a pending restored layout");
+        }
         try (SQLiteTransaction t = new SQLiteTransaction(db)) {
             dropTable(db, Favorites.TABLE_NAME);
             dropTable(db, "workspaceScreens");

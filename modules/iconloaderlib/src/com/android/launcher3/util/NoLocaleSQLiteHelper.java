@@ -37,9 +37,18 @@ public abstract class NoLocaleSQLiteHelper extends SQLiteOpenHelper {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.P;
 
     public NoLocaleSQLiteHelper(Context context, String name, int version) {
-        super(ATLEAST_P ? context : new NoLocalContext(context), name, null, version);
+        this(context, name, version, null);
+    }
+
+    protected NoLocaleSQLiteHelper(Context context, String name, int version,
+            DatabaseErrorHandler errorHandler) {
+        super(ATLEAST_P ? context : new NoLocalContext(context), name, null, version,
+                errorHandler);
         if (ATLEAST_P) {
-            setOpenParams(new OpenParams.Builder().addOpenFlags(NO_LOCALIZED_COLLATORS).build());
+            OpenParams.Builder params = new OpenParams.Builder()
+                    .addOpenFlags(NO_LOCALIZED_COLLATORS);
+            if (errorHandler != null) params.setErrorHandler(errorHandler);
+            setOpenParams(params.build());
         }
     }
 

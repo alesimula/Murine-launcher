@@ -5,21 +5,28 @@ import android.content.SharedPreferences
 import android.database.sqlite.SQLiteDatabase
 import android.net.Uri
 import android.os.Build
+import android.system.Os
+import android.system.OsConstants
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.WorkerThread
 import app.murinelauncher.icons.IconPackManager
 import com.android.launcher3.LauncherFiles
 import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.LauncherSettings
+import com.android.launcher3.R
+import com.android.launcher3.model.DeviceGridState
 import com.android.launcher3.provider.RestoreDbTask
 import io.airlift.compress.tar.TarEntry
-import io.airlift.compress.tar.TarInputStream
 import io.airlift.compress.tar.TarOutputStream
 import io.airlift.compress.zstd.ZstdInputStream
 import io.airlift.compress.zstd.ZstdOutputStream
 import java.io.BufferedInputStream
 import java.io.File
-import java.util.zip.ZipInputStream
+import java.io.FileOutputStream
+import java.io.IOException
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 
 /**
  * Local backup ("*.rat", a zstd-compressed archive) of the same file set AOSP cloud backup uses;
@@ -32,6 +39,12 @@ object BackupHelper {
     private const val TMP_PREFS = "murine_backup_tmp_prefs"
     private const val DOWNGRADE_JSON = "downgrade_schema.json"
     private const val MAIN_PREFS_XML = LauncherFiles.SHARED_PREFERENCES_KEY + ".xml"
+    @Volatile private var restoreActive = false
+    @Volatile private var restoreBlocked = false
+    private var restoreFailed = false
+
+    @JvmStatic fun isRestoreActive() = restoreActive
+    @JvmStatic fun isRestoreBlocked() = restoreBlocked
     // Current implementation only supports level 1 to 4, default is 2
     // NOTE: maybe set to 2 instead if backup grows bigger in the future (e.g. inserts a preview image) to execute faster
     private const val ZSTD_COMPRESSION_LEVEL = 3
@@ -76,7 +89,7 @@ object BackupHelper {
             PREF_FILES.forEach { name ->
                 context.getSharedPreferences(TMP_PREFS, Context.MODE_PRIVATE).edit().clear().also { ed ->
                     context.getSharedPreferences(name, Context.MODE_PRIVATE).all.forEach { (k, v) -> ed.putAny(k, v) }
-                }.commit()
+                }.commit().also { check(it) { "Cannot write backup preferences" } }
                 tar.add("$name.xml", prefsFile(context, TMP_PREFS))
             }
             File(context.filesDir, DOWNGRADE_JSON).takeIf(File::exists)
@@ -96,73 +109,223 @@ object BackupHelper {
      */
     @WorkerThread
     fun stageRestore(context: Context, uri: Uri): Boolean = try {
-        val tmp = tmpStagingDir(context).apply { deleteRecursively(); mkdirs() }
-        stagingDir(context).deleteRecursively()
-        val src = BufferedInputStream(context.contentResolver.openInputStream(uri)!!)
-        val input = BufferedInputStream(src.decompressed())
-        // Whitelist of exact file names for content validation
-        fun stage(name: String, content: java.io.InputStream) {
-            if (name in LauncherFiles.GRID_DB_FILES || name.removeSuffix(".xml") in PREF_FILES || name == DOWNGRADE_JSON)
-                File(tmp, name).outputStream().use(content::copyTo)
+        check(!restoreActive && !restoreBlocked && !stagingDir(context).exists()) {
+            "A restore is already pending"
         }
-        // The container also needs sniffing: current backups are tar, older ones are zip
-        if (input.isZip()) ZipInputStream(input).use { zip ->
-            generateSequence { zip.nextEntry }.forEach { stage(it.name, zip) }
+        val tmp = tmpStagingDir(context)
+        deleteStagingWithStateLast(tmp)
+        check(tmp.mkdirs()) { "Cannot create restore staging directory" }
+        val archive = File(tmp, "archive")
+        var zip = false
+        BufferedInputStream(requireNotNull(context.contentResolver.openInputStream(uri))).use { src ->
+            BufferedInputStream(src.decompressed()).use { input ->
+                zip = input.isZip()
+                FileOutputStream(archive).use { output ->
+                    val buffer = ByteArray(8192)
+                    var total = 0L
+                    while (true) {
+                        val count = input.read(buffer)
+                        if (count < 0) break
+                        total += count
+                        require(total <= BackupValidation.MAX_BYTES) { "Backup too large" }
+                        output.write(buffer, 0, count)
+                    }
+                    output.fd.sync()
+                }
+            }
         }
-        else TarInputStream(input).use { tar ->
-            generateSequence { tar.nextEntry }.forEach { stage(it.name, tar) }
-        }
-        val valid = File(tmp, MAIN_PREFS_XML).exists() && tmp.list()!!.any { it.endsWith(".db") }
-        (valid && tmp.renameTo(stagingDir(context))).also { if (!it) tmp.deleteRecursively() }
+        val allowed = LauncherFiles.GRID_DB_FILES.toSet() +
+            PREF_FILES.map { "$it.xml" } + DOWNGRADE_JSON
+        BackupValidation.extract(archive, tmp, allowed, zip)
+        BackupValidation.validate(tmp)
+        check(archive.delete())
+        syncDirectory(tmp)
+        move(tmp, stagingDir(context))
+        syncDirectory(context.filesDir)
+        true
     } catch (e: Exception) {
-        Log.e(TAG, "Staging restore failed", e)
-        tmpStagingDir(context).deleteRecursively()
+        Log.e(TAG, "Staging restore failed (${e.javaClass.simpleName})")
         false
     }
 
-    /**
-     * Always ran in [android.app.Application.onCreate], no-op unless staged restore.
-     */
     fun applyStagedRestoreIfNeeded(context: Context) {
-        tmpStagingDir(context).deleteRecursively()
+        restoreActive = false
+        restoreBlocked = false
+        restoreFailed = false
         val staging = stagingDir(context)
         if (!staging.exists()) return
-        try {
-            // Drop all current grid DBs
-            LauncherFiles.GRID_DB_FILES.map(context::getDatabasePath).forEach { db ->
-                listOf("", "-wal", "-shm", "-journal").forEach { File(db.path + it).delete() }
+        val journal = journal(context)
+        if (journal.exists()) {
+            try {
+                if (journal.phase() != "committed") {
+                    journal.rollback()
+                    restoreFailed = true
+                }
+                journal.cleanup()
+                deleteStagingWithStateLast(staging)
+            } catch (e: Exception) {
+                restoreFailed = true
+                restoreBlocked = !isTerminal(journal)
+                Log.e(TAG, "Restore recovery deferred (${e.javaClass.simpleName})")
             }
-            val stagedFiles = staging.list()!!.toSet()
-            staging.listFiles()!!.forEach { f ->
-                when {
-                    f.name.endsWith(".db") -> context.getDatabasePath(f.name)
-                        .also { it.parentFile?.mkdirs() }.let(f::renameTo)
-                    f.name == DOWNGRADE_JSON -> f.renameTo(File(context.filesDir, DOWNGRADE_JSON))
-                    f.name.endsWith(".xml") -> {
-                        // Read the xml as a temp SharedPreferences then commit to target prefs.
-                        context.deleteSharedPreferences(TMP_PREFS)
-                        f.renameTo(prefsFile(context, TMP_PREFS))
-                        val restored = context.getSharedPreferences(TMP_PREFS, Context.MODE_PRIVATE).all
-                        context.getSharedPreferences(f.name.removeSuffix(".xml"), Context.MODE_PRIVATE).edit().clear().also { ed ->
-                            restored.forEach { (k, v) -> ed.putAny(k, v) }
-                        }.commit()
-                        context.deleteSharedPreferences(TMP_PREFS)
+            return
+        }
+        try {
+            BackupValidation.validate(staging)
+            val main = BackupValidation.readPreferences(File(staging, MAIN_PREFS_XML))
+            main.keys.removeAll { it.startsWith("EMPTY_DATABASE_CREATED") }
+            main[RestoreDbTask.RESTORED_DEVICE_TYPE] =
+                main[DeviceGridState.KEY_DEVICE_TYPE] ?: 0
+            main.remove(RestoreDbTask.APPWIDGET_IDS)
+            main.remove(RestoreDbTask.APPWIDGET_OLD_IDS)
+            val preparedMain = File(staging, "prepared-main")
+            BackupValidation.writePreferences(preparedMain, main)
+            val deviceFile = prefsFile(context, LauncherFiles.DEVICE_PREFERENCES_KEY)
+            val deviceBackup = File(deviceFile.path + ".bak")
+            val device = when {
+                deviceBackup.exists() -> BackupValidation.readPreferences(deviceBackup)
+                deviceFile.exists() -> BackupValidation.readPreferences(deviceFile)
+                else -> mutableMapOf()
+            }
+            device["restore_user_initiated"] = true
+            device[RestoreDbTask.FIRST_LOAD_AFTER_RESTORE_KEY] = true
+            val preparedDevice = File(staging, "prepared-device")
+            BackupValidation.writePreferences(preparedDevice, device)
+            val replacements = linkedMapOf<File, File>()
+            LauncherFiles.GRID_DB_FILES.forEach { name ->
+                File(staging, name).takeIf(File::exists)?.let {
+                    replacements[context.getDatabasePath(name)] = it
+                }
+            }
+            PREF_FILES.forEach { name ->
+                File(staging, "$name.xml").takeIf(File::exists)?.let {
+                    replacements[prefsFile(context, name)] = it
+                }
+            }
+            replacements[prefsFile(context, LauncherFiles.SHARED_PREFERENCES_KEY)] = preparedMain
+            replacements[deviceFile] = preparedDevice
+            journal.install(replacements)
+            restoreActive = true
+        } catch (e: Exception) {
+            Log.e(TAG, "Applying restore failed (${e.javaClass.simpleName})")
+            restoreFailed = true
+            try {
+                if (journal.exists()) {
+                    journal.rollback()
+                    journal.cleanup()
+                }
+                deleteStagingWithStateLast(staging)
+            } catch (rollback: Exception) {
+                restoreBlocked = journal.exists() && !isTerminal(journal)
+                Log.e(TAG, "Restore recovery blocked (${rollback.javaClass.simpleName})")
+            }
+        }
+    }
+
+    private fun isTerminal(journal: RestoreJournal): Boolean = try {
+        journal.phase() in listOf("committed", "rolled-back")
+    } catch (_: IOException) {
+        false
+    }
+
+    @JvmStatic fun commitRestore(context: Context) {
+        if (!restoreActive) return
+        check(!restoreBlocked) { "Restore recovery is required" }
+        check(!context.getSharedPreferences(LauncherFiles.SHARED_PREFERENCES_KEY,
+            Context.MODE_PRIVATE).contains(RestoreDbTask.RESTORED_DEVICE_TYPE)) {
+            "Restored database has not been verified"
+        }
+        (PREF_FILES + LauncherFiles.DEVICE_PREFERENCES_KEY).forEach {
+            check(context.getSharedPreferences(it, Context.MODE_PRIVATE).edit().commit()) {
+                "Cannot persist restored preferences"
+            }
+        }
+        listOf(context, context.createDeviceProtectedStorageContext()).forEach {
+            check(it.getSharedPreferences(LauncherPrefs.BOOT_AWARE_PREFS_KEY,
+                Context.MODE_PRIVATE).edit().commit()) { "Cannot persist boot preferences" }
+        }
+        LauncherFiles.GRID_DB_FILES.map(context::getDatabasePath).filter(File::exists).forEach {
+            SQLiteDatabase.openDatabase(it.path, null, SQLiteDatabase.OPEN_READWRITE,
+                { throw IOException("Corrupt restored database") }).use { db ->
+                db.rawQuery("PRAGMA wal_checkpoint(FULL)", null).use { result ->
+                    check(result.moveToFirst() && result.getInt(0) == 0) {
+                        "Restored database checkpoint is busy"
                     }
                 }
             }
-            // Delete preferences in backupscheme present in the current app config but not in the backup
-            PREF_FILES.forEach { name ->
-                if ("$name.xml" !in stagedFiles) context.deleteSharedPreferences(name)
-            }
-            context.deleteSharedPreferences(LauncherPrefs.BOOT_AWARE_PREFS_KEY)
-            context.createDeviceProtectedStorageContext().deleteSharedPreferences(LauncherPrefs.BOOT_AWARE_PREFS_KEY)
-            RestoreDbTask.setPending(context, true)
-            Log.d(TAG, "Staged restore applied, RestoreDbTask pending")
-        } catch (e: Exception) {
-            Log.e(TAG, "Applying staged restore failed", e)
-        } finally {
-            staging.deleteRecursively()
+            FileOutputStream(it, true).use { output -> output.fd.sync() }
         }
+        journal(context).commit()
+        restoreActive = false
+        try {
+            journal(context).cleanup()
+            deleteStagingWithStateLast(stagingDir(context))
+        } catch (e: Exception) {
+            Log.w(TAG, "Restore cleanup deferred (${e.javaClass.simpleName})")
+        }
+    }
+
+    @JvmStatic fun onLoadFailure(context: Context) {
+        showFailure(context)
+        if (!restoreActive || restoreBlocked) return
+        restoreBlocked = true
+        com.android.launcher3.Utilities.restart()
+    }
+
+    fun showRestoreFailureIfNeeded(context: Context) {
+        if (restoreFailed || restoreBlocked) showFailure(context)
+    }
+
+    private fun showFailure(context: Context) {
+        com.android.launcher3.util.Executors.MAIN_EXECUTOR.execute {
+            Toast.makeText(context, context.getString(R.string.remote_action_failed, "")
+                .trim().trimEnd(':', '\uFF1A'), Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun targets(context: Context): List<File> = buildList {
+        LauncherFiles.GRID_DB_FILES.forEach { name ->
+            listOf("", "-wal", "-shm", "-journal").forEach {
+                add(File(context.getDatabasePath(name).path + it))
+            }
+        }
+        (PREF_FILES + LauncherFiles.DEVICE_PREFERENCES_KEY +
+            LauncherPrefs.BOOT_AWARE_PREFS_KEY).forEach { name ->
+            val file = prefsFile(context, name)
+            add(file)
+            add(File(file.path + ".bak"))
+        }
+        val boot = prefsFile(context.createDeviceProtectedStorageContext(),
+            LauncherPrefs.BOOT_AWARE_PREFS_KEY)
+        add(boot)
+        add(File(boot.path + ".bak"))
+        add(File(context.filesDir, DOWNGRADE_JSON))
+    }
+
+    private fun journal(context: Context) = RestoreJournal(
+        stagingDir(context), targets(context), ::syncDirectory, ::move)
+
+    private fun move(source: File, target: File) {
+        Files.move(source.toPath(), target.toPath(), StandardCopyOption.ATOMIC_MOVE,
+            StandardCopyOption.REPLACE_EXISTING)
+    }
+
+    private fun syncDirectory(directory: File) {
+        val fd = Os.open(directory.path, OsConstants.O_RDONLY, 0)
+        try { Os.fsync(fd) } finally { Os.close(fd) }
+    }
+
+    private fun deleteStagingWithStateLast(directory: File) {
+        if (!directory.exists()) return
+        directory.listFiles()?.sortedBy { it.name == "state" }?.forEach {
+            if (it.isDirectory) deleteStagingWithStateLast(it)
+            else {
+                if (!it.delete()) throw IOException("Cannot clean restore staging")
+                syncDirectory(directory)
+            }
+        } ?: throw IOException("Cannot list restore staging")
+        if (!directory.delete()) throw IOException("Cannot clean restore directory")
+        syncDirectory(requireNotNull(directory.parentFile))
     }
 
     /**
@@ -171,14 +334,16 @@ object BackupHelper {
      */
     private fun snapshotDatabase(source: File, dest: File) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            SQLiteDatabase.openDatabase(source.path, null, SQLiteDatabase.OPEN_READONLY).use {
+            SQLiteDatabase.openDatabase(source.path, null, SQLiteDatabase.OPEN_READONLY,
+                { throw IOException("Cannot snapshot corrupt launcher database") }).use {
                 it.execSQL("VACUUM INTO ?", arrayOf<Any>(dest.path))
             }
             return
         }
         // Fallback snapshot logic for older SQLite versions
         dest.createNewFile()
-        SQLiteDatabase.openDatabase(source.path, null, SQLiteDatabase.OPEN_READWRITE).use { db ->
+        SQLiteDatabase.openDatabase(source.path, null, SQLiteDatabase.OPEN_READWRITE,
+            { throw IOException("Cannot snapshot corrupt launcher database") }).use { db ->
             db.execSQL("ATTACH DATABASE ? AS snapshot", arrayOf<Any>(dest.path))
             db.beginTransaction()
             try {

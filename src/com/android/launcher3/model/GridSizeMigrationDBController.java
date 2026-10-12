@@ -28,7 +28,6 @@ import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCH
 import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_STANDARD_GRID_MIGRATION;
 import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_STANDARD_ONE_GRID_MIGRATION;
 import static com.android.launcher3.model.LoaderTask.SMARTSPACE_ON_HOME_SCREEN;
-import static com.android.launcher3.provider.LauncherDbUtils.copyTable;
 import static com.android.launcher3.provider.LauncherDbUtils.dropTable;
 import static com.android.launcher3.provider.LauncherDbUtils.shiftWorkspaceByXCells;
 
@@ -75,7 +74,7 @@ import java.util.stream.Collectors;
 public class GridSizeMigrationDBController {
 
     private static final String TAG = "GridSizeMigrationDBController";
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     private GridSizeMigrationDBController() {
         // Util class should not be instantiated
@@ -140,14 +139,12 @@ public class GridSizeMigrationDBController {
         boolean shouldMigrateToStrictlyTallerGrid = (Flags.oneGridSpecs() || isDestNewDb)
                 && srcDeviceState.getColumns().equals(destDeviceState.getColumns())
                 && srcDeviceState.getRows() < destDeviceState.getRows();
-        if (shouldMigrateToStrictlyTallerGrid) {
-            copyTable(source, TABLE_NAME, target.getWritableDatabase(), TABLE_NAME, context);
-        } else {
-            copyTable(source, TABLE_NAME, target.getWritableDatabase(), TMP_TABLE, context);
-        }
-
         long migrationStartTime = System.currentTimeMillis();
-        try (SQLiteTransaction t = new SQLiteTransaction(target.getWritableDatabase())) {
+        try (com.android.launcher3.provider.LauncherDbUtils.TableCopy tables =
+                    new com.android.launcher3.provider.LauncherDbUtils.TableCopy(
+                            source, target.getWritableDatabase(), context);
+                SQLiteTransaction t = new SQLiteTransaction(target.getWritableDatabase())) {
+            tables.copy(TABLE_NAME, shouldMigrateToStrictlyTallerGrid ? TABLE_NAME : TMP_TABLE);
 
             if (shouldMigrateToStrictlyTallerGrid) {
                 // We want to add the extra row(s) to the top of the screen, so we shift the grid
@@ -159,41 +156,34 @@ public class GridSizeMigrationDBController {
                             TABLE_NAME);
                 }
 
-                // Save current configuration, so that the migration does not run again.
-                destDeviceState.writeToPrefs(context);
                 t.commit();
                 if (isOneGridMigration(srcDeviceState, destDeviceState)) {
                     statsLogManager.logger().log(LAUNCHER_ROW_SHIFT_ONE_GRID_MIGRATION);
                 }
                 statsLogManager.logger().log(LAUNCHER_ROW_SHIFT_GRID_MIGRATION);
-                return true;
+            } else {
+                DbReader srcReader = new DbReader(t.getDb(), TMP_TABLE, context);
+                DbReader destReader = new DbReader(t.getDb(), TABLE_NAME, context);
+                Point targetSize = new Point(destDeviceState.getColumns(), destDeviceState.getRows());
+                migrate(target, srcReader, destReader, srcDeviceState.getNumHotseat(),
+                        destDeviceState.getNumHotseat(), targetSize, srcDeviceState, destDeviceState);
+                dropTable(t.getDb(), TMP_TABLE);
+                t.commit();
+                if (isOneGridMigration(srcDeviceState, destDeviceState)) {
+                    statsLogManager.logger().log(LAUNCHER_STANDARD_ONE_GRID_MIGRATION);
+                }
+                statsLogManager.logger().log(LAUNCHER_STANDARD_GRID_MIGRATION);
             }
-
-            DbReader srcReader = new DbReader(t.getDb(), TMP_TABLE, context);
-            DbReader destReader = new DbReader(t.getDb(), TABLE_NAME, context);
-
-            Point targetSize = new Point(destDeviceState.getColumns(), destDeviceState.getRows());
-            migrate(target, srcReader, destReader, srcDeviceState.getNumHotseat(),
-                    destDeviceState.getNumHotseat(), targetSize, srcDeviceState, destDeviceState);
-            dropTable(t.getDb(), TMP_TABLE);
-            t.commit();
-            if (isOneGridMigration(srcDeviceState, destDeviceState)) {
-                statsLogManager.logger().log(LAUNCHER_STANDARD_ONE_GRID_MIGRATION);
-            }
-            statsLogManager.logger().log(LAUNCHER_STANDARD_GRID_MIGRATION);
-            return true;
         } catch (Exception e) {
             Log.e(TAG, "Error during grid migration", e);
             return false;
         } finally {
             Log.v(TAG, "Workspace migration completed in "
                     + (System.currentTimeMillis() - migrationStartTime));
-
-            // Save current configuration, so that the migration does not run again.
-            destDeviceState.writeToPrefs(context);
-            // Notify if we've migrated successfully
-            modelDelegate.gridMigrationComplete(srcDeviceState, destDeviceState);
         }
+        destDeviceState.writeToPrefsSync(context);
+        modelDelegate.gridMigrationComplete(srcDeviceState, destDeviceState);
+        return true;
     }
 
     public static boolean migrate(
@@ -384,9 +374,12 @@ public class GridSizeMigrationDBController {
                 newId = helper.generateNewItemId();
             } while (idsInUse.contains(newId));
             values.put(LauncherSettings.Favorites._ID, newId);
-            helper.getWritableDatabase().insert(destTableName, null, values);
+            helper.getWritableDatabase().insertOrThrow(destTableName, null, values);
         }
         c.close();
+        if (newId < 0) {
+            throw new android.database.sqlite.SQLiteException("Missing migration source entry");
+        }
         return newId;
     }
 

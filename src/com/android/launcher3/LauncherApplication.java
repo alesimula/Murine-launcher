@@ -36,19 +36,26 @@ public class LauncherApplication extends Application {
 
     private volatile LauncherBaseAppComponent mAppComponent;
     private int mNightMode = Configuration.UI_MODE_NIGHT_UNDEFINED;
+    private boolean mIsMainProcess;
 
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         // Exempts every non-SDK interface, so hidden APIs stay reachable on Android 9+
         if (Utilities.ATLEAST_P) HiddenApiBypass.setHiddenApiExemptions("");
+        String processName = Utilities.ATLEAST_P ? Application.getProcessName()
+                : android.app.ActivityThread.currentProcessName();
+        mIsMainProcess = base.getPackageName().equals(processName);
+        if (mIsMainProcess) {
+            app.murinelauncher.backup.BackupHelper.INSTANCE.applyStagedRestoreIfNeeded(base);
+        }
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        // Only checks if a backup is staged, does nothing otherwise
-        app.murinelauncher.backup.BackupHelper.INSTANCE.applyStagedRestoreIfNeeded(this);
+        if (!mIsMainProcess) return;
+        app.murinelauncher.backup.BackupHelper.INSTANCE.showRestoreFailureIfNeeded(this);
         app.murinelauncher.icons.IconPackProgress.install(this);
         com.android.launcher3.icons.cache.IconCacheUpdateHandler.setOnIconsDrained(
                 app.murinelauncher.icons.IconPackProgress::finish);
@@ -73,6 +80,7 @@ public class LauncherApplication extends Application {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+        if (!mIsMainProcess) return;
         int nightMode = newConfig.uiMode & Configuration.UI_MODE_NIGHT_MASK;
         if (nightMode != mNightMode) {
             mNightMode = nightMode;

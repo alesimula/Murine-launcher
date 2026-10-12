@@ -157,6 +157,11 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
     fun putSync(vararg itemsToValues: Pair<Item, Any>): Unit =
         prepareToPutValues(itemsToValues).forEach { it.commit() }
 
+    fun putSyncChecked(vararg itemsToValues: Pair<Item, Any>): Unit =
+        prepareToPutValues(itemsToValues).forEach {
+            check(it.commit()) { "Unable to persist launcher preferences" }
+        }
+
     /**
      * Updates the values stored in `SharedPreferences` for each corresponding Item-value pair. If
      * the item is boot aware, this method updates both the boot aware and the encrypted files. This
@@ -267,6 +272,10 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
 
     /** Synchronously removes the [Item]'s value from its corresponding `SharedPreferences` file. */
     fun removeSync(vararg items: Item) = prepareToRemove(items).forEach { it.commit() }
+
+    fun removeSyncChecked(vararg items: Item) = prepareToRemove(items).forEach {
+        check(it.commit()) { "Unable to persist launcher preferences" }
+    }
 
     /**
      * Removes the key value pairs stored in `SharedPreferences` for each corresponding Item. If the

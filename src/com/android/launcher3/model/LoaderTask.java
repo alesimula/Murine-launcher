@@ -276,6 +276,7 @@ public class LoaderTask implements Runnable {
         try (LauncherModel.LoaderTransaction transaction = mModel.beginLoader(this)) {
             List<CacheableShortcutInfo> allShortcuts = new ArrayList<>();
             loadWorkspace(allShortcuts, "", new HashMap<>(), memoryLogger, restoreEventLogger);
+            verifyNotStopped();
 
             // Sanitize data re-syncs widgets/shortcuts based on the workspace loaded from db.
             // sanitizeData should not be invoked if the workspace is loaded from a db different
@@ -288,6 +289,10 @@ public class LoaderTask implements Runnable {
                 verifyNotStopped();
                 sanitizeFolders(mItemsDeleted);
                 sanitizeAppPairs();
+            }
+            verifyNotStopped();
+            app.murinelauncher.backup.BackupHelper.commitRestore(mContext);
+            if (Objects.equals(mIDP.dbFile, mDbName)) {
                 sanitizeWidgetsShortcutsAndPackages();
                 logASplit("sanitizeData finished");
             }
@@ -397,8 +402,9 @@ public class LoaderTask implements Runnable {
             // Loader stopped, ignore
             FileLog.w(TAG, "LoaderTask cancelled");
         } catch (Exception e) {
-            memoryLogger.printLogs();
-            throw e;
+            FileLog.e(TAG, "Workspace load failed; preserving launcher data ("
+                    + e.getClass().getSimpleName() + ")");
+            app.murinelauncher.backup.BackupHelper.onLoadFailure(mContext);
         }
         MODEL_EXECUTOR.restorePriority(CALLER_LOADER_TASK);
         TraceHelper.INSTANCE.endSection();
@@ -450,7 +456,7 @@ public class LoaderTask implements Runnable {
             try {
                 dbController.attemptMigrateDb(restoreEventLogger, mModelDelegate);
             } catch (Exception e) {
-                FileLog.e(TAG, "Failed to migrate grid", e);
+                throw new IllegalStateException("Failed to migrate grid", e);
             }
         } else {
             dbController.tryMigrateDB(restoreEventLogger, mModelDelegate);

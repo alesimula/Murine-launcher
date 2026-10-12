@@ -121,6 +121,9 @@ public class ModelDbController {
     }
 
     private synchronized void createDbIfNotExists() {
+        if (app.murinelauncher.backup.BackupHelper.isRestoreBlocked()) {
+            throw new IllegalStateException("Launcher restore requires restart recovery");
+        }
         if (mOpenHelper == null) {
             String dbFile = mPrefs.get(DB_FILE);
             if (dbFile.isEmpty()) {
@@ -128,12 +131,23 @@ public class ModelDbController {
             }
             mOpenHelper = createDatabaseHelper(false /* forMigration */, dbFile);
             printDBs("before: ");
-            RestoreDbTask.restoreIfNeeded(mContext, this);
+            try {
+                RestoreDbTask.restoreIfNeeded(mContext, this);
+            } catch (RuntimeException e) {
+                mOpenHelper.close();
+                mOpenHelper = null;
+                throw e;
+            }
             printDBs("after: ");
         }
     }
 
     protected DatabaseHelper createDatabaseHelper(boolean forMigration, String dbFile) {
+        boolean existed = mContext.getDatabasePath(dbFile).exists();
+        if (!existed && app.murinelauncher.backup.BackupHelper.isRestoreActive()
+                && !forMigration) {
+            throw new IllegalStateException("Restored active database is missing");
+        }
         // Set the flag for empty DB
         Runnable onEmptyDbCreateCallback = forMigration ? () -> { }
                 : () -> mPrefs.putSync(getEmptyDbCreatedKey(dbFile).to(true));
@@ -144,6 +158,11 @@ public class ModelDbController {
         // This way, we will try to create a table every time after crash, so the device
         // would eventually be able to recover.
         if (!tableExists(databaseHelper.getReadableDatabase(), Favorites.TABLE_NAME)) {
+            if (app.murinelauncher.backup.BackupHelper.isRestoreActive()
+                    || (existed && hasUserData(databaseHelper.getReadableDatabase()))) {
+                databaseHelper.close();
+                throw new IllegalStateException("Existing launcher database is missing favorites");
+            }
             Log.e(TAG, "Tables are missing after onCreate has been called. Trying to recreate");
             // This operation is a no-op if the table already exists.
             addTableToDb(databaseHelper.getWritableDatabase(),
@@ -259,6 +278,10 @@ public class ModelDbController {
      */
     @WorkerThread
     public void removeGhostWidgets() {
+        if (app.murinelauncher.backup.BackupHelper.isRestoreActive()
+                || app.murinelauncher.backup.BackupHelper.isRestoreBlocked()) {
+            return;
+        }
         createDbIfNotExists();
         mOpenHelper.removeGhostWidgets(mOpenHelper.getWritableDatabase());
     }
@@ -286,35 +309,15 @@ public class ModelDbController {
      * Resets the launcher DB if we should reset it.
      */
     public void resetLauncherDb(@Nullable LauncherRestoreEventLogger restoreEventLogger) {
-        if (restoreEventLogger != null) {
-            sendMetricsForFailedMigration(restoreEventLogger, getDb());
-        }
-        FileLog.d(TAG, "resetLauncherDb: Migration failed: resetting launcher database");
-        createEmptyDB();
-        mPrefs.putSync(getEmptyDbCreatedKey(mOpenHelper.getDatabaseName()).to(true));
-
-        // Write the grid state to avoid another migration
-        new DeviceGridState(mIdp).writeToPrefs(mContext);
-    }
-
-    /**
-     * Determines if we should reset the DB.
-     */
-    private boolean shouldResetDb() {
-        if (isThereExistingDb()) {
-            return true;
-        }
-        if (!isGridMigrationNecessary()) {
-            return false;
-        }
-        if (isCurrentDbSameAsTarget()) {
-            return true;
-        }
-        return false;
+        throw new IllegalStateException("Migration failure must not reset the launcher database");
     }
 
     private boolean isThereExistingDb() {
         if (mPrefs.get(getEmptyDbCreatedKey())) {
+            if (hasFavorites(mOpenHelper.getReadableDatabase())) {
+                mPrefs.removeSyncChecked(getEmptyDbCreatedKey());
+                return false;
+            }
             // If we already have a new DB, ignore migration
             FileLog.d(TAG, "isThereExistingDb: new DB already created, skipping migration");
             return true;
@@ -341,15 +344,21 @@ public class ModelDbController {
         return false;
     }
 
-    /**
-     * Migrates the DB. If the migration failed, it clears the DB.
-     */
     public void attemptMigrateDb(LauncherRestoreEventLogger restoreEventLogger,
             ModelDelegate modelDelegate) throws Exception {
         createDbIfNotExists();
-        if (shouldResetDb()) {
-            resetLauncherDb(restoreEventLogger);
+        if (isThereExistingDb()) {
+            if (app.murinelauncher.backup.BackupHelper.isRestoreActive()) {
+                throw new IllegalStateException("Restored database cannot seed defaults");
+            }
+            new DeviceGridState(mIdp).writeToPrefsSync(mContext);
             return;
+        }
+        if (!isGridMigrationNecessary()) {
+            return;
+        }
+        if (isCurrentDbSameAsTarget()) {
+            throw new IllegalStateException("Cannot migrate a grid onto its source database");
         }
 
         DatabaseHelper oldHelper = mOpenHelper;
@@ -360,8 +369,8 @@ public class ModelDbController {
                 .filter(dbName -> mContext.getDatabasePath(dbName).exists())
                 .collect(Collectors.toList());
 
-        mOpenHelper = createDatabaseHelper(true, new DeviceGridState(mIdp).getDbFile());
         try {
+            mOpenHelper = createDatabaseHelper(true, new DeviceGridState(mIdp).getDbFile());
             // This is the current grid we have, given by the mContext
             DeviceGridState srcDeviceState = new DeviceGridState(mContext);
             // This is the state we want to migrate to that is given by the idp
@@ -372,7 +381,10 @@ public class ModelDbController {
             gridSizeMigrationLogic.migrateGrid(mContext, srcDeviceState, destDeviceState,
                     mOpenHelper, oldHelper.getWritableDatabase(), isDestNewDb, modelDelegate);
         } catch (Exception e) {
-            resetLauncherDb(restoreEventLogger);
+            if (mOpenHelper != oldHelper) {
+                mOpenHelper.close();
+                mOpenHelper = oldHelper;
+            }
             throw new Exception("attemptMigrateDb: Failed to migrate grid", e);
         } finally {
             if (mOpenHelper != oldHelper) {
@@ -381,81 +393,12 @@ public class ModelDbController {
         }
     }
 
-    /**
-     * Migrates the DB if needed. If the migration failed, it clears the DB.
-     */
     public void tryMigrateDB(@Nullable LauncherRestoreEventLogger restoreEventLogger,
             ModelDelegate modelDelegate) {
-        if (!migrateGridIfNeeded(modelDelegate)) {
-            if (restoreEventLogger != null) {
-                if (mPrefs.get(NO_DB_FILES_RESTORED)) {
-                    restoreEventLogger.logLauncherItemsRestoreFailed(DATA_TYPE_DB_FILE, 1,
-                            RestoreError.DATABASE_FILE_NOT_RESTORED);
-                    mPrefs.put(NO_DB_FILES_RESTORED, false);
-                    FileLog.d(TAG, "There is no data to migrate: resetting launcher database");
-                } else {
-                    restoreEventLogger.logLauncherItemsRestored(DATA_TYPE_DB_FILE, 1);
-                    sendMetricsForFailedMigration(restoreEventLogger, getDb());
-                }
-            }
-            FileLog.d(TAG, "tryMigrateDB: Migration failed: resetting launcher database");
-            createEmptyDB();
-            mPrefs.putSync(getEmptyDbCreatedKey(mOpenHelper.getDatabaseName()).to(true));
-
-            // Write the grid state to avoid another migration
-            new DeviceGridState(mIdp).writeToPrefs(mContext);
-        } else if (restoreEventLogger != null) {
-            restoreEventLogger.logLauncherItemsRestored(DATA_TYPE_DB_FILE, 1);
-        }
-    }
-
-    /**
-     * Migrates the DB if needed, and returns false if the migration failed
-     * and DB needs to be cleared.
-     * @return true if migration was success or ignored, false if migration failed
-     * and the DB should be reset.
-     */
-    private boolean migrateGridIfNeeded(ModelDelegate modelDelegate) {
-        createDbIfNotExists();
-        if (mPrefs.get(getEmptyDbCreatedKey())) {
-            // If we have already create a new DB, ignore migration
-            FileLog.d(TAG, "migrateGridIfNeeded: new DB already created, skipping migration");
-            return false;
-        }
-        if (!GridSizeMigrationDBController.needsToMigrate(mContext, mIdp)) {
-            FileLog.d(TAG, "migrateGridIfNeeded: no grid migration needed");
-            return true;
-        }
-        String targetDbName = new DeviceGridState(mIdp).getDbFile();
-        if (TextUtils.equals(targetDbName, mOpenHelper.getDatabaseName())) {
-            FileLog.e(TAG, "migrateGridIfNeeded: target db is same as current"
-                    + " current db: " + mOpenHelper.getDatabaseName()
-                    + " target db: " + targetDbName);
-            return false;
-        }
-        DatabaseHelper oldHelper = mOpenHelper;
-        // We save the existing db's before creating the destination db helper so we know what logic
-        // to run in grid migration based on if that grid already existed before migration or not.
-        List<String> existingDBs = LauncherFiles.GRID_DB_FILES.stream()
-                .filter(dbName -> mContext.getDatabasePath(dbName).exists())
-                .collect(Collectors.toList());
-        mOpenHelper = createDatabaseHelper(true /* forMigration */, targetDbName);
         try {
-            // This is the current grid we have, given by the mContext
-            DeviceGridState srcDeviceState = new DeviceGridState(mContext);
-            // This is the state we want to migrate to that is given by the idp
-            DeviceGridState destDeviceState = new DeviceGridState(mIdp);
-            boolean isDestNewDb = !existingDBs.contains(destDeviceState.getDbFile());
-            return GridSizeMigrationDBController.migrateGridIfNeeded(mContext, srcDeviceState,
-                    destDeviceState, mOpenHelper, oldHelper.getWritableDatabase(), isDestNewDb,
-                    modelDelegate);
+            attemptMigrateDb(restoreEventLogger, modelDelegate);
         } catch (Exception e) {
-            FileLog.e(TAG, "migrateGridIfNeeded: Failed to migrate grid", e);
-            return false;
-        } finally {
-            if (mOpenHelper != oldHelper) {
-                oldHelper.close();
-            }
+            throw new IllegalStateException("Unable to migrate launcher database", e);
         }
     }
 
@@ -596,6 +539,25 @@ public class ModelDbController {
         mPrefs.removeSync(getEmptyDbCreatedKey());
     }
 
+    private static boolean hasFavorites(SQLiteDatabase db) {
+        try (Cursor cursor = db.rawQuery("SELECT 1 FROM favorites LIMIT 1", null)) {
+            return cursor.moveToFirst();
+        }
+    }
+
+    private static boolean hasUserData(SQLiteDatabase db) {
+        try (Cursor tables = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'"
+                + " AND name NOT LIKE 'sqlite_%' AND name != 'android_metadata'", null)) {
+            while (tables.moveToNext()) {
+                String name = tables.getString(0).replace("\"", "\"\"");
+                try (Cursor rows = db.rawQuery("SELECT 1 FROM \"" + name + "\" LIMIT 1", null)) {
+                    if (rows.moveToFirst()) return true;
+                }
+            }
+        }
+        return false;
+    }
+
     /**
      * Loads the default workspace based on the following priority scheme:
      *   1) From the app restrictions
@@ -608,6 +570,13 @@ public class ModelDbController {
         createDbIfNotExists();
 
         if (mPrefs.get(getEmptyDbCreatedKey())) {
+            if (hasFavorites(mOpenHelper.getReadableDatabase())) {
+                mPrefs.removeSyncChecked(getEmptyDbCreatedKey());
+                return;
+            }
+            if (app.murinelauncher.backup.BackupHelper.isRestoreActive()) {
+                throw new IllegalStateException("Restored database cannot seed defaults");
+            }
             Log.d(TAG, "loading default workspace");
 
             LauncherWidgetHolder widgetHolder = mOpenHelper.newLauncherWidgetHolder();

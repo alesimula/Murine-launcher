@@ -38,7 +38,7 @@ import com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_STAN
 import com.android.launcher3.model.GridSizeMigrationDBController.DbReader
 import com.android.launcher3.model.GridSizeMigrationDBController.isOneGridMigration
 import com.android.launcher3.provider.LauncherDbUtils.SQLiteTransaction
-import com.android.launcher3.provider.LauncherDbUtils.copyTable
+import com.android.launcher3.provider.LauncherDbUtils.TableCopy
 import com.android.launcher3.provider.LauncherDbUtils.dropTable
 import com.android.launcher3.provider.LauncherDbUtils.shiftWorkspaceByXCells
 import com.android.launcher3.util.CellAndSpan
@@ -75,85 +75,54 @@ class GridSizeMigrationLogic {
 
         val shouldMigrateToStrtictlyTallerGrid =
             shouldMigrateToStrictlyTallerGrid(isDestNewDb, srcDeviceState, destDeviceState)
-        if (shouldMigrateToStrtictlyTallerGrid) {
-            copyTable(source, TABLE_NAME, target.writableDatabase, TABLE_NAME, context)
-        } else {
-            copyTable(source, TABLE_NAME, target.writableDatabase, TMP_TABLE, context)
-        }
-
         val migrationStartTime = System.currentTimeMillis()
         try {
-            SQLiteTransaction(target.writableDatabase).use { t ->
-                // We want to add the extra row(s) to the top of the screen, so we shift the grid
-                // down.
-                if (shouldMigrateToStrtictlyTallerGrid) {
-                    Log.d(TAG, "Migrating to strictly taller grid")
-                    if (Flags.oneGridSpecs()) {
-                        shiftWorkspaceByXCells(
-                            target.writableDatabase,
-                            (destDeviceState.rows - srcDeviceState.rows),
-                            TABLE_NAME,
+            TableCopy(source, target.writableDatabase, context).use { tables ->
+                SQLiteTransaction(target.writableDatabase).use { t ->
+                    tables.copy(TABLE_NAME,
+                        if (shouldMigrateToStrtictlyTallerGrid) TABLE_NAME else TMP_TABLE)
+                    if (shouldMigrateToStrtictlyTallerGrid) {
+                        if (Flags.oneGridSpecs()) {
+                            shiftWorkspaceByXCells(t.db,
+                                destDeviceState.rows - srcDeviceState.rows, TABLE_NAME)
+                        }
+                    } else {
+                        val srcReader = DbReader(t.db, TMP_TABLE, context)
+                        val destReader = DbReader(t.db, TABLE_NAME, context)
+                        val targetSize = Point(destDeviceState.columns, destDeviceState.rows)
+                        val idsInUse = mutableListOf<Int>()
+                        migrateHotseat(
+                            srcDeviceState.numHotseat,
+                            destDeviceState.numHotseat,
+                            srcReader,
+                            destReader,
+                            target,
+                            idsInUse,
                         )
+                        migrateWorkspace(srcReader, destReader, target, targetSize, idsInUse)
+                        dropTable(t.db, TMP_TABLE)
                     }
-                    // Save current configuration, so that the migration does not run again.
-                    destDeviceState.writeToPrefs(context)
                     t.commit()
-
-                    if (isOneGridMigration(srcDeviceState, destDeviceState)) {
-                        statsLogManager.logger().log(LAUNCHER_ROW_SHIFT_ONE_GRID_MIGRATION)
-                    }
-                    statsLogManager.logger().log(LAUNCHER_ROW_SHIFT_GRID_MIGRATION)
-
-                    return
                 }
-
-                val srcReader = DbReader(t.db, TMP_TABLE, context)
-                val destReader = DbReader(t.db, TABLE_NAME, context)
-
-                val targetSize = Point(destDeviceState.columns, destDeviceState.rows)
-
-                // Here we keep all the DB ids we have in the destination DB such that we don't
-                // assign
-                // an item that we want to add to the destination DB the same id as an already
-                // existing
-                // item.
-                val idsInUse = mutableListOf<Int>()
-
-                // Migrate hotseat.
-                migrateHotseat(
-                    srcDeviceState.numHotseat,
-                    destDeviceState.numHotseat,
-                    srcReader,
-                    destReader,
-                    target,
-                    idsInUse,
-                )
-                // Migrate workspace.
-                migrateWorkspace(srcReader, destReader, target, targetSize, idsInUse)
-
-                dropTable(t.db, TMP_TABLE)
-                t.commit()
-
-                if (isOneGridMigration(srcDeviceState, destDeviceState)) {
-                    statsLogManager.logger().log(LAUNCHER_STANDARD_ONE_GRID_MIGRATION)
-                }
-                statsLogManager.logger().log(LAUNCHER_STANDARD_GRID_MIGRATION)
             }
         } catch (e: Exception) {
-            FileLog.e(TAG, "Error during grid migration", e)
+            FileLog.e(TAG, "Error during grid migration")
+            throw e
         } finally {
             Log.v(
                 TAG,
                 "Workspace migration completed in " +
                     (System.currentTimeMillis() - migrationStartTime),
             )
-
-            // Save current configuration, so that the migration does not run again.
-            destDeviceState.writeToPrefs(context)
-
-            // Notify if we've migrated successfully
-            modelDelegate.gridMigrationComplete(srcDeviceState, destDeviceState)
         }
+        destDeviceState.writeToPrefsSync(context)
+        modelDelegate.gridMigrationComplete(srcDeviceState, destDeviceState)
+        if (isOneGridMigration(srcDeviceState, destDeviceState)) {
+            statsLogManager.logger().log(if (shouldMigrateToStrtictlyTallerGrid)
+                LAUNCHER_ROW_SHIFT_ONE_GRID_MIGRATION else LAUNCHER_STANDARD_ONE_GRID_MIGRATION)
+        }
+        statsLogManager.logger().log(if (shouldMigrateToStrtictlyTallerGrid)
+            LAUNCHER_ROW_SHIFT_GRID_MIGRATION else LAUNCHER_STANDARD_GRID_MIGRATION)
     }
 
     /** Handles hotseat migration. */
@@ -575,6 +544,6 @@ class GridSizeMigrationLogic {
 
     companion object {
         private const val TAG = "GridSizeMigrationLogic"
-        private const val DEBUG = true
+        private const val DEBUG = false
     }
 }

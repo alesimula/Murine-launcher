@@ -116,17 +116,14 @@ public class RestoreDbTask {
             return;
         }
         if (!performRestore(context, dbController)) {
-            dbController.createEmptyDB();
+            throw new IllegalStateException("Unable to restore launcher database");
         }
 
         // Obtain InvariantDeviceProfile first before setting pending to false, so
         // InvariantDeviceProfile won't switch to new grid when initializing.
         InvariantDeviceProfile idp = InvariantDeviceProfile.INSTANCE.get(context);
 
-        // Set is pending to false irrespective of the result, so that it doesn't get
-        // executed again.
-        LauncherPrefs.get(context).removeSync(RESTORE_DEVICE);
-        LauncherPrefs.get(context).removeSync(RESTORE_USER_INITIATED);
+        LauncherPrefs.get(context).removeSyncChecked(RESTORE_DEVICE, RESTORE_USER_INITIATED);
 
         DeviceGridState deviceGridState = new DeviceGridState(context);
         FileLog.d(TAG, "restoreIfNeeded: deviceGridState from context: " + deviceGridState);
@@ -236,7 +233,6 @@ public class RestoreDbTask {
     protected int sanitizeDB(Context context, ModelDbController controller, SQLiteDatabase db,
             BackupManager backupManager, LauncherRestoreEventLogger restoreEventLogger)
             throws Exception {
-        logFavoritesTable(db, "Old Launcher Database before sanitizing:", null, null);
         // Primary user ids
         long myProfileId = controller.getSerialNumberForUser(myUserHandle());
         long oldProfileId = getDefaultProfileId(db);
@@ -276,7 +272,6 @@ public class RestoreDbTask {
         final String[] args = new String[profileIds.length];
         Arrays.fill(args, "?");
         final String where = "profileId NOT IN (" + TextUtils.join(", ", Arrays.asList(args)) + ")";
-        logFavoritesTable(db, "items to delete from unrestored profiles:", where, profileIds);
         if (enableLauncherBrMetricsFixed()) {
             reportUnrestoredProfiles(db, where, profileIds, restoreEventLogger);
         }

@@ -13,6 +13,28 @@ plugins {
     alias(libs.plugins.google.ksp)
 }
 
+// Refine breaks the signatures on host-test crypto JARs.
+androidComponents {
+    onVariants(selector().all()) { variant ->
+        if (variant.unitTest != null) {
+            def originalCryptoJars = variant.unitTest.runtimeConfiguration.incoming.artifactView {
+                attributes {
+                    attribute(Attribute.of('artifactType', String), 'jar')
+                }
+                componentFilter { component ->
+                    component instanceof ModuleComponentIdentifier &&
+                            component.group in ['org.conscrypt', 'org.bouncycastle']
+                }
+            }.files
+            variant.unitTest.configureTestTask { testTask ->
+                testTask.classpath = testTask.classpath.filter { artifact ->
+                    !originalCryptoJars.files.any { original -> original.name == artifact.name }
+                } + originalCryptoJars
+            }
+        }
+    }
+}
+
 final String ANDROID_TOP = "${rootDir}"
 // Old 'prebuilts', nor used anymore, stashed to: https://github.com/alesimula/old-resources-m-launcher
 final String FRAMEWORK_PREBUILTS_DIR = "${ANDROID_TOP}/prebuilts/libs/"
@@ -136,6 +158,10 @@ android {
     }
 
     sourceSets {
+        test {
+            java.srcDirs = ['tests/restore']
+            kotlin.directories.addAll(['tests/restore'])
+        }
         main {
             res.srcDirs = ['res']
             java.srcDirs = ['src', 'src_plugins' /*, 'tests/shared', 'system_ext', 'tests/multivalentTests/shared', 'systemui_core/shared'*/]
@@ -199,6 +225,9 @@ android {
     }
     buildFeatures {
         buildConfig = true
+    }
+    testOptions {
+        unitTests.includeAndroidResources = true
     }
 
     androidResources {
@@ -345,6 +374,8 @@ dependencies {
     ksp libs.dagger.compiler
 
     testImplementation libs.junit
+    testImplementation libs.robolectric
+    testImplementation libs.mockito.core
     androidTestImplementation libs.mockito.core
     androidTestImplementation libs.dexmaker
     androidTestImplementation libs.dexmaker.mockito

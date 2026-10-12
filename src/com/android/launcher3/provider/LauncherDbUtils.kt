@@ -120,27 +120,34 @@ object LauncherDbUtils {
         toTable: String,
         context: Context,
     ) {
-        val userSerial = UserCache.INSTANCE[context].getSerialNumberForUser(Process.myUserHandle())
-        dropTable(toDb, toTable)
-        LauncherSettings.Favorites.addTableToDb(toDb, userSerial, false, toTable)
-        if (fromDb != toDb) {
-            toDb.run {
-                execSQL("ATTACH DATABASE '${fromDb.path}' AS from_db")
-                execSQL(
-                    "INSERT INTO $toTable SELECT ${LauncherSettings.Favorites.getColumns(userSerial)} FROM from_db.$fromTable"
-                )
-                execSQL("DETACH DATABASE 'from_db'")
+        TableCopy(fromDb, toDb, context).use {
+            it.copy(fromTable, toTable)
+        }
+    }
+
+    class TableCopy(
+        private val source: SQLiteDatabase,
+        private val target: SQLiteDatabase,
+        context: Context,
+    ) : AutoCloseable {
+        private val serial = UserCache.INSTANCE[context]
+            .getSerialNumberForUser(Process.myUserHandle())
+        init {
+            if (source != target) {
+                target.execSQL("ATTACH DATABASE ? AS migration_source", arrayOf(source.path))
             }
-        } else {
-            toDb.run {
-                execSQL(
-                    "INSERT INTO $toTable SELECT ${
-                        LauncherSettings.Favorites.getColumns(
-                            userSerial
-                        )
-                    } FROM $fromTable"
-                )
-            }
+        }
+
+        fun copy(fromTable: String, toTable: String) {
+            dropTable(target, toTable)
+            LauncherSettings.Favorites.addTableToDb(target, serial, false, toTable)
+            val schema = if (source == target) "main" else "migration_source"
+            target.execSQL("INSERT INTO $toTable SELECT " +
+                "${LauncherSettings.Favorites.getColumns(serial)} FROM $schema.$fromTable")
+        }
+
+        override fun close() {
+            if (source != target) target.execSQL("DETACH DATABASE migration_source")
         }
     }
 
