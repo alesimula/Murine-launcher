@@ -1146,7 +1146,8 @@
     if (!drag) return;
     if (drag.kind === 'point' && (drag.start || drag.pending) && !drag.moved) selectOnly(drag.i); // a tap: just this corner
     // A press that changed nothing (a tap, or a drag back to where it started) leaves no undo step behind.
-    if (undo.length && JSON.stringify(JSON.parse(undo[undo.length - 1]).shapes) === JSON.stringify(shapes)) {
+    const top = undo.length && JSON.parse(undo[undo.length - 1]); // the shapes and the Global transform (see snapshot)
+    if (top && JSON.stringify([top.shapes, top.whole ?? null]) === JSON.stringify([shapes, whole])) {
       undo.pop(); redo.push(...drag.redoKept);
     }
     drag = null; render();
