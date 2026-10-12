@@ -114,7 +114,7 @@ constructor(
         val iconShape = if (oldState != null && oldState.iconMask == iconMask) oldState.iconShape
             else pickBestShape(iconMask)
 
-        val folderShapeMask = shapeModel.folderPathString
+        val folderShapeMask = shapeModel.folderPathString.ifBlank { iconMask }
         val folderShape = when {
             oldState != null && oldState.folderShapeMask == folderShapeMask -> oldState.folderShape
             folderShapeMask == iconMask || folderShapeMask.isBlank() -> iconShape
