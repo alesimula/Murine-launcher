@@ -192,6 +192,22 @@
             </intent-filter>
         </activity>
 
+        <!-- A shape from the website's icon shape editor (see CustomIconShape) -->
+        <activity
+            android:name="app.murinelauncher.settings.CustomIconShape$ImportActivity"
+            android:theme="@android:style/Theme.NoDisplay"
+            android:taskAffinity=""
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="murine-home" android:host="icon-shape" />
+            </intent-filter>
+        </activity>
+
         <provider
             android:name="com.android.launcher3.testing.TestInformationProvider"
             android:authorities="${applicationId}.TestInfo"

@@ -42,6 +42,7 @@
     <string name="pref_label_grid_height">Grid height</string>
     <string name="pref_label_icon_size">Icon size (%)</string>
     <string name="pref_label_icon_label_size">Label size (%)</string>
+    <string name="pref_label_custom">Custom</string>
 
     <string name="pref_label_visibility_title">Labels visibility</string>
     <string name="label_visibility_never">Never</string>

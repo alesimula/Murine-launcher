@@ -30,6 +30,7 @@ import com.android.launcher3.settings.SettingsActivity;
 import com.android.launcher3.util.DisplayController;
 import com.android.launcher3.util.SettingsCache;
 import com.android.settingslib.widget.SettingsBasePreferenceFragment;
+import com.android.settingslib.widget.SettingsThemeHelper;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -165,6 +166,15 @@ public abstract class AbstractSettingsFragment extends SettingsBasePreferenceFra
         return null;
     }
 
+    @NonNull
+    @Override
+    public RecyclerView.Adapter<?> onCreateAdapter(@NonNull PreferenceScreen preferenceScreen) {
+        // SettingsLib's cards, flashing like in Android Settings when a preference is pointed at
+        return SettingsThemeHelper.isExpressiveTheme(requireContext())
+                ? new HighlightablePreferenceAdapter(preferenceScreen)
+                : super.onCreateAdapter(preferenceScreen);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -277,7 +287,7 @@ public abstract class AbstractSettingsFragment extends SettingsBasePreferenceFra
         super.onResume();
 
         if (isAdded() && !mPreferenceHighlighted) {
-            PreferenceHighlighter highlighter = createHighlighter();
+            Runnable highlighter = createHighlighter();
             if (highlighter != null) {
                 getView().postDelayed(highlighter, DELAY_HIGHLIGHT_DURATION_MILLIS);
                 mPreferenceHighlighted = true;
@@ -328,7 +338,7 @@ public abstract class AbstractSettingsFragment extends SettingsBasePreferenceFra
         }
     }
 
-    private PreferenceHighlighter createHighlighter() {
+    private Runnable createHighlighter() {
         if (TextUtils.isEmpty(mHighLightKey)) {
             return null;
         }
@@ -339,6 +349,10 @@ public abstract class AbstractSettingsFragment extends SettingsBasePreferenceFra
         }
 
         RecyclerView list = getListView();
+        if (list.getAdapter() instanceof HighlightablePreferenceAdapter adapter) {
+            String key = mHighLightKey;
+            return adapter.getPreferenceAdapterPosition(key) >= 0 ? () -> adapter.highlight(list, key) : null;
+        }
         PreferenceGroup.PreferencePositionCallback callback = (PreferenceGroup.PreferencePositionCallback) list.getAdapter();
         int position = callback.getPreferenceAdapterPosition(mHighLightKey);
         return position >= 0 ? new PreferenceHighlighter(

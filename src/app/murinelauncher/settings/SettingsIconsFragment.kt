@@ -40,6 +40,10 @@ public final class SettingsIconsFragment: AbstractSettingsFragment() {
                     setDefaultValue(ThemeManager.PREF_ICON_SHAPE.defaultValue)
                     setTextProvider { ctx, shape -> ctx.getString(shape.title) }
                     setIconProvider { ctx, shape -> IconShapeDrawables.getShapePreviewDrawable(ctx, shape) }
+                    // Custom: the button on its right opens the website's editor
+                    setExtraActionProvider { _, shape ->
+                        if (shape == ShapesProvider.IconShape.CUSTOM) android.view.View.OnClickListener { CustomIconShape.openEditor(it.context) } else null
+                    }
                 }
                 return true
             }

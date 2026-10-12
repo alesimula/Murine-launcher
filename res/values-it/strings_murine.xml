@@ -42,6 +42,7 @@
     <string name="pref_label_grid_height">Altezza griglia</string>
     <string name="pref_label_icon_size">Dimensione icone (%)</string>
     <string name="pref_label_icon_label_size">Dimensione etichette (%)</string>
+    <string name="pref_label_custom">Personalizzato</string>
 
     <string name="pref_label_visibility_title">Visibilità etichette</string>
     <string name="label_visibility_never">Mai</string>

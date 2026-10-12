@@ -43,6 +43,7 @@ class RadioGroupPreference @JvmOverloads constructor(
     internal var summaryProviderIdx: ((Context, Int) -> CharSequence?)? = null
     internal var isVisibleProviderIdx: ((Context, Int) -> Boolean)? = null
     internal var isEnabledProviderIdx: ((Context, Int) -> Boolean)? = null
+    internal var extraActionProviderIdx: ((Context, Int) -> android.view.View.OnClickListener?)? = null
 
     private var keyEntries: Array<String>? = null
     private var fragmentManager: FragmentManager? = null
@@ -290,6 +291,7 @@ class RadioGroupPreference @JvmOverloads constructor(
             iconTint = if (tintSheetIcons) resolveIconTint() else null,
             isVisibleProvider = isVisibleProviderIdx?.let { p -> { i -> p(ctx, i) } },
             isEnabledProvider = isEnabledProviderIdx?.let { p -> { i -> p(ctx, i) } },
+            extraActionProvider = extraActionProviderIdx?.let { p -> { i -> p(ctx, i) } },
             listener = RadioGroupBottomSheet.OnItemSelectedListener { index ->
                 if (!callChangeListener(index)) return@OnItemSelectedListener
                 persistValue(index)
@@ -338,6 +340,11 @@ class RadioGroupPreference @JvmOverloads constructor(
 
         fun setEnabledProvider(provider: ((Context, T) -> Boolean)?) {
             preference.isEnabledProviderIdx = provider?.let { p -> { ctx, i -> p(ctx, entries[i]) } }
+        }
+
+        /** A button on the right of an entry (null for none), e.g. to edit it */
+        fun setExtraActionProvider(provider: ((Context, T) -> android.view.View.OnClickListener?)?) {
+            preference.extraActionProviderIdx = provider?.let { p -> { ctx, i -> p(ctx, entries[i]) } }
         }
 
         fun setOnPreferenceChangeListener(listener: ((T?) -> Boolean)?) {

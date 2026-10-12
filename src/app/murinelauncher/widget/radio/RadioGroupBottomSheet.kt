@@ -38,6 +38,7 @@ open class RadioGroupBottomSheet : BottomSheetDialogFragment() {
     private var sheetIconTint: Int? = null
     private var isVisibleProvider: ((Int) -> Boolean)? = null
     private var isEnabledProvider: ((Int) -> Boolean)? = null
+    private var extraActionProvider: ((Int) -> View.OnClickListener?)? = null
 
     fun configure(
         title: CharSequence?,
@@ -49,6 +50,7 @@ open class RadioGroupBottomSheet : BottomSheetDialogFragment() {
         iconTint: Int? = null,
         isVisibleProvider: ((Int) -> Boolean)? = null,
         isEnabledProvider: ((Int) -> Boolean)? = null,
+        extraActionProvider: ((Int) -> View.OnClickListener?)? = null,
         listener: OnItemSelectedListener
     ) {
         this.sheetTitle = title
@@ -60,6 +62,7 @@ open class RadioGroupBottomSheet : BottomSheetDialogFragment() {
         this.sheetIconTint = iconTint
         this.isVisibleProvider = isVisibleProvider
         this.isEnabledProvider = isEnabledProvider
+        this.extraActionProvider = extraActionProvider
         this.listener = listener
     }
 
@@ -102,6 +105,7 @@ open class RadioGroupBottomSheet : BottomSheetDialogFragment() {
                 val pref = createEntryPref(ctx, i, textProv(i), icon,
                     i == sheet.currentIndex, iconPosition)
                 if (sheet.isEnabledProvider?.invoke(i) == false) pref.isEnabled = false
+                sheet.extraActionProvider?.invoke(i)?.let(pref::setExtraWidgetOnClickListener)
                 screen.addPreference(pref)
             }
             preferenceScreen = screen

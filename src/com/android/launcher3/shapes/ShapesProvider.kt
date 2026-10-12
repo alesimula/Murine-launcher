@@ -26,6 +26,8 @@ object ShapesProvider {
         override val folderPathString: String = pathString,
         override val iconScale: Float = 1.0f
     ): IconShapeModel {
+        // The path is the last one imported from the website: ThemeManager.PREF_CUSTOM_ICON_SHAPE
+        CUSTOM(title = R.string.pref_label_custom, pathString = ""),
         SYSTEM(title = R.string.icon_shape_system, pathString = ""),
         CIRCLE(title = R.string.icon_shape_circle, pathString = CIRCLE_PATH),
         RICEBALLS(title = R.string.icon_shape_riceballs, pathString = RICEBALLS_PATH),

@@ -22,8 +22,10 @@ object IconShapeDrawables {
     fun getShapePreviewDrawable(context: Context, shape: ShapesProvider.IconShape, sizeDp: Int = 0): Drawable {
         val color = ContextCompat.getColor(context, R.color.white)
         val sizePx = if (sizeDp > 0) (sizeDp * context.resources.displayMetrics.density + 0.5f).toInt() else 0
-        if (shape.pathString.isNotBlank()) try {
-            return ShapePreviewDrawable(shape.pathString, color, sizePx)
+        val path = if (shape == ShapesProvider.IconShape.CUSTOM)
+            com.android.launcher3.graphics.ThemeManager.PREF_CUSTOM_ICON_SHAPE.get(context) else shape.pathString
+        if (path.isNotBlank()) try {
+            return ShapePreviewDrawable(path, color, sizePx)
         } catch (_: Exception) {}
         return SystemShapePreviewDrawable(color, sizePx)
     }
