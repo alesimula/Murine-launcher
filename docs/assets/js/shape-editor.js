@@ -1033,8 +1033,11 @@
   svg.addEventListener('blur', () => svg.removeAttribute('data-pointer'));
   // A long press on a shape picks it too (or drops it from the group), as on the cards; one that started
   // moving the selection takes that back first.
+  // A long press is one that stays put: a mouse or pen moving past the 4px that start a drag ends it (a slow drag
+  // used to stay under a fixed 10px long enough to count as one); a finger, which wobbles, gets 10px.
   let hold = null;
   const letGo = () => { if (hold) clearTimeout(hold.timer); hold = null; };
+  const holdTol = (e) => (e.pointerType === 'touch' ? 10 : 4);
   svg.addEventListener('pointerdown', (e) => {
     const pick = e.ctrlKey || e.metaKey, g0 = grabAt(e.clientX, e.clientY, e.pointerType === 'touch'), g = pick ? null : g0;
     letGo();
@@ -1045,7 +1048,7 @@
     tap = g ? null : wholeOn ? -1 : shapeAt(e);
     const under = g ? (g.move ? shapeAt(e) : -1) : tap;
     if (!pick && !wholeOn && under >= 0 && (multi.size > 1 || under !== active)) {
-      hold = { x: e.clientX, y: e.clientY, timer: setTimeout(() => {
+      hold = { x: e.clientX, y: e.clientY, tol: holdTol(e), timer: setTimeout(() => {
         hold = null; tap = null;
         if (drag) { drag = null; restore(JSON.parse(undo.pop())); render(); }
         navigator.vibrate?.(15);
@@ -1069,7 +1072,7 @@
         // corners, moves them all), and a long press adds or drops it.
         const i = g.point, before = { sel, set: new Set(selSet) }, keep = selSet.has(i) && selSet.size > 1;
         drag = { kind: 'point', i, from: at, start: keep ? startOf() : null, pending: !selSet.has(i) };
-        hold = { x: e.clientX, y: e.clientY, timer: setTimeout(() => {
+        hold = { x: e.clientX, y: e.clientY, tol: holdTol(e), timer: setTimeout(() => {
           hold = null; drag = null;
           restore(JSON.parse(undo.pop())); // takes back the press (and any small move it made)
           sel = before.sel; selSet = before.set;
@@ -1098,7 +1101,7 @@
     render();
   });
   svg.addEventListener('pointermove', (e) => {
-    if (hold && Math.hypot(e.clientX - hold.x, e.clientY - hold.y) > 10) letGo();
+    if (hold && Math.hypot(e.clientX - hold.x, e.clientY - hold.y) > hold.tol) letGo();
     if (!drag) return;
     const p = toSvg(e);
     if (drag.kind === 'point') {
