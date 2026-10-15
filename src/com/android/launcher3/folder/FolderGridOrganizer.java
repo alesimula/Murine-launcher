@@ -16,7 +16,6 @@
 
 package com.android.launcher3.folder;
 
-import static com.android.launcher3.folder.ClippedFolderIconLayoutRule.MAX_NUM_ITEMS_IN_PREVIEW;
 
 import android.graphics.Point;
 import android.util.Log;
@@ -42,8 +41,26 @@ public class FolderGridOrganizer {
     private int mCountX;
     private int mCountY;
     private boolean mDisplayingUpperLeftQuadrant = false;
-    private static final int PREVIEW_MAX_ROWS = 2;
-    private static final int PREVIEW_MAX_COLUMNS = 2;
+    // Normal folders preview 4 items (2x2); super folders preview 9 (3x3).
+    private int mMaxPreviewItems = 4;
+    private int mPreviewRows = 2;
+    private int mPreviewColumns = 2;
+
+    // Quadrant / circle / cover styles preview the first N items in reading order.
+    private boolean mSequentialPreview = false;
+
+    /**
+     * Switches between the normal 2x2 preview and the super folder previews.
+     *
+     * @param style one of the {@link FolderInfo} STYLE_* constants (ignored when not large)
+     */
+    public void setLargePreview(boolean large, int style) {
+        mSequentialPreview = large && style != FolderInfo.STYLE_GRID;
+        mMaxPreviewItems = large
+                ? ClippedFolderIconLayoutRule.maxItemsForStyle(style) : 4;
+        mPreviewRows = large ? 3 : 2;
+        mPreviewColumns = large ? 3 : 2;
+    }
 
     /**
      * Note: must call {@link #setFolderInfo(FolderInfo)} manually for verifier to work.
@@ -75,7 +92,7 @@ public class FolderGridOrganizer {
         if (contentSize != mNumItemsInFolder) {
             calculateGridSize(contentSize);
 
-            mDisplayingUpperLeftQuadrant = contentSize > MAX_NUM_ITEMS_IN_PREVIEW;
+            mDisplayingUpperLeftQuadrant = contentSize > mMaxPreviewItems;
             mNumItemsInFolder = contentSize;
         }
         return this;
@@ -175,7 +192,7 @@ public class FolderGridOrganizer {
                 result.add((R) contents.get(i));
             }
 
-            if (result.size() == MAX_NUM_ITEMS_IN_PREVIEW) {
+            if (result.size() == mMaxPreviewItems) {
                 break;
             }
         }
@@ -200,17 +217,20 @@ public class FolderGridOrganizer {
     /**
      * @param page The page the item is on.
      * @param rank The rank of the item.
-     * @return True iff the icon is in the 2x2 upper left quadrant of the Folder.
+     * @return True iff the icon is in the 3x3 upper left corner of the Folder.
      */
     public boolean isItemInPreview(int page, int rank) {
+        if (mSequentialPreview) {
+            return page == 0 && rank < mMaxPreviewItems;
+        }
         // First page items are laid out such that the first 4 items are always in the upper
         // left quadrant. For all other pages, we need to check the row and col.
         if (page > 0 || mDisplayingUpperLeftQuadrant) {
             int col = rank % mCountX;
             int row = rank / mCountX;
-            return col < PREVIEW_MAX_COLUMNS && row < PREVIEW_MAX_ROWS;
+            return col < mPreviewColumns && row < mPreviewRows;
         }
         // If we have less than 4 items do this
-        return rank < MAX_NUM_ITEMS_IN_PREVIEW;
+        return rank < mMaxPreviewItems;
     }
 }

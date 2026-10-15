@@ -225,6 +225,7 @@ public class FolderIcon extends FrameLayout implements FloatingIconViewCompanion
         icon.setAccessibilityDelegate(activity.getAccessibilityDelegate());
 
         icon.mPreviewVerifier = createFolderGridOrganizer(activity.getDeviceProfile());
+        icon.mPreviewVerifier.setLargePreview(icon.isSuperFolder(), icon.getSuperStyle());
         icon.mPreviewVerifier.setFolderInfo(folderInfo);
         icon.updatePreviewItems(false);
 
@@ -234,6 +235,23 @@ public class FolderIcon extends FrameLayout implements FloatingIconViewCompanion
     public void animateBgShadowAndStroke() {
         mBackground.fadeInBackgroundShadow();
         mBackground.animateBackgroundStroke();
+    }
+
+    /** Super folders span 2x2 cells and show a 3x3 grid of big icons. */
+    public boolean isSuperFolder() {
+        return mInfo != null && (mInfo.spanX > 1 || mInfo.spanY > 1);
+    }
+
+    /** The super folder style (quadrant, grid, circle, cover). */
+    public int getSuperStyle() {
+        return mInfo != null ? mInfo.getSuperStyle() : FolderInfo.STYLE_QUADRANT;
+    }
+
+    /** How many items the preview shows: depends on the style for super folders, 4 otherwise. */
+    public int getMaxPreviewItems() {
+        return isSuperFolder()
+                ? ClippedFolderIconLayoutRule.maxItemsForStyle(getSuperStyle())
+                : MAX_NUM_ITEMS_IN_PREVIEW;
     }
 
     public BubbleTextView getFolderName() {
@@ -347,9 +365,9 @@ public class FolderIcon extends FrameLayout implements FloatingIconViewCompanion
                 workspace.resetTransitionTransform();
             }
 
-            int numItemsInPreview = Math.min(MAX_NUM_ITEMS_IN_PREVIEW, index + 1);
+            int numItemsInPreview = Math.min(getMaxPreviewItems(), index + 1);
             boolean itemAdded = false;
-            if (itemReturnedOnFailedDrop || index >= MAX_NUM_ITEMS_IN_PREVIEW) {
+            if (itemReturnedOnFailedDrop || index >= getMaxPreviewItems()) {
                 List<ItemInfo> oldPreviewItems = new ArrayList<>(mCurrentPreviewItems);
                 getFolder().addFolderContent(item, index, false);
                 mCurrentPreviewItems.clear();
@@ -383,7 +401,7 @@ public class FolderIcon extends FrameLayout implements FloatingIconViewCompanion
             to.offset(center[0] - animateView.getMeasuredWidth() / 2,
                     center[1] - animateView.getMeasuredHeight() / 2);
 
-            float finalAlpha = index < MAX_NUM_ITEMS_IN_PREVIEW ? 1f : 0f;
+            float finalAlpha = index < getMaxPreviewItems() ? 1f : 0f;
 
             float finalScale = scale * scaleRelativeToDragLayer;
 
@@ -548,7 +566,7 @@ public class FolderIcon extends FrameLayout implements FloatingIconViewCompanion
 
     private float getLocalCenterForIndex(int index, int curNumItems, int[] center) {
         mTmpParams = mPreviewItemManager.computePreviewItemDrawingParams(
-                Math.min(MAX_NUM_ITEMS_IN_PREVIEW, index), curNumItems, mTmpParams);
+                Math.min(getMaxPreviewItems(), index), curNumItems, mTmpParams);
 
         mTmpParams.transX += mBackground.basePreviewOffsetX;
         mTmpParams.transY += mBackground.basePreviewOffsetY;
@@ -609,10 +627,13 @@ public class FolderIcon extends FrameLayout implements FloatingIconViewCompanion
     }
 
     public void drawDot(Canvas canvas) {
+        // Super folders draw a badge on each app icon instead (see PreviewItemManager).
+        if (isSuperFolder()) return;
         if (!mForceHideDot && ((mDotInfo != null && mDotInfo.hasDot()) || mDotScale > 0)) {
             Rect iconBounds = mDotParams.iconBounds;
             // FolderIcon draws the icon to be top-aligned (with padding) & horizontally-centered
-            int iconSize = mActivity.getDeviceProfile().iconSizePx;
+            int iconSize = isSuperFolder()
+                    ? mBackground.previewSize : mActivity.getDeviceProfile().iconSizePx;
             iconBounds.left = (getWidth() - iconSize) / 2;
             iconBounds.right = iconBounds.left + iconSize;
             iconBounds.top = getPaddingTop();
@@ -640,14 +661,35 @@ public class FolderIcon extends FrameLayout implements FloatingIconViewCompanion
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        boolean shouldCenterIcon = mActivity.getDeviceProfile().iconCenterVertically;
-        if (shouldCenterIcon) {
-            int iconSize = mActivity.getDeviceProfile().iconSizePx;
+        DeviceProfile dp = mActivity.getDeviceProfile();
+        FrameLayout.LayoutParams nameLp = mFolderName == null ? null
+                : (FrameLayout.LayoutParams) mFolderName.getLayoutParams();
+        if (isSuperFolder()) {
+            // Square background as big as fits above the label inside the 2x2 cells.
+            int w = MeasureSpec.getSize(widthMeasureSpec);
+            int h = MeasureSpec.getSize(heightMeasureSpec);
             Paint.FontMetrics fm = mFolderName.getPaint().getFontMetrics();
-            int cellHeightPx = iconSize + mFolderName.getCompoundDrawablePadding()
-                    + (int) Math.ceil(fm.bottom - fm.top);
-            setPadding(getPaddingLeft(), (MeasureSpec.getSize(heightMeasureSpec)
-                    - cellHeightPx) / 2, getPaddingRight(), getPaddingBottom());
+            int nameBlock = dp.iconDrawablePaddingPx + (int) Math.ceil(fm.bottom - fm.top);
+            int size = Math.min((int) (w * 0.94f), h - getPaddingTop() - nameBlock);
+            size = Math.max(size, dp.folderIconSizePx);
+            mBackground.previewSizeOverride = size;
+            if (nameLp != null) {
+                nameLp.topMargin = size + dp.iconDrawablePaddingPx;
+            }
+        } else {
+            mBackground.previewSizeOverride = 0;
+            if (nameLp != null) {
+                nameLp.topMargin = dp.iconSizePx + dp.iconDrawablePaddingPx;
+            }
+            boolean shouldCenterIcon = dp.iconCenterVertically;
+            if (shouldCenterIcon) {
+                int iconSize = dp.iconSizePx;
+                Paint.FontMetrics fm = mFolderName.getPaint().getFontMetrics();
+                int cellHeightPx = iconSize + mFolderName.getCompoundDrawablePadding()
+                        + (int) Math.ceil(fm.bottom - fm.top);
+                setPadding(getPaddingLeft(), (MeasureSpec.getSize(heightMeasureSpec)
+                        - cellHeightPx) / 2, getPaddingRight(), getPaddingBottom());
+            }
         }
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
@@ -669,6 +711,7 @@ public class FolderIcon extends FrameLayout implements FloatingIconViewCompanion
      * Returns the list of items which should be visible in the preview
      */
     public List<ItemInfo> getPreviewItemsOnPage(int page) {
+        mPreviewVerifier.setLargePreview(isSuperFolder(), getSuperStyle());
         return mPreviewVerifier.setFolderInfo(mInfo).previewItemsForPage(page, mInfo.getContents());
     }
 
@@ -790,11 +833,11 @@ public class FolderIcon extends FrameLayout implements FloatingIconViewCompanion
             title = getContext().getString(R.string.unnamed_folder);
         }
         int size = mInfo.getContents().size();
-        if (size < MAX_NUM_ITEMS_IN_PREVIEW) {
+        if (size < getMaxPreviewItems()) {
             return getContext().getString(R.string.folder_name_format_exact, title, size);
         } else {
             return getContext().getString(R.string.folder_name_format_overflow, title,
-                    MAX_NUM_ITEMS_IN_PREVIEW);
+                    getMaxPreviewItems());
         }
     }
 

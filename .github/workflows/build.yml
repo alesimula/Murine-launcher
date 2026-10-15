@@ -1,0 +1,91 @@
+name: Build APK
+
+on:
+  workflow_dispatch:
+    inputs:
+      variant:
+        description: "Jenis build"
+        type: choice
+        default: release
+        options:
+          - release
+          - debug
+
+permissions:
+  contents: write   # buat bikin halaman Release (APK langsung bisa diunduh, tanpa zip)
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          # repo tidak punya skrip gradlew, jadi versinya disamakan dengan gradle-wrapper.properties
+          gradle-version: 9.7.1
+
+      - name: Accept Android SDK licenses
+        run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
+
+      - name: Build APK
+        run: |
+          V="${{ inputs.variant }}"
+          gradle "assembleAospWithoutQuickstep${V^}" --stacktrace
+
+      # Key tanda tangan release dibuat sekali lalu disimpan di cache GitHub, supaya build
+      # berikutnya bisa dipasang di atas yang lama. Cache dihapus GitHub kalau 7 hari tidak dipakai.
+      - name: Restore release keystore
+        if: inputs.variant == 'release'
+        id: keystore-cache
+        uses: actions/cache@v4
+        with:
+          path: release.keystore
+          key: murine-release-keystore-v1
+
+      - name: Create release keystore (first time only)
+        if: inputs.variant == 'release' && steps.keystore-cache.outputs.cache-hit != 'true'
+        run: |
+          keytool -genkeypair -v -keystore release.keystore \
+            -storepass murine-release -keypass murine-release \
+            -alias murine -keyalg RSA -keysize 2048 -validity 36500 \
+            -dname "CN=Murine Mod"
+
+      - name: Sign release APK
+        if: inputs.variant == 'release'
+        run: |
+          BT=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
+          UNSIGNED=$(find . -path "*outputs/apk*" -name "*-release-unsigned.apk" | head -1)
+          echo "Unsigned APK: $UNSIGNED"
+          "$BT/zipalign" -f -p 4 "$UNSIGNED" aligned.apk
+          "$BT/apksigner" sign --ks release.keystore \
+            --ks-pass pass:murine-release --key-pass pass:murine-release \
+            --ks-key-alias murine --out murine-launcher-release.apk aligned.apk
+          "$BT/apksigner" verify murine-launcher-release.apk
+
+      - name: Collect debug APK
+        if: inputs.variant == 'debug'
+        run: |
+          APK=$(find . -path "*outputs/apk*" -name "*debug.apk" | head -1)
+          echo "Debug APK: $APK"
+          cp "$APK" murine-launcher-debug.apk
+
+      - name: Publish APK to Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          V="${{ inputs.variant }}"
+          gh release create "build-${{ github.run_number }}-$V" "murine-launcher-$V.apk" \
+            --title "Build #${{ github.run_number }} ($V)" \
+            --notes "APK $V dari commit ${GITHUB_SHA::7}" \
+            --prerelease

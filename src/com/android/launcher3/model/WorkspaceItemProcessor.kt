@@ -448,8 +448,14 @@ class WorkspaceItemProcessor(
         c.applyCommonProperties(collection)
         // Do not trim the folder label, as is was set by the user.
         collection.title = c.getString(c.mTitleIndex)
-        collection.spanX = 1
-        collection.spanY = 1
+        // Desktop folders can be "super folders" (2x2, see FolderIcon.isSuperFolder);
+        // everything else is 1x1.
+        val superFolder = collection is FolderInfo &&
+                c.container == Favorites.CONTAINER_DESKTOP &&
+                c.getInt(c.getColumnIndexOrThrow(Favorites.SPANX)) == 2 &&
+                c.getInt(c.getColumnIndexOrThrow(Favorites.SPANY)) == 2
+        collection.spanX = if (superFolder) 2 else 1
+        collection.spanY = if (superFolder) 2 else 1
         if (collection is FolderInfo) {
             collection.options = c.options
         } else {

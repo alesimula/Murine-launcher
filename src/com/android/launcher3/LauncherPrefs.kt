@@ -351,6 +351,29 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
         @JvmField
         val GESTURE_SWIPE_DOWN_NOTIFICATIONS =
             backedUpItem(SettingsHomeFragment.SWIPE_DOWN_NOTIFICATIONS, true)
+        /** true = Infinity X style clock (red hour), false = original Murine clock. */
+        @JvmField
+        val CLOCK_STYLE_INFINITYX = backedUpItem("pref_clock_style_infinityx", true)
+        /** Show "25°C • Clear" next to the clock date (typed location, uses Open-Meteo). */
+        @JvmField
+        val CLOCK_WEATHER_ENABLED = backedUpItem("pref_clock_weather", false)
+        /** Display name of the chosen location, e.g. "Tasikmalaya, ID". */
+        @JvmField
+        val CLOCK_WEATHER_CITY = backedUpItem("pref_clock_weather_city", "")
+        /** "lat,lon" of the chosen location. */
+        @JvmField
+        val CLOCK_WEATHER_PLACE = backedUpItem("pref_clock_weather_place", "")
+        /** "c" (Celsius) or "f" (Fahrenheit). */
+        @JvmField
+        val CLOCK_WEATHER_UNIT = backedUpItem("pref_clock_weather_unit", "c")
+        // Cache for the weather line (not backed up): text, the "place|unit" it was fetched
+        // for and the fetch time in ms (stored as a string).
+        @JvmField
+        val CLOCK_WEATHER_TEXT = nonRestorableItem("clock_weather_text", "")
+        @JvmField
+        val CLOCK_WEATHER_CACHE_KEY = nonRestorableItem("clock_weather_cache_key", "")
+        @JvmField
+        val CLOCK_WEATHER_TIME = nonRestorableItem("clock_weather_time", "")
         @JvmField
         val ACCESSIBILITY_DISCLOSURE_ACCEPTED =
             backedUpItem("pref_accessibility_disclosure_accepted", false)

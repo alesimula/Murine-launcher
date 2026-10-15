@@ -137,6 +137,28 @@ public class FolderInfo extends CollectionInfo {
         writer.put(LauncherSettings.Favorites.OPTIONS, options);
     }
 
+    // Super folder styles, stored in bits 4-5 of {@link #options}.
+    public static final int STYLE_QUADRANT = 0;
+    public static final int STYLE_GRID = 1;
+    public static final int STYLE_CIRCLE = 2;
+    public static final int STYLE_COVER = 3;
+    private static final int STYLE_SHIFT = 4;
+    private static final int STYLE_MASK = 0x3 << STYLE_SHIFT;
+
+    /** One of the STYLE_* constants (only used while this folder is a super folder). */
+    public int getSuperStyle() {
+        return (options & STYLE_MASK) >> STYLE_SHIFT;
+    }
+
+    /** @param writer if not null, save the change to the db. */
+    public void setSuperStyle(int style, ModelWriter writer) {
+        int oldOptions = options;
+        options = (options & ~STYLE_MASK) | ((style << STYLE_SHIFT) & STYLE_MASK);
+        if (writer != null && oldOptions != options) {
+            writer.updateItemInDatabase(this);
+        }
+    }
+
     public boolean hasOption(int optionFlag) {
         return (options & optionFlag) != 0;
     }

@@ -61,6 +61,18 @@
             android:elevation="1dp"
             />
 
+        <TextView
+            android:id="@+id/folder_size_toggle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:gravity="center"
+            android:paddingStart="12dp"
+            android:paddingEnd="4dp"
+            android:textColor="?attr/folderTextColor"
+            android:textSize="14sp"
+            android:visibility="gone" />
+
     </LinearLayout>
 
 </com.android.launcher3.folder.Folder>
