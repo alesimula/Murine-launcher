@@ -1,3 +1,4 @@
+// Modified in 2026 for the Murine Categories fork. See FORK.md.
 /*
  * Copyright (C) 2022 The Android Open Source Project
  *
@@ -76,6 +77,9 @@ import com.android.launcher3.DropTarget.DragObject;
 import com.android.launcher3.Flags;
 import com.android.launcher3.Insettable;
 import com.android.launcher3.InsettableFrameLayout;
+import com.android.launcher3.LauncherPrefs;
+import com.android.launcher3.Launcher;
+import com.android.launcher3.LauncherPrefChangeListener;
 import com.android.launcher3.R;
 import com.android.launcher3.Utilities;
 import com.android.launcher3.allapps.BaseAllAppsAdapter.AdapterItem;
@@ -86,6 +90,7 @@ import com.android.launcher3.keyboard.FocusedItemDecorator;
 import com.android.launcher3.keyboard.ViewGroupFocusHelper;
 import com.android.launcher3.model.StringCache;
 import com.android.launcher3.model.data.ItemInfo;
+import com.android.launcher3.model.data.AppInfo;
 import com.android.launcher3.pm.UserCache;
 import com.android.launcher3.recyclerview.AllAppsRecyclerViewPool;
 import com.android.launcher3.util.ItemInfoMatcher;
@@ -107,6 +112,8 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import app.murinelauncher.graphics.WorkspaceBlurUtils;
+import app.murinelauncher.drawer.DrawerCategoriesController;
+import app.murinelauncher.settings.hiddenapps.HiddenAppsRepository;
 
 /**
  * All apps container view with search support for use in a dragging activity.
@@ -189,6 +196,25 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
     private int mTabsProtectionAlpha;
     @Nullable private AllAppsTransitionController mAllAppsTransitionController;
     private WorkspaceBlurUtils.DrawerBlurType mCurrentDrawerBlurType;
+    @Nullable private DrawerCategoriesController mCategoryController;
+    private boolean mDrawerImeVisible;
+    private int mDrawerImeBottom;
+    private boolean mDrawerLayoutCustomized;
+    private final LauncherPrefChangeListener mDrawerPrefsListener = this::onDrawerPrefChanged;
+
+    private void onDrawerPrefChanged(String key) {
+        if ("pref_drawer_categories".equals(key)
+                || "pref_drawer_category_state".equals(key)
+                || "pref_drawer_bottom_search".equals(key)) {
+            post(() -> {
+                if (mCategoryController != null) mCategoryController.refresh();
+                updateDrawerControlsLayout();
+                if (mActivityContext instanceof Launcher) {
+                    ((Launcher) mActivityContext).updateDrawerSoftInputMode();
+                }
+            });
+        }
+    }
 
     public ActivityAllAppsContainerView(Context context) {
         this(context, null);
@@ -371,6 +397,10 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         mBottomSheetBackgroundColorLegacy = legacyColor;
         updateBackgroundVisibility(mActivityContext.getDeviceProfile());
         mSearchUiManager.initializeSearch(this);
+        if (!isSearchBarFloating()) {
+            mCategoryController = new DrawerCategoriesController(this);
+            mCategoryController.refresh();
+        }
     }
 
     @Override
@@ -384,12 +414,19 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
             mSearchUiDelegate.onInitializeSearchBar();
         }
         mActivityContext.addOnDeviceProfileChangeListener(this);
+        LauncherPrefs.get(getContext()).addListener(mDrawerPrefsListener,
+                LauncherPrefs.DRAWER_CATEGORIES, LauncherPrefs.DRAWER_CATEGORY_STATE,
+                LauncherPrefs.DRAWER_BOTTOM_SEARCH);
+        if (mCategoryController != null) mCategoryController.refresh();
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         mActivityContext.removeOnDeviceProfileChangeListener(this);
+        LauncherPrefs.get(getContext()).removeListener(mDrawerPrefsListener,
+                LauncherPrefs.DRAWER_CATEGORIES, LauncherPrefs.DRAWER_CATEGORY_STATE,
+                LauncherPrefs.DRAWER_BOTTOM_SEARCH);
     }
 
     public SearchUiManager getSearchUiManager() {
@@ -519,7 +556,8 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
     public void reset(boolean animate, boolean exitSearch) {
         // Scroll Main and Work RV to top. Search RV is done in `resetSearch`.
         for (int i = 0; i < mAH.size(); i++) {
-            if (i != SEARCH && mAH.get(i).mRecyclerView != null) {
+            if (i != SEARCH && mAH.get(i).mRecyclerView != null
+                    && !LauncherPrefs.DRAWER_CATEGORIES.get(getContext())) {
                 mAH.get(i).mRecyclerView.scrollToTop();
             }
         }
@@ -611,6 +649,9 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         // Header keeps track of active recycler view to properly render header protection.
         mHeader.setActiveRV(currentActivePage);
         mWorkManager.onActivePageChanged(currentActivePage);
+        if (currentActivePage != SEARCH && mCategoryController != null) {
+            mCategoryController.refresh();
+        }
     }
 
     protected void rebindAdapters() {
@@ -699,6 +740,8 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         mAllAppsStore.registerIconContainer(mAH.get(AdapterHolder.MAIN).mRecyclerView);
         mAllAppsStore.registerIconContainer(mAH.get(AdapterHolder.WORK).mRecyclerView);
         mAllAppsStore.registerIconContainer(mAH.get(AdapterHolder.SEARCH).mRecyclerView);
+        applyCategoryFilter();
+        updateDrawerControlsLayout();
     }
 
     /**
@@ -1124,6 +1167,7 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
                 .anyMatch(mWorkManager.getItemInfoMatcher());
         mHasPrivateApps = Stream.of(mAllAppsStore.getApps())
                 .anyMatch(mPrivateProfileManager.getItemInfoMatcher());
+        if (mCategoryController != null) mCategoryController.refresh();
         boolean privateProfileExists = mHasPrivateApps || mPrivateProfileManager.getProfileUser() != null;
         if (!isSearching()) {
             rebindAdapters();
@@ -1258,6 +1302,122 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
     @Override
     public void onDropCompleted(View target, DragObject d, boolean success) {}
 
+    /** Category filtering composes with, rather than replaces, the profile predicates. */
+    public void applyCategoryFilter() {
+        if (mCategoryController == null) return;
+        mAH.get(MAIN).mAppsList.updateItemFilter(
+                mPersonalMatcher.and(mCategoryController::matches));
+        mAH.get(WORK).mAppsList.updateItemFilter(
+                mWorkManager.getItemInfoMatcher().and(mCategoryController::matches));
+    }
+
+    /** Profile selection independent of search results being the active recycler view. */
+    public int getCategoryProfile() {
+        return mViewPager == null ? MAIN : mViewPager.getNextPage();
+    }
+
+    /** Only visible apps from the current Android profile influence the category tabs. */
+    public AppInfo[] getCategoryApps() {
+        Predicate<ItemInfo> profile = getCategoryProfile() == WORK
+                ? mWorkManager.getItemInfoMatcher() : mPersonalMatcher;
+        java.util.Set<String> hidden = HiddenAppsRepository.getHiddenComponents(getContext());
+        return Stream.of(mAllAppsStore.getApps())
+                .filter(profile)
+                .filter(app -> app.componentName != null
+                        && !hidden.contains(app.componentName.flattenToString()))
+                .toArray(AppInfo[]::new);
+    }
+
+    public boolean isBottomSearchEnabled() {
+        return !isSearchBarFloating() && LauncherPrefs.DRAWER_BOTTOM_SEARCH.get(getContext());
+    }
+
+    /** Called for IME animation frames as well as ordinary inset dispatch. */
+    public void onDrawerImeInsets(int bottom, boolean visible) {
+        mDrawerImeVisible = visible;
+        // Older Android resizes the window. Edge-to-edge Android uses explicit IME layout.
+        mDrawerImeBottom = Utilities.ATLEAST_R && visible ? bottom : 0;
+        updateDrawerControlsLayout();
+    }
+
+    /** Positions optional controls without changing the original drawer when both are off. */
+    public void updateDrawerControlsLayout() {
+        if (mCategoryController == null || isSearchBarFloating()) return;
+        boolean bottomSearch = isBottomSearchEnabled();
+        boolean categories = LauncherPrefs.DRAWER_CATEGORIES.get(getContext());
+        if (!bottomSearch && !categories && !mDrawerLayoutCustomized) return;
+        mDrawerLayoutCustomized = bottomSearch || categories;
+        View tabs = mCategoryController.getTabs();
+        boolean showTabs = categories && !isSearching() && !mDrawerImeVisible;
+        tabs.setVisibility(showTabs ? VISIBLE : GONE);
+        int tabsHeight = showTabs ? tabs.getLayoutParams().height : 0;
+        int navBottom = Math.max(mInsets.bottom, mNavBarScrimHeight);
+        int screenBottom = bottomSearch ? Math.max(navBottom, mDrawerImeBottom) : navBottom;
+        LayoutParams tabsLp = (LayoutParams) tabs.getLayoutParams();
+        if (tabsLp.bottomMargin != navBottom) {
+            tabsLp.bottomMargin = navBottom;
+            tabs.setLayoutParams(tabsLp);
+        }
+
+        LayoutParams searchLp = (LayoutParams) mSearchContainer.getLayoutParams();
+        int[] oldRules = searchLp.getRules().clone();
+        int oldTop = searchLp.topMargin;
+        int oldBottom = searchLp.bottomMargin;
+        searchLp.removeRule(ALIGN_PARENT_BOTTOM);
+        if (bottomSearch) {
+            searchLp.addRule(ALIGN_PARENT_BOTTOM);
+            searchLp.topMargin = 0;
+            searchLp.bottomMargin = screenBottom + tabsHeight + dpToPx(8);
+        } else {
+            searchLp.topMargin = mActivityContext.getDeviceProfile().shouldShowAllAppsOnSheet()
+                    ? getResources().getDimensionPixelSize(R.dimen.bottom_sheet_handle_area_height)
+                    : mInsets.top;
+            searchLp.bottomMargin = 0;
+        }
+        if (oldTop != searchLp.topMargin || oldBottom != searchLp.bottomMargin
+                || !Arrays.equals(oldRules, searchLp.getRules())) {
+            mSearchContainer.setLayoutParams(searchLp);
+        }
+
+        int controlsHeight = tabsHeight + (bottomSearch
+                ? getResources().getDimensionPixelSize(R.dimen.all_apps_search_bar_field_height)
+                        + dpToPx(16) + screenBottom - navBottom : 0);
+        View[] content = {getAppsRecyclerViewContainer(), getSearchRecyclerView(), mHeader};
+        for (View view : content) {
+            if (view == null) continue;
+            LayoutParams lp = (LayoutParams) view.getLayoutParams();
+            int[] rules = lp.getRules().clone();
+            int previousTop = lp.topMargin;
+            int previousBottom = lp.bottomMargin;
+            lp.removeRule(BELOW);
+            removeCustomRules(view);
+            if (bottomSearch) {
+                alignParentTop(view, view == getAppsRecyclerViewContainer() && mUsingTabs);
+                lp.topMargin += mActivityContext.getDeviceProfile().shouldShowAllAppsOnSheet()
+                        ? getResources().getDimensionPixelSize(R.dimen.bottom_sheet_handle_area_height)
+                        : mInsets.top;
+            } else {
+                layoutBelowSearchContainer(view,
+                        view == getAppsRecyclerViewContainer() && mUsingTabs);
+                if (view == mHeader) lp.addRule(BELOW, R.id.search_container_all_apps);
+            }
+            lp.bottomMargin = view == mHeader ? 0 : controlsHeight;
+            if (previousTop != lp.topMargin || previousBottom != lp.bottomMargin
+                    || !Arrays.equals(rules, lp.getRules())) view.setLayoutParams(lp);
+        }
+        for (View scroller : new View[]{mFastScroller, mFastScrollLetterLayout}) {
+            LayoutParams lp = (LayoutParams) scroller.getLayoutParams();
+            if (lp.bottomMargin != controlsHeight) {
+                lp.bottomMargin = controlsHeight;
+                scroller.setLayoutParams(lp);
+            }
+        }
+    }
+
+    private int dpToPx(int value) {
+        return Math.round(value * getResources().getDisplayMetrics().density);
+    }
+
     @Override
     public void setInsets(Rect insets) {
         mInsets.set(insets);
@@ -1286,6 +1446,7 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
             setPadding(grid.allAppsLeftRightMargin, topPadding, grid.allAppsLeftRightMargin, 0);
         }
         InsettableFrameLayout.dispatchInsets(this, insets);
+        updateDrawerControlsLayout();
     }
 
     /**
@@ -1334,6 +1495,7 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         if (mHeader.isSetUp()) {
             mHeader.setActiveRV(getCurrentPage());
         }
+        updateDrawerControlsLayout();
     }
 
     private void applyAdapterSideAndBottomPaddings(DeviceProfile grid) {

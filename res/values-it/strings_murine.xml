@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<!-- Modified in 2026 for the Murine Categories fork. See FORK.md. -->
+
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="pref_group_grid_size_title">Dimensione griglia</string>
     <string name="pref_group_grid_size_desc">Modifica il numero di righe e colonne</string>
     <string name="pref_group_icon_scale_title">Scala icone</string>
@@ -175,6 +177,32 @@
     <string name="pref_clear_custom_icons_confirm_title">Cancellare icone personalizzate?</string>
     <string name="pref_clear_custom_icons_confirm_message">Verranno ripristinate le impostazioni globali per tutte le icone personalizzate.</string>
     <string name="pref_clear_custom_icons_toast">Icone personalizzate cancellate</string>
+
+    <!-- Drawer categories: English and Italian first; other locales use English fallback. -->
+    <string name="pref_drawer_categories_title" tools:ignore="MissingTranslation">Schede per categoria</string>
+    <string name="pref_drawer_categories_summary" tools:ignore="MissingTranslation">Raggruppa le app automaticamente, con correzioni manuali e schede in basso</string>
+    <string name="pref_drawer_bottom_search_title" tools:ignore="MissingTranslation">Ricerca del cassetto in basso</string>
+    <string name="pref_drawer_bottom_search_summary" tools:ignore="MissingTranslation">Mantieni la ricerca a portata di mano, sopra la tastiera durante la digitazione</string>
+    <string name="drawer_manage_categories" tools:ignore="MissingTranslation">Gestisci categorie</string>
+    <string name="drawer_category_create" tools:ignore="MissingTranslation">Crea categoria</string>
+    <string name="drawer_category_name" tools:ignore="MissingTranslation">Nome della categoria</string>
+    <string name="drawer_category_name_error" tools:ignore="MissingTranslation">Inserisci un nome univoco e non vuoto</string>
+    <string name="drawer_category_rename" tools:ignore="MissingTranslation">Rinomina</string>
+    <string name="drawer_category_move_earlier" tools:ignore="MissingTranslation">Sposta prima</string>
+    <string name="drawer_category_move_later" tools:ignore="MissingTranslation">Sposta dopo</string>
+    <string name="drawer_category_delete" tools:ignore="MissingTranslation">Elimina categoria</string>
+    <string name="drawer_category_delete_message" tools:ignore="MissingTranslation">Le app in questa categoria verranno spostate nella categoria di riserva. Nessuna app verrà disinstallata.</string>
+    <string name="drawer_category_move" tools:ignore="MissingTranslation">Sposta nella categoria</string>
+    <string name="drawer_category_move_app" tools:ignore="MissingTranslation">Sposta %1$s nella categoria</string>
+    <string name="drawer_category_automatic" tools:ignore="MissingTranslation">Usa categoria automatica</string>
+    <string name="drawer_category_games" tools:ignore="MissingTranslation">Giochi</string>
+    <string name="drawer_category_communication" tools:ignore="MissingTranslation">Comunicazione</string>
+    <string name="drawer_category_media" tools:ignore="MissingTranslation">Multimedia</string>
+    <string name="drawer_category_productivity" tools:ignore="MissingTranslation">Produttività</string>
+    <string name="drawer_category_news" tools:ignore="MissingTranslation">Notizie</string>
+    <string name="drawer_category_maps" tools:ignore="MissingTranslation">Mappe</string>
+    <string name="drawer_category_tools" tools:ignore="MissingTranslation">Strumenti</string>
+    <string name="drawer_category_other" tools:ignore="MissingTranslation">Altro</string>
 
     <!-- Misc -->
     <string name="pref_default_launcher_title">Launcher predefinito</string>

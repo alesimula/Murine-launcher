@@ -1,3 +1,4 @@
+// Modified in 2026 for the Murine Categories fork. See FORK.md.
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
@@ -114,13 +115,13 @@ android {
     productFlavors {
         aosp {
             dimension "app"
-            applicationId 'app.murinelauncher'
+            applicationId 'io.github.rafaeltj13.murine'
             testApplicationId 'com.android.launcher3.tests'
         }
 
         l3go {
             dimension "app"
-            applicationId 'app.murinelauncher'
+            applicationId 'io.github.rafaeltj13.murine'
             testApplicationId 'com.android.launcher3.tests'
         }
 
@@ -136,6 +137,10 @@ android {
     }
 
     sourceSets {
+        test {
+            java.srcDirs = ['tests/unit']
+            kotlin.directories.addAll(['tests/unit'])
+        }
         // Debug-only resource overrides (e.g. the launcher icon colors), merged over res/
         debug {
             res.srcDirs = ['res_debug']
@@ -350,6 +355,7 @@ dependencies {
     ksp libs.dagger.compiler
 
     testImplementation libs.junit
+    testImplementation libs.json
     androidTestImplementation libs.mockito.core
     androidTestImplementation libs.dexmaker
     androidTestImplementation libs.dexmaker.mockito

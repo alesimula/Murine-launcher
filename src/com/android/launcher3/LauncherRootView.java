@@ -1,3 +1,4 @@
+// Modified in 2026 for the Murine Categories fork. See FORK.md.
 package com.android.launcher3;
 
 import static com.android.launcher3.config.FeatureFlags.SEPARATE_RECENTS_ACTIVITY;
@@ -13,6 +14,7 @@ import com.android.launcher3.graphics.SysUiScrim;
 import com.android.launcher3.statemanager.StatefulContainer;
 import com.android.launcher3.util.window.WindowManagerProxy;
 import com.android.launcher3.views.ActivityContext;
+import androidx.core.view.WindowInsetsCompat;
 
 import java.util.Collections;
 import java.util.List;
@@ -53,9 +55,20 @@ public class LauncherRootView extends InsettableFrameLayout {
 
     @Override
     public WindowInsets onApplyWindowInsets(WindowInsets insets) {
+        // Read the raw IME insets before Launcher3 normalizes them for its device profile.
+        WindowInsetsCompat rawInsets = WindowInsetsCompat.toWindowInsetsCompat(insets, this);
         mStatefulContainer.handleConfigurationChanged(
                 mStatefulContainer.asContext().getResources().getConfiguration());
-        return updateInsets(insets);
+        WindowInsets result = updateInsets(insets);
+        if (mStatefulContainer.asContext() instanceof Launcher) {
+            Launcher launcher = (Launcher) mStatefulContainer.asContext();
+            if (launcher.getAppsView() != null) {
+                launcher.getAppsView().onDrawerImeInsets(
+                        rawInsets.getInsets(WindowInsetsCompat.Type.ime()).bottom,
+                        rawInsets.isVisible(WindowInsetsCompat.Type.ime()));
+            }
+        }
+        return result;
     }
 
     private WindowInsets updateInsets(WindowInsets insets) {

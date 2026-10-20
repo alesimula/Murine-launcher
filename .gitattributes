@@ -1,0 +1,3 @@
+# Keep the generated launch scripts usable on their native platforms.
+gradlew text eol=lf
+gradlew.bat text eol=crlf

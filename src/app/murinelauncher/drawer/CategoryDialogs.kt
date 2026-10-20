@@ -1,0 +1,112 @@
+/*
+ * Copyright 2026 Murine Categories contributors
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may obtain a copy at https://www.apache.org/licenses/LICENSE-2.0
+ * Distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND.
+ */
+package app.murinelauncher.drawer
+
+import android.content.Context
+import android.text.InputFilter
+import android.widget.EditText
+import com.android.launcher3.R
+import com.android.launcher3.model.data.AppInfo
+import android.app.AlertDialog
+
+/** Editing UI shared by drawer tabs, app shortcuts, and launcher settings. */
+object CategoryDialogs {
+    @JvmStatic
+    fun manage(context: Context, repository: CategoryRepository) {
+        val categories = repository.state().categories.toList()
+        AlertDialog.Builder(context)
+            .setTitle(R.string.drawer_manage_categories)
+            .setItems(categories.map(repository::title).toTypedArray()) { _, index ->
+                edit(context, repository, categories[index].id)
+            }
+            .setPositiveButton(R.string.drawer_category_create) { _, _ ->
+                name(context, repository, null)
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
+    }
+
+    @JvmStatic
+    fun assign(context: Context, repository: CategoryRepository, app: AppInfo) {
+        val categories = repository.state().categories.toList()
+        val current = categories.indexOfFirst { it.id == repository.categoryFor(app) }
+        AlertDialog.Builder(context)
+            .setTitle(context.getString(R.string.drawer_category_move_app, app.title))
+            .setSingleChoiceItems(categories.map(repository::title).toTypedArray(), current) { dialog, index ->
+                repository.edit { it.assign(repository.key(app), categories[index].id) }
+                dialog.dismiss()
+            }
+            .setNeutralButton(R.string.drawer_category_automatic) { _, _ ->
+                repository.edit { it.assignments.remove(repository.key(app)) }
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
+    }
+
+    fun edit(context: Context, repository: CategoryRepository, id: String) {
+        val category = repository.state().categories.firstOrNull { it.id == id } ?: return
+        val actions = mutableListOf(
+            R.string.drawer_category_rename,
+            R.string.drawer_category_move_earlier,
+            R.string.drawer_category_move_later,
+        )
+        if (id != CategoryState.OTHER) actions.add(R.string.drawer_category_delete)
+        AlertDialog.Builder(context)
+            .setTitle(repository.title(category))
+            .setItems(actions.map(context::getString).toTypedArray()) { _, index ->
+                when (index) {
+                    0 -> name(context, repository, id)
+                    1 -> repository.edit { it.move(id, -1) }
+                    2 -> repository.edit { it.move(id, 1) }
+                    3 -> AlertDialog.Builder(context)
+                        .setTitle(R.string.drawer_category_delete)
+                        .setMessage(R.string.drawer_category_delete_message)
+                        .setPositiveButton(android.R.string.ok) { _, _ ->
+                            repository.edit { it.delete(id) }
+                        }
+                        .setNegativeButton(android.R.string.cancel, null)
+                        .show()
+                }
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
+    }
+
+    private fun name(context: Context, repository: CategoryRepository, id: String?) {
+        val input = EditText(context).apply {
+            setSingleLine()
+            filters = arrayOf(InputFilter.LengthFilter(64))
+            hint = context.getString(R.string.drawer_category_name)
+            if (id != null) {
+                repository.state().categories.firstOrNull { it.id == id }?.let {
+                    setText(repository.title(it))
+                    selectAll()
+                }
+            }
+        }
+        val dialog = AlertDialog.Builder(context)
+            .setTitle(if (id == null) R.string.drawer_category_create else R.string.drawer_category_rename)
+            .setView(input)
+            .setPositiveButton(android.R.string.ok, null)
+            .setNegativeButton(android.R.string.cancel, null)
+            .create()
+        dialog.setOnShowListener {
+            dialog.getButton(android.content.DialogInterface.BUTTON_POSITIVE).setOnClickListener {
+                val name = input.text.toString().trim()
+                if (name.isBlank() || repository.state().categories.any {
+                        it.id != id && repository.title(it).equals(name, ignoreCase = true)
+                    }) {
+                    input.error = context.getString(R.string.drawer_category_name_error)
+                } else {
+                    repository.edit { if (id == null) it.create(name) else it.rename(id, name) }
+                    dialog.dismiss()
+                }
+            }
+        }
+        dialog.show()
+    }
+}

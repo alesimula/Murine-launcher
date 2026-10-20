@@ -1,3 +1,13 @@
+# Murine Categories
+
+Personal-use fork of [Murine Launcher](https://github.com/alesimula/Murine-launcher)
+with optional offline category tabs and bottom app-drawer search. Both options are off
+by default. The app installs separately as **Murine Categories**.
+
+See [FORK.md](FORK.md) for setup, behavior, maintenance, and validation.
+
+---
+
 # Murine Launcher (Launcher :3)
 
 <img width="380" src="/image/app_icon/icon_browser_fullsize.svg"/>

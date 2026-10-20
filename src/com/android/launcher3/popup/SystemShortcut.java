@@ -1,3 +1,4 @@
+// Modified in 2026 for the Murine Categories fork. See FORK.md.
 package com.android.launcher3.popup;
 
 import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_DISMISS_PREDICTION_UNDO;
@@ -148,6 +149,25 @@ public abstract class SystemShortcut<T extends ActivityContext> extends ItemInfo
     }
 
     public static final Factory<ActivityContext> APP_INFO = AppInfo::new;
+
+    public static final Factory<ActivityContext> MOVE_TO_CATEGORY = (context, item, view) -> {
+        if (!(item instanceof com.android.launcher3.model.data.AppInfo)
+                || !item.getContainerInfo().hasAllAppsContainer()
+                || !LauncherPrefs.DRAWER_CATEGORIES.get(context.asContext())
+                || UserCache.INSTANCE.get(context.asContext()).getUserInfo(item.user).isPrivate()) {
+            return null;
+        }
+        return new SystemShortcut<ActivityContext>(android.R.drawable.ic_menu_sort_by_size,
+                R.string.drawer_category_move, context, item, view) {
+            @Override
+            public void onClick(View clicked) {
+                dismissTaskMenuView();
+                app.murinelauncher.drawer.CategoryDialogs.assign(context.asContext(),
+                        new app.murinelauncher.drawer.CategoryRepository(context.asContext()),
+                        (com.android.launcher3.model.data.AppInfo) item);
+            }
+        };
+    };
 
     public static class AppInfo<T extends ActivityContext> extends SystemShortcut<T> {
 

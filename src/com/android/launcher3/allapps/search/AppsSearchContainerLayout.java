@@ -1,3 +1,4 @@
+// Modified in 2026 for the Murine Categories fork. See FORK.md.
 /*
  * Copyright (C) 2017 The Android Open Source Project
  *
@@ -139,7 +140,8 @@ public class AppsSearchContainerLayout extends ExtendedEditText
         int shift = expectedLeft - left;
         setTranslationX(shift);
 
-        if (!mLauncher.getDeviceProfile().shouldShowAllAppsOnSheet())
+        if (!mAppsView.isBottomSearchEnabled()
+                && !mLauncher.getDeviceProfile().shouldShowAllAppsOnSheet())
             offsetTopAndBottom(mContentOverlap);
     }
 
@@ -211,7 +213,8 @@ public class AppsSearchContainerLayout extends ExtendedEditText
     @Override
     public void setInsets(Rect insets) {
         MarginLayoutParams mlp = (MarginLayoutParams) getLayoutParams();
-        mlp.topMargin = mLauncher.getDeviceProfile().shouldShowAllAppsOnSheet() ?
+        mlp.topMargin = mAppsView != null && mAppsView.isBottomSearchEnabled() ? 0
+                : mLauncher.getDeviceProfile().shouldShowAllAppsOnSheet() ?
                 getResources().getDimensionPixelSize(R.dimen.bottom_sheet_handle_area_height) :
                 insets.top;
         requestLayout();
