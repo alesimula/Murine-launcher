@@ -13,27 +13,38 @@ Use Android's default Home app settings when you are ready to switch.
 
 In launcher settings, open **App drawer**:
 
-- **Category tabs** enables editable groups with a fixed, horizontally scrollable bottom
-  icon row with 48 dp touch targets. Category names remain available to accessibility
-  services. It replaces the ordinary app list with one category at a time. There is no
+- **Category tabs** enables editable groups with the selected category's title above
+  the app grid and a Material 3 category bar at the bottom. The bar measures its available
+  width, reserves the manage button, and fits whole 48 dp touch targets on each page.
+  Swipe horizontally for more categories; dots indicate the current page. Category names
+  remain available to accessibility services. It shows one category at a time. There is no
   All apps category. With this option off, the original drawer remains available.
 - **Bottom drawer search** moves the existing app search to the bottom. It is independent
   of categories and works with the original app list too.
-- **Manage categories** creates, renames, reorders, and deletes categories, and lets you choose each
-  category's icon. Long-pressing
-  a category tab also opens its editing actions. The final tab button opens the manager.
+- **Manage categories** creates, renames, reorders, and deletes categories, and lets you
+  choose each category's icon. Long-pressing a category opens its editing actions. The
+  manage button stays visible while category pages scroll.
 - Long-press an app in the drawer or app-search results and choose **Move to category**.
   Select a group to pin its assignment, or **Use automatic category** to clear the correction.
 
 Deleting a category moves its explicitly assigned apps to the fallback category. Apps
-automatically mapped to a deleted category also fall back there. The fallback can be
-renamed and moved but not deleted. Its tab is hidden when it has no visible apps.
+automatically mapped to a deleted category also fall back there. The drawer immediately
+selects that destination so the moved apps remain visible. A cold start retains a saved
+fallback selection while the app model loads. The fallback can be renamed and moved but
+not deleted. Its tab is hidden when it has no visible apps, except while waiting for a
+saved fallback category's apps to load.
 
 Dense phone grids keep the requested column count and icon-size preference, but cap the
 drawn icons to the cell width with a 12 dp horizontal gap. This prevents icons from
 overlapping at eight columns without changing the home-screen icon size. Bottom search
 also removes the unused top-search gutter when no profile tabs or floating header rows
 need that space.
+
+The category title uses Material 3 Title Large typography. The bar and category dialogs
+use a scoped Material 3 dynamic-color theme, tonal selection, rounded icon buttons, and
+ripples. The 40 dp visible icon-button shape sits inside a 48 dp touch target; reducing
+visual padding does not reduce the touch target. Launcher3's activity theme stays intact.
+The heading hides during search and grows with long names or larger system text.
 
 ## Sorting and search
 
@@ -87,8 +98,8 @@ Physical-phone widget migration remains untested.
 ## Validation on 2026-10-20
 
 - `:assembleAospWithoutQuickstepDebug` passed and produced a signed debug APK.
-- `:testAospWithoutQuickstepDebugUnitTest` passed all 13 tests, including category-icon
-  persistence and older backups.
+- `:testAospWithoutQuickstepDebugUnitTest` passed all 22 tests, including category-icon
+  persistence, older backups, responsive page sizing, and category selection while loading.
 - Android 16 / API 36 emulator checks passed with gesture navigation at 1080 x 2400:
   all four combinations of the two switches, the original alphabetical drawer with both
   off, global app search from another category, search above the keyboard, hidden tabs
@@ -99,13 +110,21 @@ Physical-phone widget migration remains untested.
 - Moto Edge 60 Pro checks confirmed eight-column spacing, icon tabs, global app search,
   search above the Portuguese keyboard, and hiding tabs while typing.
 - The emulator icon chooser saved a custom icon for an existing custom category.
+- The Material 3 revision is emulator-verified and has not been installed on the Moto yet,
+  at the user's request. The physical-device checks above apply to the prior icon-bar build.
+- Deletion checks cover custom manual assignments and automatic categories. Removed
+  categories lead to Other with the moved apps visible, including after a process restart.
+- Responsive M3 checks passed at 360 dp and 411 dp phone widths and a wider 685 dp layout,
+  with whole category buttons, snapping pages, a pinned manage action, and correct heading
+  placement. Long titles at 150% system text and both light/dark themes were checked.
 - Model tests exercise rename/reorder/delete and category-state backup round trips.
   Actual `.rat` archive export/restore and physical-phone widget migration were not exercised.
-- Full-project lint reported 615 errors and 835 warnings, including inherited wallpaper
-  permissions, translations, format strings, and API checks. The one new warning, drawable
-  compatibility loading in the icon picker, was fixed with `AppCompatResources`; a focused
-  lint recheck found no remaining compatibility-loading warnings in the new drawer code.
-  The remaining 615 errors and 834 warnings are inherited and are not suppressed globally.
+- Full-project lint reported 615 errors and 836 warnings. The two new warnings were
+  addressed: page updates now use specific adapter range notifications, and the
+  callback-constructed bar has a local, documented `ViewConstructor` exemption because
+  it is never inflated from XML. A focused recheck passed with no new drawer findings
+  for those two rules. The remaining
+  615 errors and 834 warnings are inherited and are not suppressed globally.
   The detailed report is generated at
   `build/reports/lint-results-aospWithoutQuickstepDebug.html`.
 

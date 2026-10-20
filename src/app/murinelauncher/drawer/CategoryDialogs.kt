@@ -15,7 +15,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.android.launcher3.R
 import com.android.launcher3.model.data.AppInfo
-import android.app.AlertDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import androidx.appcompat.content.res.AppCompatResources
 
 /** Editing UI shared by drawer tabs, app shortcuts, and launcher settings. */
@@ -23,7 +23,7 @@ object CategoryDialogs {
     @JvmStatic
     fun manage(context: Context, repository: CategoryRepository) {
         val categories = repository.state().categories.toList()
-        AlertDialog.Builder(context)
+        MaterialAlertDialogBuilder(DrawerCategoryTheme.wrap(context))
             .setTitle(R.string.drawer_manage_categories)
             .setItems(categories.map(repository::title).toTypedArray()) { _, index ->
                 edit(context, repository, categories[index].id)
@@ -39,7 +39,7 @@ object CategoryDialogs {
     fun assign(context: Context, repository: CategoryRepository, app: AppInfo) {
         val categories = repository.state().categories.toList()
         val current = categories.indexOfFirst { it.id == repository.categoryFor(app) }
-        AlertDialog.Builder(context)
+        MaterialAlertDialogBuilder(DrawerCategoryTheme.wrap(context))
             .setTitle(context.getString(R.string.drawer_category_move_app, app.title))
             .setSingleChoiceItems(categories.map(repository::title).toTypedArray(), current) { dialog, index ->
                 repository.edit { it.assign(repository.key(app), categories[index].id) }
@@ -61,7 +61,7 @@ object CategoryDialogs {
             R.string.drawer_category_move_later,
         )
         if (id != CategoryState.OTHER) actions.add(R.string.drawer_category_delete)
-        AlertDialog.Builder(context)
+        MaterialAlertDialogBuilder(DrawerCategoryTheme.wrap(context))
             .setTitle(repository.title(category))
             .setItems(actions.map(context::getString).toTypedArray()) { _, index ->
                 when (actions[index]) {
@@ -69,11 +69,11 @@ object CategoryDialogs {
                     R.string.drawer_category_icon -> icon(context, repository, id)
                     R.string.drawer_category_move_earlier -> repository.edit { it.move(id, -1) }
                     R.string.drawer_category_move_later -> repository.edit { it.move(id, 1) }
-                    R.string.drawer_category_delete -> AlertDialog.Builder(context)
+                    R.string.drawer_category_delete -> MaterialAlertDialogBuilder(DrawerCategoryTheme.wrap(context))
                         .setTitle(R.string.drawer_category_delete)
                         .setMessage(R.string.drawer_category_delete_message)
                         .setPositiveButton(android.R.string.ok) { _, _ ->
-                            repository.edit { it.delete(id) }
+                            repository.deleteCategory(id)
                         }
                         .setNegativeButton(android.R.string.cancel, null)
                         .show()
@@ -86,10 +86,11 @@ object CategoryDialogs {
     private fun icon(context: Context, repository: CategoryRepository, id: String) {
         val icons = CategoryState.ICON_IDS
         val labels = icons.map { context.getString(CategoryIcons.label(it)) }
-        val adapter = object : ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, labels) {
+        val adapter = object : ArrayAdapter<String>(DrawerCategoryTheme.wrap(context),
+            android.R.layout.simple_list_item_1, labels) {
             override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
                 return (super.getView(position, convertView, parent) as TextView).apply {
-                    val icon = AppCompatResources.getDrawable(context, CategoryIcons.drawable(icons[position]))!!.mutate()
+                    val icon = AppCompatResources.getDrawable(this.context, CategoryIcons.drawable(icons[position]))!!.mutate()
                     val size = (24 * resources.displayMetrics.density).toInt()
                     icon.setBounds(0, 0, size, size)
                     icon.setTint(currentTextColor)
@@ -98,7 +99,7 @@ object CategoryDialogs {
                 }
             }
         }
-        AlertDialog.Builder(context)
+        MaterialAlertDialogBuilder(DrawerCategoryTheme.wrap(context))
             .setTitle(R.string.drawer_category_icon)
             .setAdapter(adapter) { _, position ->
                 repository.edit { it.setIcon(id, icons[position]) }
@@ -108,7 +109,7 @@ object CategoryDialogs {
     }
 
     private fun name(context: Context, repository: CategoryRepository, id: String?) {
-        val input = EditText(context).apply {
+        val input = EditText(DrawerCategoryTheme.wrap(context)).apply {
             setSingleLine()
             filters = arrayOf(InputFilter.LengthFilter(64))
             hint = context.getString(R.string.drawer_category_name)
@@ -119,7 +120,7 @@ object CategoryDialogs {
                 }
             }
         }
-        val dialog = AlertDialog.Builder(context)
+        val dialog = MaterialAlertDialogBuilder(DrawerCategoryTheme.wrap(context))
             .setTitle(if (id == null) R.string.drawer_category_create else R.string.drawer_category_rename)
             .setView(input)
             .setPositiveButton(android.R.string.ok, null)

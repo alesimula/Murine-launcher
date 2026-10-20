@@ -46,6 +46,12 @@ class CategoryRepository(private val context: Context) {
         prefs.put(LauncherPrefs.DRAWER_CATEGORY_STATE, state.encode())
     }
 
+    fun deleteCategory(id: String) {
+        // Pref listeners refresh asynchronously; select the destination in that same refresh.
+        prefs.put(LauncherPrefs.DRAWER_LAST_CATEGORY, CategoryState.OTHER)
+        edit { it.delete(id) }
+    }
+
     fun categoryFor(app: AppInfo): String = state().categoryFor(
         key(app), app.componentName?.packageName.orEmpty(), app.appCategory,
     )

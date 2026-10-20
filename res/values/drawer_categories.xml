@@ -2,4 +2,24 @@
 <!-- Copyright 2026 Murine Categories contributors. Licensed under Apache-2.0. -->
 <resources>
     <item name="drawer_category_tabs" type="id" />
+    <item name="drawer_category_heading" type="id" />
+    <item name="drawer_category_pages" type="id" />
+    <style name="Widget.MurineCategories.CategoryButton" parent="Widget.Material3.Button.IconButton">
+        <item name="android:minWidth">48dp</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingRight">8dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:insetLeft">4dp</item>
+        <item name="android:insetRight">4dp</item>
+        <item name="android:insetTop">4dp</item>
+        <item name="android:insetBottom">4dp</item>
+        <item name="iconSize">24dp</item>
+        <item name="iconPadding">0dp</item>
+        <item name="cornerRadius">20dp</item>
+    </style>
+    <style name="ThemeOverlay.MurineCategories.CategoryButton" parent="">
+        <item name="materialButtonStyle">@style/Widget.MurineCategories.CategoryButton</item>
+    </style>
 </resources>

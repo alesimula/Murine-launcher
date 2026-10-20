@@ -1351,6 +1351,25 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         boolean showTabs = categories && !isSearching() && !mDrawerImeVisible;
         tabs.setVisibility(showTabs ? VISIBLE : GONE);
         int tabsHeight = showTabs ? tabs.getLayoutParams().height : 0;
+        View heading = mCategoryController.getHeading();
+        heading.setVisibility(showTabs ? VISIBLE : GONE);
+        int headingHeight = showTabs ? mCategoryController.getHeadingHeight() : 0;
+        LayoutParams headingLp = (LayoutParams) heading.getLayoutParams();
+        removeCustomRules(heading);
+        headingLp.removeRule(BELOW);
+        if (bottomSearch) {
+            alignParentTop(heading, false);
+            headingLp.topMargin = mActivityContext.getDeviceProfile().shouldShowAllAppsOnSheet()
+                    ? getResources().getDimensionPixelSize(R.dimen.bottom_sheet_handle_area_height)
+                    : mInsets.top;
+        } else {
+            headingLp.addRule(BELOW, R.id.search_container_all_apps);
+            headingLp.topMargin = dpToPx(8);
+        }
+        DeviceProfile profile = mActivityContext.getDeviceProfile();
+        headingLp.leftMargin = Math.max(dpToPx(16), profile.allAppsPadding.left);
+        headingLp.rightMargin = Math.max(dpToPx(16), profile.allAppsPadding.right);
+        heading.setLayoutParams(headingLp);
         int navBottom = Math.max(mInsets.bottom, mNavBarScrimHeight);
         int screenBottom = bottomSearch ? Math.max(navBottom, mDrawerImeBottom) : navBottom;
         LayoutParams tabsLp = (LayoutParams) tabs.getLayoutParams();
@@ -1418,6 +1437,7 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
                         view == getAppsRecyclerViewContainer() && mUsingTabs);
                 if (view == mHeader) lp.addRule(BELOW, R.id.search_container_all_apps);
             }
+            lp.topMargin += headingHeight;
             lp.bottomMargin = view == mHeader ? 0 : controlsHeight;
             if (previousTop != lp.topMargin || previousBottom != lp.bottomMargin
                     || !Arrays.equals(rules, lp.getRules())) view.setLayoutParams(lp);
