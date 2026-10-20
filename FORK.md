@@ -142,8 +142,11 @@ Physical-phone widget migration remains untested.
   placement. Long titles at 150% system text and both light/dark themes were checked.
 - The bottom-aligned grid revision passed emulator checks for sparse and scrolling
   categories, both search placements, the original drawer, category swipes, global search,
-  and retaining empty definitions for editing and later assignment. This newer revision
-  is prepared as an APK; the Moto was disconnected during these layout checks.
+  and retaining empty definitions for editing and later assignment. The same APK was
+  then installed on the Moto. Device checks confirmed the bold title, bottom-aligned
+  short grids with an 8 dp gap above search, hidden empty News, and both swipe directions.
+  The final rows of longer categories remain reachable above search. Category definitions,
+  assignments, the user's five-column setting, selection, and default Home app were preserved.
 - Model tests exercise rename/reorder/delete and category-state backup round trips.
   Actual `.rat` archive export/restore and physical-phone widget migration were not exercised.
 - Full-project lint reported 615 errors and 836 warnings. The two new warnings were
