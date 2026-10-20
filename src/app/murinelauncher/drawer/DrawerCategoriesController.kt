@@ -6,7 +6,6 @@
  */
 package app.murinelauncher.drawer
 
-import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.os.Parcelable
 import android.view.Gravity
@@ -15,7 +14,6 @@ import android.widget.HorizontalScrollView
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
-import android.widget.TextView
 import androidx.core.graphics.ColorUtils
 import androidx.core.view.doOnLayout
 import com.android.launcher3.LauncherPrefs
@@ -29,10 +27,13 @@ class DrawerCategoriesController(private val host: ActivityAllAppsContainerView<
     private val context = host.context
     private val prefs = LauncherPrefs.get(context)
     private val repository = CategoryRepository(context)
-    private val row = LinearLayout(context).apply { gravity = Gravity.CENTER_VERTICAL }
+    private val row = LinearLayout(context).apply { gravity = Gravity.CENTER }
     val tabs = HorizontalScrollView(context).apply {
         id = R.id.drawer_category_tabs
         isHorizontalScrollBarEnabled = false
+        isFillViewport = true
+        setPadding(dp(8), 0, dp(8), 0)
+        clipToPadding = false
         addView(row)
         elevation = dp(2).toFloat()
     }
@@ -77,19 +78,17 @@ class DrawerCategoriesController(private val host: ActivityAllAppsContainerView<
         val color = context.getColor(R.color.all_apps_label_text_color)
         visible.forEach { category ->
             val active = category.id == selected
-            row.addView(TextView(context).apply {
-                text = repository.title(category)
-                gravity = Gravity.CENTER
-                minHeight = dp(48)
-                minWidth = dp(64)
-                setPadding(dp(16), 0, dp(16), 0)
-                setTextColor(color)
-                setTypeface(null, if (active) Typeface.BOLD else Typeface.NORMAL)
+            row.addView(ImageButton(context, null, android.R.attr.borderlessButtonStyle).apply {
+                setImageResource(CategoryIcons.drawable(category.iconId))
+                imageTintList = android.content.res.ColorStateList.valueOf(color)
+                contentDescription = repository.title(category)
+                tooltipText = repository.title(category)
+                setPadding(dp(12), dp(12), dp(12), dp(12))
                 isSelected = active
                 isFocusable = true
                 background = GradientDrawable().apply {
-                    cornerRadius = dp(24).toFloat()
-                    setColor(ColorUtils.setAlphaComponent(color, if (active) 28 else 0))
+                    cornerRadius = dp(16).toFloat()
+                    setColor(ColorUtils.setAlphaComponent(color, if (active) 45 else 0))
                 }
                 setOnClickListener { select(category.id) }
                 setOnLongClickListener {
@@ -105,12 +104,14 @@ class DrawerCategoriesController(private val host: ActivityAllAppsContainerView<
                         info.isSelected = active
                     }
                 }
-            }, LinearLayout.LayoutParams(-2, dp(48)))
+            }, LinearLayout.LayoutParams(dp(48), dp(48)))
         }
         row.addView(ImageButton(context, null, android.R.attr.borderlessButtonStyle).apply {
-            setImageResource(android.R.drawable.ic_menu_manage)
+            setImageResource(R.drawable.ic_category_manage)
+            setPadding(dp(12), dp(12), dp(12), dp(12))
             imageTintList = android.content.res.ColorStateList.valueOf(color)
             contentDescription = context.getString(R.string.drawer_manage_categories)
+            tooltipText = contentDescription
             setOnClickListener { CategoryDialogs.manage(context, repository) }
         }, LinearLayout.LayoutParams(dp(48), dp(48)))
         host.applyCategoryFilter()

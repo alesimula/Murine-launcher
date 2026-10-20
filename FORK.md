@@ -14,11 +14,13 @@ Use Android's default Home app settings when you are ready to switch.
 In launcher settings, open **App drawer**:
 
 - **Category tabs** enables editable groups with a fixed, horizontally scrollable bottom
-  tab row. It replaces the ordinary app list with one category at a time. There is no
+  icon row with 48 dp touch targets. Category names remain available to accessibility
+  services. It replaces the ordinary app list with one category at a time. There is no
   All apps category. With this option off, the original drawer remains available.
 - **Bottom drawer search** moves the existing app search to the bottom. It is independent
   of categories and works with the original app list too.
-- **Manage categories** creates, renames, reorders, and deletes categories. Long-pressing
+- **Manage categories** creates, renames, reorders, and deletes categories, and lets you choose each
+  category's icon. Long-pressing
   a category tab also opens its editing actions. The final tab button opens the manager.
 - Long-press an app in the drawer or app-search results and choose **Move to category**.
   Select a group to pin its assignment, or **Use automatic category** to clear the correction.
@@ -26,6 +28,12 @@ In launcher settings, open **App drawer**:
 Deleting a category moves its explicitly assigned apps to the fallback category. Apps
 automatically mapped to a deleted category also fall back there. The fallback can be
 renamed and moved but not deleted. Its tab is hidden when it has no visible apps.
+
+Dense phone grids keep the requested column count and icon-size preference, but cap the
+drawn icons to the cell width with a 12 dp horizontal gap. This prevents icons from
+overlapping at eight columns without changing the home-screen icon size. Bottom search
+also removes the unused top-search gutter when no profile tabs or floating header rows
+need that space.
 
 ## Sorting and search
 
@@ -73,14 +81,14 @@ installation. Build artifacts from another machine may need a different signing 
 
 The unit tests cover assignment precedence, profile separation, deleting groups, unknown
 apps, invalid backup data, and persistence of custom names, order, and assignments.
-Runtime layout checks use an isolated Android 16 emulator. The Moto Edge 60 Pro still
-needs physical-device testing with its installed Android version, keyboard, navigation
-mode, and existing widgets/icon settings.
+Runtime layout checks use an isolated Android 16 emulator and the connected Moto Edge 60 Pro.
+Physical-phone widget migration remains untested.
 
 ## Validation on 2026-10-20
 
 - `:assembleAospWithoutQuickstepDebug` passed and produced a signed debug APK.
-- `:testAospWithoutQuickstepDebugUnitTest` passed all 11 tests.
+- `:testAospWithoutQuickstepDebugUnitTest` passed all 13 tests, including category-icon
+  persistence and older backups.
 - Android 16 / API 36 emulator checks passed with gesture navigation at 1080 x 2400:
   all four combinations of the two switches, the original alphabetical drawer with both
   off, global app search from another category, search above the keyboard, hidden tabs
@@ -88,12 +96,16 @@ mode, and existing widgets/icon settings.
   reassignment, creating a custom category, and retaining the
   category and assignment after a process restart. Cold starts wait for Murine's app model
   to load before evaluating the app list.
+- Moto Edge 60 Pro checks confirmed eight-column spacing, icon tabs, global app search,
+  search above the Portuguese keyboard, and hiding tabs while typing.
+- The emulator icon chooser saved a custom icon for an existing custom category.
 - Model tests exercise rename/reorder/delete and category-state backup round trips.
   Actual `.rat` archive export/restore and physical-phone widget migration were not exercised.
-- Full-project lint reports 615 errors and 834 warnings in inherited code, including
-  wallpaper API permissions, old
-  translations/format strings, and API-level checks. There are no findings on added/modified lines or in the new drawer files.
-  Inherited findings are not suppressed globally.
+- Full-project lint reported 615 errors and 835 warnings, including inherited wallpaper
+  permissions, translations, format strings, and API checks. The one new warning, drawable
+  compatibility loading in the icon picker, was fixed with `AppCompatResources`; a focused
+  lint recheck found no remaining compatibility-loading warnings in the new drawer code.
+  The remaining 615 errors and 834 warnings are inherited and are not suppressed globally.
   The detailed report is generated at
   `build/reports/lint-results-aospWithoutQuickstepDebug.html`.
 

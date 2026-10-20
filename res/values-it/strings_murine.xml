@@ -187,6 +187,8 @@
     <string name="drawer_category_create" tools:ignore="MissingTranslation">Crea categoria</string>
     <string name="drawer_category_name" tools:ignore="MissingTranslation">Nome della categoria</string>
     <string name="drawer_category_name_error" tools:ignore="MissingTranslation">Inserisci un nome univoco e non vuoto</string>
+    <string name="drawer_category_icon" tools:ignore="MissingTranslation">Cambia icona</string>
+    <string name="drawer_category_folder" tools:ignore="MissingTranslation">Cartella</string>
     <string name="drawer_category_rename" tools:ignore="MissingTranslation">Rinomina</string>
     <string name="drawer_category_move_earlier" tools:ignore="MissingTranslation">Sposta prima</string>
     <string name="drawer_category_move_later" tools:ignore="MissingTranslation">Sposta dopo</string>

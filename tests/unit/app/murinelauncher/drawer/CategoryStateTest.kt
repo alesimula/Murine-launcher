@@ -48,6 +48,25 @@ class CategoryStateTest {
         assertEquals(custom, restored.categoryFor("personal/example.app", "example.app", 0))
     }
 
+    @Test fun chosenIconSurvivesRenameReorderAndBackup() {
+        val state = CategoryState()
+        val custom = state.create("Work")
+        assertEquals("folder", state.categories.first { it.id == custom }.iconId)
+        state.setIcon(custom, "productivity")
+        state.rename(custom, "Study")
+        state.move(custom, -100)
+        val restored = CategoryState.decode(state.encode()).categories.first()
+        assertEquals(custom, restored.id)
+        assertEquals("Study", restored.name)
+        assertEquals("productivity", restored.iconId)
+    }
+
+    @Test fun oldBackupsKeepDefaultIconsAndUnknownIconsFallBack() {
+        val old = CategoryState.decode("""{"version":1,"categories":[{"id":"games"},{"id":"custom","name":"Study","icon":"future"}],"assignments":{}}""")
+        assertEquals("games", old.categories[0].iconId)
+        assertEquals("folder", old.categories[1].iconId)
+    }
+
     @Test(expected = IllegalArgumentException::class)
     fun fallbackCannotBeDeleted() {
         CategoryState().delete("other")

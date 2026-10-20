@@ -15,7 +15,9 @@ class CategoryState(
     val categories: MutableList<Category> = DEFAULT_IDS.map { Category(it) }.toMutableList(),
     val assignments: MutableMap<String, String> = linkedMapOf(),
 ) {
-    data class Category(val id: String, val name: String = "")
+    data class Category(val id: String, val name: String = "", val icon: String = "") {
+        val iconId: String get() = icon.ifEmpty { id.takeIf { it in ICON_IDS } ?: "folder" }
+    }
 
     fun categoryFor(appKey: String, packageName: String, androidCategory: Int): String {
         val candidate = assignments[appKey] ?: OfflineAppClassifier.classify(packageName, androidCategory)
@@ -38,7 +40,14 @@ class CategoryState(
         require(name.isNotBlank())
         val index = categories.indexOfFirst { it.id == id }
         require(index >= 0)
-        categories[index] = Category(id, name.trim())
+        categories[index] = categories[index].copy(name = name.trim())
+    }
+
+    fun setIcon(id: String, icon: String) {
+        require(icon in ICON_IDS)
+        val index = categories.indexOfFirst { it.id == id }
+        require(index >= 0)
+        categories[index] = categories[index].copy(icon = icon)
     }
 
     fun move(id: String, delta: Int) {
@@ -57,7 +66,7 @@ class CategoryState(
     fun encode(): String = JSONObject().apply {
         put("version", 1)
         put("categories", JSONArray().apply {
-            categories.forEach { put(JSONObject().put("id", it.id).put("name", it.name)) }
+            categories.forEach { put(JSONObject().put("id", it.id).put("name", it.name).put("icon", it.icon)) }
         })
         put("assignments", JSONObject(assignments as Map<*, *>))
     }.toString()
@@ -68,6 +77,8 @@ class CategoryState(
             "games", "communication", "media", "productivity", "news", "maps", "tools", OTHER,
         )
 
+        val ICON_IDS = DEFAULT_IDS + "folder"
+
         /** Invalid state is rejected; callers can keep the original data and fall back safely. */
         fun decode(serialized: String): CategoryState {
             if (serialized.isEmpty()) return CategoryState()
@@ -76,7 +87,8 @@ class CategoryState(
             val array = root.getJSONArray("categories")
             val categories = (0 until array.length()).map { index ->
                 val entry = array.getJSONObject(index)
-                Category(entry.getString("id"), entry.optString("name"))
+                Category(entry.getString("id"), entry.optString("name"),
+                    entry.optString("icon").takeIf { it in ICON_IDS }.orEmpty())
             }.toMutableList()
             require(categories.all { it.id.isNotBlank() && (it.id in DEFAULT_IDS || it.name.isNotBlank()) })
             require(categories.map { it.id }.distinct().size == categories.size)

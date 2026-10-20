@@ -830,7 +830,7 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
                 getCurrentPage(),
                 tabsHidden);
 
-        int padding = mHeader.getMaxTranslation();
+        int padding = getDrawerContentTopPadding();
         mAH.forEach(adapterHolder -> {
             adapterHolder.mPadding.top = padding;
             adapterHolder.applyPadding();
@@ -1382,6 +1382,23 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         int controlsHeight = tabsHeight + (bottomSearch
                 ? getResources().getDimensionPixelSize(R.dimen.all_apps_search_bar_field_height)
                         + dpToPx(16) + screenBottom - navBottom : 0);
+        // The empty header normally reserves a gap below the top search field.
+        // With bottom search only a small gutter is needed below the sheet handle.
+        int contentTop = getDrawerContentTopPadding();
+        int headerTop = hasCompactDrawerHeader() ? contentTop
+                : getResources().getDimensionPixelSize(R.dimen.all_apps_header_top_padding);
+        if (mHeader.getPaddingTop() != headerTop) {
+            mHeader.setPadding(mHeader.getPaddingLeft(), headerTop, mHeader.getPaddingRight(),
+                    mHeader.getPaddingBottom());
+            // FloatingHeaderView also uses its top padding as the recycler's clip boundary.
+            mHeader.applyVerticalMove();
+        }
+        mAH.forEach(holder -> {
+            if (holder.mPadding.top != contentTop) {
+                holder.mPadding.top = contentTop;
+                holder.applyPadding();
+            }
+        });
         View[] content = {getAppsRecyclerViewContainer(), getSearchRecyclerView(), mHeader};
         for (View view : content) {
             if (view == null) continue;
@@ -1412,6 +1429,14 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
                 scroller.setLayoutParams(lp);
             }
         }
+    }
+
+    private int getDrawerContentTopPadding() {
+        return hasCompactDrawerHeader() ? dpToPx(8) : mHeader.getMaxTranslation();
+    }
+
+    private boolean hasCompactDrawerHeader() {
+        return isBottomSearchEnabled() && !mUsingTabs && mHeader.getFloatingRowsHeight() == 0;
     }
 
     private int dpToPx(int value) {
