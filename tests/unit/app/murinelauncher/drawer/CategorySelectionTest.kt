@@ -13,9 +13,9 @@ class CategorySelectionTest {
     private val categories = CategoryState().categories
 
     @Test fun coldStartRetainsOtherUntilItsAppsArrive() {
-        val loading = CategorySelection.resolve(categories, "other", emptySet())
+        val loading = CategorySelection.resolve(categories, "other", emptySet(), appsLoaded = false)
         assertEquals("other", loading.selected)
-        assertTrue(loading.categories.any { it.id == "other" })
+        assertTrue(loading.categories.isEmpty())
         val loaded = CategorySelection.resolve(categories, loading.selected, setOf("tools", "other"))
         assertEquals("other", loaded.selected)
     }
@@ -28,9 +28,9 @@ class CategorySelectionTest {
 
     @Test fun deletionBeforeTheAppModelLoadsStillShowsItsDestination() {
         val remaining = categories.filter { it.id != "communication" }
-        val resolved = CategorySelection.resolve(remaining, "communication", emptySet())
+        val resolved = CategorySelection.resolve(remaining, "communication", emptySet(), appsLoaded = false)
         assertEquals("other", resolved.selected)
-        assertTrue(resolved.categories.any { it.id == "other" })
+        assertTrue(resolved.categories.isEmpty())
     }
 
     @Test fun firstOpenChoosesANonEmptyCategoryAndHidesAnEmptyFallback() {
@@ -39,7 +39,28 @@ class CategorySelectionTest {
         assertFalse(resolved.categories.any { it.id == "other" })
     }
 
+    @Test fun allEmptyCategoriesAreHiddenInStoredOrder() {
+        val resolved = CategorySelection.resolve(categories, "news", setOf("tools", "games"))
+        assertEquals(listOf("games", "tools"), resolved.categories.map { it.id })
+        assertEquals("games", resolved.selected)
+    }
+
+    @Test fun noVisibleAppsLeavesNoCategoryTabsOrSelection() {
+        val resolved = CategorySelection.resolve(categories, "tools", emptySet())
+        assertTrue(resolved.categories.isEmpty())
+        assertEquals("", resolved.selected)
+    }
+
+    @Test fun anEmptyCustomCategoryReappearsWhenAnAppIsAssigned() {
+        val custom = categories + CategoryState.Category("custom", "Custom")
+        assertFalse(CategorySelection.resolve(custom, "games", setOf("games"))
+            .categories.any { it.id == "custom" })
+        assertEquals(listOf("games", "custom"),
+            CategorySelection.resolve(custom, "custom", setOf("games", "custom"))
+                .categories.map { it.id })
+    }
+
     @Test fun aSavedCategorySurvivesWhileTheModelIsLoading() {
-        assertEquals("tools", CategorySelection.resolve(categories, "tools", emptySet()).selected)
+        assertEquals("tools", CategorySelection.resolve(categories, "tools", emptySet(), appsLoaded = false).selected)
     }
 }

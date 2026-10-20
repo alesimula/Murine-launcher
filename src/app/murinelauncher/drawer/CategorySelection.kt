@@ -13,17 +13,17 @@ data class CategorySelection(val categories: List<CategoryState.Category>, val s
             categories: List<CategoryState.Category>,
             saved: String,
             nonEmptyIds: Set<String>,
+            appsLoaded: Boolean = true,
         ): CategorySelection {
             require(categories.isNotEmpty())
             val requested = if (saved.isNotEmpty() && categories.none { it.id == saved }) {
                 CategoryState.OTHER
             } else saved
-            val visible = categories.filter {
-                it.id != CategoryState.OTHER || it.id in nonEmptyIds ||
-                    (nonEmptyIds.isEmpty() && requested == CategoryState.OTHER)
-            }.ifEmpty { listOf(categories.first()) }
+            // Loading has no visible tabs yet, but must not discard the saved selection.
+            if (!appsLoaded) return CategorySelection(emptyList(), requested)
+            val visible = categories.filter { it.id in nonEmptyIds }
             val selected = requested.takeIf { id -> visible.any { it.id == id } }
-                ?: visible.firstOrNull { it.id in nonEmptyIds }?.id ?: visible.first().id
+                ?: visible.firstOrNull()?.id.orEmpty()
             return CategorySelection(visible, selected)
         }
     }

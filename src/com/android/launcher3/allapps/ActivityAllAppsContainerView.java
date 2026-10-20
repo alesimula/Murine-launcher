@@ -1358,8 +1358,9 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         if (!showTabs) mCategoryController.cancelMotion();
         int tabsHeight = showTabs ? tabs.getLayoutParams().height : 0;
         View heading = mCategoryController.getHeading();
-        heading.setVisibility(showTabs ? VISIBLE : GONE);
-        int headingHeight = showTabs ? mCategoryController.getHeadingHeight() : 0;
+        boolean showHeading = showTabs && mCategoryController.getHasVisibleCategories();
+        heading.setVisibility(showHeading ? VISIBLE : GONE);
+        int headingHeight = showHeading ? mCategoryController.getHeadingHeight() : 0;
         LayoutParams headingLp = (LayoutParams) heading.getLayoutParams();
         removeCustomRules(heading);
         headingLp.removeRule(BELOW);
@@ -1419,10 +1420,8 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
             mHeader.applyVerticalMove();
         }
         mAH.forEach(holder -> {
-            if (holder.mPadding.top != contentTop) {
-                holder.mPadding.top = contentTop;
-                holder.applyPadding();
-            }
+            holder.mPadding.top = contentTop;
+            holder.applyPadding();
         });
         View[] content = {getAppsRecyclerViewContainer(), getSearchRecyclerView(), mHeader};
         for (View view : content) {
@@ -1455,6 +1454,13 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
                 scroller.setLayoutParams(lp);
             }
         }
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        // Use the final measured control bounds, including the search field's container padding.
+        if (mCategoryController != null) mAH.forEach(AdapterHolder::applyPadding);
     }
 
     private int getDrawerContentTopPadding() {
@@ -1982,8 +1988,39 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
                 if (isSearchBarFloating()) {
                     bottomOffset += mSearchContainer.getHeight();
                 }
-                mRecyclerView.setPadding(mPadding.left, mPadding.top, mPadding.right,
-                        mPadding.bottom + bottomOffset);
+                int bottom = mPadding.bottom + bottomOffset;
+                if (!isSearch() && !isSearching() && !mDrawerImeVisible
+                        && mCategoryController != null
+                        && mCategoryController.getTabs().getVisibility() == VISIBLE) {
+                    View controls = isBottomSearchEnabled()
+                            ? mSearchContainer : mCategoryController.getTabs();
+                    if (controls.getHeight() > 0 && mRecyclerView.getHeight() > 0) {
+                        Rect bounds = new Rect(0, 0,
+                                mRecyclerView.getWidth(), mRecyclerView.getHeight());
+                        offsetDescendantRectToMyCoords(mRecyclerView, bounds);
+                        bottom = Math.max(bottom,
+                                bounds.bottom - controls.getTop() + dpToPx(8));
+                    }
+                }
+                int top = mPadding.top;
+                // Uniform category grids sit within thumb reach. Larger lists and profile cards
+                // retain the original top alignment and scroll geometry.
+                if (!isSearch() && !isSearching() && !mDrawerImeVisible && !isSearchBarFloating()
+                        && LauncherPrefs.DRAWER_CATEGORIES.get(getContext())
+                        && mAppsList.getNumAppRows() > 0
+                        && mAppsList.getAdapterItems().stream().allMatch(item ->
+                                BaseAllAppsAdapter.isIconViewType(item.viewType)
+                                || item.viewType == BaseAllAppsAdapter.VIEW_TYPE_BOTTOM_VIEW_TO_SCROLL_TO)) {
+                    int contentHeight = mAppsList.getNumAppRows()
+                            * mActivityContext.getDeviceProfile().allAppsCellHeightPx;
+                    top = Math.max(top, mRecyclerView.getHeight() - bottom - contentHeight);
+                }
+                if (mRecyclerView.getPaddingLeft() != mPadding.left
+                        || mRecyclerView.getPaddingTop() != top
+                        || mRecyclerView.getPaddingRight() != mPadding.right
+                        || mRecyclerView.getPaddingBottom() != bottom) {
+                    mRecyclerView.setPadding(mPadding.left, top, mPadding.right, bottom);
+                }
             }
         }
 

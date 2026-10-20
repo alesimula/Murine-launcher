@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+// Modified in 2026 for the Murine Categories fork. See FORK.md.
 package com.android.launcher3.allapps;
 
 import static com.android.launcher3.model.data.AppInfo.COMPONENT_KEY_COMPARATOR;
@@ -64,6 +65,7 @@ public class AllAppsStore<T extends Context & ActivityContext> {
     private AppInfo mTempInfo = new AppInfo();
 
     private @NonNull AppInfo[] mApps = EMPTY_ARRAY;
+    private boolean mAppsLoaded;
 
     private final List<OnUpdateListener> mUpdateListeners = new CopyOnWriteArrayList<>();
     private final ArrayList<ViewGroup> mIconContainers = new ArrayList<>();
@@ -74,6 +76,11 @@ public class AllAppsStore<T extends Context & ActivityContext> {
     private final AllAppsRecyclerViewPool mAllAppsRecyclerViewPool = new AllAppsRecyclerViewPool();
 
     private final T mContext;
+
+    /** Whether the app model has delivered its first list, including a genuinely empty list. */
+    public boolean isLoaded() {
+        return mAppsLoaded;
+    }
 
     public AppInfo[] getApps() {
         return mApps;
@@ -104,6 +111,7 @@ public class AllAppsStore<T extends Context & ActivityContext> {
     public void setApps(@Nullable AppInfo[] apps, int flags, Map<PackageUserKey, Integer> map,
             boolean shouldPreinflate) {
         mApps = apps == null ? EMPTY_ARRAY : apps;
+        mAppsLoaded = true;
         Log.d(TAG, "setApps: apps.length=" + mApps.length);
         mModelFlags = flags;
         notifyUpdate();

@@ -31,8 +31,9 @@ Deleting a category moves its explicitly assigned apps to the fallback category.
 automatically mapped to a deleted category also fall back there. The drawer immediately
 selects that destination so the moved apps remain visible. A cold start retains a saved
 fallback selection while the app model loads. The fallback can be renamed and moved but
-not deleted. Its tab is hidden when it has no visible apps, except while waiting for a
-saved fallback category's apps to load.
+not deleted. All empty categories are hidden from drawer navigation. Their definitions
+remain in Manage categories and their tabs return when they have visible apps. Loading
+the app model preserves the saved selection without temporarily showing empty tabs.
 
 Dense phone grids keep the requested column count and icon-size preference, but cap the
 drawn icons to the cell width with a 12 dp horizontal gap. This prevents icons from
@@ -40,7 +41,12 @@ overlapping at eight columns without changing the home-screen icon size. Bottom 
 also removes the unused top-search gutter when no profile tabs or floating header rows
 need that space.
 
-The category title uses Material 3 Title Large typography. The bar and category dialogs
+Short category grids align at the bottom above the drawer controls, so their apps stay
+within thumb reach. Grids that fill the available height keep normal vertical scrolling.
+The original drawer and search results keep their top alignment. Profile education cards
+and Private Space sections retain their existing layout.
+
+The category title uses bold Material 3 Title Large typography. The bar and category dialogs
 use a scoped Material 3 dynamic-color theme, tonal selection, rounded icon buttons, and
 ripples. The 40 dp visible icon-button shape sits inside a 48 dp touch target; reducing
 visual padding does not reduce the touch target. Launcher3's activity theme stays intact.
@@ -49,7 +55,7 @@ The heading hides during search and grows with long names or larger system text.
 ## Category gestures
 
 Swipe left or right across the app grid to move to the next or previous category. Tapping
-an icon uses the same directional slide/fade transition for the title and grid. Motion
+a category icon uses the same directional slide/fade transition for the title and grid. Motion
 uses Material 3 shared-axis distance, emphasized easing, and the theme's medium duration,
 and respects Android's animation scale. The first and last categories stop at the edge.
 Category order follows reading direction in RTL layouts.
@@ -111,9 +117,9 @@ Physical-phone widget migration remains untested.
 ## Validation on 2026-10-20
 
 - `:assembleAospWithoutQuickstepDebug` passed and produced a signed debug APK.
-- `:testAospWithoutQuickstepDebugUnitTest` passed all 30 tests, including category-icon
+- `:testAospWithoutQuickstepDebugUnitTest` passed all 33 tests, including category-icon
   persistence, older backups, responsive page sizing, category selection while loading,
-  and gesture ownership/direction.
+  gesture ownership/direction, and hiding/revealing empty categories.
 - Android 16 / API 36 emulator checks passed with gesture navigation at 1080 x 2400:
   all four combinations of the two switches, the original alphabetical drawer with both
   off, global app search from another category, search above the keyboard, hidden tabs
@@ -124,7 +130,7 @@ Physical-phone widget migration remains untested.
 - Moto Edge 60 Pro checks confirmed eight-column spacing, icon tabs, global app search,
   search above the Portuguese keyboard, and hiding tabs while typing.
 - The emulator icon chooser saved a custom icon for an existing custom category.
-- The Material 3 revision with animated category swipes is installed on the Moto.
+- The animated category-swipe revision was installed on the Moto.
   Device checks passed for left/right navigation, first/last boundaries, short drags,
   app long presses, global search, and vertical scrolling with categories enabled.
   Scrolling used a temporary four-column grid; the original eight-column setting and
@@ -134,6 +140,10 @@ Physical-phone widget migration remains untested.
 - Responsive M3 checks passed at 360 dp and 411 dp phone widths and a wider 685 dp layout,
   with whole category buttons, snapping pages, a pinned manage action, and correct heading
   placement. Long titles at 150% system text and both light/dark themes were checked.
+- The bottom-aligned grid revision passed emulator checks for sparse and scrolling
+  categories, both search placements, the original drawer, category swipes, global search,
+  and retaining empty definitions for editing and later assignment. This newer revision
+  is prepared as an APK; the Moto was disconnected during these layout checks.
 - Model tests exercise rename/reorder/delete and category-state backup round trips.
   Actual `.rat` archive export/restore and physical-phone widget migration were not exercised.
 - Full-project lint reported 615 errors and 836 warnings. The two new warnings were

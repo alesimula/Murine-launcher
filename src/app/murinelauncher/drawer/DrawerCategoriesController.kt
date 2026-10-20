@@ -7,6 +7,7 @@
 package app.murinelauncher.drawer
 
 import android.graphics.Rect
+import android.graphics.Typeface
 import android.os.Parcelable
 import android.view.MotionEvent
 import android.view.ViewConfiguration
@@ -31,6 +32,7 @@ class DrawerCategoriesController(private val host: ActivityAllAppsContainerView<
     val heading = MaterialTextView(materialContext).apply {
         id = R.id.drawer_category_heading
         setTextAppearance(MaterialR.style.TextAppearance_Material3_TitleLarge)
+        setTypeface(typeface, Typeface.BOLD)
         setTextColor(context.getColor(R.color.all_apps_label_text_color))
         gravity = Gravity.CENTER_VERTICAL or Gravity.START
         minHeight = dp(56)
@@ -51,6 +53,7 @@ class DrawerCategoriesController(private val host: ActivityAllAppsContainerView<
     private val scrollStates = mutableMapOf<String, Parcelable?>()
     private var selected = prefs.get(LauncherPrefs.DRAWER_LAST_CATEGORY)
     private var visible = emptyList<CategoryState.Category>()
+    val hasVisibleCategories: Boolean get() = visible.isNotEmpty()
     private var lastProfile = -1
     private var enabled = false
 
@@ -80,7 +83,7 @@ class DrawerCategoriesController(private val host: ActivityAllAppsContainerView<
         }
         val apps = host.categoryApps
         val selection = CategorySelection.resolve(repository.state().categories, selected,
-            apps.map(repository::categoryFor).toSet())
+            apps.map(repository::categoryFor).toSet(), host.appsStore.isLoaded)
         visible = selection.categories
         selected = selection.selected
         if (prefs.get(LauncherPrefs.DRAWER_LAST_CATEGORY) != selected) {
