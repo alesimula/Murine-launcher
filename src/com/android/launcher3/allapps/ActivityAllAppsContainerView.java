@@ -207,7 +207,10 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
                 || "pref_drawer_category_state".equals(key)
                 || "pref_drawer_bottom_search".equals(key)) {
             post(() -> {
-                if (mCategoryController != null) mCategoryController.refresh();
+                if (mCategoryController != null) {
+                    mCategoryController.cancelMotion();
+                    mCategoryController.refresh();
+                }
                 updateDrawerControlsLayout();
                 if (mActivityContext instanceof Launcher) {
                     ((Launcher) mActivityContext).updateDrawerSoftInputMode();
@@ -422,6 +425,7 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
 
     @Override
     protected void onDetachedFromWindow() {
+        if (mCategoryController != null) mCategoryController.cancelMotion();
         super.onDetachedFromWindow();
         mActivityContext.removeOnDeviceProfileChangeListener(this);
         LauncherPrefs.get(getContext()).removeListener(mDrawerPrefsListener,
@@ -1212,7 +1216,7 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         if (mTouchHandler != null) {
             return mTouchHandler.handleTouchEvent(ev, mFastScrollerOffset);
         }
-        return false;
+        return mCategoryController != null && mCategoryController.interceptSwipe(ev);
     }
 
     @Override
@@ -1238,6 +1242,7 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
             mTouchHandler.handleTouchEvent(ev, mFastScrollerOffset);
             return true;
         }
+        if (mCategoryController != null && mCategoryController.touchSwipe(ev)) return true;
         if (isSearching()
                 && mActivityContext.getDragLayer().isEventOverView(getVisibleContainerView(), ev)) {
             // if in search state, consume touch event.
@@ -1350,6 +1355,7 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         View tabs = mCategoryController.getTabs();
         boolean showTabs = categories && !isSearching() && !mDrawerImeVisible;
         tabs.setVisibility(showTabs ? VISIBLE : GONE);
+        if (!showTabs) mCategoryController.cancelMotion();
         int tabsHeight = showTabs ? tabs.getLayoutParams().height : 0;
         View heading = mCategoryController.getHeading();
         heading.setVisibility(showTabs ? VISIBLE : GONE);

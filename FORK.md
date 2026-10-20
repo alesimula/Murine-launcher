@@ -46,6 +46,19 @@ ripples. The 40 dp visible icon-button shape sits inside a 48 dp touch target; r
 visual padding does not reduce the touch target. Launcher3's activity theme stays intact.
 The heading hides during search and grows with long names or larger system text.
 
+## Category gestures
+
+Swipe left or right across the app grid to move to the next or previous category. Tapping
+an icon uses the same directional slide/fade transition for the title and grid. Motion
+uses Material 3 shared-axis distance, emphasized easing, and the theme's medium duration,
+and respects Android's animation scale. The first and last categories stop at the edge.
+Category order follows reading direction in RTL layouts.
+
+Horizontal intent must win before a category swipe takes ownership. Vertical scrolling,
+app taps, long presses, back-edge gestures, the fast scroller, and search keep their own
+handling. Short or cancelled horizontal drags settle back. The bottom icon bar continues
+to page independently, and category scroll positions are preserved when switching.
+
 ## Sorting and search
 
 Sorting runs locally. Explicit assignments take priority over bundled exact-package rules,
@@ -98,8 +111,9 @@ Physical-phone widget migration remains untested.
 ## Validation on 2026-10-20
 
 - `:assembleAospWithoutQuickstepDebug` passed and produced a signed debug APK.
-- `:testAospWithoutQuickstepDebugUnitTest` passed all 22 tests, including category-icon
-  persistence, older backups, responsive page sizing, and category selection while loading.
+- `:testAospWithoutQuickstepDebugUnitTest` passed all 30 tests, including category-icon
+  persistence, older backups, responsive page sizing, category selection while loading,
+  and gesture ownership/direction.
 - Android 16 / API 36 emulator checks passed with gesture navigation at 1080 x 2400:
   all four combinations of the two switches, the original alphabetical drawer with both
   off, global app search from another category, search above the keyboard, hidden tabs
@@ -110,8 +124,11 @@ Physical-phone widget migration remains untested.
 - Moto Edge 60 Pro checks confirmed eight-column spacing, icon tabs, global app search,
   search above the Portuguese keyboard, and hiding tabs while typing.
 - The emulator icon chooser saved a custom icon for an existing custom category.
-- The Material 3 revision is emulator-verified and has not been installed on the Moto yet,
-  at the user's request. The physical-device checks above apply to the prior icon-bar build.
+- The Material 3 revision with animated category swipes is installed on the Moto.
+  Device checks passed for left/right navigation, first/last boundaries, short drags,
+  app long presses, global search, and vertical scrolling with categories enabled.
+  Scrolling used a temporary four-column grid; the original eight-column setting and
+  selected category were restored. Category definitions and assignments stayed unchanged.
 - Deletion checks cover custom manual assignments and automatic categories. Removed
   categories lead to Other with the moved apps visible, including after a process restart.
 - Responsive M3 checks passed at 360 dp and 411 dp phone widths and a wider 685 dp layout,
@@ -126,7 +143,9 @@ Physical-phone widget migration remains untested.
   for those two rules. The remaining
   615 errors and 834 warnings are inherited and are not suppressed globally.
   The detailed report is generated at
-  `build/reports/lint-results-aospWithoutQuickstepDebug.html`.
+  `build/reports/lint-results-aospWithoutQuickstepDebug.html`. A focused lint pass for
+  touch accessibility, recycled objects, and animator bindings also passed with no new
+  drawer findings after adding swipes.
 
 ## Maintain
 

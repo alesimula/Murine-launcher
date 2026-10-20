@@ -6,7 +6,10 @@
  */
 package app.murinelauncher.drawer
 
+import android.graphics.Rect
 import android.os.Parcelable
+import android.view.MotionEvent
+import android.view.ViewConfiguration
 import android.view.Gravity
 import android.view.View
 import android.widget.RelativeLayout
@@ -38,6 +41,13 @@ class DrawerCategoriesController(private val host: ActivityAllAppsContainerView<
     val tabs = DrawerCategoryBar(materialContext, repository::title, ::select,
         { CategoryDialogs.edit(context, repository, it) },
         { CategoryDialogs.manage(context, repository) })
+    private val motion = DrawerCategoryMotion(materialContext) {
+        listOfNotNull(host.activeRecyclerView, heading)
+    }
+    private val gesture = CategorySwipeGesture(
+        ViewConfiguration.get(context).scaledTouchSlop.toFloat(), dp(48).toFloat(),
+        ViewConfiguration.getLongPressTimeout().toLong())
+    private val swipeBounds = Rect()
     private val scrollStates = mutableMapOf<String, Parcelable?>()
     private var selected = prefs.get(LauncherPrefs.DRAWER_LAST_CATEGORY)
     private var visible = emptyList<CategoryState.Category>()
@@ -92,7 +102,15 @@ class DrawerCategoriesController(private val host: ActivityAllAppsContainerView<
         repository.categoryFor(item) == selected
 
     private fun select(id: String) {
-        if (id == selected) return
+        motion.finishAnimation()
+        if (id == selected || visible.none { it.id == id }) return
+        val step = if (visible.indexOfFirst { it.id == id } > visible.indexOfFirst { it.id == selected }) 1 else -1
+        val direction = step * if (host.layoutDirection == View.LAYOUT_DIRECTION_RTL) -1 else 1
+        motion.switch(direction) { applySelection(id) }
+    }
+
+    private fun applySelection(id: String) {
+        if (!enabled || visible.none { it.id == id }) return
         val recycler = host.activeRecyclerView
         scrollStates[selected] = recycler?.layoutManager?.onSaveInstanceState()
         selected = id
@@ -102,6 +120,67 @@ class DrawerCategoriesController(private val host: ActivityAllAppsContainerView<
             val saved = scrollStates[id]
             if (saved == null) recycler.scrollToTop() else manager.onRestoreInstanceState(saved)
         }
+    }
+
+    fun interceptSwipe(event: MotionEvent): Boolean {
+        if (event.actionMasked == MotionEvent.ACTION_DOWN) {
+            cancelMotion(finishSelection = true)
+            if (!enabled || host.isSearching || tabs.visibility != View.VISIBLE) return false
+            val recycler = host.activeRecyclerView ?: return false
+            swipeBounds.set(0, 0, recycler.width, recycler.height)
+            host.offsetDescendantRectToMyCoords(recycler, swipeBounds)
+            // Keep gestures away from Android's back edges and outside the actual app grid.
+            val edge = dp(24)
+            if (event.x < edge || event.x > host.width - edge ||
+                !swipeBounds.contains(event.x.toInt(), event.y.toInt())) return false
+            gesture.begin(event.x, event.y, event.eventTime)
+        }
+        if (event.pointerCount > 1) {
+            gesture.cancel()
+            motion.settle()
+            return false
+        }
+        if (event.actionMasked == MotionEvent.ACTION_MOVE &&
+            gesture.move(event.x, event.y, event.eventTime)) {
+            host.parent?.requestDisallowInterceptTouchEvent(true)
+            return true
+        }
+        if (event.actionMasked == MotionEvent.ACTION_UP || event.actionMasked == MotionEvent.ACTION_CANCEL) {
+            gesture.cancel()
+        }
+        return false
+    }
+
+    fun touchSwipe(event: MotionEvent): Boolean {
+        if (!gesture.active) return false
+        when (event.actionMasked) {
+            MotionEvent.ACTION_MOVE -> {
+                if (event.pointerCount > 1) {
+                    gesture.finish(true, false)
+                    motion.settle()
+                } else {
+                    gesture.move(event.x, event.y, event.eventTime)
+                    motion.drag(gesture.deltaX)
+                }
+            }
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                if (event.actionMasked == MotionEvent.ACTION_UP) {
+                    gesture.move(event.x, event.y, event.eventTime)
+                }
+                val step = gesture.finish(event.actionMasked == MotionEvent.ACTION_CANCEL,
+                    host.layoutDirection == View.LAYOUT_DIRECTION_RTL)
+                val target = visible.getOrNull(visible.indexOfFirst { it.id == selected } + step)
+                if (step != 0 && target != null) select(target.id) else motion.settle()
+                host.parent?.requestDisallowInterceptTouchEvent(false)
+            }
+        }
+        return true
+    }
+
+    @JvmOverloads
+    fun cancelMotion(finishSelection: Boolean = false) {
+        gesture.cancel()
+        if (finishSelection) motion.finish() else motion.cancel()
     }
 
     private fun dp(value: Int): Int = (value * context.resources.displayMetrics.density).toInt()
