@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+  <title>r4l.launcher home and app grid</title>
+  <path d="M10,41 L48,9 L86,41" fill="none" stroke="#6554F4" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M30,42 H39 Q45,42 45,48 V57 Q45,63 39,63 H30 Q24,63 24,57 V48 Q24,42 30,42 Z" fill="#EDF7FF"/>
+  <path d="M57,42 H66 Q72,42 72,48 V57 Q72,63 66,63 H57 Q51,63 51,57 V48 Q51,42 57,42 Z" fill="#6554F4"/>
+  <path d="M30,69 H39 Q45,69 45,75 V84 Q45,90 39,90 H30 Q24,90 24,84 V75 Q24,69 30,69 Z" fill="#EDF7FF"/>
+  <path d="M57,69 H66 Q72,69 72,75 V84 Q72,90 66,90 H57 Q51,90 51,84 V75 Q51,69 57,69 Z" fill="#EDF7FF"/>
+</svg>

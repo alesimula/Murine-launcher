@@ -1,4 +1,4 @@
-// Modified in 2026 for the Murine Categories fork. See FORK.md.
+// Modified in 2026 for the r4l.launcher fork. See FORK.md.
 package com.android.launcher3;
 
 import static com.android.launcher3.config.FeatureFlags.SEPARATE_RECENTS_ACTIVITY;

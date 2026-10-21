@@ -1,4 +1,4 @@
-// Modified in 2026 for the Murine Categories fork. See FORK.md.
+// Modified in 2026 for the r4l.launcher fork. See FORK.md.
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
@@ -54,8 +54,8 @@ android {
     defaultConfig {
         minSdk = 26
         targetSdk = 37
-        versionCode 10205
-        versionName "1.2.5"
+        versionCode 10206
+        versionName "1.2.6"
 
         buildConfigField "boolean", "IS_STUDIO_BUILD", "false"
         buildConfigField "boolean", "QSB_ON_FIRST_SCREEN", "false"

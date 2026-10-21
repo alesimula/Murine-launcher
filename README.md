@@ -1,94 +1,45 @@
-# Murine Categories
+# r4l.launcher
 
-Personal-use fork of [Murine Launcher](https://github.com/alesimula/Murine-launcher)
-with optional offline category tabs and bottom app-drawer search. Both options are off
-by default. The app installs separately as **Murine Categories**.
+![r4l.launcher cover](image/brand/r4l-launcher-cover.png)
 
-See [FORK.md](FORK.md) for setup, behavior, maintenance, and validation.
+A personal Android launcher by [Rafael Maciel](https://r4l-blog-v2.vercel.app/),
+with offline app categories, bottom drawer search, and a charcoal and violet R4L identity.
+Built on [Murine Launcher](https://github.com/alesimula/Murine-launcher) and AOSP Launcher3.
 
----
+## What it does
 
-# Murine Launcher (Launcher :3)
+- Optional category tabs with local sorting, editable groups, and swipe navigation.
+- App search at the bottom of the drawer, above the keyboard.
+- Home-screen grids, widgets, icon packs, gestures, and launcher backups inherited from Murine.
+- Android 8 and above. Blur effects need Android 12 and device support.
 
-<img width="380" src="/image/app_icon/icon_browser_fullsize.svg"/>
+Category tabs and bottom search are off by default. Enable them in **Launcher settings → App drawer**.
 
-## About
+## Build
 
-A lightweight FOSS Android launcher forked from AOSP's Launcher3, using [yuchuangu85's repo](https://github.com/yuchuangu85/Launcher3) as a base.
+Use JDK 21 and Android SDK platform `android-37.2`.
 
-It offers minimalistic but modern and clean custom looks and feel, and essential customization options without bloat.
+```sh
+./gradlew :testAospWithoutQuickstepDebugUnitTest :assembleAospWithoutQuickstepDebug
+```
 
-## Compatibility
+The debug APK is in `build/outputs/apk/aospWithoutQuickstep/debug/`.
+See [FORK.md](FORK.md) for installation, behavior, maintenance, and device validation.
 
-Murine Launcher currently supports Androd 8 and above
+## Branding
 
-Blur effects are supported on Android 12 and above.<br/>
-Some OEM/ROMs may hide or disable window-level blurs; if that's your case try to check for an &quot;Allow window-level blurs&quot; option in Display Options or Developer Options.<br/>
-Alternatively, try enabling <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">this Magisk module</a> on rooted devices
+The [brand assets](image/brand/README.md) include the transparent generated logo,
+SVG mark, Android icons, and project cover. The palette follows
+[R4L Blog v2](https://r4l-blog-v2.vercel.app/). The launcher has its own home-and-app-grid symbol.
 
-## Screenshots
-<img width="320" src="/fastlane/metadata/android/en-US/images/phoneScreenshots/1.png"/>    <img width="320" src="/fastlane/metadata/android/en-US/images/phoneScreenshots/2.png"/>
-<img width="320" src="/fastlane/metadata/android/en-US/images/phoneScreenshots/3.png"/>    <img width="320" src="/fastlane/metadata/android/en-US/images/phoneScreenshots/4.png"/>
-<img width="320" src="/fastlane/metadata/android/en-US/images/phoneScreenshots/5.png"/>    <img width="320" src="/fastlane/metadata/android/en-US/images/phoneScreenshots/6.png"/>
-<img width="320" src="/fastlane/metadata/android/en-US/images/phoneScreenshots/7.png"/>
+## Credits and license
 
-## Translations
+This fork builds on [alesimula's Murine Launcher](https://github.com/alesimula/Murine-launcher),
+which builds on [yuchuangu85's Launcher3](https://github.com/yuchuangu85/Launcher3) and AOSP.
+Original copyright notices, [LICENSE](LICENSE), and [NOTICE](NOTICE) are retained.
+Inherited preview art is by [Miikrowelle](https://miikrowelle.straw.page).
+Some icons come from [Lets Icons by sadik sajid](https://www.figma.com/community/plugin/1551156216287797438).
 
-The launcher's own strings are translated separately from the locales it inherits from AOSP.
-
-[See which languages are covered, how complete each one is, and how to help](https://www.murinelauncher.app/localization-status/)
-
-## Download
-
-Check [the website](https://www.murinelauncher.app/) or download it from:
-
-<p align="left">
-  <a href="https://f-droid.org/en/packages/app.murinelauncher">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="image/github/badge-fdroid.webp" height="60">
-      <img alt="Get it on F-Droid" src="image/github/badge-fdroid.webp" height="60">
-    </picture>
-  </a>
-  <a href="https://apt.izzysoft.de/fdroid/index/apk/app.murinelauncher">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="image/github/badge-izzyondroid.webp" height="60">
-      <img alt="Get it on IzzyOnDroid" src="image/github/badge-izzyondroid.webp" height="60">
-    </picture>
-  </a>
-  <a href="https://play.google.com/store/apps/details?id=app.murinelauncher">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="image/github/badge-google-play.webp" height="60">
-      <img alt="Get it on Google Play" src="image/github/badge-google-play.webp" height="60">
-    </picture>
-  </a>
-  <a href="https://github.com/alesimula/Murine-launcher/releases">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="image/github/badge-github.webp" height="60">
-      <img alt="Get it on GitHub" src="image/github/badge-github.webp" height="60">
-    </picture>
-  </a>
-</p>
-
-## Building
-
-Last tested on:
-
- - Android Studio: Quail 4 (2026.1.4)
- - Gradle: 9.7.1 (bundled)
-
-## Buy me a beer
-
-<a href="https://www.paypal.com/donate/?hosted_button_id=3HRAWU9KVYKKS">
-  <img src="https://raw.githubusercontent.com/stefan-niedermann/paypal-donate-button/master/paypal-donate-button.png" alt="Donate with PayPal" />
-</a>
-
-## Credits
-
-- [Preview art by Miikrowelle](https://miikrowelle.straw.page)
-- [Contains some icons from Lets Icons by sadik sajid](https://www.figma.com/community/plugin/1551156216287797438)
-
-## Extra resources
-
- - [Recovery: User-initiated, offline crash log sharing with zero permissions](https://github.com/alesimula/Recovery)
- - [murine-aircompressor: full-Java zstd, lz4, snappy and lzo implementations](https://github.com/alesimula/murine-aircompressor)
- - [Old resources: just some trash I don't want to clutter my main repo](https://github.com/alesimula/old-resources-m-launcher)
+Dependencies include [Recovery](https://github.com/alesimula/Recovery),
+[murine-aircompressor](https://github.com/alesimula/murine-aircompressor), and
+[murine-sdp](https://github.com/alesimula/murine-sdp).

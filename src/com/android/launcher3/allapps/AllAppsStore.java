@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// Modified in 2026 for the Murine Categories fork. See FORK.md.
+// Modified in 2026 for the r4l.launcher fork. See FORK.md.
 package com.android.launcher3.allapps;
 
 import static com.android.launcher3.model.data.AppInfo.COMPONENT_KEY_COMPARATOR;

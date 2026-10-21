@@ -1,1 +1,1 @@
-A modern, lightweight Launcher3 fork for an enhanced stock++ Android experience.
+An Android home screen with offline categories and bottom drawer search.

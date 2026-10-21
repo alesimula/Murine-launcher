@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Modified in 2026 for the Murine Categories fork. See FORK.md. -->
+<!-- Modified in 2026 for the r4l.launcher fork. See FORK.md. -->
 
 <!-- Copyright (C) 2022 The Android Open Source Project
 
@@ -25,7 +25,7 @@
 
     <!-- A string pointer to the original app name string. This allows derived projects to
      easily override the app name without providing all translations -->
-    <string name="derived_app_name" translatable="false">Murine Categories</string>
+    <string name="derived_app_name" translatable="false">r4l.launcher</string>
 
     <!-- String representing the intent to delete a package.-->
     <string name="delete_package_intent" translatable="false">#Intent;action=android.intent.action.DELETE;launchFlags=0x10800000;end</string>

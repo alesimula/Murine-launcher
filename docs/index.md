@@ -7,18 +7,14 @@ title: Home
 <section class="hero">
   <div class="hero-inner">
     <div class="hero-text">
-      <h1>Open launcher,<br><span class="accent">plain and simple.</span></h1>
-      <p class="hero-desc">
-        A modern, lightweight FOSS Launcher3 fork delivering an enhanced stock Android experience, 
-         providing a familiar AOSP feel out of the box, with some sprinkles on top :3 <br/><br/>
-        Offers a minimalistic yet polished home screen interface with essential customization options, with zero bloat.
-      </p>
+      <h1>r4l.launcher<br><span class="accent">Your home. Your categories.</span></h1>
+      <p class="hero-desc">Rafael Maciel's personal Android home screen. Organize your apps with offline categories, swipe between groups, and keep search within reach.</p>
       <div class="hero-actions">
         <a href="{{ '/download' | relative_url }}" class="btn-filled">
           <span class="material-symbols-outlined">&#xF090;</span> <!-- download -->
           Download
         </a>
-        <a href="https://github.com/alesimula/Murine-launcher" class="btn-outlined" target="_blank" rel="noopener">
+        <a href="https://github.com/rafaeltj13/r4l.launcher" class="btn-outlined" target="_blank" rel="noopener">
           <span class="material-symbols-outlined">&#xE86F;</span> <!-- code -->
           Source Code
         </a>
@@ -27,8 +23,8 @@ title: Home
     <div class="hero-visual">
       <div class="hero-icon-wrapper" id="heroIcon">
         <button class="hero-icon-flip" aria-label="Flip the icon">
-          <img class="hero-icon-face" src="{{ '/assets/img/icon_adaptive_baked.svg' | relative_url }}" alt="Murine Launcher icon">
-          <img class="hero-icon-face hero-icon-back" src="{{ '/assets/img/icon_freeform_baked.svg' | relative_url }}" alt="Murine Launcher icon, freeform" aria-hidden="true">
+          <img class="hero-icon-face" src="{{ '/assets/img/icon_adaptive_baked.svg' | relative_url }}" alt="r4l.launcher icon">
+          <img class="hero-icon-face hero-icon-back" src="{{ '/assets/img/icon_freeform_baked.svg' | relative_url }}" alt="r4l.launcher icon, freeform" aria-hidden="true">
         </button>
       </div>
     </div>
@@ -56,7 +52,7 @@ title: Home
 <section class="features-section">
   <div class="section-header">
     <h2>What it has to offer</h2>
-    <p>Built on AOSP Launcher3, Murine Launcher keeps things clean while adding a little touches here and there.</p>
+    <p>Built on Murine Launcher and AOSP Launcher3, with optional category tabs and bottom drawer search.</p>
   </div>
   <div class="features-grid">
     <div class="feature-card">
@@ -71,28 +67,28 @@ title: Home
         <span class="custom-icon icon-private-space"></span>
       </div>
       <h3>Private Space Integration</h3>
-      <p>Native support for Android 15's Private Space: every mouse needs a burrow; hide your sensitive apps and data from prying eyes.</p>
+      <p>Keep Android 15 Private Space apps in their protected drawer section, separate from ordinary categories.</p>
     </div>
     <div class="feature-card">
       <div class="feature-icon">
         <span class="material-symbols-outlined">&#xE8B6;</span> <!-- search -->
       </div>
       <h3>Customised QuickSearchBox</h3>
-      <p>Can look great without needing Google; disable the Lens button, choose your preferred search engine, or disable it alltogether if it's not your thing.</p>
+      <p>Choose your search provider and optional search buttons. Move drawer search to the bottom to keep it above the keyboard.</p>
     </div>
     <div class="feature-card">
       <div class="feature-icon">
         <span class="custom-icon icon-feather"></span>
       </div>
       <h3>Lightweight</h3>
-      <p>Very close to its AOSP source, with some enhancements but no bloat. Very tiny, very light, very demure.</p>
+      <p>Built on AOSP Launcher3 with home-screen grids, widgets, icon packs, and gestures.</p>
     </div>
     <div class="feature-card">
       <div class="feature-icon">
         <span class="custom-icon icon-bestfeature"></span>
       </div>
-      <h3>Designed by a mouse</h3>
-      <p>Are you tired of apps designed by humans? This one was built by a mouse, no (excessive) desire for money, will not sell out or sell you out, mice only deal in cheese and crumbs.</p>
+      <h3>Offline app categories</h3>
+      <p>Create your own groups, choose their icons, and swipe between categories. Sorting and manual assignments stay on your device.</p>
     </div>
     <div class="feature-card">
       <div class="feature-icon">
@@ -126,7 +122,7 @@ title: Home
     </div>
     <div class="compat-details">
       <h3>Compatibility</h3>
-      <p>Murine Launcher supports <strong>Android 8 (Oreo)</strong> and above.</p>
+      <p>r4l.launcher supports <strong>Android 8 (Oreo)</strong> and above.</p>
       <p>Blur effects require <strong>Android 12+</strong>. Some OEMs or ROMs may hide or disable window-level blurs - check for an "Allow window-level blurs" option in Display or Developer Options.</p>
       <p>On rooted devices, you can try enabling the <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs" target="_blank" rel="noopener">enable-blurs Magisk module</a>.</p>
     </div>

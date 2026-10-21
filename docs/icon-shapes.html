@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Icon shapes
-subtitle: Pick a preset or draw your own shape, then send it to Murine
+subtitle: Pick a preset or draw your own shape, then send it to r4l.launcher
 permalink: /icon-shapes/
 sitemap: false   # keep it out of sitemap.xml
 noindex: true    # and out of search engines
@@ -467,7 +467,7 @@ noindex: true    # and out of search engines
     <p id="se-warn" class="se-warn" hidden></p>
     <p id="se-note" class="se-note-out" hidden></p>
     <div class="se-actions">
-      <a id="se-use" class="btn-filled" href="#">Use in Murine</a>
+      <a id="se-use" class="btn-filled" href="#">Use in r4l.launcher</a>
       <button id="se-share-open" class="btn-outlined" type="button" aria-haspopup="dialog">Share</button>
     </div>
   </div>
@@ -477,23 +477,23 @@ noindex: true    # and out of search engines
   <summary>Link format</summary>
   <p>An edit link opens an icon in this editor. It's the editor's URL with the icon in its fragment, in one of two forms:</p>
   <ul>
-    <li><code>https://www.murinelauncher.app/icon-shapes/#edit=DATA</code>: the icon's JSON (below), compressed with raw
+    <li><code>https://rafaeltj13.github.io/r4l.launcher/icon-shapes/#edit=DATA</code>: the icon's JSON (below), compressed with raw
       DEFLATE (no zlib header or checksum: <code>zlib.compressobj(9, zlib.DEFLATED, -15)</code> in Python,
       <code>new CompressionStream('deflate-raw')</code> in JavaScript), then base64url-encoded without <code>=</code> padding.
       This is the preferred form: it's what <strong>Share</strong> produces and it keeps links short.</li>
-    <li><code>https://www.murinelauncher.app/icon-shapes/#edit-raw=JSON</code>: the same JSON, uncompressed and
+    <li><code>https://rafaeltj13.github.io/r4l.launcher/icon-shapes/#edit-raw=JSON</code>: the same JSON, uncompressed and
       percent-encoded (<code>encodeURIComponent</code> in JavaScript, <code>urllib.parse.quote(json, safe='')</code> in
       Python). Use it when compressing isn't possible.</li>
   </ul>
   <p>Opening either one loads the icon (the previous one stays a step back in Undo); <strong>Share</strong> then gives the
-    short link and the link that sends the shape to Murine. A link that doesn't follow the format below is ignored, and
+    short link and the link that sends the shape to r4l.launcher. A link that doesn't follow the format below is ignored, and
     the editor keeps the icon it had.</p>
   <h3>Checking a link</h3>
   <p>A link written by hand or by a script is worth opening before it's shared: the canvas shows the shape, and anything the
     launcher can't use (shapes that don't touch, crossing edges) is reported in red under <strong>Result</strong>, which
-    also disables <strong>Use in Murine</strong>. Other messages are just information: a corner whose size shrinks its
+    also disables <strong>Use in r4l.launcher</strong>. Other messages are just information: a corner whose size shrinks its
     neighbours, for instance, is fine if the shape looks as intended. Small fixes can be made right there. <strong>Share</strong> then has the finished links: the address of its <strong>Edit link</strong> entry is the
-    compressed edit link (clicking the entry copies it), and <strong>Use in Murine</strong> points to the import link.</p>
+    compressed edit link (clicking the entry copies it), and <strong>Use in r4l.launcher</strong> points to the import link.</p>
   <h3>The JSON</h3>
 <pre><code>{"shapes": [
   {"pts": [{"x": 50, "y": 4, "r": 12, "s": 0.6}, {"x": 97.6, "y": 38.5, "r": 12, "s": 0.6}, …],
@@ -539,8 +539,8 @@ noindex: true    # and out of search engines
   <h3>Example</h3>
   <p>A rounded pentagon: <code>{"shapes":[{"pts":[{"x":50,"y":4,"r":12,"s":0.6},{"x":97.6,"y":38.5,"r":12,"s":0.6},{"x":79.4,"y":94.5,"r":12,"s":0.6},{"x":20.6,"y":94.5,"r":12,"s":0.6},{"x":2.4,"y":38.5,"r":12,"s":0.6}]}]}</code></p>
   <ul class="se-docs-links">
-    <li>Compressed: <a href="#edit=q1YqzkgsSC1WsoquVioogdAVSlamBnoGOkqVSlYmILpIycrQSEcJKGugZ1arA1Zhaa5nBlZhbKFnil2JuaWeCViJpQkuJUYGUFPwKIEags2eWCAEAA">https://www.murinelauncher.app/icon-shapes/#edit=q1YqzkgsSC1WsoquVioogdAVSlamBnoGOkqVSlYmILpIycrQSEcJKGugZ1arA1Zhaa5nBlZhbKFnil2JuaWeCViJpQkuJUYGUFPwKIEags2eWCAEAA</a></li>
-    <li>Raw: <a href="#edit-raw=%7B%22shapes%22%3A%5B%7B%22pts%22%3A%5B%7B%22x%22%3A50.0%2C%22y%22%3A4.0%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%2C%7B%22x%22%3A97.6%2C%22y%22%3A38.5%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%2C%7B%22x%22%3A79.4%2C%22y%22%3A94.5%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%2C%7B%22x%22%3A20.6%2C%22y%22%3A94.5%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%2C%7B%22x%22%3A2.4%2C%22y%22%3A38.5%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%5D%7D%5D%7D">https://www.murinelauncher.app/icon-shapes/#edit-raw=%7B%22shapes%22%3A%5B%7B%22pts%22%3A%5B%7B%22x%22%3A50.0%2C%22y%22%3A4.0%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%2C%7B%22x%22%3A97.6%2C%22y%22%3A38.5%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%2C%7B%22x%22%3A79.4%2C%22y%22%3A94.5%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%2C%7B%22x%22%3A20.6%2C%22y%22%3A94.5%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%2C%7B%22x%22%3A2.4%2C%22y%22%3A38.5%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%5D%7D%5D%7D</a></li>
+    <li>Compressed: <a href="#edit=q1YqzkgsSC1WsoquVioogdAVSlamBnoGOkqVSlYmILpIycrQSEcJKGugZ1arA1Zhaa5nBlZhbKFnil2JuaWeCViJpQkuJUYGUFPwKIEags2eWCAEAA">https://rafaeltj13.github.io/r4l.launcher/icon-shapes/#edit=q1YqzkgsSC1WsoquVioogdAVSlamBnoGOkqVSlYmILpIycrQSEcJKGugZ1arA1Zhaa5nBlZhbKFnil2JuaWeCViJpQkuJUYGUFPwKIEags2eWCAEAA</a></li>
+    <li>Raw: <a href="#edit-raw=%7B%22shapes%22%3A%5B%7B%22pts%22%3A%5B%7B%22x%22%3A50.0%2C%22y%22%3A4.0%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%2C%7B%22x%22%3A97.6%2C%22y%22%3A38.5%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%2C%7B%22x%22%3A79.4%2C%22y%22%3A94.5%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%2C%7B%22x%22%3A20.6%2C%22y%22%3A94.5%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%2C%7B%22x%22%3A2.4%2C%22y%22%3A38.5%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%5D%7D%5D%7D">https://rafaeltj13.github.io/r4l.launcher/icon-shapes/#edit-raw=%7B%22shapes%22%3A%5B%7B%22pts%22%3A%5B%7B%22x%22%3A50.0%2C%22y%22%3A4.0%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%2C%7B%22x%22%3A97.6%2C%22y%22%3A38.5%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%2C%7B%22x%22%3A79.4%2C%22y%22%3A94.5%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%2C%7B%22x%22%3A20.6%2C%22y%22%3A94.5%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%2C%7B%22x%22%3A2.4%2C%22y%22%3A38.5%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%5D%7D%5D%7D</a></li>
   </ul>
 </details>
 
@@ -561,7 +561,7 @@ noindex: true    # and out of search engines
       </a>
       <button class="contact-card se-share-card" type="button" data-copy="import" id="se-share-import">
         <span class="contact-card-icon"><span class="material-symbols-outlined">&#xE32C;</span></span> <!-- smartphone -->
-        <span class="contact-card-info"><span class="se-card-title">Import link</span><span class="se-card-sub">Open it on your phone to apply the shape in Murine</span></span>
+        <span class="contact-card-info"><span class="se-card-title">Import link</span><span class="se-card-sub">Open it on your phone to apply the shape in r4l.launcher</span></span>
       </button>
       <button class="contact-card se-share-card" type="button" data-copy="path">
         <span class="contact-card-icon"><span class="material-symbols-outlined">&#xE86F;</span></span> <!-- code -->

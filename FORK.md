@@ -1,13 +1,27 @@
-# Murine Categories
+# r4l.launcher
 
 This fork adds optional category tabs and bottom app-drawer search to Murine Launcher.
 It starts from upstream commit `1c0d0d3` on `main`. It keeps Murine's home-screen,
 widget, icon, drawer styling, and gesture settings.
 
+## Branding and update compatibility
+
+The project and GitHub fork are named **r4l.launcher**. The local checkout is
+`/home/rafaelm/Documents/code/r4l.launcher`, and `origin` points to
+`https://github.com/rafaeltj13/r4l.launcher.git`.
+
+App labels, adaptive/legacy/themed icons, store artwork, README, and the bundled website
+use the R4L identity. See [brand assets and generation prompts](image/brand/README.md).
+The existing application ID, implementation packages, stored keys, and `.rat` backup
+format are retained. A build signed with the same key can update Murine Categories while
+preserving categories, home-screen layout, widgets, and settings. The `murine-home` icon
+shape scheme remains compatible with the inherited editor. The crash screen no longer
+points users at the upstream developer's email.
+
 ## Install and configure
 
 The standard build is `aospWithoutQuickstepDebug`. It needs no root access and installs
-as **Murine Categories**, package `io.github.rafaeltj13.murine.debug`, alongside Murine.
+as **r4l.launcher**, package `io.github.rafaeltj13.murine.debug`, alongside Murine.
 Installing it does not change your default launcher or import another launcher's data.
 Use Android's default Home app settings when you are ready to switch.
 
@@ -78,7 +92,7 @@ Tools, and Other. Apps are alphabetized within each group. No store scraping, ne
 classification, or new permission is involved. The bundled rule list is deliberately small;
 manual corrections are expected for some apps.
 
-Search uses Murine's existing app-search algorithm over all eligible apps, regardless of
+Search uses the inherited app-search algorithm over all eligible apps, regardless of
 the selected category. It preserves the existing hidden-app and Private Space behavior.
 Search autofocus stays off by default and remains configurable. With bottom search on,
 the search field stays above the keyboard; tabs hide while the keyboard/search is active.
@@ -86,14 +100,14 @@ Leaving search restores the category list. The last selected category is saved a
 process restarts. Per-category scroll positions are held only in memory.
 
 Personal and Work remain Android profile tabs, separate from user categories. Categories
-filter those profile lists without merging them. Private Space remains Murine's protected
+filter those profile lists without merging them. Private Space remains the launcher's protected
 section rather than being redistributed into ordinary categories. This behavior needs
 separate on-device validation before relying on it for a managed or private profile.
 
 ## Backup
 
 Definitions, explicit assignments, both feature switches, and the last category use
-`LauncherPrefs` entries in the preference file already included by Murine's `.rat` backup
+`LauncherPrefs` entries in the preference file already included by the launcher's `.rat` backup
 and Android backup. Category ids are stable across renames and reordering. Personal-app
 assignments use a portable package key. Non-personal profile assignments additionally use
 an installation-local random id and profile serial, so a cross-device restore cannot
@@ -118,6 +132,39 @@ apps, invalid backup data, and persistence of custom names, order, and assignmen
 Runtime layout checks use an isolated Android 16 emulator and the connected Moto Edge 60 Pro.
 Physical-phone widget migration remains untested.
 
+## Version 1.2.6 phone update on 2026-10-21
+
+Version `1.2.6`, code `10206`, was built and installed as an in-place update on the
+Moto Edge 60 Pro. The signing certificate matched the previous installation. A private
+local app-data backup was saved before installation. Drawer preferences, category state,
+and home-screen database records matched before and after installation; drawer preferences
+also matched after startup. The launcher remained the default Home app.
+
+`:testAospWithoutQuickstepDebugUnitTest` passed all 33 tests, and
+`:assembleAospWithoutQuickstepDebug` passed for this version.
+
+## Dedicated launcher icon on 2026-10-21
+
+The R4L monogram was replaced with a dedicated rounded roof and four app tiles.
+The editable SVG produces matching native adaptive, legacy, and monochrome vectors,
+store icons, and project-site artwork. The cover and store feature graphic use the same
+symbol. Previous monogram masters are kept under `image/brand/archive/`.
+
+`:assembleAospWithoutQuickstepDebug` passed after the icon update. AAPT2 verified the
+new roof path in each of the three compiled icon variants. App identity and stored data
+are unchanged. The 33 unit tests recorded below cover the earlier rebrand; this icon-only
+revision was verified with the APK build and artwork inspection.
+
+## Branding validation on 2026-10-21
+
+- `:testAospWithoutQuickstepDebugUnitTest` passed all 33 tests with no failures or errors.
+- `:assembleAospWithoutQuickstepDebug` produced `r4l.launcher-aosp-withoutQuickstep-debug.apk`.
+- Compiled APK metadata retains `io.github.rafaeltj13.murine.debug`, min SDK 26, and target SDK 37.
+- All 81 localized app-name resources, the main application label, and the Quickstep label use `r4l.launcher`.
+- AAPT2 verified the final APK label and decoded the compiled adaptive foreground, monochrome, and legacy vectors.
+- A full debug assemble also passed after moving the checkout to `r4l.launcher`.
+- Store icon, generated cover, and website layout were visually inspected. No device was connected for runtime checks.
+
 ## Validation on 2026-10-20
 
 - `:assembleAospWithoutQuickstepDebug` passed and produced a signed debug APK.
@@ -129,7 +176,7 @@ Physical-phone widget migration remains untested.
   off, global app search from another category, search above the keyboard, hidden tabs
   during search, opening the drawer by swipe with normal animations, manual app
   reassignment, creating a custom category, and retaining the
-  category and assignment after a process restart. Cold starts wait for Murine's app model
+  category and assignment after a process restart. Cold starts wait for the app model
   to load before evaluating the app list.
 - Moto Edge 60 Pro checks confirmed eight-column spacing, icon tabs, global app search,
   search above the Portuguese keyboard, and hiding tabs while typing.
@@ -179,8 +226,9 @@ upstream on a separate branch, then re-run the unit tests, build, and drawer che
 using it as your daily launcher.
 
 The model, classifier, persistence adapter, category dialogs, and tab controller live in
-`src/app/murinelauncher/drawer/`. Changes in inherited code are limited to preferences,
-the app metadata field, drawer layout/filtering, IME handling, and app shortcut registration.
+`src/app/murinelauncher/drawer/`. Feature changes in inherited code cover preferences, drawer layout/filtering, IME handling,
+and app shortcuts. Branding changes also update labels, icons, backup filenames, crash
+contact display, build naming, store metadata, and the bundled website.
 New strings are in the English and Italian `strings_murine.xml` files; other locales fall
 back to English for these strings. Missing-translation lint is suppressed only for these
 new entries, following the upstream English-and-Italian-first localization policy.

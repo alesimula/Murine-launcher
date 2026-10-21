@@ -1607,7 +1607,7 @@
   });
   if (navigator.share) {
     $('se-share-native').hidden = false;
-    $('se-share-native').onclick = () => navigator.share({ title: 'Murine icon shape', url: links.edit }).catch(() => {});
+    $('se-share-native').onclick = () => navigator.share({ title: 'r4l.launcher icon shape', url: links.edit }).catch(() => {});
   }
 
   $('se-use').addEventListener('click', (e) => { if (e.currentTarget.classList.contains('se-disabled')) e.preventDefault(); });

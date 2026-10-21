@@ -1,45 +1,11 @@
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="108dp"
-    android:height="108dp"
-    android:viewportWidth="1024"
-    android:viewportHeight="1024">
-  <group android:scaleX="0.57"
-      android:scaleY="0.57"
-      android:translateX="220.16"
-      android:translateY="220.16">
-    <!-- eye highlight, left -->
-    <path
-        android:pathData="m296.5,558.3c11.1,6.4 22.1,13 33.1,19.5 3.3,1.9 7.2,4.4 6.5,8.9 -0.4,13.4 2.5,26.9 9.6,38.3 9.9,17.8 41,31.4 61,33.8L374.7,663.3 361.7,656.8c-8.6,-3.8 -17.1,-7.9 -24.6,-13.7 -8.3,-6.4 -15.4,-14.4 -21.1,-23.1 -11.8,-18.5 -16.9,-40.2 -19.5,-61.7z"
-        android:fillColor="#000000"
-        android:fillAlpha="0.5"/>
-    <!-- eye highlight, right -->
-    <path
-        android:pathData="m727.2,558.1c-11.1,6.4 -22.1,13 -33.1,19.5 -3.3,1.9 -7.2,4.4 -6.5,8.9 0.4,13.4 -2.5,26.9 -9.6,38.3 -9.9,17.8 -41,31.4 -61,33.8l32,4.6 12.9,-6.5c8.6,-3.8 17.1,-7.9 24.6,-13.7 8.3,-6.4 15.4,-14.4 21.1,-23.1 11.8,-18.5 16.9,-40.2 19.5,-61.7z"
-        android:fillColor="#000000"
-        android:fillAlpha="0.5"/>
-    <!-- inner ear, left -->
-    <path
-        android:pathData="m276.9,434.5c-11.6 -40.4 -48.1 -91.1 -71.1 -119.8l-88.2 -80.9l-44,206.1l163.5,76.5z"
-        android:fillColor="#000000"
-        android:fillAlpha="0.32"/>
-    <!-- inner ear, right -->
-    <path
-        android:pathData="m747.6,433.9c11.6 -40.4,48.1 -91.1,71.1 -119.8l79.1 -74.4l90.7,133.9l-178.8,144z"
-        android:fillColor="#000000"
-        android:fillAlpha="0.32"/>
-    <!-- whisker, left -->
-    <path
-        android:pathData="m147.6,649.3 l81.2,-31.9 184,110.2c-15.6,2.9 -54,0.4 -69.7,2.8l-12.8,-10.9z"
-        android:fillColor="#000000"
-        android:fillAlpha="0.43"/>
-    <!-- whisker, right -->
-    <path
-        android:pathData="m875.9,649.3 l-81.2,-31.9 -184,110.2c15.6,2.9 54.8,0.3 70.5,2.7l12,-10.8z"
-        android:fillColor="#000000"
-        android:fillAlpha="0.43"/>
-    <!-- head -->
-    <path
-        android:pathData="@string/ic_launcher_path_head"
-        android:fillColor="#000000"/>
-  </group>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: image/brand/r4l-launcher-mark.svg -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
+<group android:scaleX="0.62" android:scaleY="0.62" android:translateX="24.24" android:translateY="24.24">
+<path android:pathData="M10,41 L48,9 L86,41" android:fillColor="#00000000" android:strokeColor="#000000" android:strokeWidth="14" android:strokeLineCap="round" android:strokeLineJoin="round"/>
+<path android:pathData="M30,42 H39 Q45,42 45,48 V57 Q45,63 39,63 H30 Q24,63 24,57 V48 Q24,42 30,42 Z" android:fillColor="#000000"/>
+<path android:pathData="M57,42 H66 Q72,42 72,48 V57 Q72,63 66,63 H57 Q51,63 51,57 V48 Q51,42 57,42 Z" android:fillColor="#000000"/>
+<path android:pathData="M30,69 H39 Q45,69 45,75 V84 Q45,90 39,90 H30 Q24,90 24,84 V75 Q24,69 30,69 Z" android:fillColor="#000000"/>
+<path android:pathData="M57,69 H66 Q72,69 72,75 V84 Q72,90 66,90 H57 Q51,90 51,84 V75 Q51,69 57,69 Z" android:fillColor="#000000"/>
+</group>
 </vector>

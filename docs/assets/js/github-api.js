@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  var REPO = 'alesimula/Murine-launcher';
+  var REPO = 'rafaeltj13/r4l.launcher';
   var API = 'https://api.github.com/repos/' + REPO;
 
   // --- Markdown to HTML (lightweight) ---

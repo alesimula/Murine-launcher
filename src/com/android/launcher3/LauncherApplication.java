@@ -56,7 +56,7 @@ public class LauncherApplication extends Application {
 
         com.zxy.recovery.core.Recovery.getInstance()
                 .debug(true)
-                .showDevEmail("alesimula@murinelauncher.app", true)
+                .showDevEmail("", false)
                 .recoverInBackground(false)
                 .recoverStack(true)
                 .mainPage(Launcher.class)

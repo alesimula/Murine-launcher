@@ -96,7 +96,7 @@ public final class SettingsMiscFragment: AbstractSettingsFragment() {
             BACKUP_EXPORT -> {
                 preference.setOnPreferenceClickListener {
                     val date = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Date())
-                    exportBackup.launch("murine_backup_$date.rat")
+                    exportBackup.launch("r4l_launcher_backup_$date.rat")
                     true
                 }
                 return true

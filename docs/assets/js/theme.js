@@ -3,12 +3,12 @@
   'use strict';
 
   // --- Theme ---
-  const STORAGE_KEY = 'murine-theme';
+  const STORAGE_KEY = 'r4l-launcher-theme';
 
   function getPreferred() {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) return stored;
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    return 'dark';
   }
 
   function applyTheme(theme) {

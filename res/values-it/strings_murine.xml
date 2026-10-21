@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Modified in 2026 for the Murine Categories fork. See FORK.md. -->
+<!-- Modified in 2026 for the r4l.launcher fork. See FORK.md. -->
 
 <resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="pref_group_grid_size_title">Dimensione griglia</string>

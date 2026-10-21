@@ -1,3 +1,10 @@
-A modern, lightweight FOSS Launcher3 fork delivering an enhanced stock Android experience, providing a familiar AOSP feel out of the box, with some sprinkles on top :3
+r4l.launcher is Rafael Maciel's personal Android launcher, built on Murine Launcher and AOSP Launcher3.
 
-It offers a minimalistic yet polished interface with essential customization options, with zero bloat.
+Organize your app drawer with optional offline categories. Create and rename groups, choose their icons, swipe between categories, and move apps by hand. Sorting stays on your device.
+
+Move app search to the bottom of the drawer, above the keyboard. Both category tabs and bottom search are off by default and can be enabled in Launcher settings.
+
+Customize your home screen with grids, icon packs, widgets, gestures, and backups inherited from Murine. Supports Android 8 and above. Some effects depend on Android version and device support.
+
+Part of R4L: https://r4l-blog-v2.vercel.app/
+Source: https://github.com/rafaeltj13/r4l.launcher
