@@ -14,6 +14,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.view.ContextThemeWrapper
 import android.view.Gravity
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -27,15 +28,15 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.R as MaterialR
 
-/** Responsive pages of complete category buttons, with management always reachable. */
+/** Responsive pages of complete category buttons; long-press a category to manage them. */
 // Programmatic-only view: construction requires category action callbacks.
 @SuppressLint("ViewConstructor")
 class DrawerCategoryBar(
     context: Context,
     private val title: (CategoryState.Category) -> String,
     private val onSelect: (String) -> Unit,
-    private val onEdit: (String) -> Unit,
-    onManage: () -> Unit,
+    private val onManage: () -> Unit,
+    onSearch: () -> Unit,
 ) : LinearLayout(context) {
     private var categories = emptyList<CategoryState.Category>()
     private var selected = ""
@@ -52,19 +53,26 @@ class DrawerCategoryBar(
     }
     private val indicator = PageIndicator(context)
     private val snap = PagerSnapHelper()
+    private val controls = FrameLayout(context)
+    private val searchButton = button(R.drawable.ic_allapps_search,
+        context.getString(R.string.all_apps_search_bar_hint)).apply {
+        id = R.id.drawer_category_search
+        isCheckable = false
+        visibility = View.GONE
+        setOnClickListener { onSearch() }
+        backgroundTintList = ColorStateList.valueOf(color(MaterialR.attr.colorPrimaryContainer))
+        iconTint = ColorStateList.valueOf(color(MaterialR.attr.colorOnPrimaryContainer))
+    }
+    private var searchEnabled = false
+    private var searchProgress = 0f
 
     init {
         id = R.id.drawer_category_tabs
         orientation = VERTICAL
         setPadding(dp(4), dp(4), dp(4), 0)
         background = DrawerCategoryTheme.surface(context)
-        val controls = LinearLayout(context).apply { gravity = Gravity.CENTER_VERTICAL }
-        controls.addView(pager, LayoutParams(0, dp(48), 1f))
-        controls.addView(button(R.drawable.ic_category_manage,
-            context.getString(R.string.drawer_manage_categories)).apply {
-            isCheckable = false
-            setOnClickListener { onManage() }
-        }, LayoutParams(dp(48), dp(48)))
+        controls.addView(pager, FrameLayout.LayoutParams(-1, dp(48)))
+        controls.addView(searchButton, FrameLayout.LayoutParams(dp(48), dp(48), Gravity.CENTER))
         addView(controls, LayoutParams(-1, dp(48)))
         addView(indicator, LayoutParams(-1, dp(8)))
         snap.attachToRecyclerView(pager)
@@ -80,6 +88,26 @@ class DrawerCategoryBar(
         })
     }
 
+    fun setSearchEnabled(enabled: Boolean) {
+        if (searchEnabled == enabled) return
+        searchEnabled = enabled
+        searchButton.visibility = if (enabled) View.VISIBLE else View.GONE
+        pager.post { rebuild() }
+    }
+
+    fun setSearchProgress(progress: Float) {
+        searchProgress = progress
+        background?.alpha = (255 * (1 - progress)).toInt()
+        controls.alpha = 1 - progress
+        controls.scaleX = 1 - 0.08f * progress
+        indicator.alpha = 1 - progress
+        importantForAccessibility = if (progress > 0) IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
+            else IMPORTANT_FOR_ACCESSIBILITY_AUTO
+    }
+
+    override fun onInterceptTouchEvent(event: MotionEvent): Boolean =
+        searchProgress > 0 || super.onInterceptTouchEvent(event)
+
     fun update(categories: List<CategoryState.Category>, selected: String) {
         this.categories = categories
         this.selected = selected
@@ -90,7 +118,8 @@ class DrawerCategoryBar(
         if (pager.width <= 0) return
         val previousCount = sizing.pageCount
         pager.stopScroll()
-        sizing = CategoryBarLayout.calculate(pager.width, dp(48), categories.size)
+        sizing = if (searchEnabled) CategoryBarLayout.centered(pager.width, dp(48), categories.size)
+            else CategoryBarLayout.calculate(pager.width, dp(48), categories.size)
         val count = sizing.pageCount
         if (count > previousCount) pages.notifyItemRangeInserted(previousCount, count - previousCount)
         if (count < previousCount) pages.notifyItemRangeRemoved(count, previousCount - count)
@@ -120,13 +149,19 @@ class DrawerCategoryBar(
             holder.row.layoutParams = RecyclerView.LayoutParams(sizing.width, dp(48))
             holder.row.removeAllViews()
             repeat(sizing.capacity) { slot ->
-                val category = categories.getOrNull(position * sizing.capacity + slot) ?: return@repeat
+                if (searchEnabled && slot == sizing.leftCapacity) {
+                    holder.row.addView(View(context), LayoutParams(sizing.searchWidth, dp(48)))
+                }
+                val category = categories.getOrNull(position * sizing.capacity + slot)
+                if (category == null && !searchEnabled) return@repeat
                 val cell = FrameLayout(context)
-                cell.addView(button(CategoryIcons.drawable(category.iconId), title(category),
-                    category.id == selected).apply {
-                    setOnClickListener { onSelect(category.id) }
-                    setOnLongClickListener { onEdit(category.id); true }
-                }, FrameLayout.LayoutParams(dp(48), dp(48), Gravity.CENTER))
+                category?.let {
+                    cell.addView(button(CategoryIcons.drawable(category.iconId), title(category),
+                        category.id == selected).apply {
+                        setOnClickListener { onSelect(category.id) }
+                        setOnLongClickListener { onManage(); true }
+                    }, FrameLayout.LayoutParams(dp(48), dp(48), Gravity.CENTER))
+                }
                 holder.row.addView(cell, LayoutParams(sizing.slotWidth(slot), dp(48)))
             }
         }

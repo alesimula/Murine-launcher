@@ -41,8 +41,7 @@ class DrawerCategoriesController(private val host: ActivityAllAppsContainerView<
     }
     val headingHeight: Int get() = maxOf(heading.minHeight, heading.measuredHeight)
     val tabs = DrawerCategoryBar(materialContext, repository::title, ::select,
-        { CategoryDialogs.edit(context, repository, it) },
-        { CategoryDialogs.manage(context, repository) })
+        { CategoryDialogs.manage(context, repository) }, host::openCategorySearch)
     private val motion = DrawerCategoryMotion(materialContext) {
         listOfNotNull(host.activeRecyclerView, heading)
     }
@@ -60,8 +59,6 @@ class DrawerCategoriesController(private val host: ActivityAllAppsContainerView<
     init {
         host.addView(tabs, RelativeLayout.LayoutParams(-1, dp(60)).apply {
             addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
-            leftMargin = dp(4)
-            rightMargin = dp(4)
         })
         host.addView(heading, RelativeLayout.LayoutParams(-1, -2))
         heading.addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
@@ -128,7 +125,8 @@ class DrawerCategoriesController(private val host: ActivityAllAppsContainerView<
     fun interceptSwipe(event: MotionEvent): Boolean {
         if (event.actionMasked == MotionEvent.ACTION_DOWN) {
             cancelMotion(finishSelection = true)
-            if (!enabled || host.isSearching || tabs.visibility != View.VISIBLE) return false
+            if (!enabled || host.isSearching || host.isCategorySearchExpanded
+                || tabs.visibility != View.VISIBLE) return false
             val recycler = host.activeRecyclerView ?: return false
             swipeBounds.set(0, 0, recycler.width, recycler.height)
             host.offsetDescendantRectToMyCoords(recycler, swipeBounds)

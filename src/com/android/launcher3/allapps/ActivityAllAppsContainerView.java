@@ -114,6 +114,7 @@ import java.util.stream.Stream;
 
 import app.murinelauncher.graphics.WorkspaceBlurUtils;
 import app.murinelauncher.drawer.DrawerCategoriesController;
+import app.murinelauncher.drawer.DrawerSearchMotion;
 import app.murinelauncher.settings.hiddenapps.HiddenAppsRepository;
 
 /**
@@ -198,6 +199,8 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
     @Nullable private AllAppsTransitionController mAllAppsTransitionController;
     private WorkspaceBlurUtils.DrawerBlurType mCurrentDrawerBlurType;
     @Nullable private DrawerCategoriesController mCategoryController;
+    @Nullable private DrawerSearchMotion mCategorySearchMotion;
+    private boolean mCategorySearchExpanded;
     private boolean mDrawerImeVisible;
     private int mDrawerImeBottom;
     private boolean mDrawerLayoutCustomized;
@@ -403,6 +406,12 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         mSearchUiManager.initializeSearch(this);
         if (!isSearchBarFloating()) {
             mCategoryController = new DrawerCategoriesController(this);
+            if (mSearchContainer instanceof AppsSearchContainerLayout) {
+                mCategorySearchMotion = new DrawerSearchMotion(
+                        app.murinelauncher.drawer.DrawerCategoryTheme.INSTANCE.wrap(getContext()),
+                        mSearchContainer, mCategoryController.getTabs(), this::closeCategorySearch);
+                addView(mCategorySearchMotion.getCloseButton(), new LayoutParams(dpToPx(48), dpToPx(48)));
+            }
             mCategoryController.refresh();
         }
     }
@@ -427,6 +436,7 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
     @Override
     protected void onDetachedFromWindow() {
         if (mCategoryController != null) mCategoryController.cancelMotion();
+        if (mCategorySearchMotion != null) mCategorySearchMotion.finish();
         super.onDetachedFromWindow();
         mActivityContext.removeOnDeviceProfileChangeListener(this);
         LauncherPrefs.get(getContext()).removeListener(mDrawerPrefsListener,
@@ -1338,12 +1348,57 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         return !isSearchBarFloating() && LauncherPrefs.DRAWER_BOTTOM_SEARCH.get(getContext());
     }
 
+    public boolean isCategorySearchEnabled() {
+        return mCategorySearchMotion != null && isBottomSearchEnabled()
+                && LauncherPrefs.DRAWER_CATEGORIES.get(getContext());
+    }
+
+    public boolean isCategorySearchExpanded() {
+        return isCategorySearchEnabled() && mCategorySearchExpanded;
+    }
+
+    /** Also used by autofocus and hardware typing before the collapsed input requests focus. */
+    public void prepareCategorySearch() {
+        if (!isCategorySearchEnabled() || mCategorySearchExpanded) return;
+        mCategorySearchExpanded = true;
+        mCategoryController.cancelMotion(true);
+        mSearchContainer.bringToFront();
+        mCategorySearchMotion.getCloseButton().bringToFront();
+        updateDrawerControlsLayout();
+        mCategorySearchMotion.setExpanded(true, true);
+    }
+
+    public void openCategorySearch() {
+        if (!isCategorySearchEnabled()) return;
+        prepareCategorySearch();
+        mSearchUiManager.getEditText().showKeyboard();
+    }
+
+    /** Back returns to the current category even when a query has already been entered. */
+    public boolean closeCategorySearch() {
+        if (!isCategorySearchExpanded()) return false;
+        mCategorySearchExpanded = false;
+        mSearchUiManager.resetSearch();
+        return true;
+    }
+
+    public void onCategorySearchReset() {
+        mCategorySearchExpanded = false;
+        if (mCategorySearchMotion != null) mCategorySearchMotion.setExpanded(false, true);
+        updateDrawerControlsLayout();
+    }
+
     /** Called for IME animation frames as well as ordinary inset dispatch. */
     public void onDrawerImeInsets(int bottom, boolean visible) {
         mDrawerImeVisible = visible;
         // Older Android resizes the window. Edge-to-edge Android uses explicit IME layout.
-        mDrawerImeBottom = Utilities.ATLEAST_R && visible ? bottom : 0;
+        mDrawerImeBottom = Utilities.ATLEAST_R ? bottom : 0;
         updateDrawerControlsLayout();
+    }
+
+    /** Animation progress may briefly report hidden IME insets while the keyboard opens. */
+    public void onDrawerImeAnimationEnd(boolean visible) {
+        if (!visible) closeCategorySearch();
     }
 
     /** Positions optional controls without changing the original drawer when both are off. */
@@ -1353,13 +1408,18 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         boolean categories = LauncherPrefs.DRAWER_CATEGORIES.get(getContext());
         if (!bottomSearch && !categories && !mDrawerLayoutCustomized) return;
         mDrawerLayoutCustomized = bottomSearch || categories;
+        boolean integratedSearch = isCategorySearchEnabled();
+        if (!integratedSearch) mCategorySearchExpanded = false;
+        if (mCategorySearchMotion != null) mCategorySearchMotion.setEnabled(integratedSearch);
+        mCategoryController.getTabs().setSearchEnabled(integratedSearch);
         View tabs = mCategoryController.getTabs();
-        boolean showTabs = categories && !isSearching() && !mDrawerImeVisible;
+        boolean showTabs = categories && (integratedSearch || (!isSearching() && !mDrawerImeVisible));
         tabs.setVisibility(showTabs ? VISIBLE : GONE);
         if (!showTabs) mCategoryController.cancelMotion();
         int tabsHeight = showTabs ? tabs.getLayoutParams().height : 0;
         View heading = mCategoryController.getHeading();
-        boolean showHeading = showTabs && mCategoryController.getHasVisibleCategories();
+        boolean showHeading = showTabs && !isCategorySearchExpanded() && !isSearching()
+                && mCategoryController.getHasVisibleCategories();
         heading.setVisibility(showHeading ? VISIBLE : GONE);
         int headingHeight = showHeading ? mCategoryController.getHeadingHeight() : 0;
         LayoutParams headingLp = (LayoutParams) heading.getLayoutParams();
@@ -1380,8 +1440,13 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         heading.setLayoutParams(headingLp);
         int navBottom = Math.max(mInsets.bottom, mNavBarScrimHeight);
         int screenBottom = bottomSearch ? Math.max(navBottom, mDrawerImeBottom) : navBottom;
+        int searchBottom = screenBottom + (isCategorySearchExpanded() ? dpToPx(8) : 0);
         LayoutParams tabsLp = (LayoutParams) tabs.getLayoutParams();
-        if (tabsLp.bottomMargin != navBottom) {
+        if (tabsLp.bottomMargin != navBottom
+                || tabsLp.leftMargin != profile.allAppsPadding.left
+                || tabsLp.rightMargin != profile.allAppsPadding.right) {
+            tabsLp.leftMargin = profile.allAppsPadding.left;
+            tabsLp.rightMargin = profile.allAppsPadding.right;
             tabsLp.bottomMargin = navBottom;
             tabs.setLayoutParams(tabsLp);
         }
@@ -1393,18 +1458,19 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         int oldHeight = searchLp.height;
         int oldLeft = searchLp.leftMargin;
         int oldRight = searchLp.rightMargin;
-        searchLp.height = categories ? dpToPx(56)
+        searchLp.height = integratedSearch ? tabs.getLayoutParams().height : categories ? dpToPx(56)
                 : getResources().getDimensionPixelSize(R.dimen.all_apps_search_bar_field_height);
         searchLp.leftMargin = categories ? tabsLp.leftMargin : 0;
         searchLp.rightMargin = categories ? tabsLp.rightMargin : 0;
         if (mSearchContainer instanceof AppsSearchContainerLayout) {
             ((AppsSearchContainerLayout) mSearchContainer).setCategoryStyle(categories);
+            ((AppsSearchContainerLayout) mSearchContainer).setIntegratedCategorySearch(integratedSearch);
         }
         searchLp.removeRule(ALIGN_PARENT_BOTTOM);
         if (bottomSearch) {
             searchLp.addRule(ALIGN_PARENT_BOTTOM);
             searchLp.topMargin = 0;
-            searchLp.bottomMargin = screenBottom + tabsHeight + dpToPx(8);
+            searchLp.bottomMargin = searchBottom + (integratedSearch ? 0 : tabsHeight + dpToPx(8));
         } else {
             searchLp.topMargin = mActivityContext.getDeviceProfile().shouldShowAllAppsOnSheet()
                     ? getResources().getDimensionPixelSize(R.dimen.bottom_sheet_handle_area_height)
@@ -1417,7 +1483,17 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
             mSearchContainer.setLayoutParams(searchLp);
         }
 
-        int controlsHeight = tabsHeight + (bottomSearch
+        if (mCategorySearchMotion != null) {
+            View close = mCategorySearchMotion.getCloseButton();
+            LayoutParams closeLp = (LayoutParams) close.getLayoutParams();
+            closeLp.addRule(ALIGN_PARENT_BOTTOM);
+            closeLp.addRule(ALIGN_PARENT_START);
+            closeLp.setMarginStart(searchLp.getMarginStart() + dpToPx(4));
+            closeLp.bottomMargin = searchBottom + (searchLp.height - dpToPx(48)) / 2;
+            close.setLayoutParams(closeLp);
+        }
+        int controlsHeight = integratedSearch ? tabsHeight + dpToPx(8) + searchBottom - navBottom
+                : tabsHeight + (bottomSearch
                 ? searchLp.height + dpToPx(16) + screenBottom - navBottom : 0);
         // The empty header normally reserves a gap below the top search field.
         // With bottom search only a small gutter is needed below the sheet handle.
@@ -1454,7 +1530,13 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
                 if (view == mHeader) lp.addRule(BELOW, R.id.search_container_all_apps);
             }
             lp.topMargin += headingHeight;
-            lp.bottomMargin = view == mHeader ? 0 : controlsHeight;
+            if (isCategorySearchExpanded() && view != mHeader) {
+                // Anchor to the field's actual position during both IME inset and window resizing.
+                lp.addRule(ABOVE, R.id.search_container_all_apps);
+                lp.bottomMargin = dpToPx(8);
+            } else {
+                lp.bottomMargin = view == mHeader ? 0 : controlsHeight;
+            }
             if (previousTop != lp.topMargin || previousBottom != lp.bottomMargin
                     || !Arrays.equals(rules, lp.getRules())) view.setLayoutParams(lp);
         }
@@ -2019,10 +2101,10 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
                     bottomOffset += mSearchContainer.getHeight();
                 }
                 int bottom = mPadding.bottom + bottomOffset;
-                if (!isSearch() && !isSearching() && !mDrawerImeVisible
+                if (!isSearch() && !isSearching() && !isCategorySearchExpanded() && !mDrawerImeVisible
                         && mCategoryController != null
                         && mCategoryController.getTabs().getVisibility() == VISIBLE) {
-                    View controls = isBottomSearchEnabled()
+                    View controls = isBottomSearchEnabled() && !isCategorySearchEnabled()
                             ? mSearchContainer : mCategoryController.getTabs();
                     if (controls.getHeight() > 0 && mRecyclerView.getHeight() > 0) {
                         Rect bounds = new Rect(0, 0,
@@ -2035,7 +2117,8 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
                 int top = mPadding.top;
                 // Uniform category grids sit within thumb reach. Larger lists and profile cards
                 // retain the original top alignment and scroll geometry.
-                if (!isSearch() && !isSearching() && !mDrawerImeVisible && !isSearchBarFloating()
+                if (!isSearch() && !isSearching() && !isCategorySearchExpanded()
+                        && !mDrawerImeVisible && !isSearchBarFloating()
                         && LauncherPrefs.DRAWER_CATEGORIES.get(getContext())
                         && mAppsList.getNumAppRows() > 0
                         && mAppsList.getAdapterItems().stream().allMatch(item ->

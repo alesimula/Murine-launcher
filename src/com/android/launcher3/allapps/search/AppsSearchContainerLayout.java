@@ -72,11 +72,13 @@ public class AppsSearchContainerLayout extends ExtendedEditText
 
     private ActivityAllAppsContainerView<?> mAppsView;
     private boolean mCategoryStyle;
+    private boolean mIntegratedCategorySearch;
     private final Drawable mOriginalBackground;
     private final ColorStateList mOriginalTextColors;
     private final ColorStateList mOriginalHintColors;
     private final int mOriginalGravity;
     private final Rect mOriginalPadding;
+    private final CharSequence mDefaultSearchHint;
 
     // The amount of pixels to shift down and overlap with the rest of the content.
     private final int mContentOverlap;
@@ -107,6 +109,7 @@ public class AppsSearchContainerLayout extends ExtendedEditText
         mSearchQueryBuilder = new SpannableStringBuilder();
         Selection.setSelection(mSearchQueryBuilder, 0);
         setHint(prefixTextWithIcon(getContext(), R.drawable.ic_allapps_search, getHint()));
+        mDefaultSearchHint = getHint();
 
         mContentOverlap =
                 getResources().getDimensionPixelSize(R.dimen.all_apps_search_bar_content_overlap);
@@ -144,6 +147,30 @@ public class AppsSearchContainerLayout extends ExtendedEditText
                     mOriginalPadding.right, mOriginalPadding.bottom);
         }
         requestLayout();
+    }
+
+    /** Leave a real 48 dp close action beside the text when search covers the category bar. */
+    public void setIntegratedCategorySearch(boolean enabled) {
+        if (mIntegratedCategorySearch == enabled) return;
+        mIntegratedCategorySearch = enabled;
+        setHint(enabled ? getContext().getString(R.string.all_apps_search_bar_hint) : mDefaultSearchHint);
+        if (mCategoryStyle) {
+            int start = Math.round((enabled ? 56 : 16) * getResources().getDisplayMetrics().density);
+            int end = Math.round(16 * getResources().getDisplayMetrics().density);
+            setPaddingRelative(start, 0, end, 0);
+            Context themed = DrawerCategoryTheme.INSTANCE.wrap(getContext());
+            int hint = MaterialColors.getColor(themed,
+                    com.google.android.material.R.attr.colorOnSurfaceVariant, "DrawerSearch");
+            setHintTextColor(new ColorStateList(new int[][] {
+                    new int[] {android.R.attr.state_focused}, new int[] {}
+            }, new int[] {enabled ? hint : Color.TRANSPARENT, hint}));
+        }
+    }
+
+    @Override
+    public boolean showKeyboard() {
+        if (mAppsView != null) mAppsView.prepareCategorySearch();
+        return super.showKeyboard();
     }
 
     @Override
@@ -203,6 +230,7 @@ public class AppsSearchContainerLayout extends ExtendedEditText
         mSearchBarController.initialize(
                 new DefaultAppSearchAlgorithm(getContext(), true),
                 this, mLauncher, this);
+        setOnBackKeyListener(() -> mAppsView.closeCategorySearch() || mSearchBarController.onBackKey());
     }
 
     @Override
@@ -213,6 +241,7 @@ public class AppsSearchContainerLayout extends ExtendedEditText
     @Override
     public void resetSearch() {
         mSearchBarController.reset();
+        mAppsView.onCategorySearchReset();
     }
 
     @Override

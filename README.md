@@ -9,7 +9,7 @@ Built on [Murine Launcher](https://github.com/alesimula/Murine-launcher) and AOS
 ## What it does
 
 - Optional category tabs with local sorting, editable groups, and swipe navigation.
-- App search at the bottom of the drawer, above the keyboard.
+- A center search action that expands over the category bar, above the keyboard.
 - Home-screen grids, widgets, icon packs, gestures, and launcher backups inherited from Murine.
 - Android 8 and above. Blur effects need Android 12 and device support.
 

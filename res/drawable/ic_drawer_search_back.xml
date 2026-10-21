@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 r4l.launcher contributors. Licensed under Apache-2.0. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp"
+    android:viewportWidth="24" android:viewportHeight="24" android:autoMirrored="true">
+    <path android:fillColor="#FF000000"
+        android:pathData="M20,11 H7.83 L13.42,5.41 L12,4 L4,12 L12,20 L13.42,18.59 L7.83,13 H20 Z" />
+</vector>

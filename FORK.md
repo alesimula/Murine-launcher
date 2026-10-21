@@ -29,15 +29,16 @@ In launcher settings, open **App drawer**:
 
 - **Category tabs** enables editable groups with the selected category's title directly above
   its app rows and a Material 3 category bar at the bottom. The bar measures its available
-  width, reserves the manage button, and fits whole 48 dp touch targets on each page.
+  width and fits whole 48 dp touch targets on each page.
   Swipe horizontally for more categories; dots indicate the current page. Category names
   remain available to accessibility services. It shows one category at a time. There is no
   All apps category. With this option off, the original drawer remains available.
-- **Bottom drawer search** moves the existing app search to the bottom. It is independent
-  of categories and works with the original app list too.
+- **Bottom drawer search** moves the existing app search to the bottom. With category tabs
+  enabled, a fixed center search button opens the input over the category bar itself.
+  With categories off, it remains a standalone search field above the original app list.
 - **Manage categories** creates, renames, reorders, and deletes categories, and lets you
-  choose each category's icon. Long-pressing a category opens its editing actions. The
-  manage button stays visible while category pages scroll.
+  choose each category's icon. Hold any category button to open Manage categories,
+  then select a category to edit it or create a new one. It is also available in settings.
 - Long-press an app in the drawer or app-search results and choose **Move to category**.
   Select a group to pin its assignment, or **Use automatic category** to clear the correction.
 
@@ -66,9 +67,15 @@ use a scoped Material 3 dynamic-color theme, tonal selection, rounded icon butto
 ripples. The 40 dp visible icon-button shape sits inside a 48 dp touch target; reducing
 visual padding does not reduce the touch target. Launcher3's activity theme stays intact.
 The heading hides during search and grows with long names or larger system text.
-Search shares the bar's solid Material 3 surface, 28 dp corner radius, and side margins.
-Its 56 dp field uses a leading search hint with Material text colors. Turning categories
-off restores the original search background, colors, padding, alignment, and sizing.
+In the combined mode, search and categories share one solid Material 3 surface and the
+same side margins, aligned with the app grid's horizontal padding. Search expands from
+the center action while the category icons fade and contract; closing reverses the motion.
+The existing input moves above the keyboard with an 8 dp gap. While search is open,
+the app list ends 8 dp above the input so rows cannot scroll underneath it.
+A separate 48 dp Back action closes search, clears the query, and restores the current
+category. Motion respects Android's animator scale, including disabled animations.
+Turning categories off restores the original search background, colors, padding,
+alignment, and sizing. Categories with top search retain their separate original field.
 
 ## Category gestures
 
@@ -95,7 +102,10 @@ manual corrections are expected for some apps.
 Search uses the inherited app-search algorithm over all eligible apps, regardless of
 the selected category. It preserves the existing hidden-app and Private Space behavior.
 Search autofocus stays off by default and remains configurable. With bottom search on,
-the search field stays above the keyboard; tabs hide while the keyboard/search is active.
+the search field stays above the keyboard. In the combined mode it replaces the category
+controls in the same bar, including for an empty focused query. Back and the close action
+restore the category controls. Keyboard-dismissal events are handled after the IME
+animation settles, so transient hidden insets while opening do not close the input.
 Leaving search restores the category list. The last selected category is saved across
 process restarts. Per-category scroll positions are held only in memory.
 
@@ -154,6 +164,30 @@ symbol. Previous monogram masters are kept under `image/brand/archive/`.
 new roof path in each of the three compiled icon variants. App identity and stored data
 are unchanged. The 33 unit tests recorded below cover the earlier rebrand; this icon-only
 revision was verified with the APK build and artwork inspection.
+
+## Integrated search validation on 2026-10-21
+
+- `:testAospWithoutQuickstepDebugUnitTest` passed all 35 tests with no failures or errors.
+- `:assembleAospWithoutQuickstepDebug` produced the debug APK.
+- Android 16 / API 36 emulator checks passed for opening the center action, keeping
+  the focused input above the keyboard, searching globally from another category,
+  and restoring the selected category with Back or the close action.
+- All four combinations of category tabs and bottom search, search autofocus, and
+  disabled animations passed. At 320 dp and 685 dp widths, the search action stays
+  centered and retains a 48 dp touch target; the input opens and closes correctly.
+- After removing the drawer's manage button, emulator checks confirmed that holding
+  active or inactive category buttons opens full management, including create and edit
+  actions. Normal category taps, centered search, and paging at 320 dp still work.
+  Hold-to-manage also works with top search. The app was closed before installation
+  and testing in a fresh emulator session.
+- Search spacing checks measured an 8 dp gap above the keyboard and between the app
+  list or search results and the input. Screenshots confirmed that the category surface
+  fades away behind search instead of filling the keyboard gap. Closing search restores
+  the category bar's original position.
+- The final APK was installed on the Moto Edge 60 Pro and its hash matched the local
+  build. Preferences and launcher databases were preserved byte-for-byte during the
+  update. The original 30-second screen timeout was restored, and the updated UI was
+  confirmed on the phone.
 
 ## Branding validation on 2026-10-21
 
