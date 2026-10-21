@@ -1,3 +1,4 @@
+// Modified in 2026 for the Murine Categories fork. See FORK.md.
 /*
  * Copyright (C) 2008 The Android Open Source Project
  *
@@ -1400,6 +1401,18 @@ public class DeviceProfile {
             updateAllAppsIconSize(1f, context.getResources());
         }
         updateAllAppsContainerWidth(context.getResources());
+        if (!mIsResponsiveGrid && !isTablet) {
+            // Custom column counts must not leave icons wider than their actual cells.
+            int contentWidth = availableWidthPx - allAppsLeftRightMargin * 2
+                    - allAppsPadding.left - allAppsPadding.right;
+            int cellWidth = Math.max(1, contentWidth / numShownAllAppsColumns);
+            int maxIconSize = Math.max(1, cellWidth - pxFromDp(12, mMetrics));
+            if (allAppsIconSizePx > maxIconSize) {
+                allAppsIconSizePx = maxIconSize;
+                allAppsCellWidthPx = cellWidth;
+                autoResizeAllAppsCells();
+            }
+        }
         if (!mIsResponsiveGrid) {
             if (mHideWorkspaceLabels) {
                 iconTextSizePx = 0;

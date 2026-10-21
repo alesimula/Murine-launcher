@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Modified in 2026 for the Murine Categories fork. See FORK.md. -->
+
 <!-- Copyright (C) 2015 Google Inc.
 
      Licensed under the Apache License, Version 2.0 (the "License");
@@ -65,6 +67,20 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_subcategory_options">
+        <SwitchPreferenceCompat
+            android:key="pref_drawer_categories"
+            android:title="@string/pref_drawer_categories_title"
+            android:summary="@string/pref_drawer_categories_summary"
+            android:defaultValue="false" />
+        <Preference
+            android:key="pref_drawer_manage_categories"
+            android:title="@string/drawer_manage_categories"
+            android:dependency="pref_drawer_categories" />
+        <SwitchPreferenceCompat
+            android:key="pref_drawer_bottom_search"
+            android:title="@string/pref_drawer_bottom_search_title"
+            android:summary="@string/pref_drawer_bottom_search_summary"
+            android:defaultValue="false" />
         <SwitchPreferenceCompat
             android:key="pref_drawer_search_autofocus"
             android:title="@string/pref_drawer_search_autofocus_title"

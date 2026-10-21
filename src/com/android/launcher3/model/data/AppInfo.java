@@ -1,3 +1,4 @@
+// Modified in 2026 for the Murine Categories fork. See FORK.md.
 /*
  * Copyright (C) 2008 The Android Open Source Project
  *
@@ -75,6 +76,9 @@ public class AppInfo extends ItemInfoWithIcon implements WorkspaceItemFactory {
      */
     public int uid = -1;
 
+    /** Offline category declared by the installed app or its installer. */
+    public int appCategory = android.content.pm.ApplicationInfo.CATEGORY_UNDEFINED;
+
     public AppInfo() {
         itemType = LauncherSettings.Favorites.ITEM_TYPE_APPLICATION;
     }
@@ -105,6 +109,7 @@ public class AppInfo extends ItemInfoWithIcon implements WorkspaceItemFactory {
             runtimeStatusFlags |= FLAG_DISABLED_QUIET_USER;
         }
         uid = info.getApplicationInfo().uid;
+        appCategory = info.getApplicationInfo().category;
         updateRuntimeFlagsForActivityTarget(this, info, userIconInfo, apiWrapper, pmHelper);
     }
 
@@ -114,6 +119,7 @@ public class AppInfo extends ItemInfoWithIcon implements WorkspaceItemFactory {
         title = Utilities.trim(info.title);
         intent = new Intent(info.intent);
         uid = info.uid;
+        appCategory = info.appCategory;
     }
 
     @VisibleForTesting

@@ -1,3 +1,4 @@
+// Modified in 2026 for the Murine Categories fork. See FORK.md.
 /*
  * Copyright (C) 2017 The Android Open Source Project
  *
@@ -24,6 +25,9 @@ import static com.android.launcher3.icons.IconNormalizer.ICON_VISIBLE_AREA_FACTO
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.graphics.Rect;
 import android.icu.text.RuleBasedCollator;
 import android.text.Selection;
@@ -31,6 +35,7 @@ import android.text.SpannableStringBuilder;
 import android.text.method.TextKeyListener;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup.MarginLayoutParams;
 
@@ -49,6 +54,9 @@ import com.android.launcher3.views.ActivityContext;
 
 import android.icu.text.Collator;
 
+import app.murinelauncher.drawer.DrawerCategoryTheme;
+import com.google.android.material.color.MaterialColors;
+
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -63,6 +71,12 @@ public class AppsSearchContainerLayout extends ExtendedEditText
     private final SpannableStringBuilder mSearchQueryBuilder;
 
     private ActivityAllAppsContainerView<?> mAppsView;
+    private boolean mCategoryStyle;
+    private final Drawable mOriginalBackground;
+    private final ColorStateList mOriginalTextColors;
+    private final ColorStateList mOriginalHintColors;
+    private final int mOriginalGravity;
+    private final Rect mOriginalPadding;
 
     // The amount of pixels to shift down and overlap with the rest of the content.
     private final int mContentOverlap;
@@ -81,6 +95,12 @@ public class AppsSearchContainerLayout extends ExtendedEditText
     public AppsSearchContainerLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
+        mOriginalBackground = getBackground();
+        mOriginalTextColors = getTextColors();
+        mOriginalHintColors = getHintTextColors();
+        mOriginalGravity = getGravity();
+        mOriginalPadding = new Rect(getPaddingLeft(), getPaddingTop(),
+                getPaddingRight(), getPaddingBottom());
         mLauncher = ActivityContext.lookupContext(context);
         mSearchBarController = new AllAppsSearchBarController();
 
@@ -98,6 +118,34 @@ public class AppsSearchContainerLayout extends ExtendedEditText
         if (mLabelMatcher instanceof RuleBasedCollator rba) rba.setAlternateHandlingShifted(true);
     }
 
+    /** Scoped to the optional category drawer; the original search appearance is restorable. */
+    public void setCategoryStyle(boolean enabled) {
+        if (mCategoryStyle == enabled) return;
+        mCategoryStyle = enabled;
+        if (enabled) {
+            Context themed = DrawerCategoryTheme.INSTANCE.wrap(getContext());
+            setBackground(DrawerCategoryTheme.surface(themed));
+            setTextColor(MaterialColors.getColor(themed,
+                    com.google.android.material.R.attr.colorOnSurface, "DrawerSearch"));
+            int hint = MaterialColors.getColor(themed,
+                    com.google.android.material.R.attr.colorOnSurfaceVariant, "DrawerSearch");
+            setHintTextColor(new ColorStateList(new int[][] {
+                    new int[] {android.R.attr.state_focused}, new int[] {}
+            }, new int[] {Color.TRANSPARENT, hint}));
+            setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
+            int horizontal = Math.round(16 * getResources().getDisplayMetrics().density);
+            setPadding(horizontal, 0, horizontal, 0);
+        } else {
+            setBackground(mOriginalBackground);
+            setTextColor(mOriginalTextColors);
+            setHintTextColor(mOriginalHintColors);
+            setGravity(mOriginalGravity);
+            setPadding(mOriginalPadding.left, mOriginalPadding.top,
+                    mOriginalPadding.right, mOriginalPadding.bottom);
+        }
+        requestLayout();
+    }
+
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
@@ -112,6 +160,11 @@ public class AppsSearchContainerLayout extends ExtendedEditText
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        if (mCategoryStyle) {
+            // The parent supplies the same side margins as the Material 3 category bar.
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+            return;
+        }
         // Update the width to match the grid padding
         DeviceProfile dp = mLauncher.getDeviceProfile();
         int myRequestedWidth = getSize(widthMeasureSpec);
@@ -139,7 +192,8 @@ public class AppsSearchContainerLayout extends ExtendedEditText
         int shift = expectedLeft - left;
         setTranslationX(shift);
 
-        if (!mLauncher.getDeviceProfile().shouldShowAllAppsOnSheet())
+        if (!mAppsView.isBottomSearchEnabled()
+                && !mLauncher.getDeviceProfile().shouldShowAllAppsOnSheet())
             offsetTopAndBottom(mContentOverlap);
     }
 
@@ -211,7 +265,8 @@ public class AppsSearchContainerLayout extends ExtendedEditText
     @Override
     public void setInsets(Rect insets) {
         MarginLayoutParams mlp = (MarginLayoutParams) getLayoutParams();
-        mlp.topMargin = mLauncher.getDeviceProfile().shouldShowAllAppsOnSheet() ?
+        mlp.topMargin = mAppsView != null && mAppsView.isBottomSearchEnabled() ? 0
+                : mLauncher.getDeviceProfile().shouldShowAllAppsOnSheet() ?
                 getResources().getDimensionPixelSize(R.dimen.bottom_sheet_handle_area_height) :
                 insets.top;
         requestLayout();

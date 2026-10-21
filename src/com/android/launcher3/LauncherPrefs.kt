@@ -1,3 +1,4 @@
+// Modified in 2026 for the Murine Categories fork. See FORK.md.
 /*
  * Copyright (C) 2023 The Android Open Source Project
  *
@@ -316,6 +317,16 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
         val DRAWER_PADDING = backedUpItem(SettingsDrawerFragment.DRAWER_PADDING, 100)
         @JvmField
         val DRAWER_SEARCH_AUTOFOCUS = backedUpItem(SettingsDrawerFragment.SEARCH_AUTOFOCUS, false)
+        @JvmField
+        val DRAWER_CATEGORIES = backedUpItem("pref_drawer_categories", false)
+        @JvmField
+        val DRAWER_BOTTOM_SEARCH = backedUpItem("pref_drawer_bottom_search", false)
+        @JvmField
+        val DRAWER_CATEGORY_STATE = backedUpItem("pref_drawer_category_state", "")
+        @JvmField
+        val DRAWER_LAST_CATEGORY = backedUpItem("pref_drawer_last_category", "")
+        @JvmField
+        val DRAWER_PROFILE_SCOPE = nonRestorableItem("pref_drawer_profile_scope", "")
         @JvmField
         val ICON_SIZE = backedUpItem(SettingsIconsFragment.ICON_SIZE_KEY, 100)
         @JvmField

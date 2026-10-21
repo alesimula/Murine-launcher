@@ -1,6 +1,9 @@
+// Modified in 2026 for the Murine Categories fork. See FORK.md.
 package app.murinelauncher.settings
 
 import android.util.Log
+import app.murinelauncher.drawer.CategoryDialogs
+import app.murinelauncher.drawer.CategoryRepository
 import androidx.preference.Preference
 import androidx.preference.SwitchPreferenceCompat
 import app.murinelauncher.graphics.WorkspaceBlurUtils
@@ -43,6 +46,13 @@ public final class SettingsDrawerFragment: AbstractSettingsFragment() {
 
     override fun initPreference(preference: Preference, info: DisplayController.Info): Boolean {
         when (preference.key) {
+            "pref_drawer_manage_categories" -> {
+                preference.setOnPreferenceClickListener {
+                    CategoryDialogs.manage(requireContext(), CategoryRepository(requireContext()))
+                    true
+                }
+                return true
+            }
             DRAWER_TYPE -> {
                 preference as SegmentedButtonPreference
                 preference.apply {

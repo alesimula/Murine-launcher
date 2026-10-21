@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Murine Categories contributors. Licensed under Apache-2.0. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp"
+    android:viewportWidth="24" android:viewportHeight="24">
+    <path android:fillColor="@android:color/transparent" android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="1.7" android:strokeLineCap="round" android:strokeLineJoin="round"
+        android:pathData="M8,7 L8,4 Q8,3 9,3 L15,3 Q16,3 16,4 L16,7 M4,7 L20,7 Q22,7 22,9 L22,19 Q22,21 20,21 L4,21 Q2,21 2,19 L2,9 Q2,7 4,7 Z M2,12 Q12,17 22,12 M12,12 L12,16" />
+</vector>

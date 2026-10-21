@@ -1,3 +1,4 @@
+# Modified in 2026 for the Murine Categories fork. See FORK.md.
 # Translation status board (rendered by docs/localization-status.md).
 #
 # status: reviewed | mostly | partial | ai   -> see the legend in localization-status.md
@@ -8,14 +9,14 @@
 #          both accept several names separated by ', ' and are shown together,
 #          in that order. Omit both if nobody has reviewed it
 
-total: 149
+total: 176
 
 languages:
   - code: en
     name: English
     native: English
     status: reviewed
-    strings: 149
+    strings: 176
     by_git: alesimula
     note: Source language
 
@@ -23,7 +24,7 @@ languages:
     name: Italian
     native: Italiano
     status: reviewed
-    strings: 149
+    strings: 176
     by_git: alesimula
     note: Dev's language
 

@@ -16,3 +16,7 @@ gradle/
 build/
 gradlew*
 .DS_Store
+
+# Keep the pinned build entrypoints in the fork.
+!gradlew
+!gradlew.bat
