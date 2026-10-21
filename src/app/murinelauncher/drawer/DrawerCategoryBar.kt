@@ -60,8 +60,14 @@ class DrawerCategoryBar(
         isCheckable = false
         visibility = View.GONE
         setOnClickListener { onSearch() }
-        backgroundTintList = ColorStateList.valueOf(color(MaterialR.attr.colorPrimaryContainer))
-        iconTint = ColorStateList.valueOf(color(MaterialR.attr.colorOnPrimaryContainer))
+        // An outlined ring reads as an action; a filled circle would mimic the selected category.
+        backgroundTintList = ColorStateList.valueOf(Color.TRANSPARENT)
+        strokeColor = ColorStateList.valueOf(color(MaterialR.attr.colorOutline))
+        strokeWidth = dp(1)
+        iconTint = ColorStateList.valueOf(color(MaterialR.attr.colorOnSurface))
+        // A larger glyph further sets the action apart from the 24 dp category icons.
+        iconSize = dp(28)
+        setPadding(dp(6), dp(6), dp(6), dp(6))
     }
     private var searchEnabled = false
     private var searchProgress = 0f
