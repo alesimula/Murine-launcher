@@ -7,13 +7,26 @@
 package app.murinelauncher.drawer
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.view.ContextThemeWrapper
 import androidx.core.graphics.ColorUtils
+import com.google.android.material.color.MaterialColors
+import com.google.android.material.shape.MaterialShapeDrawable
+import com.google.android.material.shape.ShapeAppearanceModel
 import com.android.launcher3.R
 import com.google.android.material.R as MaterialR
 
 /** A real M3 theme scoped to drawer controls; Launcher3 itself uses a platform theme. */
 object DrawerCategoryTheme {
+    /** Both controls use the same surface and 28 dp rounded shape. Context must be M3 themed. */
+    @JvmStatic
+    fun surface(context: Context): MaterialShapeDrawable = MaterialShapeDrawable(
+        ShapeAppearanceModel.builder().setAllCornerSizes(28 * context.resources.displayMetrics.density).build(),
+    ).apply {
+        fillColor = ColorStateList.valueOf(MaterialColors.getColor(context,
+            MaterialR.attr.colorSurfaceContainer, "DrawerCategoryTheme"))
+    }
+
     fun wrap(context: Context): Context {
         val lightText = ColorUtils.calculateLuminance(
             context.getColor(R.color.all_apps_label_text_color),

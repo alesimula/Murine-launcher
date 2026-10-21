@@ -25,8 +25,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.android.launcher3.R
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.color.MaterialColors
-import com.google.android.material.shape.MaterialShapeDrawable
-import com.google.android.material.shape.ShapeAppearanceModel
 import com.google.android.material.R as MaterialR
 
 /** Responsive pages of complete category buttons, with management always reachable. */
@@ -59,11 +57,7 @@ class DrawerCategoryBar(
         id = R.id.drawer_category_tabs
         orientation = VERTICAL
         setPadding(dp(4), dp(4), dp(4), 0)
-        background = MaterialShapeDrawable(
-            ShapeAppearanceModel.builder().setAllCornerSizes(dp(28).toFloat()).build(),
-        ).apply {
-            fillColor = ColorStateList.valueOf(color(MaterialR.attr.colorSurfaceContainer))
-        }
+        background = DrawerCategoryTheme.surface(context)
         val controls = LinearLayout(context).apply { gravity = Gravity.CENTER_VERTICAL }
         controls.addView(pager, LayoutParams(0, dp(48), 1f))
         controls.addView(button(R.drawable.ic_category_manage,

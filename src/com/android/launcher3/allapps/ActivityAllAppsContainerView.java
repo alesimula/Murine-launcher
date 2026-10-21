@@ -88,6 +88,7 @@ import com.android.launcher3.allapps.search.SearchAdapterProvider;
 import com.android.launcher3.config.FeatureFlags;
 import com.android.launcher3.keyboard.FocusedItemDecorator;
 import com.android.launcher3.keyboard.ViewGroupFocusHelper;
+import com.android.launcher3.allapps.search.AppsSearchContainerLayout;
 import com.android.launcher3.model.StringCache;
 import com.android.launcher3.model.data.ItemInfo;
 import com.android.launcher3.model.data.AppInfo;
@@ -1389,6 +1390,16 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         int[] oldRules = searchLp.getRules().clone();
         int oldTop = searchLp.topMargin;
         int oldBottom = searchLp.bottomMargin;
+        int oldHeight = searchLp.height;
+        int oldLeft = searchLp.leftMargin;
+        int oldRight = searchLp.rightMargin;
+        searchLp.height = categories ? dpToPx(56)
+                : getResources().getDimensionPixelSize(R.dimen.all_apps_search_bar_field_height);
+        searchLp.leftMargin = categories ? tabsLp.leftMargin : 0;
+        searchLp.rightMargin = categories ? tabsLp.rightMargin : 0;
+        if (mSearchContainer instanceof AppsSearchContainerLayout) {
+            ((AppsSearchContainerLayout) mSearchContainer).setCategoryStyle(categories);
+        }
         searchLp.removeRule(ALIGN_PARENT_BOTTOM);
         if (bottomSearch) {
             searchLp.addRule(ALIGN_PARENT_BOTTOM);
@@ -1401,13 +1412,13 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
             searchLp.bottomMargin = 0;
         }
         if (oldTop != searchLp.topMargin || oldBottom != searchLp.bottomMargin
-                || !Arrays.equals(oldRules, searchLp.getRules())) {
+                || oldHeight != searchLp.height || oldLeft != searchLp.leftMargin
+                || oldRight != searchLp.rightMargin || !Arrays.equals(oldRules, searchLp.getRules())) {
             mSearchContainer.setLayoutParams(searchLp);
         }
 
         int controlsHeight = tabsHeight + (bottomSearch
-                ? getResources().getDimensionPixelSize(R.dimen.all_apps_search_bar_field_height)
-                        + dpToPx(16) + screenBottom - navBottom : 0);
+                ? searchLp.height + dpToPx(16) + screenBottom - navBottom : 0);
         // The empty header normally reserves a gap below the top search field.
         // With bottom search only a small gutter is needed below the sheet handle.
         int contentTop = getDrawerContentTopPadding();
@@ -1454,13 +1465,32 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
                 scroller.setLayoutParams(lp);
             }
         }
+        updateCategoryHeadingPosition();
     }
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
         // Use the final measured control bounds, including the search field's container padding.
-        if (mCategoryController != null) mAH.forEach(AdapterHolder::applyPadding);
+        if (mCategoryController != null) {
+            mAH.forEach(AdapterHolder::applyPadding);
+            updateCategoryHeadingPosition();
+        }
+    }
+
+    private void updateCategoryHeadingPosition() {
+        if (mCategoryController == null) return;
+        View heading = mCategoryController.getHeading();
+        AllAppsRecyclerView recycler = getActiveRecyclerView();
+        int offset = 0;
+        if (heading.getVisibility() == VISIBLE && recycler != null && recycler.getHeight() > 0) {
+            Rect bounds = new Rect(0, 0, recycler.getWidth(), recycler.getHeight());
+            offsetDescendantRectToMyCoords(recycler, bounds);
+            // Anchor to the row's measured content origin, including either search placement.
+            offset = Math.max(0, bounds.top + recycler.getPaddingTop()
+                    - heading.getHeight() - dpToPx(8) - heading.getTop());
+        }
+        heading.setTranslationY(offset);
     }
 
     private int getDrawerContentTopPadding() {

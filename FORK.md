@@ -13,8 +13,8 @@ Use Android's default Home app settings when you are ready to switch.
 
 In launcher settings, open **App drawer**:
 
-- **Category tabs** enables editable groups with the selected category's title above
-  the app grid and a Material 3 category bar at the bottom. The bar measures its available
+- **Category tabs** enables editable groups with the selected category's title directly above
+  its app rows and a Material 3 category bar at the bottom. The bar measures its available
   width, reserves the manage button, and fits whole 48 dp touch targets on each page.
   Swipe horizontally for more categories; dots indicate the current page. Category names
   remain available to accessibility services. It shows one category at a time. There is no
@@ -41,8 +41,9 @@ overlapping at eight columns without changing the home-screen icon size. Bottom 
 also removes the unused top-search gutter when no profile tabs or floating header rows
 need that space.
 
-Short category grids align at the bottom above the drawer controls, so their apps stay
-within thumb reach. Grids that fill the available height keep normal vertical scrolling.
+Short category grids and their titles align together at the bottom above the drawer
+controls, so the title stays just above the first app row. Grids that fill the available
+height keep their title at the top of the grid and retain normal vertical scrolling.
 The original drawer and search results keep their top alignment. Profile education cards
 and Private Space sections retain their existing layout.
 
@@ -51,6 +52,9 @@ use a scoped Material 3 dynamic-color theme, tonal selection, rounded icon butto
 ripples. The 40 dp visible icon-button shape sits inside a 48 dp touch target; reducing
 visual padding does not reduce the touch target. Launcher3's activity theme stays intact.
 The heading hides during search and grows with long names or larger system text.
+Search shares the bar's solid Material 3 surface, 28 dp corner radius, and side margins.
+Its 56 dp field uses a leading search hint with Material text colors. Turning categories
+off restores the original search background, colors, padding, alignment, and sizing.
 
 ## Category gestures
 
@@ -147,6 +151,13 @@ Physical-phone widget migration remains untested.
   short grids with an 8 dp gap above search, hidden empty News, and both swipe directions.
   The final rows of longer categories remain reachable above search. Category definitions,
   assignments, the user's five-column setting, selection, and default Home app were preserved.
+- The title-and-search revision is installed and checked on the Moto. Games and
+  Communication keep the title 8 dp above the app cells; search and category controls
+  have identical measured side edges and sampled surface colors. Category swipes,
+  global search, keyboard placement, and returning from search pass. Category state,
+  the chosen grid, selection, and default Home app stay unchanged. Emulator checks also
+  cover top search, long-list scrolling, light/dark surfaces, and restoring the original
+  search appearance by disabling categories and re-enabling it in the live launcher.
 - Model tests exercise rename/reorder/delete and category-state backup round trips.
   Actual `.rat` archive export/restore and physical-phone widget migration were not exercised.
 - Full-project lint reported 615 errors and 836 warnings. The two new warnings were
