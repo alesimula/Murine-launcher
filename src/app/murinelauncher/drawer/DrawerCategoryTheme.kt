@@ -10,6 +10,8 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.view.ContextThemeWrapper
 import androidx.core.graphics.ColorUtils
+import app.murinelauncher.graphics.WorkspaceBlurUtils
+import app.murinelauncher.graphics.WorkspaceBlurUtils.DrawerBlurType
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
@@ -18,13 +20,26 @@ import com.google.android.material.R as MaterialR
 
 /** A real M3 theme scoped to drawer controls; Launcher3 itself uses a platform theme. */
 object DrawerCategoryTheme {
-    /** Both controls use the same surface and 28 dp rounded shape. Context must be M3 themed. */
+    /**
+     * Search and categories share a 28 dp rounded surface whose material follows the drawer type:
+     * a frosted pane with an edge highlight, an opaque wallpaper-tinted surface, or flat neutral.
+     * Context must be M3 themed.
+     */
     @JvmStatic
     fun surface(context: Context): MaterialShapeDrawable = MaterialShapeDrawable(
         ShapeAppearanceModel.builder().setAllCornerSizes(28 * context.resources.displayMetrics.density).build(),
     ).apply {
-        fillColor = ColorStateList.valueOf(MaterialColors.getColor(context,
-            MaterialR.attr.colorSurfaceContainer, "DrawerCategoryTheme"))
+        when (WorkspaceBlurUtils.getDrawerBlur()) {
+            DrawerBlurType.GLASS -> {
+                fillColor = ColorStateList.valueOf(context.getColor(R.color.drawer_control_color_glass))
+                setStroke(context.resources.displayMetrics.density,
+                    context.getColor(R.color.drawer_control_stroke_glass))
+            }
+            DrawerBlurType.MICA -> fillColor = ColorStateList.valueOf(MaterialColors.getColor(context,
+                MaterialR.attr.colorSurfaceContainerHigh, "DrawerCategoryTheme"))
+            DrawerBlurType.NONE -> fillColor =
+                ColorStateList.valueOf(context.getColor(R.color.drawer_control_color_none))
+        }
     }
 
     fun wrap(context: Context): Context {

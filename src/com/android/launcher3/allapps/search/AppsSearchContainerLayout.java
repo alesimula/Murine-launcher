@@ -71,6 +71,7 @@ public class AppsSearchContainerLayout extends ExtendedEditText
     private final SpannableStringBuilder mSearchQueryBuilder;
 
     private ActivityAllAppsContainerView<?> mAppsView;
+    private boolean mControlStyle;
     private boolean mCategoryStyle;
     private boolean mIntegratedCategorySearch;
     private final Drawable mOriginalBackground;
@@ -121,27 +122,50 @@ public class AppsSearchContainerLayout extends ExtendedEditText
         if (mLabelMatcher instanceof RuleBasedCollator rba) rba.setAlternateHandlingShifted(true);
     }
 
-    /** Scoped to the optional category drawer; the original search appearance is restorable. */
-    public void setCategoryStyle(boolean enabled) {
-        if (mCategoryStyle == enabled) return;
-        mCategoryStyle = enabled;
+    /**
+     * Floating drawer search (bottom or categories) uses the drawer type's control surface so it
+     * stays readable over apps. The original top search appearance is restorable.
+     */
+    public void setControlStyle(boolean enabled) {
+        if (mControlStyle == enabled) return;
+        mControlStyle = enabled;
         if (enabled) {
             Context themed = DrawerCategoryTheme.INSTANCE.wrap(getContext());
             setBackground(DrawerCategoryTheme.surface(themed));
             setTextColor(MaterialColors.getColor(themed,
                     com.google.android.material.R.attr.colorOnSurface, "DrawerSearch"));
-            int hint = MaterialColors.getColor(themed,
-                    com.google.android.material.R.attr.colorOnSurfaceVariant, "DrawerSearch");
-            setHintTextColor(new ColorStateList(new int[][] {
-                    new int[] {android.R.attr.state_focused}, new int[] {}
-            }, new int[] {Color.TRANSPARENT, hint}));
-            setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
-            int horizontal = Math.round(16 * getResources().getDisplayMetrics().density);
-            setPadding(horizontal, 0, horizontal, 0);
+            applyControlHintColor();
         } else {
             setBackground(mOriginalBackground);
             setTextColor(mOriginalTextColors);
             setHintTextColor(mOriginalHintColors);
+        }
+    }
+
+    /** Called when the drawer type changes while the control style is applied. */
+    public void refreshControlSurface() {
+        if (mControlStyle) {
+            setBackground(DrawerCategoryTheme.surface(DrawerCategoryTheme.INSTANCE.wrap(getContext())));
+        }
+    }
+
+    private void applyControlHintColor() {
+        int hint = MaterialColors.getColor(DrawerCategoryTheme.INSTANCE.wrap(getContext()),
+                com.google.android.material.R.attr.colorOnSurfaceVariant, "DrawerSearch");
+        setHintTextColor(new ColorStateList(new int[][] {
+                new int[] {android.R.attr.state_focused}, new int[] {}
+        }, new int[] {mIntegratedCategorySearch ? hint : Color.TRANSPARENT, hint}));
+    }
+
+    /** Scoped to the optional category drawer: matches the category bar's layout. */
+    public void setCategoryStyle(boolean enabled) {
+        if (mCategoryStyle == enabled) return;
+        mCategoryStyle = enabled;
+        if (enabled) {
+            setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
+            int horizontal = Math.round(16 * getResources().getDisplayMetrics().density);
+            setPadding(horizontal, 0, horizontal, 0);
+        } else {
             setGravity(mOriginalGravity);
             setPadding(mOriginalPadding.left, mOriginalPadding.top,
                     mOriginalPadding.right, mOriginalPadding.bottom);
@@ -158,13 +182,8 @@ public class AppsSearchContainerLayout extends ExtendedEditText
             int start = Math.round((enabled ? 56 : 16) * getResources().getDisplayMetrics().density);
             int end = Math.round(16 * getResources().getDisplayMetrics().density);
             setPaddingRelative(start, 0, end, 0);
-            Context themed = DrawerCategoryTheme.INSTANCE.wrap(getContext());
-            int hint = MaterialColors.getColor(themed,
-                    com.google.android.material.R.attr.colorOnSurfaceVariant, "DrawerSearch");
-            setHintTextColor(new ColorStateList(new int[][] {
-                    new int[] {android.R.attr.state_focused}, new int[] {}
-            }, new int[] {enabled ? hint : Color.TRANSPARENT, hint}));
         }
+        if (mControlStyle) applyControlHintColor();
     }
 
     @Override
@@ -187,8 +206,8 @@ public class AppsSearchContainerLayout extends ExtendedEditText
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        if (mCategoryStyle) {
-            // The parent supplies the same side margins as the Material 3 category bar.
+        if (mControlStyle) {
+            // The parent supplies the same side margins as the category bar.
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
             return;
         }

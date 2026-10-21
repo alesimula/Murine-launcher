@@ -22,6 +22,11 @@
     <color name="drawer_sheet_color_mica">#CC1F1F1F</color>
     <color name="drawer_sheet_color_none">#AC2A2A2A</color>
 
+    <!-- Floating drawer controls (search, categories). MICA uses the opaque dynamic surface. -->
+    <color name="drawer_control_color_glass">#73747474</color>
+    <color name="drawer_control_stroke_glass">#40FFFFFF</color>
+    <color name="drawer_control_color_none">#E6484848</color>
+
     <color name="drawer_scrim_color_glass">#4B4E4E4E</color>
     <color name="drawer_scrim_color_none">#4B4E4E4E</color>
 </resources>

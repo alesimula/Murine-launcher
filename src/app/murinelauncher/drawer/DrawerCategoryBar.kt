@@ -95,6 +95,12 @@ class DrawerCategoryBar(
         pager.post { rebuild() }
     }
 
+    /** Picks up a changed drawer type without rebuilding the category pages. */
+    fun refreshSurface() {
+        background = DrawerCategoryTheme.surface(context)
+        setSearchProgress(searchProgress)
+    }
+
     fun setSearchProgress(progress: Float) {
         searchProgress = progress
         background?.alpha = (255 * (1 - progress)).toInt()

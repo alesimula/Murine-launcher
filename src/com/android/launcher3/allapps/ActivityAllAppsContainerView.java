@@ -960,6 +960,14 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         if (currentType != mCurrentDrawerBlurType) {
             mCurrentDrawerBlurType = currentType;
             updateDrawerSheetColors();
+            refreshDrawerControlSurfaces();
+        }
+    }
+
+    private void refreshDrawerControlSurfaces() {
+        if (mCategoryController != null) mCategoryController.getTabs().refreshSurface();
+        if (mSearchContainer instanceof AppsSearchContainerLayout) {
+            ((AppsSearchContainerLayout) mSearchContainer).refreshControlSurface();
         }
     }
 
@@ -1460,9 +1468,11 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         int oldRight = searchLp.rightMargin;
         searchLp.height = integratedSearch ? tabs.getLayoutParams().height : categories ? dpToPx(56)
                 : getResources().getDimensionPixelSize(R.dimen.all_apps_search_bar_field_height);
-        searchLp.leftMargin = categories ? tabsLp.leftMargin : 0;
-        searchLp.rightMargin = categories ? tabsLp.rightMargin : 0;
+        boolean controlMargins = bottomSearch || categories;
+        searchLp.leftMargin = controlMargins ? tabsLp.leftMargin : 0;
+        searchLp.rightMargin = controlMargins ? tabsLp.rightMargin : 0;
         if (mSearchContainer instanceof AppsSearchContainerLayout) {
+            ((AppsSearchContainerLayout) mSearchContainer).setControlStyle(bottomSearch || categories);
             ((AppsSearchContainerLayout) mSearchContainer).setCategoryStyle(categories);
             ((AppsSearchContainerLayout) mSearchContainer).setIntegratedCategorySearch(integratedSearch);
         }

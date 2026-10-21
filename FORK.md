@@ -67,15 +67,19 @@ use a scoped Material 3 dynamic-color theme, tonal selection, rounded icon butto
 ripples. The 40 dp visible icon-button shape sits inside a 48 dp touch target; reducing
 visual padding does not reduce the touch target. Launcher3's activity theme stays intact.
 The heading hides during search and grows with long names or larger system text.
-In the combined mode, search and categories share one solid Material 3 surface and the
+Floating drawer controls follow **Drawer type**: search and categories share one surface,
+a frosted pane with an edge highlight for Frosted, an opaque wallpaper-tinted surface for
+MICA, or flat neutral grey for Translucent. They stay readable over scrolling apps and
+update when the type changes. In the combined mode they also share the
 same side margins, aligned with the app grid's horizontal padding. Search expands from
 the center action while the category icons fade and contract; closing reverses the motion.
 The existing input moves above the keyboard with an 8 dp gap. While search is open,
 the app list ends 8 dp above the input so rows cannot scroll underneath it.
 A separate 48 dp Back action closes search, clears the query, and restores the current
 category. Motion respects Android's animator scale, including disabled animations.
-Turning categories off restores the original search background, colors, padding,
-alignment, and sizing. Categories with top search retain their separate original field.
+Turning categories off restores the original search padding, alignment, and sizing;
+bottom search keeps the drawer-type surface and the category bar's side margins. Turning both options off restores the
+original search background and colors. Categories with top search retain their separate original field.
 
 ## Category gestures
 
