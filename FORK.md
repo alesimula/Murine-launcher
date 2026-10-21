@@ -71,8 +71,12 @@ Floating drawer controls follow **Drawer type**: search and categories share one
 a frosted pane with an edge highlight for Frosted, an opaque wallpaper-tinted surface for
 MICA, or flat neutral grey for Translucent. They stay readable over scrolling apps and
 update when the type changes. In the combined mode they also share the
-same side margins, aligned with the app grid's horizontal padding. Search expands from
-the center action while the category icons fade and contract; closing reverses the motion.
+same side margins, aligned with the app grid's horizontal padding. Search is a separate
+60 dp rounded-square action at the end of the category bar, so it never looks like a
+selected category. It follows the same drawer type in a high-emphasis form: a frosted
+primary pane with the edge highlight, an opaque wallpaper-tinted primary, or flat neutral
+that inverts the Translucent controls. Search expands out of that action across the bar
+while the category icons fade and contract; closing reverses the motion.
 The existing input moves above the keyboard with an 8 dp gap. While search is open,
 the app list ends 8 dp above the input so rows cannot scroll underneath it.
 A separate 48 dp Back action closes search, clears the query, and restores the current
@@ -145,6 +149,18 @@ The unit tests cover assignment precedence, profile separation, deleting groups,
 apps, invalid backup data, and persistence of custom names, order, and assignments.
 Runtime layout checks use an isolated Android 16 emulator and the connected Moto Edge 60 Pro.
 Physical-phone widget migration remains untested.
+
+## Detached search action validation on 2026-10-21
+
+- `:testAospWithoutQuickstepDebugUnitTest` passed all 33 tests. The two centered-layout
+  tests were removed with the in-bar search slot they covered.
+- `:assembleAospWithoutQuickstepDebug` produced the debug APK.
+- Android 16 / API 36 emulator screenshots confirmed the detached action for Frosted,
+  MICA, and Translucent in both light and dark mode. Only the selected category is filled.
+- Search opened from the action, accepted typing, and a single Back restored the bar
+  and the action. With top search, the bar spans the full width and shows no action.
+- Forced right-to-left layout did not apply on the emulator image, so mirrored placement
+  remains untested at runtime.
 
 ## Version 1.2.6 phone update on 2026-10-21
 

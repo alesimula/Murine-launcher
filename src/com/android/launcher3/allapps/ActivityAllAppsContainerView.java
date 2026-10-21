@@ -114,6 +114,7 @@ import java.util.stream.Stream;
 
 import app.murinelauncher.graphics.WorkspaceBlurUtils;
 import app.murinelauncher.drawer.DrawerCategoriesController;
+import app.murinelauncher.drawer.DrawerSearchAction;
 import app.murinelauncher.drawer.DrawerSearchMotion;
 import app.murinelauncher.settings.hiddenapps.HiddenAppsRepository;
 
@@ -409,7 +410,8 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
             if (mSearchContainer instanceof AppsSearchContainerLayout) {
                 mCategorySearchMotion = new DrawerSearchMotion(
                         app.murinelauncher.drawer.DrawerCategoryTheme.INSTANCE.wrap(getContext()),
-                        mSearchContainer, mCategoryController.getTabs(), this::closeCategorySearch);
+                        mSearchContainer, mCategoryController.getTabs(),
+                        mCategoryController.getSearchAction(), this::closeCategorySearch);
                 addView(mCategorySearchMotion.getCloseButton(), new LayoutParams(dpToPx(48), dpToPx(48)));
             }
             mCategoryController.refresh();
@@ -965,7 +967,10 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
     }
 
     private void refreshDrawerControlSurfaces() {
-        if (mCategoryController != null) mCategoryController.getTabs().refreshSurface();
+        if (mCategoryController != null) {
+            mCategoryController.getTabs().refreshSurface();
+            mCategoryController.getSearchAction().refreshSurface();
+        }
         if (mSearchContainer instanceof AppsSearchContainerLayout) {
             ((AppsSearchContainerLayout) mSearchContainer).refreshControlSurface();
         }
@@ -1419,10 +1424,12 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         boolean integratedSearch = isCategorySearchEnabled();
         if (!integratedSearch) mCategorySearchExpanded = false;
         if (mCategorySearchMotion != null) mCategorySearchMotion.setEnabled(integratedSearch);
-        mCategoryController.getTabs().setSearchEnabled(integratedSearch);
         View tabs = mCategoryController.getTabs();
         boolean showTabs = categories && (integratedSearch || (!isSearching() && !mDrawerImeVisible));
         tabs.setVisibility(showTabs ? VISIBLE : GONE);
+        View searchAction = mCategoryController.getSearchAction();
+        boolean showSearchAction = showTabs && integratedSearch;
+        searchAction.setVisibility(showSearchAction ? VISIBLE : GONE);
         if (!showTabs) mCategoryController.cancelMotion();
         int tabsHeight = showTabs ? tabs.getLayoutParams().height : 0;
         View heading = mCategoryController.getHeading();
@@ -1449,14 +1456,26 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         int navBottom = Math.max(mInsets.bottom, mNavBarScrimHeight);
         int screenBottom = bottomSearch ? Math.max(navBottom, mDrawerImeBottom) : navBottom;
         int searchBottom = screenBottom + (isCategorySearchExpanded() ? dpToPx(8) : 0);
+        // Detached search takes the end of the row; the bar keeps the remaining width.
+        boolean rtl = getLayoutDirection() == LAYOUT_DIRECTION_RTL;
+        int actionSpace = showSearchAction ? dpToPx(DrawerSearchAction.SIZE_DP
+                + DrawerSearchAction.GAP_DP) : 0;
+        int tabsLeft = profile.allAppsPadding.left + (rtl ? actionSpace : 0);
+        int tabsRight = profile.allAppsPadding.right + (rtl ? 0 : actionSpace);
         LayoutParams tabsLp = (LayoutParams) tabs.getLayoutParams();
         if (tabsLp.bottomMargin != navBottom
-                || tabsLp.leftMargin != profile.allAppsPadding.left
-                || tabsLp.rightMargin != profile.allAppsPadding.right) {
-            tabsLp.leftMargin = profile.allAppsPadding.left;
-            tabsLp.rightMargin = profile.allAppsPadding.right;
+                || tabsLp.leftMargin != tabsLeft || tabsLp.rightMargin != tabsRight) {
+            tabsLp.leftMargin = tabsLeft;
+            tabsLp.rightMargin = tabsRight;
             tabsLp.bottomMargin = navBottom;
             tabs.setLayoutParams(tabsLp);
+        }
+        LayoutParams actionLp = (LayoutParams) searchAction.getLayoutParams();
+        int actionEnd = rtl ? profile.allAppsPadding.left : profile.allAppsPadding.right;
+        if (actionLp.bottomMargin != navBottom || actionLp.getMarginEnd() != actionEnd) {
+            actionLp.setMarginEnd(actionEnd);
+            actionLp.bottomMargin = navBottom;
+            searchAction.setLayoutParams(actionLp);
         }
 
         LayoutParams searchLp = (LayoutParams) mSearchContainer.getLayoutParams();
@@ -1469,8 +1488,8 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         searchLp.height = integratedSearch ? tabs.getLayoutParams().height : categories ? dpToPx(56)
                 : getResources().getDimensionPixelSize(R.dimen.all_apps_search_bar_field_height);
         boolean controlMargins = bottomSearch || categories;
-        searchLp.leftMargin = controlMargins ? tabsLp.leftMargin : 0;
-        searchLp.rightMargin = controlMargins ? tabsLp.rightMargin : 0;
+        searchLp.leftMargin = controlMargins ? profile.allAppsPadding.left : 0;
+        searchLp.rightMargin = controlMargins ? profile.allAppsPadding.right : 0;
         if (mSearchContainer instanceof AppsSearchContainerLayout) {
             ((AppsSearchContainerLayout) mSearchContainer).setControlStyle(bottomSearch || categories);
             ((AppsSearchContainerLayout) mSearchContainer).setCategoryStyle(categories);

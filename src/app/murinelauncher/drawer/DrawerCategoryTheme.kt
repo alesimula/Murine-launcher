@@ -42,6 +42,38 @@ object DrawerCategoryTheme {
         }
     }
 
+    /**
+     * The detached search action is a high-emphasis rounded square in the same material: a frosted
+     * primary pane with the edge highlight, an opaque wallpaper-tinted primary, or flat neutral that
+     * inverts the Translucent controls. Context must be M3 themed.
+     */
+    @JvmStatic
+    fun searchAction(context: Context): MaterialShapeDrawable = MaterialShapeDrawable(
+        ShapeAppearanceModel.builder().setAllCornerSizes(SEARCH_ACTION_CORNER_DP *
+            context.resources.displayMetrics.density).build(),
+    ).apply {
+        val primary = MaterialColors.getColor(context, androidx.appcompat.R.attr.colorPrimary,
+            "DrawerCategoryTheme")
+        when (WorkspaceBlurUtils.getDrawerBlur()) {
+            DrawerBlurType.GLASS -> {
+                fillColor = ColorStateList.valueOf(ColorUtils.setAlphaComponent(primary, 0xD9))
+                setStroke(context.resources.displayMetrics.density,
+                    context.getColor(R.color.drawer_control_stroke_glass))
+            }
+            DrawerBlurType.MICA -> fillColor = ColorStateList.valueOf(primary)
+            DrawerBlurType.NONE -> fillColor =
+                ColorStateList.valueOf(context.getColor(R.color.drawer_search_action_color_none))
+        }
+    }
+
+    @JvmStatic
+    fun searchActionIcon(context: Context): Int = when (WorkspaceBlurUtils.getDrawerBlur()) {
+        DrawerBlurType.NONE -> context.getColor(R.color.drawer_search_action_icon_none)
+        else -> MaterialColors.getColor(context, MaterialR.attr.colorOnPrimary, "DrawerCategoryTheme")
+    }
+
+    const val SEARCH_ACTION_CORNER_DP = 20f
+
     fun wrap(context: Context): Context {
         val lightText = ColorUtils.calculateLuminance(
             context.getColor(R.color.all_apps_label_text_color),

@@ -46,30 +46,4 @@ class CategoryBarLayoutTest {
         assertEquals(0, empty.pageFor(-1))
         assertEquals(1, CategoryBarLayout.calculate(0, 48, 5).capacity)
     }
-
-    @Test fun centeredSearchUsesBothWingsForWholeCategoryTargetsOnPhoneAndTablet() {
-        for (width in listOf(192, 304, 344, 377, 418, 971, 1800)) {
-            val layout = CategoryBarLayout.centered(width, 48, 20)
-            assertEquals(width, layout.leftWidth + layout.searchWidth + layout.rightWidth)
-            assertTrue(kotlin.math.abs(layout.leftWidth + 24 - width / 2f) <= 0.5f)
-            assertTrue(kotlin.math.abs(layout.leftWidth - layout.rightWidth) <= 1)
-            assertTrue((0 until layout.capacity).all { layout.slotWidth(it) >= 48 })
-            assertEquals(layout.leftWidth, (0 until layout.leftCapacity).sumOf(layout::slotWidth))
-            if (layout.capacity > layout.leftCapacity) {
-                assertEquals(layout.rightWidth,
-                    (layout.leftCapacity until layout.capacity).sumOf(layout::slotWidth))
-            }
-        }
-    }
-
-    @Test fun centeredPagesPreserveTheSelectedCategoryAcrossWidthChanges() {
-        val narrow = CategoryBarLayout.centered(344, 48, 9)
-        val wide = CategoryBarLayout.centered(736, 48, 9)
-        assertEquals(6, narrow.capacity)
-        assertEquals(2, narrow.pageCount)
-        assertEquals(1, narrow.pageFor(8))
-        assertEquals(1, wide.pageCount)
-        assertEquals(0, wide.pageFor(8))
-        assertEquals(0, CategoryBarLayout.centered(344, 48, 0).pageCount)
-    }
 }

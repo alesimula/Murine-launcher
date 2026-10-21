@@ -36,7 +36,6 @@ class DrawerCategoryBar(
     private val title: (CategoryState.Category) -> String,
     private val onSelect: (String) -> Unit,
     private val onManage: () -> Unit,
-    onSearch: () -> Unit,
 ) : LinearLayout(context) {
     private var categories = emptyList<CategoryState.Category>()
     private var selected = ""
@@ -54,22 +53,6 @@ class DrawerCategoryBar(
     private val indicator = PageIndicator(context)
     private val snap = PagerSnapHelper()
     private val controls = FrameLayout(context)
-    private val searchButton = button(R.drawable.ic_allapps_search,
-        context.getString(R.string.all_apps_search_bar_hint)).apply {
-        id = R.id.drawer_category_search
-        isCheckable = false
-        visibility = View.GONE
-        setOnClickListener { onSearch() }
-        // An outlined ring reads as an action; a filled circle would mimic the selected category.
-        backgroundTintList = ColorStateList.valueOf(Color.TRANSPARENT)
-        strokeColor = ColorStateList.valueOf(color(MaterialR.attr.colorOutline))
-        strokeWidth = dp(1)
-        iconTint = ColorStateList.valueOf(color(MaterialR.attr.colorOnSurface))
-        // A larger glyph further sets the action apart from the 24 dp category icons.
-        iconSize = dp(28)
-        setPadding(dp(6), dp(6), dp(6), dp(6))
-    }
-    private var searchEnabled = false
     private var searchProgress = 0f
 
     init {
@@ -78,7 +61,6 @@ class DrawerCategoryBar(
         setPadding(dp(4), dp(4), dp(4), 0)
         background = DrawerCategoryTheme.surface(context)
         controls.addView(pager, FrameLayout.LayoutParams(-1, dp(48)))
-        controls.addView(searchButton, FrameLayout.LayoutParams(dp(48), dp(48), Gravity.CENTER))
         addView(controls, LayoutParams(-1, dp(48)))
         addView(indicator, LayoutParams(-1, dp(8)))
         snap.attachToRecyclerView(pager)
@@ -92,13 +74,6 @@ class DrawerCategoryBar(
                 }
             }
         })
-    }
-
-    fun setSearchEnabled(enabled: Boolean) {
-        if (searchEnabled == enabled) return
-        searchEnabled = enabled
-        searchButton.visibility = if (enabled) View.VISIBLE else View.GONE
-        pager.post { rebuild() }
     }
 
     /** Picks up a changed drawer type without rebuilding the category pages. */
@@ -130,8 +105,7 @@ class DrawerCategoryBar(
         if (pager.width <= 0) return
         val previousCount = sizing.pageCount
         pager.stopScroll()
-        sizing = if (searchEnabled) CategoryBarLayout.centered(pager.width, dp(48), categories.size)
-            else CategoryBarLayout.calculate(pager.width, dp(48), categories.size)
+        sizing = CategoryBarLayout.calculate(pager.width, dp(48), categories.size)
         val count = sizing.pageCount
         if (count > previousCount) pages.notifyItemRangeInserted(previousCount, count - previousCount)
         if (count < previousCount) pages.notifyItemRangeRemoved(count, previousCount - count)
@@ -161,19 +135,14 @@ class DrawerCategoryBar(
             holder.row.layoutParams = RecyclerView.LayoutParams(sizing.width, dp(48))
             holder.row.removeAllViews()
             repeat(sizing.capacity) { slot ->
-                if (searchEnabled && slot == sizing.leftCapacity) {
-                    holder.row.addView(View(context), LayoutParams(sizing.searchWidth, dp(48)))
-                }
                 val category = categories.getOrNull(position * sizing.capacity + slot)
-                if (category == null && !searchEnabled) return@repeat
+                    ?: return@repeat
                 val cell = FrameLayout(context)
-                category?.let {
-                    cell.addView(button(CategoryIcons.drawable(category.iconId), title(category),
-                        category.id == selected).apply {
-                        setOnClickListener { onSelect(category.id) }
-                        setOnLongClickListener { onManage(); true }
-                    }, FrameLayout.LayoutParams(dp(48), dp(48), Gravity.CENTER))
-                }
+                cell.addView(button(CategoryIcons.drawable(category.iconId), title(category),
+                    category.id == selected).apply {
+                    setOnClickListener { onSelect(category.id) }
+                    setOnLongClickListener { onManage(); true }
+                }, FrameLayout.LayoutParams(dp(48), dp(48), Gravity.CENTER))
                 holder.row.addView(cell, LayoutParams(sizing.slotWidth(slot), dp(48)))
             }
         }

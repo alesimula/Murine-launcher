@@ -24,11 +24,15 @@ import com.google.android.material.motion.MotionUtils
 import kotlin.math.abs
 import com.google.android.material.R as MaterialR
 
-/** Reveals the existing search field over the category bar, without moving its touch bounds. */
+/**
+ * Grows the existing search field out of the detached search action until it covers the category
+ * bar, without moving the field's touch bounds.
+ */
 class DrawerSearchMotion(
     context: Context,
     private val field: View,
     private val tabs: DrawerCategoryBar,
+    private val action: DrawerSearchAction,
     onClose: Runnable,
 ) {
     val closeButton = MaterialButton(ContextThemeWrapper(context,
@@ -53,15 +57,23 @@ class DrawerSearchMotion(
     private val easing = MotionUtils.resolveThemeInterpolator(context,
         MaterialR.attr.motionEasingEmphasizedInterpolator,
         AnimationUtils.loadInterpolator(context, MaterialR.interpolator.m3_sys_motion_easing_emphasized))
-    private val minimumWidth = 48 * context.resources.displayMetrics.density
+    private val density = context.resources.displayMetrics.density
+    private val actionSize = DrawerSearchAction.SIZE_DP * density
+    private val actionCorner = DrawerCategoryTheme.SEARCH_ACTION_CORNER_DP * density
     private var animator: ValueAnimator? = null
     private var progress = 0f
     private var expanded = false
     private var enabled = false
     private val revealOutline = object : ViewOutlineProvider() {
         override fun getOutline(view: View, outline: Outline) {
-            val inset = ((view.width - minimumWidth).coerceAtLeast(0f) * (1 - progress) / 2).toInt()
-            outline.setRoundRect(inset, 0, view.width - inset, view.height, view.height / 2f)
+            // Collapsed, the field matches the action's rounded square at the end of the row.
+            val inset = ((view.width - actionSize).coerceAtLeast(0f) * (1 - progress)).toInt()
+            val radius = actionCorner + (view.height / 2f - actionCorner) * progress
+            if (view.layoutDirection == View.LAYOUT_DIRECTION_RTL) {
+                outline.setRoundRect(0, 0, view.width - inset, view.height, radius)
+            } else {
+                outline.setRoundRect(inset, 0, view.width, view.height, radius)
+            }
         }
     }
 
@@ -126,6 +138,9 @@ class DrawerSearchMotion(
         field.visibility = if (!enabled || expanded || progress > 0f) View.VISIBLE else View.INVISIBLE
         field.invalidateOutline()
         tabs.setSearchProgress(if (enabled) progress else 0f)
+        // The field's own surface takes over quickly, so the two materials never stack for long.
+        action.alpha = if (enabled) (1 - progress / 0.3f).coerceIn(0f, 1f) else 1f
+        action.isEnabled = !enabled || progress == 0f
         closeButton.visibility = if (enabled && (expanded || progress > 0f)) View.VISIBLE else View.GONE
         closeButton.alpha = ((progress - 0.35f) / 0.65f).coerceIn(0f, 1f)
         closeButton.isEnabled = expanded && progress > 0.6f

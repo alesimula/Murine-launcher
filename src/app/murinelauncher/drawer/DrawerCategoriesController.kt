@@ -41,7 +41,10 @@ class DrawerCategoriesController(private val host: ActivityAllAppsContainerView<
     }
     val headingHeight: Int get() = maxOf(heading.minHeight, heading.measuredHeight)
     val tabs = DrawerCategoryBar(materialContext, repository::title, ::select,
-        { CategoryDialogs.manage(context, repository) }, host::openCategorySearch)
+        { CategoryDialogs.manage(context, repository) })
+    val searchAction = DrawerSearchAction(materialContext, host::openCategorySearch).apply {
+        visibility = View.GONE
+    }
     private val motion = DrawerCategoryMotion(materialContext) {
         listOfNotNull(host.activeRecyclerView, heading)
     }
@@ -60,6 +63,11 @@ class DrawerCategoriesController(private val host: ActivityAllAppsContainerView<
         host.addView(tabs, RelativeLayout.LayoutParams(-1, dp(60)).apply {
             addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
         })
+        host.addView(searchAction, RelativeLayout.LayoutParams(
+            dp(DrawerSearchAction.SIZE_DP), dp(DrawerSearchAction.SIZE_DP)).apply {
+            addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+            addRule(RelativeLayout.ALIGN_PARENT_END)
+        })
         host.addView(heading, RelativeLayout.LayoutParams(-1, -2))
         heading.addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
             if (bottom - top != oldBottom - oldTop) host.post { host.updateDrawerControlsLayout() }
@@ -73,6 +81,7 @@ class DrawerCategoriesController(private val host: ActivityAllAppsContainerView<
         enabled = prefs.get(LauncherPrefs.DRAWER_CATEGORIES)
         if (!enabled) {
             tabs.visibility = View.GONE
+            searchAction.visibility = View.GONE
             heading.visibility = View.GONE
             if (wasEnabled) host.applyCategoryFilter()
             host.updateDrawerControlsLayout()

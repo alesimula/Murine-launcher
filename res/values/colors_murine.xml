@@ -26,6 +26,9 @@
     <color name="drawer_control_color_glass">#B8FFFFFF</color>
     <color name="drawer_control_stroke_glass">#E6FFFFFF</color>
     <color name="drawer_control_color_none">#E6CACACA</color>
+    <!-- Detached search action. GLASS and MICA use the dynamic primary color. -->
+    <color name="drawer_search_action_color_none">#E6484848</color>
+    <color name="drawer_search_action_icon_none">#FFFFFFFF</color>
 
     <color name="drawer_scrim_color_glass">#4B4E4E4E</color>
     <color name="drawer_scrim_color_none">#4B8E8E8E</color>
