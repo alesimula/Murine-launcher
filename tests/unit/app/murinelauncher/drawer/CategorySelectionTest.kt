@@ -10,7 +10,9 @@ import org.junit.Assert.*
 import org.junit.Test
 
 class CategorySelectionTest {
-    private val categories = CategoryState().categories
+    private val categories = CategoryState().apply {
+        select(listOf("games", "messaging", "news", "productivity", "tools"))
+    }.shown
 
     @Test fun coldStartRetainsOtherUntilItsAppsArrive() {
         val loading = CategorySelection.resolve(categories, "other", emptySet(), appsLoaded = false)
@@ -20,44 +22,35 @@ class CategorySelectionTest {
         assertEquals("other", loaded.selected)
     }
 
-    @Test fun deletingSelectedCategoryShowsTheFallbackDestination() {
-        val remaining = categories.filter { it.id != "communication" }
-        val resolved = CategorySelection.resolve(remaining, "communication", setOf("tools", "other"))
+    @Test fun anUnpickedSelectedCategoryShowsOther() {
+        val resolved = CategorySelection.resolve(categories, "finance", setOf("tools", "other"))
         assertEquals("other", resolved.selected)
     }
 
-    @Test fun deletionBeforeTheAppModelLoadsStillShowsItsDestination() {
-        val remaining = categories.filter { it.id != "communication" }
-        val resolved = CategorySelection.resolve(remaining, "communication", emptySet(), appsLoaded = false)
+    @Test fun anUnpickedSelectionBeforeTheAppModelLoadsKeepsOther() {
+        val resolved = CategorySelection.resolve(categories, "finance", emptySet(), appsLoaded = false)
         assertEquals("other", resolved.selected)
         assertTrue(resolved.categories.isEmpty())
     }
 
-    @Test fun firstOpenChoosesANonEmptyCategoryAndHidesAnEmptyFallback() {
-        val resolved = CategorySelection.resolve(categories, "", setOf("communication"))
-        assertEquals("communication", resolved.selected)
+    @Test fun firstOpenChoosesTheFirstTabAndHidesAnEmptyOther() {
+        val resolved = CategorySelection.resolve(categories, "", setOf("messaging"))
+        assertEquals("games", resolved.selected)
         assertFalse(resolved.categories.any { it.id == "other" })
     }
 
-    @Test fun allEmptyCategoriesAreHiddenInStoredOrder() {
+    @Test fun pickedCategoriesShowEvenWhenEmpty() {
         val resolved = CategorySelection.resolve(categories, "news", setOf("tools", "games"))
-        assertEquals(listOf("games", "tools"), resolved.categories.map { it.id })
-        assertEquals("games", resolved.selected)
+        assertEquals(listOf("games", "messaging", "productivity", "news", "tools"),
+            resolved.categories.map { it.id })
+        assertEquals("news", resolved.selected)
     }
 
-    @Test fun noVisibleAppsLeavesNoCategoryTabsOrSelection() {
-        val resolved = CategorySelection.resolve(categories, "tools", emptySet())
-        assertTrue(resolved.categories.isEmpty())
-        assertEquals("", resolved.selected)
-    }
-
-    @Test fun anEmptyCustomCategoryReappearsWhenAnAppIsAssigned() {
-        val custom = categories + CategoryState.Category("custom", "Custom")
-        assertFalse(CategorySelection.resolve(custom, "games", setOf("games"))
-            .categories.any { it.id == "custom" })
-        assertEquals(listOf("games", "custom"),
-            CategorySelection.resolve(custom, "custom", setOf("games", "custom"))
-                .categories.map { it.id })
+    @Test fun otherShowsLastOnceItHoldsApps() {
+        val resolved = CategorySelection.resolve(categories, "other", setOf("other"))
+        assertEquals("other", resolved.categories.last().id)
+        assertEquals(6, resolved.categories.size)
+        assertEquals("other", resolved.selected)
     }
 
     @Test fun aSavedCategorySurvivesWhileTheModelIsLoading() {

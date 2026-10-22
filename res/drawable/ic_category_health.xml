@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 r4l.launcher contributors. Licensed under Apache-2.0. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp"
+    android:viewportWidth="24" android:viewportHeight="24">
+    <path android:fillColor="@android:color/transparent" android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="1.7" android:strokeLineCap="round" android:strokeLineJoin="round"
+        android:pathData="M12,20.5 C5,15.5 2,12 2,8.5 A5,5 0,0 1,12 6.5 A5,5 0,0 1,22 8.5 C22,12 19,15.5 12,20.5 Z M6,12 L9,12 L10.5,9.5 L13,14.5 L14.5,12 L18,12" />
+</vector>

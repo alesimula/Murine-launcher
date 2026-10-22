@@ -3,6 +3,7 @@ package app.murinelauncher.settings
 
 import android.util.Log
 import app.murinelauncher.drawer.CategoryDialogs
+import app.murinelauncher.drawer.CategoryPicker
 import app.murinelauncher.drawer.CategoryRepository
 import androidx.preference.Preference
 import androidx.preference.SwitchPreferenceCompat
@@ -46,6 +47,19 @@ public final class SettingsDrawerFragment: AbstractSettingsFragment() {
 
     override fun initPreference(preference: Preference, info: DisplayController.Info): Boolean {
         when (preference.key) {
+            "pref_drawer_categories" -> {
+                preference as SwitchPreferenceCompat
+                // Categories only turn on once the user saves a pick; cancelling leaves them off.
+                preference.setOnPreferenceChangeListener { _, newValue ->
+                    if (newValue != true) return@setOnPreferenceChangeListener true
+                    CategoryPicker.show(requireContext(), CategoryRepository(requireContext())) {
+                        LauncherPrefs.get(preference.context).put(LauncherPrefs.DRAWER_CATEGORIES, true)
+                        preference.isChecked = true
+                    }
+                    false
+                }
+                return true
+            }
             "pref_drawer_manage_categories" -> {
                 preference.setOnPreferenceClickListener {
                     CategoryDialogs.manage(requireContext(), CategoryRepository(requireContext()))

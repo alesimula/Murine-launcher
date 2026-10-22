@@ -6,7 +6,10 @@
  */
 package app.murinelauncher.drawer
 
-/** Resolve tab visibility without treating a still-empty app model as a deleted selection. */
+/**
+ * Resolves which of the shown categories get a tab. Picked categories always do, so an empty
+ * one is still a drop target; Other only does while it holds apps.
+ */
 data class CategorySelection(val categories: List<CategoryState.Category>, val selected: String) {
     companion object {
         fun resolve(
@@ -21,7 +24,7 @@ data class CategorySelection(val categories: List<CategoryState.Category>, val s
             } else saved
             // Loading has no visible tabs yet, but must not discard the saved selection.
             if (!appsLoaded) return CategorySelection(emptyList(), requested)
-            val visible = categories.filter { it.id in nonEmptyIds }
+            val visible = categories.filter { it.id != CategoryState.OTHER || it.id in nonEmptyIds }
             val selected = requested.takeIf { id -> visible.any { it.id == id } }
                 ?: visible.firstOrNull()?.id.orEmpty()
             return CategorySelection(visible, selected)

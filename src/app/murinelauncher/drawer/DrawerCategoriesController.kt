@@ -6,6 +6,7 @@
  */
 package app.murinelauncher.drawer
 
+import android.content.ContextWrapper
 import android.graphics.Rect
 import android.graphics.Typeface
 import android.os.Parcelable
@@ -15,11 +16,14 @@ import android.view.Gravity
 import android.view.View
 import android.widget.RelativeLayout
 import androidx.core.view.ViewCompat
+import com.android.launcher3.Launcher
 import com.android.launcher3.LauncherPrefs
+import com.android.launcher3.LauncherState
 import com.android.launcher3.R
 import com.android.launcher3.allapps.ActivityAllAppsContainerView
 import com.android.launcher3.model.data.AppInfo
 import com.android.launcher3.model.data.ItemInfo
+import com.android.launcher3.statemanager.StateManager
 import com.google.android.material.textview.MaterialTextView
 import com.google.android.material.R as MaterialR
 import java.util.IdentityHashMap
@@ -67,8 +71,14 @@ class DrawerCategoriesController(private val host: ActivityAllAppsContainerView<
     // While dragging: the order shown and the dragged app, which may come from another category.
     private var previewKeys: List<String>? = null
     private var previewKey: String? = null
+    private var upgradePrompted = false
 
     init {
+        launcher()?.stateManager?.addStateListener(object : StateManager.StateListener<LauncherState> {
+            override fun onStateTransitionComplete(finalState: LauncherState) {
+                if (finalState == LauncherState.ALL_APPS) promptUpgrade()
+            }
+        })
         host.addView(tabs, RelativeLayout.LayoutParams(-1, dp(60)).apply {
             addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
         })
@@ -97,7 +107,14 @@ class DrawerCategoriesController(private val host: ActivityAllAppsContainerView<
             return
         }
         val apps = host.categoryApps
-        val selection = CategorySelection.resolve(repository.state().categories, selected,
+        val state = repository.state()
+        if (host.appsStore.isLoaded && !state.confirmed && state.selected.size != CategoryState.PICK_COUNT) {
+            // Upgraded or restored state: start from the categories holding the most apps.
+            val primaries = apps.map(repository::pickerApp)
+                .map { state.primaryFor(it.key, it.packageName, it.androidCategory) }
+            repository.edit { it.preselect(primaries) }
+        }
+        val selection = CategorySelection.resolve(repository.state().shown, selected,
             apps.map(repository::categoryFor).toSet(), host.appsStore.isLoaded)
         visible = selection.categories
         selected = selection.selected
@@ -266,6 +283,23 @@ class DrawerCategoriesController(private val host: ActivityAllAppsContainerView<
     fun cancelMotion(finishSelection: Boolean = false) {
         gesture.cancel()
         if (finishSelection) motion.finish() else motion.cancel()
+    }
+
+    /** Offers the picker once to users whose categories predate it, when the drawer opens. */
+    private fun promptUpgrade() {
+        if (!enabled || upgradePrompted || !host.appsStore.isLoaded || repository.state().confirmed) return
+        upgradePrompted = true
+        CategoryPicker.show(context, repository, host.categoryApps.map(repository::pickerApp),
+            upgrade = true)
+    }
+
+    private fun launcher(): Launcher? {
+        var current = context
+        while (current is ContextWrapper) {
+            if (current is Launcher) return current
+            current = current.baseContext
+        }
+        return null
     }
 
     private fun dp(value: Int): Int = (value * context.resources.displayMetrics.density).toInt()

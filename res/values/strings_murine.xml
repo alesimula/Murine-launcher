@@ -184,7 +184,11 @@
     <string name="pref_drawer_bottom_search_title" tools:ignore="MissingTranslation">Bottom drawer search</string>
     <string name="pref_drawer_bottom_search_summary" tools:ignore="MissingTranslation">Keep app search within reach, above the keyboard while typing</string>
     <string name="drawer_manage_categories" tools:ignore="MissingTranslation">Manage categories</string>
-    <string name="drawer_category_create" tools:ignore="MissingTranslation">Create category</string>
+    <string name="drawer_category_choose" tools:ignore="MissingTranslation">Choose categories</string>
+    <string name="drawer_category_choose_message" tools:ignore="MissingTranslation">Pick %1$d. Apps that fit none of them go to Other.</string>
+    <string name="drawer_category_choose_count" tools:ignore="MissingTranslation">%1$d of %2$d selected</string>
+    <string name="drawer_category_save" tools:ignore="MissingTranslation">Save</string>
+    <string name="drawer_category_chip" tools:ignore="MissingTranslation">%1$s · %2$d</string>
     <string name="drawer_category_name" tools:ignore="MissingTranslation">Category name</string>
     <string name="drawer_category_name_error" tools:ignore="MissingTranslation">Enter a unique, non-empty name</string>
     <string name="drawer_category_page" tools:ignore="MissingTranslation">Category page %1$d of %2$d</string>
@@ -197,20 +201,25 @@
     <string name="drawer_category_move_later" tools:ignore="MissingTranslation">Move later</string>
     <string name="drawer_category_sort_alphabetically" tools:ignore="MissingTranslation">Sort A–Z</string>
     <string name="drawer_category_sort_message" tools:ignore="MissingTranslation">Apps in this category will return to alphabetical order.</string>
-    <string name="drawer_category_delete" tools:ignore="MissingTranslation">Delete category</string>
-    <string name="drawer_category_delete_message" tools:ignore="MissingTranslation">Apps in this category will move to the fallback category. No apps will be uninstalled.</string>
     <string name="drawer_category_move" tools:ignore="MissingTranslation">Move to category</string>
     <string name="drawer_category_move_app" tools:ignore="MissingTranslation">Move %1$s to category</string>
     <string name="drawer_category_automatic" tools:ignore="MissingTranslation">Use automatic category</string>
     <string name="drawer_drag_home" tools:ignore="MissingTranslation">Home screen</string>
     <string name="drawer_category_moved" tools:ignore="MissingTranslation">Moved %1$s to %2$s</string>
     <string name="drawer_category_games" tools:ignore="MissingTranslation">Games</string>
-    <string name="drawer_category_communication" tools:ignore="MissingTranslation">Communication</string>
-    <string name="drawer_category_media" tools:ignore="MissingTranslation">Media</string>
+    <string name="drawer_category_social" tools:ignore="MissingTranslation">Social</string>
+    <string name="drawer_category_messaging" tools:ignore="MissingTranslation">Messaging</string>
+    <string name="drawer_category_music" tools:ignore="MissingTranslation">Music &amp; audio</string>
+    <string name="drawer_category_video" tools:ignore="MissingTranslation">Video</string>
+    <string name="drawer_category_photos" tools:ignore="MissingTranslation">Photos &amp; camera</string>
     <string name="drawer_category_productivity" tools:ignore="MissingTranslation">Productivity</string>
-    <string name="drawer_category_news" tools:ignore="MissingTranslation">News</string>
-    <string name="drawer_category_maps" tools:ignore="MissingTranslation">Maps</string>
-    <string name="drawer_category_tools" tools:ignore="MissingTranslation">Tools</string>
+    <string name="drawer_category_news" tools:ignore="MissingTranslation">News &amp; reading</string>
+    <string name="drawer_category_maps" tools:ignore="MissingTranslation">Maps &amp; travel</string>
+    <string name="drawer_category_shopping" tools:ignore="MissingTranslation">Shopping</string>
+    <string name="drawer_category_finance" tools:ignore="MissingTranslation">Finance</string>
+    <string name="drawer_category_health" tools:ignore="MissingTranslation">Health &amp; fitness</string>
+    <string name="drawer_category_internet" tools:ignore="MissingTranslation">Internet</string>
+    <string name="drawer_category_tools" tools:ignore="MissingTranslation">Tools &amp; system</string>
     <string name="drawer_category_other" tools:ignore="MissingTranslation">Other</string>
 
     <!-- Misc -->
