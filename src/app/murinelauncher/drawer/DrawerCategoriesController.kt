@@ -22,6 +22,8 @@ import com.android.launcher3.model.data.AppInfo
 import com.android.launcher3.model.data.ItemInfo
 import com.google.android.material.textview.MaterialTextView
 import com.google.android.material.R as MaterialR
+import java.util.IdentityHashMap
+import java.util.function.ToIntFunction
 
 /** Category UI filters existing profile lists; it never merges or replaces Android profiles. */
 class DrawerCategoriesController(private val host: ActivityAllAppsContainerView<*>) {
@@ -45,7 +47,7 @@ class DrawerCategoriesController(private val host: ActivityAllAppsContainerView<
     val searchAction = DrawerSearchAction(materialContext, host::openCategorySearch).apply {
         visibility = View.GONE
     }
-    val drag = DrawerCategoryDrag(host, materialContext, tabs, searchAction, repository)
+    val drag = DrawerCategoryDrag(host, materialContext, tabs, searchAction, repository, this)
     private val motion = DrawerCategoryMotion(materialContext) {
         listOfNotNull(host.activeRecyclerView, heading)
     }
@@ -59,6 +61,12 @@ class DrawerCategoriesController(private val host: ActivityAllAppsContainerView<
     val hasVisibleCategories: Boolean get() = visible.isNotEmpty()
     private var lastProfile = -1
     private var enabled = false
+    /** Sort positions for the selected category; null keeps the original A–Z order. */
+    var order: ToIntFunction<AppInfo>? = null
+        private set
+    // While dragging: the order shown and the dragged app, which may come from another category.
+    private var previewKeys: List<String>? = null
+    private var previewKey: String? = null
 
     init {
         host.addView(tabs, RelativeLayout.LayoutParams(-1, dp(60)).apply {
@@ -101,6 +109,7 @@ class DrawerCategoriesController(private val host: ActivityAllAppsContainerView<
             lastProfile = host.categoryProfile
             scrollStates.clear()
         }
+        updateOrder()
         heading.text = visible.firstOrNull { it.id == selected }?.let(repository::title).orEmpty()
         tabs.update(visible, selected)
         host.applyCategoryFilter()
@@ -116,7 +125,65 @@ class DrawerCategoriesController(private val host: ActivityAllAppsContainerView<
     }
 
     fun matches(item: ItemInfo): Boolean = !enabled || item !is AppInfo ||
-        repository.categoryFor(item) == selected
+        repository.categoryFor(item) == selected ||
+        (previewKey != null && repository.key(item) == previewKey)
+
+    val selectedCategory: String get() = selected
+
+    private fun updateOrder() {
+        val keys = previewKeys ?: repository.state().order(selected).ifEmpty { null }
+        order = keys?.let {
+            val positions = CategoryOrder.positions(it)
+            val memo = IdentityHashMap<AppInfo, Int>()
+            ToIntFunction { app ->
+                memo.getOrPut(app) { positions[repository.key(app)] ?: Int.MAX_VALUE }
+            }
+        }
+    }
+
+    /** Keys of the selected category's apps as currently shown, preview included. */
+    fun shownKeys(): List<String> = host.categoryShownApps.map(repository::key)
+
+    /** Shows [keys] as the selected category's order while [draggedKey] is being dragged. */
+    fun previewOrder(keys: List<String>, draggedKey: String) {
+        if (keys == previewKeys && draggedKey == previewKey) return
+        previewKeys = keys
+        previewKey = draggedKey
+        updateOrder()
+        host.applyCategoryFilter()
+        // An app from another category can add a row; bottom-aligned grids re-pad for it.
+        host.updateDrawerControlsLayout()
+    }
+
+    fun clearPreview() {
+        if (previewKeys == null && previewKey == null) return
+        previewKeys = null
+        previewKey = null
+        refresh()
+    }
+
+    /** Saves [keys], the order shown for the current profile, as the selected category's order. */
+    fun saveOrder(state: CategoryState, keys: List<String>) {
+        val installed = host.appsStore.apps.mapTo(HashSet(), repository::key)
+        state.setOrder(selected, CategoryOrder.merge(keys, state.order(selected), installed))
+    }
+
+    /** Accessibility alternative to dragging: shifts [app] one place within its category. */
+    fun canMoveApp(app: AppInfo, delta: Int): Boolean {
+        if (!enabled || host.isSearching || repository.categoryFor(app) != selected) return false
+        val keys = shownKeys()
+        val index = keys.indexOf(repository.key(app))
+        return index >= 0 && index + delta in keys.indices
+    }
+
+    fun moveApp(app: AppInfo, delta: Int): Boolean {
+        if (!canMoveApp(app, delta)) return false
+        val keys = shownKeys()
+        val key = repository.key(app)
+        val moved = CategoryOrder.move(keys, key, keys.indexOf(key) + delta)
+        repository.edit { saveOrder(it, moved) }
+        return true
+    }
 
     private fun select(id: String) {
         motion.finishAnimation()

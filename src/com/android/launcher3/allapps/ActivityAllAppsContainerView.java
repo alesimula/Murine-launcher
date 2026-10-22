@@ -67,8 +67,10 @@ import androidx.annotation.Px;
 import androidx.annotation.VisibleForTesting;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.graphics.ColorUtils;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.launcher3.BubbleTextView;
 import com.android.launcher3.BuildConfig;
 import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.DeviceProfile.OnDeviceProfileChangeListener;
@@ -110,6 +112,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.function.ToIntFunction;
 import java.util.stream.Stream;
 
 import app.murinelauncher.graphics.WorkspaceBlurUtils;
@@ -1346,10 +1349,59 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
     /** Category filtering composes with, rather than replaces, the profile predicates. */
     public void applyCategoryFilter() {
         if (mCategoryController == null) return;
+        ToIntFunction<AppInfo> order = mCategoryController.getOrder();
         mAH.get(MAIN).mAppsList.updateItemFilter(
-                mPersonalMatcher.and(mCategoryController::matches));
+                mPersonalMatcher.and(mCategoryController::matches), order);
         mAH.get(WORK).mAppsList.updateItemFilter(
-                mWorkManager.getItemInfoMatcher().and(mCategoryController::matches));
+                mWorkManager.getItemInfoMatcher().and(mCategoryController::matches), order);
+    }
+
+    /** Whether {@code host}, an icon in the category grid, can shift one place in its category. */
+    public boolean canMoveCategoryApp(View host, AppInfo app, int delta) {
+        return mCategoryController != null && host.getParent() != null
+                && host.getParent() == getCategoryRecyclerView()
+                && mCategoryController.canMoveApp(app, delta);
+    }
+
+    public boolean moveCategoryApp(View host, AppInfo app, int delta) {
+        return canMoveCategoryApp(host, app, delta) && mCategoryController.moveApp(app, delta);
+    }
+
+    /** Apps of the selected category in display order, for the current profile. */
+    public List<AppInfo> getCategoryShownApps() {
+        return mAH.get(getCategoryProfile()).mAppsList.getShownApps();
+    }
+
+    /** The category grid for the current profile, or null while search results are shown. */
+    @Nullable
+    public AllAppsRecyclerView getCategoryRecyclerView() {
+        return isSearching() ? null : mAH.get(getCategoryProfile()).mRecyclerView;
+    }
+
+    /**
+     * While an app is dragged within the categorized drawer, its icon stays invisible wherever
+     * it is bound and other icons animate as the preview order changes.
+     */
+    public void setCategoryDragIcon(@Nullable Predicate<ItemInfo> dragged) {
+        for (int i = 0; i < mAH.size(); i++) {
+            AdapterHolder holder = mAH.get(i);
+            if (holder == null) continue;
+            if (holder.mAdapter != null) holder.mAdapter.setHiddenIcon(dragged);
+            if (holder.mRecyclerView == null || holder.isSearch()) continue;
+            if (dragged != null) {
+                DefaultItemAnimator animator = new DefaultItemAnimator();
+                animator.setSupportsChangeAnimations(false);
+                holder.mRecyclerView.setItemAnimator(animator);
+            } else {
+                holder.mRecyclerView.setItemAnimator(null);
+            }
+            for (int c = 0; c < holder.mRecyclerView.getChildCount(); c++) {
+                View child = holder.mRecyclerView.getChildAt(c);
+                if (child instanceof BubbleTextView && child.getTag() instanceof ItemInfo info) {
+                    child.setVisibility(dragged != null && dragged.test(info) ? INVISIBLE : VISIBLE);
+                }
+            }
+        }
     }
 
     /** Profile selection independent of search results being the active recycler view. */

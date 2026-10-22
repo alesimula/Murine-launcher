@@ -193,6 +193,8 @@
     <string name="drawer_category_rename" tools:ignore="MissingTranslation">Rename</string>
     <string name="drawer_category_move_earlier" tools:ignore="MissingTranslation">Move earlier</string>
     <string name="drawer_category_move_later" tools:ignore="MissingTranslation">Move later</string>
+    <string name="drawer_category_sort_alphabetically" tools:ignore="MissingTranslation">Sort A–Z</string>
+    <string name="drawer_category_sort_message" tools:ignore="MissingTranslation">Apps in this category will return to alphabetical order.</string>
     <string name="drawer_category_delete" tools:ignore="MissingTranslation">Delete category</string>
     <string name="drawer_category_delete_message" tools:ignore="MissingTranslation">Apps in this category will move to the fallback category. No apps will be uninstalled.</string>
     <string name="drawer_category_move" tools:ignore="MissingTranslation">Move to category</string>

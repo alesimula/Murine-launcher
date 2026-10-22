@@ -14,7 +14,16 @@ import java.util.UUID
 class CategoryState(
     val categories: MutableList<Category> = DEFAULT_IDS.map { Category(it) }.toMutableList(),
     val assignments: MutableMap<String, String> = linkedMapOf(),
+    /** Custom app order per category id, as app keys; apps missing from it sort A–Z after it. */
+    val orders: MutableMap<String, MutableList<String>> = linkedMapOf(),
 ) {
+    /** Assignment and orders captured before a move, so Undo restores both exactly. */
+    class Snapshot internal constructor(
+        val appKey: String,
+        val assignment: String?,
+        val orders: Map<String, List<String>>,
+    )
+
     data class Category(val id: String, val name: String = "", val icon: String = "") {
         val iconId: String get() = icon.ifEmpty { id.takeIf { it in ICON_IDS } ?: "folder" }
     }
@@ -24,9 +33,12 @@ class CategoryState(
         return candidate.takeIf { id -> categories.any { it.id == id } } ?: OTHER
     }
 
+    /** A moved app leaves its other categories' orders and joins the destination's A–Z tail. */
     fun assign(appKey: String, categoryId: String) {
         require(categories.any { it.id == categoryId })
-        assignments[appKey] = categoryId
+        if (assignments.put(appKey, categoryId) == categoryId) return
+        orders.values.forEach { it.remove(appKey) }
+        orders.values.removeAll { it.isEmpty() }
     }
 
     /** Restores an assignment captured before a move; null means the automatic category. */
@@ -35,6 +47,30 @@ class CategoryState(
             assignments[appKey] = previous
         } else {
             assignments.remove(appKey)
+        }
+    }
+
+    fun order(categoryId: String): List<String> = orders[categoryId].orEmpty()
+
+    fun hasOrder(categoryId: String): Boolean = orders[categoryId]?.isNotEmpty() == true
+
+    fun setOrder(categoryId: String, appKeys: List<String>) {
+        require(categories.any { it.id == categoryId })
+        if (appKeys.isEmpty()) orders.remove(categoryId) else orders[categoryId] = appKeys.toMutableList()
+    }
+
+    fun clearOrder(categoryId: String) {
+        orders.remove(categoryId)
+    }
+
+    fun capture(appKey: String) = Snapshot(appKey, assignments[appKey],
+        orders.mapValues { it.value.toList() })
+
+    fun restore(snapshot: Snapshot) {
+        restoreAssignment(snapshot.appKey, snapshot.assignment)
+        orders.clear()
+        snapshot.orders.forEach { (id, keys) ->
+            if (categories.any { it.id == id }) orders[id] = keys.toMutableList()
         }
     }
 
@@ -69,6 +105,7 @@ class CategoryState(
     fun delete(id: String) {
         require(id != OTHER) // The fallback must always exist, even when its tab is hidden.
         categories.removeAll { it.id == id }
+        orders.remove(id)
         assignments.replaceAll { _, category -> if (category == id) OTHER else category }
     }
 
@@ -78,6 +115,7 @@ class CategoryState(
             categories.forEach { put(JSONObject().put("id", it.id).put("name", it.name).put("icon", it.icon)) }
         })
         put("assignments", JSONObject(assignments as Map<*, *>))
+        put("orders", JSONObject().apply { orders.forEach { (id, keys) -> put(id, JSONArray(keys)) } })
     }.toString()
 
     companion object {
@@ -108,7 +146,17 @@ class CategoryState(
                 val id = jsonAssignments.getString(key)
                 assignments[key] = id.takeIf { value -> categories.any { it.id == value } } ?: OTHER
             }
-            return CategoryState(categories, assignments)
+            // Older backups have no orders; unknown categories' orders are dropped.
+            val orders = linkedMapOf<String, MutableList<String>>()
+            root.optJSONObject("orders")?.let { jsonOrders ->
+                jsonOrders.keys().forEach { id ->
+                    if (categories.none { it.id == id }) return@forEach
+                    val array = jsonOrders.getJSONArray(id)
+                    val keys = (0 until array.length()).map(array::getString).distinct()
+                    if (keys.isNotEmpty()) orders[id] = keys.toMutableList()
+                }
+            }
+            return CategoryState(categories, assignments, orders)
         }
     }
 }

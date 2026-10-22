@@ -43,7 +43,11 @@ import com.android.launcher3.BubbleTextView;
 import com.android.launcher3.R;
 import com.android.launcher3.allapps.search.SearchAdapterProvider;
 import com.android.launcher3.model.data.AppInfo;
+import com.android.launcher3.model.data.ItemInfo;
 import com.android.launcher3.views.ActivityContext;
+
+import java.util.Objects;
+import java.util.function.Predicate;
 
 /**
  * Adapter for all the apps.
@@ -137,7 +141,12 @@ public abstract class BaseAllAppsAdapter<T extends Context & ActivityContext> ex
          * Returns true if the items represent the same object
          */
         public boolean isSameAs(AdapterItem other) {
-            return (other.viewType == viewType) && (other.getClass() == getClass());
+            if (other.viewType != viewType || other.getClass() != getClass()) return false;
+            // Identify apps so a reordered drawer animates moves instead of rebinding in place.
+            if (itemInfo instanceof AppInfo app && other.itemInfo instanceof AppInfo otherApp) {
+                return Objects.equals(app.getComponentKey(), otherApp.getComponentKey());
+            }
+            return true;
         }
 
         /**
@@ -170,6 +179,8 @@ public abstract class BaseAllAppsAdapter<T extends Context & ActivityContext> ex
     protected final LayoutInflater mLayoutInflater;
     protected final OnClickListener mOnIconClickListener;
     protected final OnLongClickListener mOnIconLongClickListener;
+    // The app being dragged within the categorized drawer leaves a gap wherever it is bound.
+    @Nullable private Predicate<ItemInfo> mHiddenIcon;
     protected OnFocusChangeListener mIconFocusListener;
 
     public BaseAllAppsAdapter(T activityContext, LayoutInflater inflater,
@@ -254,6 +265,11 @@ public abstract class BaseAllAppsAdapter<T extends Context & ActivityContext> ex
         }
     }
 
+    /** Leaves matching icons invisible when bound; null shows every icon. */
+    public void setHiddenIcon(@Nullable Predicate<ItemInfo> hiddenIcon) {
+        mHiddenIcon = hiddenIcon;
+    }
+
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.itemView.setVisibility(View.VISIBLE);
@@ -263,6 +279,9 @@ public abstract class BaseAllAppsAdapter<T extends Context & ActivityContext> ex
                 BubbleTextView icon = (BubbleTextView) holder.itemView;
                 icon.reset();
                 icon.applyFromApplicationInfo(adapterItem.itemInfo);
+                if (mHiddenIcon != null && mHiddenIcon.test(adapterItem.itemInfo)) {
+                    icon.setVisibility(View.INVISIBLE);
+                }
                 icon.setOnFocusChangeListener(mIconFocusListener);
                 PrivateProfileManager privateProfileManager = mApps.getPrivateProfileManager();
                 if (privateProfileManager != null) {

@@ -60,6 +60,7 @@ object CategoryDialogs {
             R.string.drawer_category_move_earlier,
             R.string.drawer_category_move_later,
         )
+        if (repository.state().hasOrder(id)) actions.add(R.string.drawer_category_sort_alphabetically)
         if (id != CategoryState.OTHER) actions.add(R.string.drawer_category_delete)
         MaterialAlertDialogBuilder(DrawerCategoryTheme.wrap(context))
             .setTitle(repository.title(category))
@@ -69,6 +70,15 @@ object CategoryDialogs {
                     R.string.drawer_category_icon -> icon(context, repository, id)
                     R.string.drawer_category_move_earlier -> repository.edit { it.move(id, -1) }
                     R.string.drawer_category_move_later -> repository.edit { it.move(id, 1) }
+                    R.string.drawer_category_sort_alphabetically -> MaterialAlertDialogBuilder(
+                        DrawerCategoryTheme.wrap(context))
+                        .setTitle(R.string.drawer_category_sort_alphabetically)
+                        .setMessage(R.string.drawer_category_sort_message)
+                        .setPositiveButton(android.R.string.ok) { _, _ ->
+                            repository.edit { it.clearOrder(id) }
+                        }
+                        .setNegativeButton(android.R.string.cancel, null)
+                        .show()
                     R.string.drawer_category_delete -> MaterialAlertDialogBuilder(DrawerCategoryTheme.wrap(context))
                         .setTitle(R.string.drawer_category_delete)
                         .setMessage(R.string.drawer_category_delete_message)

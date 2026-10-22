@@ -84,6 +84,8 @@ public class LauncherAccessibilityDelegate extends BaseAccessibilityDelegate<Lau
     protected static final int RESIZE = R.id.action_resize;
     public static final int DEEP_SHORTCUTS = R.id.action_deep_shortcuts;
     public static final int CLOSE = R.id.action_close;
+    protected static final int CATEGORY_MOVE_EARLIER = R.id.action_category_move_earlier;
+    protected static final int CATEGORY_MOVE_LATER = R.id.action_category_move_later;
 
     public LauncherAccessibilityDelegate(Launcher launcher) {
         super(launcher);
@@ -108,6 +110,10 @@ public class LauncherAccessibilityDelegate extends BaseAccessibilityDelegate<Lau
                 R.string.action_deep_shortcut, KeyEvent.KEYCODE_S));
         mActions.put(CLOSE, new LauncherAction(CLOSE,
                 R.string.action_close, KeyEvent.KEYCODE_X));
+        mActions.put(CATEGORY_MOVE_EARLIER, new LauncherAction(CATEGORY_MOVE_EARLIER,
+                R.string.drawer_category_move_earlier, KeyEvent.KEYCODE_LEFT_BRACKET));
+        mActions.put(CATEGORY_MOVE_LATER, new LauncherAction(CATEGORY_MOVE_LATER,
+                R.string.drawer_category_move_later, KeyEvent.KEYCODE_RIGHT_BRACKET));
     }
 
     private static boolean isNotInShortcutMenu(@Nullable View view) {
@@ -148,6 +154,16 @@ public class LauncherAccessibilityDelegate extends BaseAccessibilityDelegate<Lau
 
         if (editAllowed && supportAddToWorkSpace(item)) {
             out.add(mActions.get(ADD_TO_WORKSPACE));
+        }
+
+        // Ordering apps within a drawer category without dragging.
+        if (item instanceof AppInfo app) {
+            if (mContext.getAppsView().canMoveCategoryApp(host, app, -1)) {
+                out.add(mActions.get(CATEGORY_MOVE_EARLIER));
+            }
+            if (mContext.getAppsView().canMoveCategoryApp(host, app, 1)) {
+                out.add(mActions.get(CATEGORY_MOVE_LATER));
+            }
         }
     }
 
@@ -223,6 +239,10 @@ public class LauncherAccessibilityDelegate extends BaseAccessibilityDelegate<Lau
                     : (host instanceof BubbleTextHolder
                             ? ((BubbleTextHolder) host).getBubbleText() : null);
             return btv != null && PopupContainerWithArrow.showForIcon(btv) != null;
+        } else if ((action == CATEGORY_MOVE_EARLIER || action == CATEGORY_MOVE_LATER)
+                && item instanceof AppInfo app) {
+            return mContext.getAppsView().moveCategoryApp(host, app,
+                    action == CATEGORY_MOVE_EARLIER ? -1 : 1);
         } else if (action == CLOSE) {
             if (host instanceof AppWidgetResizeFrame) {
                 AbstractFloatingView.closeOpenViews(mContext, /* animate= */ false,

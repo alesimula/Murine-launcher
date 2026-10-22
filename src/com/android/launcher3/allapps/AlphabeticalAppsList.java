@@ -50,6 +50,8 @@ import com.android.launcher3.views.ActivityContext;
 import java.io.PrintWriter;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -57,6 +59,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Predicate;
+import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -122,6 +125,8 @@ public class AlphabeticalAppsList<T extends Context & ActivityContext> implement
     private int mNumAppsPerRowAllApps;
     private int mNumAppRowsInAdapter;
     private Predicate<ItemInfo> mItemFilter;
+    // Custom positions from drawer categories; apps without one sort by name after them.
+    @Nullable private ToIntFunction<AppInfo> mItemOrder;
 
     public AlphabeticalAppsList(Context context, @Nullable AllAppsStore<T> appsStore,
             WorkProfileManager workProfileManager, PrivateProfileManager privateProfileManager) {
@@ -153,6 +158,18 @@ public class AlphabeticalAppsList<T extends Context & ActivityContext> implement
     public void updateItemFilter(Predicate<ItemInfo> itemFilter) {
         this.mItemFilter = itemFilter;
         onAppsUpdated();
+    }
+
+    /** Filters and orders together, so the list is rebuilt once. Null order keeps A–Z. */
+    public void updateItemFilter(Predicate<ItemInfo> itemFilter,
+            @Nullable ToIntFunction<AppInfo> itemOrder) {
+        mItemOrder = itemOrder;
+        updateItemFilter(itemFilter);
+    }
+
+    /** Apps currently shown, in display order; empty while showing search results. */
+    public List<AppInfo> getShownApps() {
+        return hasSearchResults() ? List.of() : Collections.unmodifiableList(mApps);
     }
 
     /**
@@ -268,13 +285,17 @@ public class AlphabeticalAppsList<T extends Context & ActivityContext> implement
                         .filter(mPrivateProviderManager.getItemInfoMatcher());
             }
         }
-        appSteam = appSteam.sorted(mAppNameComparator);
+        boolean customOrder = mItemOrder != null && !hasSearchResults();
+        appSteam = appSteam.sorted(customOrder
+                ? Comparator.comparingInt(mItemOrder).thenComparing(mAppNameComparator)
+                : mAppNameComparator);
         privateAppStream = privateAppStream.sorted(mAppNameComparator);
 
         // As a special case for some languages (currently only Simplified Chinese), we may need to
         // coalesce sections
         Locale curLocale = mActivityContext.getResources().getConfiguration().locale;
-        boolean localeRequiresSectionSorting = curLocale.equals(Locale.SIMPLIFIED_CHINESE);
+        boolean localeRequiresSectionSorting = !customOrder
+                && curLocale.equals(Locale.SIMPLIFIED_CHINESE);
         if (localeRequiresSectionSorting) {
             // Compute the section headers. We use a TreeMap with the section name comparator to
             // ensure that the sections are ordered when we iterate over it later
@@ -508,6 +529,15 @@ public class AlphabeticalAppsList<T extends Context & ActivityContext> implement
                 mAdapterItems.add(AdapterItem.asApp(info));
             }
 
+            if (mItemOrder != null) {
+                // Letters mean nothing in a custom order: one unnamed section per row keeps
+                // the fast scroller proportional and hides its letter popup.
+                if (mNumAppsPerRowAllApps <= 0 || i % mNumAppsPerRowAllApps == 0) {
+                    mFastScrollerSections.add(new FastScrollSectionInfo("", position));
+                }
+                position++;
+                continue;
+            }
             String sectionName = info.sectionName;
             // Create a new section if the section names do not match
             if (!sectionName.equals(lastSectionName)) {

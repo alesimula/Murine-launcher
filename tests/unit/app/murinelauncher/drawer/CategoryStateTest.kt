@@ -40,6 +40,47 @@ class CategoryStateTest {
         assertFalse(state.assignments.containsKey("personal/example"))
     }
 
+    @Test fun movingAnAppDropsItsPositionsAndUndoRestoresThem() {
+        val state = CategoryState()
+        state.setOrder("tools", listOf("personal/a", "personal/b"))
+        state.setOrder("media", listOf("personal/m", "personal/b"))
+        val before = state.capture("personal/b")
+        state.assign("personal/b", "media")
+        assertEquals(listOf("personal/a"), state.order("tools"))
+        assertEquals(listOf("personal/m"), state.order("media"))
+        state.setOrder("media", listOf("personal/b", "personal/m"))
+        state.restore(before)
+        assertFalse(state.assignments.containsKey("personal/b"))
+        assertEquals(listOf("personal/a", "personal/b"), state.order("tools"))
+        assertEquals(listOf("personal/m", "personal/b"), state.order("media"))
+    }
+
+    @Test fun reassigningToTheSameCategoryKeepsItsPosition() {
+        val state = CategoryState()
+        state.assign("personal/a", "tools")
+        state.setOrder("tools", listOf("personal/b", "personal/a"))
+        state.assign("personal/a", "tools")
+        assertEquals(listOf("personal/b", "personal/a"), state.order("tools"))
+    }
+
+    @Test fun ordersSurviveBackupAndDeletedCategoriesLoseThem() {
+        val state = CategoryState()
+        val custom = state.create("Work")
+        state.setOrder("tools", listOf("personal/b", "personal/a"))
+        state.setOrder(custom, listOf("personal/w"))
+        val decoded = CategoryState.decode(state.encode())
+        assertEquals(listOf("personal/b", "personal/a"), decoded.order("tools"))
+        decoded.delete(custom)
+        assertFalse(decoded.hasOrder(custom))
+        decoded.clearOrder("tools")
+        assertFalse(CategoryState.decode(decoded.encode()).hasOrder("tools"))
+    }
+
+    @Test fun backupsWithoutOrdersStillDecode() {
+        val legacy = """{"version":1,"categories":[{"id":"other"}],"assignments":{}}"""
+        assertTrue(CategoryState.decode(legacy).orders.isEmpty())
+    }
+
     @Test fun profilesDoNotShareManualCorrections() {
         val state = CategoryState()
         state.assign("personal/com.whatsapp", "productivity")

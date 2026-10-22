@@ -49,6 +49,15 @@ In launcher settings, open **App drawer**:
   **Home screen** strip at the top for 300 ms to continue the drag on the home screen as
   before; releasing on the strip sooner cancels. Dragging from search results closes
   search first. With category tabs off, a drawer drag goes straight to the home screen.
+- Drag an app within its category's grid to reorder it: pausing over another app for 150 ms
+  slides the grid open where the app will land. The first reorder saves the order shown at
+  that moment; apps added later sit after the ordered ones, A–Z. Holding near the grid's
+  top or bottom edge scrolls long categories. Dropping into another category's grid (for
+  example, after dragging from search results) moves the app there at that position, with
+  Undo. Each category orders the apps of each profile separately, and orders are kept in
+  backups. **Sort A–Z** in a category's Manage categories menu discards its custom order.
+  Ordered categories keep the fast scroller without letter popups. Accessibility services
+  get **Move earlier** and **Move later** actions on drawer apps.
 
 Deleting a category moves its explicitly assigned apps to the fallback category. Apps
 automatically mapped to a deleted category also fall back there. The drawer immediately
