@@ -29,14 +29,14 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.R as MaterialR
 
-/** Responsive pages of complete category buttons; long-press a category to manage them. */
+/** Responsive pages of complete category buttons; long-press to edit that category. */
 // Programmatic-only view: construction requires category action callbacks.
 @SuppressLint("ViewConstructor")
 class DrawerCategoryBar(
     context: Context,
     private val title: (CategoryState.Category) -> String,
     private val onSelect: (String) -> Unit,
-    private val onManage: () -> Unit,
+    private val onEdit: (View, String) -> Unit,
 ) : LinearLayout(context) {
     private var categories = emptyList<CategoryState.Category>()
     private var selected = ""
@@ -184,7 +184,7 @@ class DrawerCategoryBar(
                     category.id == selected).apply {
                     tag = category.id
                     setOnClickListener { onSelect(category.id) }
-                    setOnLongClickListener { onManage(); true }
+                    setOnLongClickListener { anchor -> onEdit(anchor, category.id); true }
                 }, FrameLayout.LayoutParams(dp(48), dp(48), Gravity.CENTER))
                 holder.row.addView(cell, LayoutParams(sizing.slotWidth(slot), dp(48)))
             }

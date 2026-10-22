@@ -36,9 +36,10 @@ In launcher settings, open **App drawer**:
 - **Bottom drawer search** moves the existing app search to the bottom. With category tabs
   enabled, a fixed center search button opens the input over the category bar itself.
   With categories off, it remains a standalone search field above the original app list.
-- **Manage categories** creates, renames, reorders, and deletes categories, and lets you
-  choose each category's icon. Hold any category button to open Manage categories,
-  then select a category to edit it or create a new one. It is also available in settings.
+- Hold a category button to open an anchored app-style popup: rename it, change its icon,
+  reorder it, or reset its app order. Deletion is unavailable from this menu.
+- **Manage categories** in settings creates, renames, reorders, and deletes categories,
+  and lets you choose each category's icon.
 - Long-press an app in the drawer or app-search results and choose **Move to category**.
   Select a group to pin its assignment, or **Use automatic category** to clear the correction.
 - With category tabs on, dragging an app keeps the drawer open. Drop it on a category
@@ -55,7 +56,7 @@ In launcher settings, open **App drawer**:
   top or bottom edge scrolls long categories. Dropping into another category's grid (for
   example, after dragging from search results) moves the app there at that position, with
   Undo. Each category orders the apps of each profile separately, and orders are kept in
-  backups. **Sort A–Z** in a category's Manage categories menu discards its custom order.
+  backups. **Sort A–Z** in a category's options discards its custom order.
   Ordered categories keep the fast scroller without letter popups. Accessibility services
   get **Move earlier** and **Move later** actions on drawer apps.
 

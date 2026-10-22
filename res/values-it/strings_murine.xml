@@ -191,6 +191,8 @@
     <string name="drawer_category_icon" tools:ignore="MissingTranslation">Cambia icona</string>
     <string name="drawer_category_folder" tools:ignore="MissingTranslation">Cartella</string>
     <string name="drawer_category_rename" tools:ignore="MissingTranslation">Rinomina</string>
+    <string name="drawer_category_move_left" tools:ignore="MissingTranslation">Sposta a sinistra</string>
+    <string name="drawer_category_move_right" tools:ignore="MissingTranslation">Sposta a destra</string>
     <string name="drawer_category_move_earlier" tools:ignore="MissingTranslation">Sposta prima</string>
     <string name="drawer_category_move_later" tools:ignore="MissingTranslation">Sposta dopo</string>
     <string name="drawer_category_sort_alphabetically" tools:ignore="MissingTranslation">Ordina A–Z</string>

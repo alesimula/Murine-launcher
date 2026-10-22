@@ -191,6 +191,8 @@
     <string name="drawer_category_icon" tools:ignore="MissingTranslation">Change icon</string>
     <string name="drawer_category_folder" tools:ignore="MissingTranslation">Folder</string>
     <string name="drawer_category_rename" tools:ignore="MissingTranslation">Rename</string>
+    <string name="drawer_category_move_left" tools:ignore="MissingTranslation">Move left</string>
+    <string name="drawer_category_move_right" tools:ignore="MissingTranslation">Move right</string>
     <string name="drawer_category_move_earlier" tools:ignore="MissingTranslation">Move earlier</string>
     <string name="drawer_category_move_later" tools:ignore="MissingTranslation">Move later</string>
     <string name="drawer_category_sort_alphabetically" tools:ignore="MissingTranslation">Sort A–Z</string>

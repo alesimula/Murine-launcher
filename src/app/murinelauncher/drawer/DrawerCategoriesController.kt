@@ -43,7 +43,7 @@ class DrawerCategoriesController(private val host: ActivityAllAppsContainerView<
     }
     val headingHeight: Int get() = maxOf(heading.minHeight, heading.measuredHeight)
     val tabs = DrawerCategoryBar(materialContext, repository::title, ::select,
-        { CategoryDialogs.manage(context, repository) })
+        { anchor, id -> CategoryDialogs.popup(anchor, repository, id) })
     val searchAction = DrawerSearchAction(materialContext, host::openCategorySearch).apply {
         visibility = View.GONE
     }

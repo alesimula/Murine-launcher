@@ -7,6 +7,12 @@
 package app.murinelauncher.drawer
 
 import android.content.Context
+import android.graphics.Rect
+import android.graphics.RectF
+import com.android.launcher3.AbstractFloatingView
+import com.android.launcher3.Launcher
+import com.android.launcher3.logging.StatsLogManager.LauncherEvent.IGNORE
+import com.android.launcher3.views.OptionsPopupView
 import android.text.InputFilter
 import android.widget.EditText
 import android.widget.ArrayAdapter
@@ -52,45 +58,82 @@ object CategoryDialogs {
             .show()
     }
 
-    fun edit(context: Context, repository: CategoryRepository, id: String) {
+    /** Uses the launcher's app-shortcut popup, anchored to the category button. */
+    fun popup(anchor: View, repository: CategoryRepository, id: String) {
         val category = repository.state().categories.firstOrNull { it.id == id } ?: return
+        val launcher = Launcher.getLauncher(anchor.context)
+        val bounds = Rect()
+        launcher.dragLayer.getDescendantRectRelativeToSelf(anchor, bounds)
+        val rtl = anchor.layoutDirection == View.LAYOUT_DIRECTION_RTL
+        val items = actions(repository, id, allowDelete = false).map { action ->
+            val icon = when (action) {
+                R.string.drawer_category_rename -> R.drawable.gm_edit_24
+                R.string.drawer_category_icon -> CategoryIcons.drawable(category.iconId)
+                R.string.drawer_category_move_left ->
+                    if (rtl) R.drawable.ic_chevron_end else R.drawable.ic_chevron_start
+                R.string.drawer_category_move_right ->
+                    if (rtl) R.drawable.ic_chevron_start else R.drawable.ic_chevron_end
+                else -> android.R.drawable.ic_menu_sort_alphabetically
+            }
+            OptionsPopupView.OptionItem(launcher, action, icon, IGNORE) {
+                performAction(launcher, repository, id, action)
+                true
+            }
+        }
+        AbstractFloatingView.closeOpenViews(launcher, false, AbstractFloatingView.TYPE_OPTIONS_POPUP)
+        OptionsPopupView.show<Launcher>(launcher, RectF(bounds), items, true)
+            ?.contentDescription = repository.title(category)
+    }
+
+    private fun actions(repository: CategoryRepository, id: String, allowDelete: Boolean): List<Int> {
         val actions = mutableListOf(
             R.string.drawer_category_rename,
             R.string.drawer_category_icon,
-            R.string.drawer_category_move_earlier,
-            R.string.drawer_category_move_later,
+            R.string.drawer_category_move_left,
+            R.string.drawer_category_move_right,
         )
         if (repository.state().hasOrder(id)) actions.add(R.string.drawer_category_sort_alphabetically)
-        if (id != CategoryState.OTHER) actions.add(R.string.drawer_category_delete)
+        if (allowDelete && id != CategoryState.OTHER) actions.add(R.string.drawer_category_delete)
+        return actions
+    }
+
+    private fun edit(context: Context, repository: CategoryRepository, id: String) {
+        val category = repository.state().categories.firstOrNull { it.id == id } ?: return
+        val actions = actions(repository, id, allowDelete = true)
         MaterialAlertDialogBuilder(DrawerCategoryTheme.wrap(context))
             .setTitle(repository.title(category))
             .setItems(actions.map(context::getString).toTypedArray()) { _, index ->
-                when (actions[index]) {
-                    R.string.drawer_category_rename -> name(context, repository, id)
-                    R.string.drawer_category_icon -> icon(context, repository, id)
-                    R.string.drawer_category_move_earlier -> repository.edit { it.move(id, -1) }
-                    R.string.drawer_category_move_later -> repository.edit { it.move(id, 1) }
-                    R.string.drawer_category_sort_alphabetically -> MaterialAlertDialogBuilder(
-                        DrawerCategoryTheme.wrap(context))
-                        .setTitle(R.string.drawer_category_sort_alphabetically)
-                        .setMessage(R.string.drawer_category_sort_message)
-                        .setPositiveButton(android.R.string.ok) { _, _ ->
-                            repository.edit { it.clearOrder(id) }
-                        }
-                        .setNegativeButton(android.R.string.cancel, null)
-                        .show()
-                    R.string.drawer_category_delete -> MaterialAlertDialogBuilder(DrawerCategoryTheme.wrap(context))
-                        .setTitle(R.string.drawer_category_delete)
-                        .setMessage(R.string.drawer_category_delete_message)
-                        .setPositiveButton(android.R.string.ok) { _, _ ->
-                            repository.deleteCategory(id)
-                        }
-                        .setNegativeButton(android.R.string.cancel, null)
-                        .show()
-                }
+                performAction(context, repository, id, actions[index])
             }
             .setNegativeButton(android.R.string.cancel, null)
             .show()
+    }
+
+    private fun performAction(context: Context, repository: CategoryRepository, id: String, action: Int) {
+        val right = if (context.resources.configuration.layoutDirection == View.LAYOUT_DIRECTION_RTL) -1 else 1
+        when (action) {
+            R.string.drawer_category_rename -> name(context, repository, id)
+            R.string.drawer_category_icon -> icon(context, repository, id)
+            R.string.drawer_category_move_left -> repository.edit { it.move(id, -right) }
+            R.string.drawer_category_move_right -> repository.edit { it.move(id, right) }
+            R.string.drawer_category_sort_alphabetically -> MaterialAlertDialogBuilder(
+                DrawerCategoryTheme.wrap(context))
+                .setTitle(R.string.drawer_category_sort_alphabetically)
+                .setMessage(R.string.drawer_category_sort_message)
+                .setPositiveButton(android.R.string.ok) { _, _ ->
+                    repository.edit { it.clearOrder(id) }
+                }
+                .setNegativeButton(android.R.string.cancel, null)
+                .show()
+            R.string.drawer_category_delete -> MaterialAlertDialogBuilder(DrawerCategoryTheme.wrap(context))
+                .setTitle(R.string.drawer_category_delete)
+                .setMessage(R.string.drawer_category_delete_message)
+                .setPositiveButton(android.R.string.ok) { _, _ ->
+                    repository.deleteCategory(id)
+                }
+                .setNegativeButton(android.R.string.cancel, null)
+                .show()
+        }
     }
 
     private fun icon(context: Context, repository: CategoryRepository, id: String) {
