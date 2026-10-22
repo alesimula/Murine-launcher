@@ -41,6 +41,14 @@ In launcher settings, open **App drawer**:
   then select a category to edit it or create a new one. It is also available in settings.
 - Long-press an app in the drawer or app-search results and choose **Move to category**.
   Select a group to pin its assignment, or **Use automatic category** to clear the correction.
+- With category tabs on, dragging an app keeps the drawer open. Drop it on a category
+  button to pin it there; the button fills and shows its name while the app is over it.
+  A snackbar above the bar confirms the move, and **Undo** restores the previous pinned or
+  automatic category. Only buttons on the bar's current page accept drops. Dropping on the
+  app's own category or anywhere else returns the icon. Hold the app over the
+  **Home screen** strip at the top for 300 ms to continue the drag on the home screen as
+  before; releasing on the strip sooner cancels. Dragging from search results closes
+  search first. With category tabs off, a drawer drag goes straight to the home screen.
 
 Deleting a category moves its explicitly assigned apps to the fallback category. Apps
 automatically mapped to a deleted category also fall back there. The drawer immediately

@@ -12,6 +12,7 @@ import android.content.res.ColorStateList
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Rect
 import android.view.ContextThemeWrapper
 import android.view.Gravity
 import android.view.MotionEvent
@@ -126,6 +127,47 @@ class DrawerCategoryBar(
         )
     }
 
+    /** Category buttons on the current page; a drag never pages the bar. */
+    private fun visibleButtons(): List<MaterialButton> {
+        val buttons = mutableListOf<MaterialButton>()
+        val bounds = Rect()
+        for (page in 0 until pager.childCount) {
+            val row = pager.getChildAt(page) as? ViewGroup ?: continue
+            for (slot in 0 until row.childCount) {
+                val button = (row.getChildAt(slot) as? ViewGroup)?.getChildAt(0) as? MaterialButton
+                    ?: continue
+                // Layout bounds ignore the hover scale, which would otherwise clip the button.
+                bounds.set(0, 0, button.width, button.height)
+                pager.offsetDescendantRectToMyCoords(button, bounds)
+                if (bounds.left >= 0 && bounds.right <= pager.width) buttons.add(button)
+            }
+        }
+        return buttons
+    }
+
+    /** The button for [id] when it is fully visible, for drop feedback and animations. */
+    fun buttonFor(id: String): View? = visibleButtons().firstOrNull { it.tag == id }
+
+    /** Category whose visible button contains ([x], [y]) in [ancestor] coordinates. */
+    fun categoryAt(ancestor: ViewGroup, x: Int, y: Int): String? {
+        val bounds = Rect()
+        return visibleButtons().firstOrNull { button ->
+            bounds.set(0, 0, button.width, button.height)
+            ancestor.offsetDescendantRectToMyCoords(button, bounds)
+            bounds.contains(x, y)
+        }?.tag as? String
+    }
+
+    /** Fills and enlarges the drop target under a dragged app; null clears it. */
+    fun setDropHover(id: String?) {
+        visibleButtons().forEach { button ->
+            val hovered = button.tag == id
+            button.isChecked = hovered || button.tag == selected
+            val scale = if (hovered) DROP_HOVER_SCALE else 1f
+            button.animate().scaleX(scale).scaleY(scale).setDuration(HOVER_DURATION_MS).start()
+        }
+    }
+
     private inner class PageAdapter : RecyclerView.Adapter<PageHolder>() {
         override fun getItemCount(): Int = sizing.pageCount
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PageHolder =
@@ -140,6 +182,7 @@ class DrawerCategoryBar(
                 val cell = FrameLayout(context)
                 cell.addView(button(CategoryIcons.drawable(category.iconId), title(category),
                     category.id == selected).apply {
+                    tag = category.id
                     setOnClickListener { onSelect(category.id) }
                     setOnLongClickListener { onManage(); true }
                 }, FrameLayout.LayoutParams(dp(48), dp(48), Gravity.CENTER))
@@ -173,6 +216,11 @@ class DrawerCategoryBar(
 
     private fun color(attribute: Int): Int = MaterialColors.getColor(context, attribute, javaClass.name)
     private fun dp(value: Int): Int = (value * resources.displayMetrics.density + 0.5f).toInt()
+
+    private companion object {
+        const val DROP_HOVER_SCALE = 1.15f
+        const val HOVER_DURATION_MS = 120L
+    }
 
     private inner class PageIndicator(context: Context) : View(context) {
         var page = 0

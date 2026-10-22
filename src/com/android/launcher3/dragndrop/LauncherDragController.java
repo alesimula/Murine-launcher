@@ -223,13 +223,15 @@ public class LauncherDragController extends DragController<Launcher> {
 
     @Override
     protected void exitDrag() {
-        if (!mIsInPreDrag && !mActivity.isInState(EDIT_MODE)) {
+        if (!mIsInPreDrag && !mActivity.isInState(EDIT_MODE) && !hasExclusiveDropTarget()) {
             mActivity.getStateManager().goToState(NORMAL, SPRING_LOADED_EXIT_DELAY);
         }
     }
 
     @Override
     protected boolean endWithFlingAnimation() {
+        // The delete target is hidden while the drag stays in another surface.
+        if (hasExclusiveDropTarget()) return false;
         Runnable flingAnimation = mFlingToDeleteHelper.getFlingAnimation(mDragObject, mOptions);
         if (flingAnimation != null) {
             drop(mFlingToDeleteHelper.getDropTarget(), flingAnimation);

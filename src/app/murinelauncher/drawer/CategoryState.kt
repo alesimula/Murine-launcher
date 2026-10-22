@@ -29,6 +29,15 @@ class CategoryState(
         assignments[appKey] = categoryId
     }
 
+    /** Restores an assignment captured before a move; null means the automatic category. */
+    fun restoreAssignment(appKey: String, previous: String?) {
+        if (previous != null && categories.any { it.id == previous }) {
+            assignments[appKey] = previous
+        } else {
+            assignments.remove(appKey)
+        }
+    }
+
     fun create(name: String): String {
         require(name.isNotBlank())
         val id = UUID.randomUUID().toString()

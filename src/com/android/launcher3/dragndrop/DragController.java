@@ -92,6 +92,9 @@ public abstract class DragController<T extends ActivityContext>
 
     protected DropTarget mLastDropTarget;
 
+    /** While set, receives every drag event instead of the registered drop targets. */
+    @Nullable private DropTarget mExclusiveDropTarget;
+
     private int mLastTouchClassification;
     protected int mDistanceSinceScroll = 0;
 
@@ -559,6 +562,14 @@ public abstract class DragController<T extends ActivityContext>
         mCoordinatesTemp[0] = x;
         mCoordinatesTemp[1] = y;
 
+        if (mExclusiveDropTarget != null) {
+            mActivity.getDragLayer().mapCoordInSelfToDescendant(
+                    mExclusiveDropTarget.getDropView(), mCoordinatesTemp);
+            mDragObject.x = mCoordinatesTemp[0];
+            mDragObject.y = mCoordinatesTemp[1];
+            return mExclusiveDropTarget;
+        }
+
         final Rect r = mRectTemp;
         final ArrayList<DropTarget> dropTargets = mDropTargets;
         final int count = dropTargets.size();
@@ -583,6 +594,24 @@ public abstract class DragController<T extends ActivityContext>
     }
 
     protected abstract DropTarget getDefaultDropTarget(int[] dropCoordinates);
+
+    /**
+     * Keeps the drag within one surface, such as the categorized app drawer, until cleared.
+     * While set, the drag does not move the launcher into spring-loaded or normal state.
+     */
+    public void setExclusiveDropTarget(@Nullable DropTarget target) {
+        if (mExclusiveDropTarget == target) return;
+        if (mLastDropTarget != null && mLastDropTarget == mExclusiveDropTarget
+                && mDragObject != null) {
+            mLastDropTarget.onDragExit(mDragObject);
+            mLastDropTarget = null;
+        }
+        mExclusiveDropTarget = target;
+    }
+
+    public boolean hasExclusiveDropTarget() {
+        return mExclusiveDropTarget != null;
+    }
 
     /**
      * Sets the drag listener which will be notified when a drag starts or ends.

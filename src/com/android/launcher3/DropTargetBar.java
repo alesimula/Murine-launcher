@@ -322,6 +322,8 @@ public class DropTargetBar extends FrameLayout
      */
     @Override
     public void onDragStart(DropTarget.DragObject dragObject, DragOptions options) {
+        // A drag held in the categorized drawer shows the bar once it reaches the home screen.
+        if (mLauncher.getDragController().hasExclusiveDropTarget()) return;
         animateToVisibility(true);
     }
 

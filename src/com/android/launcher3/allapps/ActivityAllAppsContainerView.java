@@ -1331,6 +1331,18 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
     @Override
     public void onDropCompleted(View target, DragObject d, boolean success) {}
 
+    /** With category tabs, an app drag stays in the drawer; see {@code DrawerCategoryDrag}. */
+    public void holdCategoryDrag(Object tag) {
+        if (mCategoryController != null && tag instanceof AppInfo app) {
+            mCategoryController.holdDrag(app);
+        }
+    }
+
+    /** A drag from search results returns to the category bar so it can be dropped there. */
+    public void closeSearchForCategoryDrag() {
+        if (!closeCategorySearch() && isSearching()) mSearchUiManager.resetSearch();
+    }
+
     /** Category filtering composes with, rather than replaces, the profile predicates. */
     public void applyCategoryFilter() {
         if (mCategoryController == null) return;
@@ -1453,6 +1465,12 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         headingLp.leftMargin = Math.max(dpToPx(16), profile.allAppsPadding.left);
         headingLp.rightMargin = Math.max(dpToPx(16), profile.allAppsPadding.right);
         heading.setLayoutParams(headingLp);
+        mCategoryController.getDrag().setInsets(
+                mActivityContext.getDeviceProfile().shouldShowAllAppsOnSheet()
+                        ? getResources().getDimensionPixelSize(
+                                R.dimen.bottom_sheet_handle_area_height)
+                        : mInsets.top,
+                profile.allAppsPadding.left, profile.allAppsPadding.right);
         int navBottom = Math.max(mInsets.bottom, mNavBarScrimHeight);
         int screenBottom = bottomSearch ? Math.max(navBottom, mDrawerImeBottom) : navBottom;
         int searchBottom = screenBottom + (isCategorySearchExpanded() ? dpToPx(8) : 0);

@@ -525,7 +525,8 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
         if (mAccessibilityDragListener != null) {
             mAccessibilityDragListener.onDragStart(dragObject, options);
         }
-        if (!mLauncher.isInState(EDIT_MODE)) {
+        // A drag held in the categorized drawer enters spring-loaded state once released.
+        if (!mLauncher.isInState(EDIT_MODE) && !mDragController.hasExclusiveDropTarget()) {
             mLauncher.getStateManager().goToState(SPRING_LOADED);
         }
         mStatsLogManager.logger().withItemInfo(dragObject.dragInfo)

@@ -45,6 +45,7 @@ class DrawerCategoriesController(private val host: ActivityAllAppsContainerView<
     val searchAction = DrawerSearchAction(materialContext, host::openCategorySearch).apply {
         visibility = View.GONE
     }
+    val drag = DrawerCategoryDrag(host, materialContext, tabs, searchAction, repository)
     private val motion = DrawerCategoryMotion(materialContext) {
         listOfNotNull(host.activeRecyclerView, heading)
     }
@@ -105,6 +106,13 @@ class DrawerCategoriesController(private val host: ActivityAllAppsContainerView<
         host.applyCategoryFilter()
         if (selected != previousSelection) host.activeRecyclerView?.scrollToTop()
         host.updateDrawerControlsLayout()
+    }
+
+    /** Keeps an app drag in the drawer when there are categories to drop it on. */
+    fun holdDrag(app: AppInfo) {
+        if (!enabled || visible.isEmpty()) return
+        cancelMotion(finishSelection = true)
+        drag.hold(app)
     }
 
     fun matches(item: ItemInfo): Boolean = !enabled || item !is AppInfo ||

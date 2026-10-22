@@ -20,6 +20,26 @@ class CategoryStateTest {
         assertEquals("communication", state.categoryFor("personal/com.whatsapp", "com.whatsapp", 0))
     }
 
+    @Test fun undoRestoresPinnedOrAutomaticAssignment() {
+        val state = CategoryState()
+        state.assign("personal/com.whatsapp", "media")
+        state.assign("personal/com.whatsapp", "tools")
+        state.restoreAssignment("personal/com.whatsapp", "media")
+        assertEquals("media", state.assignments["personal/com.whatsapp"])
+        state.restoreAssignment("personal/com.whatsapp", null)
+        assertFalse(state.assignments.containsKey("personal/com.whatsapp"))
+        assertEquals("communication", state.categoryFor("personal/com.whatsapp", "com.whatsapp", -1))
+    }
+
+    @Test fun undoToDeletedCategoryFallsBackToAutomatic() {
+        val state = CategoryState()
+        val custom = state.create("Work")
+        state.assign("personal/example", "tools")
+        state.delete(custom)
+        state.restoreAssignment("personal/example", custom)
+        assertFalse(state.assignments.containsKey("personal/example"))
+    }
+
     @Test fun profilesDoNotShareManualCorrections() {
         val state = CategoryState()
         state.assign("personal/com.whatsapp", "productivity")

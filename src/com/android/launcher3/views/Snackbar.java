@@ -85,6 +85,16 @@ public class Snackbar extends AbstractFloatingView {
     /** Show a snackbar with a label and action. */
     public static void show(ActivityContext activity, CharSequence labelString,
             int actionStringResId, Runnable onDismissed, @Nullable Runnable onActionClicked) {
+        show(activity, labelString, actionStringResId, onDismissed, onActionClicked, -1);
+    }
+
+    /**
+     * Show a snackbar with a label and action, {@code bottomMarginPx} above the screen bottom so
+     * it can clear bottom controls. A negative margin uses the default position.
+     */
+    public static void show(ActivityContext activity, CharSequence labelString,
+            int actionStringResId, Runnable onDismissed, @Nullable Runnable onActionClicked,
+            int bottomMarginPx) {
         closeOpenViews(activity, true, TYPE_SNACKBAR);
         Snackbar snackbar = new Snackbar((Context) activity, null);
         // Set some properties here since inflated xml only contains the children.
@@ -116,7 +126,7 @@ public class Snackbar extends AbstractFloatingView {
                 absoluteMaxWidth);
         params.width = minWidth;
         DeviceProfile deviceProfile = activity.getDeviceProfile();
-        params.setMargins(0, 0, 0, marginBottom
+        params.setMargins(0, 0, 0, bottomMarginPx >= 0 ? bottomMarginPx : marginBottom
                 + (deviceProfile.isTaskbarPresent
                 ? deviceProfile.taskbarHeight + deviceProfile.getTaskbarOffsetY()
                 : insets.bottom));

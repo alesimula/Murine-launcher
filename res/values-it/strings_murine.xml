@@ -198,6 +198,8 @@
     <string name="drawer_category_move" tools:ignore="MissingTranslation">Sposta nella categoria</string>
     <string name="drawer_category_move_app" tools:ignore="MissingTranslation">Sposta %1$s nella categoria</string>
     <string name="drawer_category_automatic" tools:ignore="MissingTranslation">Usa categoria automatica</string>
+    <string name="drawer_drag_home" tools:ignore="MissingTranslation">Schermata Home</string>
+    <string name="drawer_category_moved" tools:ignore="MissingTranslation">%1$s spostata in %2$s</string>
     <string name="drawer_category_games" tools:ignore="MissingTranslation">Giochi</string>
     <string name="drawer_category_communication" tools:ignore="MissingTranslation">Comunicazione</string>
     <string name="drawer_category_media" tools:ignore="MissingTranslation">Multimedia</string>
