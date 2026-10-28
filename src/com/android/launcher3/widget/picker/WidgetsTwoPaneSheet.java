@@ -379,7 +379,9 @@ public class WidgetsTwoPaneSheet extends WidgetsFullSheet {
                 // is likely a programmatic header click.
                 if (mSelectedHeader != null && !mOpenCloseAnimation.getAnimationPlayer().isRunning()
                         && !getAccessibilityInitialFocusView().isAccessibilityFocused()) {
-                    mRightPaneScrollView.setAccessibilityPaneTitle(suggestionsRightPaneTitle);
+                    if (Utilities.ATLEAST_P) {
+                        mRightPaneScrollView.setAccessibilityPaneTitle(suggestionsRightPaneTitle);
+                    }
                     focusOnFirstWidgetCell(mWidgetRecommendationsView);
                 }
                 // If switching from another header, unselect any WidgetCells. This is necessary
@@ -565,9 +567,11 @@ public class WidgetsTwoPaneSheet extends WidgetsFullSheet {
                 mRightPane.removeAllViews();
                 mRightPane.addView(widgetsRowViewHolder.itemView);
                 if (isUserClick) {
-                    mRightPaneScrollView.setAccessibilityPaneTitle(getContext().getString(
-                            R.string.widget_picker_right_pane_accessibility_title,
-                            contentEntry.mPkgItem.title));
+                    if (Utilities.ATLEAST_P) {
+                        mRightPaneScrollView.setAccessibilityPaneTitle(getContext().getString(
+                                R.string.widget_picker_right_pane_accessibility_title,
+                                contentEntry.mPkgItem.title));
+                    }
                     postDelayed(() -> focusOnFirstWidgetCell(widgetsRowViewHolder.tableContainer),
                             WIDGET_LIST_ITEM_APPEARANCE_DELAY);
                 }
