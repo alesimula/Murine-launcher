@@ -114,6 +114,7 @@ android {
     productFlavors {
         aosp {
             dimension "app"
+            isDefault = true
             applicationId 'app.murinelauncher'
             testApplicationId 'com.android.launcher3.tests'
         }
@@ -132,6 +133,7 @@ android {
 
         withoutQuickstep {
             dimension "recents"
+            isDefault = true
         }
     }
 
