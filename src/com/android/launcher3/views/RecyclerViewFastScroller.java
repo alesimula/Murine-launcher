@@ -141,6 +141,7 @@ public class RecyclerViewFastScroller extends View {
     private boolean mIsThumbDetached;
     private final boolean mCanThumbDetach;
     private boolean mIgnoreDragGesture;
+    private boolean mDownOnThumb;
     private long mDownTimeStampMillis;
 
     // This is the offset from the top of the scrollbar when the user first starts touching.  To
@@ -290,7 +291,8 @@ public class RecyclerViewFastScroller extends View {
                     // touch sequence goes over the touch slop.
                     mRv.stopScroll();
                 }
-                if (isNearThumb(x, y)) {
+                mDownOnThumb = isNearThumb(x, y);
+                if (mDownOnThumb) {
                     mTouchOffsetY = mDownY - mThumbOffsetY;
                 }
                 break;
@@ -302,12 +304,14 @@ public class RecyclerViewFastScroller extends View {
 
                 // Check if we should start scrolling, but ignore this fastscroll gesture if we have
                 // exceeded some fixed movement
-                mIgnoreDragGesture |= absDeltaY > mConfig.getScaledPagingTouchSlop();
+                // Grab is decided at touch-down, so a quick flick from the thumb isn't dropped
+                mIgnoreDragGesture |= !mDownOnThumb
+                        && absDeltaY > mConfig.getScaledPagingTouchSlop();
 
                 if (!mIsDragging && !mIgnoreDragGesture && mRv.supportsFastScrolling()) {
-                    if ((isNearThumb(mDownX, mLastY) && ev.getEventTime() - mDownTimeStampMillis
+                    if ((mDownOnThumb && ev.getEventTime() - mDownTimeStampMillis
                                     > FASTSCROLL_THRESHOLD_MILLIS)) {
-                        calcTouchOffsetAndPrepToFastScroll(mDownY, mLastY);
+                        calcTouchOffsetAndPrepToFastScroll();
                     }
                 }
                 if (mIsDragging) {
@@ -337,12 +341,13 @@ public class RecyclerViewFastScroller extends View {
         return mIsDragging;
     }
 
-    private void calcTouchOffsetAndPrepToFastScroll(int downY, int lastY) {
+    private void calcTouchOffsetAndPrepToFastScroll() {
         mIsDragging = true;
         if (mCanThumbDetach) {
             mIsThumbDetached = true;
         }
-        mTouchOffsetY += (lastY - downY);
+        // mTouchOffsetY is kept from touch-down, so the thumb stays under the finger
+        //mTouchOffsetY += (lastY - downY);
         animatePopupVisibility(true);
         showActiveScrollbar(true);
     }
@@ -433,6 +438,8 @@ public class RecyclerViewFastScroller extends View {
         // swiping very close to the thumb area (not just within it's bound)
         // will also prevent back gesture
         SYSTEM_GESTURE_EXCLUSION_RECT.get(0).offset(mThumbDrawOffset.x, mThumbDrawOffset.y);
+        // Same extra margin as isNearThumb, so the back gesture doesn't steal those touches
+        SYSTEM_GESTURE_EXCLUSION_RECT.get(0).inset(0, -thumbTouchMargin());
         if (Utilities.ATLEAST_Q) {
             if (mSystemGestureInsets != null) {
                 SYSTEM_GESTURE_EXCLUSION_RECT.get(0).left =
@@ -481,8 +488,14 @@ public class RecyclerViewFastScroller extends View {
      */
     private boolean isNearThumb(int x, int y) {
         int offset = y - mThumbOffsetY;
+        int margin = thumbTouchMargin();
 
-        return x >= 0 && x < getWidth() && offset >= 0 && offset <= mThumbHeight;
+        return x >= 0 && x < getWidth() && offset >= -margin && offset <= mThumbHeight + margin;
+    }
+
+    /** Extra touch area above and below the thumb, which is easy to miss at the screen edge. */
+    private int thumbTouchMargin() {
+        return mThumbHeight / 4;
     }
 
     /**
