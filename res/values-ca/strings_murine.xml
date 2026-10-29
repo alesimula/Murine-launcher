@@ -42,6 +42,7 @@
     <string name="pref_label_grid_height">Alçada de la graella</string>
     <string name="pref_label_icon_size">Mida de les icones (%)</string>
     <string name="pref_label_icon_label_size">Mida de les etiquetes (%)</string>
+    <string name="pref_label_custom">Personalitzat</string>
 
     <string name="pref_label_visibility_title">Visibilitat de les etiquetes</string>
     <string name="label_visibility_never">Mai</string>
@@ -123,6 +124,19 @@
     <string name="pref_smartspace_summary_clock">Mostra un rellotge amb la data d\'avui</string>
     <string name="pref_smartspace_summary_google">Mostra el widget Google Smartspace</string>
     <string name="pref_smartspace_summary_disabled">Cap widget a la primera pantalla</string>
+
+    <!-- At a Glance widget -->
+    <string name="glance_widget_label">D\'un cop d\'ull</string>
+    <string name="glance_battery_charging">Carregant</string>
+    <string name="glance_battery_low">Bateria baixa</string>
+    <string name="glance_battery_full_in">%1$s — Càrrega completa en %2$s</string>
+    <string name="glance_torch_on">Llanterna encesa</string>
+    <string name="glance_torch_off_action">Toca per apagar</string>
+    <string name="pref_glance_google_title">Temps i esdeveniments</string>
+    <string name="pref_glance_google_summary">Del widget Smartspace de l\'app de Google</string>
+    <string name="pref_glance_battery_title">Estat de la bateria</string>
+    <string name="pref_glance_torch_title">Estat de la llanterna</string>
+    <string name="pref_glance_media_title">S\'està reproduint</string>
 
     <string name="pref_blur_unsupported_warning"><![CDATA[És possible que aquest OEM/ROM no admeti del tot o no tingui activat el difuminat del fons de pantalla; si tens problemes, busca una opció &quot;Permet els difuminats a escala de finestra&quot; a les opcions de pantalla o a les opcions per a desenvolupadors.<br/>També pots provar d\'activar <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">aquest mòdul de Magisk</a> en dispositius amb root]]></string>
 

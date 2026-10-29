@@ -42,6 +42,7 @@
     <string name="pref_label_grid_height">Izgara yüksekliği</string>
     <string name="pref_label_icon_size">Simge boyutu (%)</string>
     <string name="pref_label_icon_label_size">Etiket boyutu (%)</string>
+    <string name="pref_label_custom">Özel</string>
 
     <string name="pref_label_visibility_title">Etiket görünürlüğü</string>
     <string name="label_visibility_never">Asla</string>
@@ -123,6 +124,19 @@
     <string name="pref_smartspace_summary_clock">Bugünün tarihiyle birlikte bir saat gösterir</string>
     <string name="pref_smartspace_summary_google">Google Smartspace widget\'ını gösterir</string>
     <string name="pref_smartspace_summary_disabled">İlk ekranda widget yok</string>
+
+    <!-- At a Glance widget -->
+    <string name="glance_widget_label">Bir Bakışta</string>
+    <string name="glance_battery_charging">Şarj oluyor</string>
+    <string name="glance_battery_low">Pil zayıf</string>
+    <string name="glance_battery_full_in">%1$s — %2$s içinde dolacak</string>
+    <string name="glance_torch_on">Fener açık</string>
+    <string name="glance_torch_off_action">Kapatmak için dokun</string>
+    <string name="pref_glance_google_title">Hava durumu ve etkinlikler</string>
+    <string name="pref_glance_google_summary">Google uygulamasının Smartspace widget\'ından</string>
+    <string name="pref_glance_battery_title">Pil durumu</string>
+    <string name="pref_glance_torch_title">Fener durumu</string>
+    <string name="pref_glance_media_title">Şimdi çalıyor</string>
 
     <string name="pref_blur_unsupported_warning"><![CDATA[Duvar kağıdı bulanıklığı bu OEM/ROM tarafından tam olarak desteklenmiyor veya etkinleştirilmemiş olabilir; sorun yaşarsan ekran seçenekleri ya da geliştirici seçeneklerinde &quot;Pencere düzeyinde bulanıklığa izin ver&quot; seçeneğini ara.<br/>Alternatif olarak, root erişimi olan cihazlarda <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">bu Magisk modülünü</a> etkinleştirmeyi dene]]></string>
 

@@ -42,6 +42,7 @@
     <string name="pref_label_grid_height">Высота сетки</string>
     <string name="pref_label_icon_size">Размер значков (%)</string>
     <string name="pref_label_icon_label_size">Размер подписей (%)</string>
+    <string name="pref_label_custom">Своя</string>
 
     <string name="pref_label_visibility_title">Отображение подписей</string>
     <string name="label_visibility_never">Никогда</string>
@@ -123,6 +124,19 @@
     <string name="pref_smartspace_summary_clock">Показывает часы с сегодняшней датой</string>
     <string name="pref_smartspace_summary_google">Показывает виджет Google Smartspace</string>
     <string name="pref_smartspace_summary_disabled">Без виджета на первом экране</string>
+
+    <!-- At a Glance widget -->
+    <string name="glance_widget_label">Коротко о главном</string>
+    <string name="glance_battery_charging">Заряжается</string>
+    <string name="glance_battery_low">Низкий заряд батареи</string>
+    <string name="glance_battery_full_in">%1$s — Полный заряд через %2$s</string>
+    <string name="glance_torch_on">Фонарик включён</string>
+    <string name="glance_torch_off_action">Коснитесь, чтобы выключить</string>
+    <string name="pref_glance_google_title">Погода и события</string>
+    <string name="pref_glance_google_summary">Из виджета Smartspace приложения Google</string>
+    <string name="pref_glance_battery_title">Состояние батареи</string>
+    <string name="pref_glance_torch_title">Состояние фонарика</string>
+    <string name="pref_glance_media_title">Сейчас играет</string>
 
     <string name="pref_blur_unsupported_warning"><![CDATA[Размытие обоев может не полностью поддерживаться или быть отключено этим OEM/ROM; если возникнут проблемы, поищите параметр &quot;Разрешить размытие на уровне окон&quot; в настройках экрана или в параметрах разработчика.<br/>Также можно включить <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">этот модуль Magisk</a> на устройствах с root-доступом]]></string>
 

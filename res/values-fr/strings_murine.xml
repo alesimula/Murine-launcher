@@ -42,6 +42,7 @@
     <string name="pref_label_grid_height">Hauteur de la grille</string>
     <string name="pref_label_icon_size">Taille des icônes (%)</string>
     <string name="pref_label_icon_label_size">Taille des libellés (%)</string>
+    <string name="pref_label_custom">Personnalisé</string>
 
     <string name="pref_label_visibility_title">Visibilité des libellés</string>
     <string name="label_visibility_never">Jamais</string>
@@ -123,6 +124,19 @@
     <string name="pref_smartspace_summary_clock">Affiche une horloge avec la date du jour</string>
     <string name="pref_smartspace_summary_google">Affiche le widget Google Smartspace</string>
     <string name="pref_smartspace_summary_disabled">Aucun widget sur le premier écran</string>
+
+    <!-- At a Glance widget -->
+    <string name="glance_widget_label">En un coup d\'œil</string>
+    <string name="glance_battery_charging">En charge</string>
+    <string name="glance_battery_low">Batterie faible</string>
+    <string name="glance_battery_full_in">%1$s — Charge complète dans %2$s</string>
+    <string name="glance_torch_on">Lampe torche allumée</string>
+    <string name="glance_torch_off_action">Appuyer pour éteindre</string>
+    <string name="pref_glance_google_title">Météo et événements</string>
+    <string name="pref_glance_google_summary">Depuis le widget Smartspace de l\'appli Google</string>
+    <string name="pref_glance_battery_title">État de la batterie</string>
+    <string name="pref_glance_torch_title">État de la lampe torche</string>
+    <string name="pref_glance_media_title">En cours de lecture</string>
 
     <string name="pref_blur_unsupported_warning"><![CDATA[Le flou du fond d\'écran n\'est peut-être pas entièrement pris en charge ou activé par cet OEM/ROM ; en cas de problème, cherchez une option &quot;Autoriser les flous au niveau des fenêtres&quot; dans les options d\'affichage ou les options pour développeurs.<br/>Sinon, essayez d\'activer <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">ce module Magisk</a> sur les appareils rootés]]></string>
 

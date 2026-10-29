@@ -42,6 +42,7 @@
     <string name="pref_label_grid_height">Altura da grade</string>
     <string name="pref_label_icon_size">Tamanho dos ícones (%)</string>
     <string name="pref_label_icon_label_size">Tamanho dos rótulos (%)</string>
+    <string name="pref_label_custom">Personalizado</string>
 
     <string name="pref_label_visibility_title">Visibilidade dos rótulos</string>
     <string name="label_visibility_never">Nunca</string>
@@ -123,6 +124,19 @@
     <string name="pref_smartspace_summary_clock">Mostra um relógio com a data de hoje</string>
     <string name="pref_smartspace_summary_google">Mostra o widget Google Smartspace</string>
     <string name="pref_smartspace_summary_disabled">Nenhum widget na tela inicial</string>
+
+    <!-- At a Glance widget -->
+    <string name="glance_widget_label">Visão rápida</string>
+    <string name="glance_battery_charging">Carregando</string>
+    <string name="glance_battery_low">Bateria fraca</string>
+    <string name="glance_battery_full_in">%1$s — Carga completa em %2$s</string>
+    <string name="glance_torch_on">Lanterna ligada</string>
+    <string name="glance_torch_off_action">Toque para desligar</string>
+    <string name="pref_glance_google_title">Clima e eventos</string>
+    <string name="pref_glance_google_summary">Do widget Smartspace do app Google</string>
+    <string name="pref_glance_battery_title">Status da bateria</string>
+    <string name="pref_glance_torch_title">Status da lanterna</string>
+    <string name="pref_glance_media_title">Tocando agora</string>
 
     <string name="pref_blur_unsupported_warning"><![CDATA[O desfoque do plano de fundo pode não ser totalmente compatível ou estar ativado neste OEM/ROM; se encontrar problemas, procure uma opção &quot;Permitir desfoques em nível de janela&quot; nas opções de tela ou nas opções do desenvolvedor.<br/>Como alternativa, tente ativar <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">este módulo Magisk</a> em dispositivos com root]]></string>
 

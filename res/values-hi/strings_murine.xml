@@ -42,6 +42,7 @@
     <string name="pref_label_grid_height">ग्रिड ऊँचाई</string>
     <string name="pref_label_icon_size">आइकन आकार (%)</string>
     <string name="pref_label_icon_label_size">लेबल आकार (%)</string>
+    <string name="pref_label_custom">कस्टम</string>
 
     <string name="pref_label_visibility_title">लेबल दृश्यता</string>
     <string name="label_visibility_never">कभी नहीं</string>
@@ -123,6 +124,19 @@
     <string name="pref_smartspace_summary_clock">आज की तारीख के साथ घड़ी दिखाता है</string>
     <string name="pref_smartspace_summary_google">Google का Smartspace विजेट दिखाता है</string>
     <string name="pref_smartspace_summary_disabled">पहली स्क्रीन पर कोई विजेट नहीं</string>
+
+    <!-- At a Glance widget -->
+    <string name="glance_widget_label">एक नज़र में</string>
+    <string name="glance_battery_charging">चार्ज हो रहा है</string>
+    <string name="glance_battery_low">बैटरी कम है</string>
+    <string name="glance_battery_full_in">%1$s — %2$s में पूरी चार्ज</string>
+    <string name="glance_torch_on">टॉर्च चालू है</string>
+    <string name="glance_torch_off_action">बंद करने के लिए टैप करें</string>
+    <string name="pref_glance_google_title">मौसम और इवेंट</string>
+    <string name="pref_glance_google_summary">Google ऐप के Smartspace विजेट से</string>
+    <string name="pref_glance_battery_title">बैटरी की स्थिति</string>
+    <string name="pref_glance_torch_title">टॉर्च की स्थिति</string>
+    <string name="pref_glance_media_title">अभी चल रहा है</string>
 
     <string name="pref_blur_unsupported_warning"><![CDATA[हो सकता है कि इस OEM/ROM द्वारा वॉलपेपर ब्लर पूरी तरह समर्थित या सक्षम न हो; अगर समस्या आए तो डिस्प्ले विकल्प या डेवलपर विकल्प में &quot;Allow window-level blurs&quot; विकल्प देखें।<br/>वैकल्पिक रूप से, रूट किए गए डिवाइस पर <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">यह Magisk मॉड्यूल</a> सक्षम करके देखें]]></string>
 

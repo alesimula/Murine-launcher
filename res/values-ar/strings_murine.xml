@@ -42,6 +42,7 @@
     <string name="pref_label_grid_height">ارتفاع الشبكة</string>
     <string name="pref_label_icon_size">حجم الأيقونات (%)</string>
     <string name="pref_label_icon_label_size">حجم التسميات (%)</string>
+    <string name="pref_label_custom">مخصص</string>
 
     <string name="pref_label_visibility_title">ظهور التسميات</string>
     <string name="label_visibility_never">أبدًا</string>
@@ -123,6 +124,19 @@
     <string name="pref_smartspace_summary_clock">تعرض ساعة مع تاريخ اليوم</string>
     <string name="pref_smartspace_summary_google">تعرض أداة Google Smartspace</string>
     <string name="pref_smartspace_summary_disabled">لا توجد أداة في الشاشة الأولى</string>
+
+    <!-- At a Glance widget -->
+    <string name="glance_widget_label">نظرة سريعة</string>
+    <string name="glance_battery_charging">جارٍ الشحن</string>
+    <string name="glance_battery_low">البطارية منخفضة</string>
+    <string name="glance_battery_full_in">%1$s — يكتمل الشحن خلال %2$s</string>
+    <string name="glance_torch_on">المصباح مضاء</string>
+    <string name="glance_torch_off_action">انقر لإطفائه</string>
+    <string name="pref_glance_google_title">الطقس والأحداث</string>
+    <string name="pref_glance_google_summary">من أداة Smartspace في تطبيق Google</string>
+    <string name="pref_glance_battery_title">حالة البطارية</string>
+    <string name="pref_glance_torch_title">حالة المصباح</string>
+    <string name="pref_glance_media_title">قيد التشغيل الآن</string>
 
     <string name="pref_blur_unsupported_warning"><![CDATA[قد لا يكون تمويه الخلفية مدعومًا بالكامل أو مفعّلاً في هذا الـ OEM/ROM؛ إذا واجهت مشكلات، ابحث عن خيار &quot;السماح بالتمويه على مستوى النوافذ&quot; في خيارات العرض أو خيارات المطوّر.<br/>وبدلاً من ذلك، جرّب تفعيل <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">وحدة Magisk هذه</a> على الأجهزة التي بها روت]]></string>
 

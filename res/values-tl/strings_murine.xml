@@ -42,6 +42,7 @@
     <string name="pref_label_grid_height">Taas ng grid</string>
     <string name="pref_label_icon_size">Laki ng icon (%)</string>
     <string name="pref_label_icon_label_size">Laki ng label (%)</string>
+    <string name="pref_label_custom">Custom</string>
 
     <string name="pref_label_visibility_title">Pagpapakita ng mga label</string>
     <string name="label_visibility_never">Hindi kailanman</string>
@@ -123,6 +124,19 @@
     <string name="pref_smartspace_summary_clock">Nagpapakita ng orasan kasama ang petsa ngayon</string>
     <string name="pref_smartspace_summary_google">Nagpapakita ng Smartspace widget ng Google</string>
     <string name="pref_smartspace_summary_disabled">Walang widget sa unang screen</string>
+
+    <!-- At a Glance widget -->
+    <string name="glance_widget_label">Sa Isang Sulyap</string>
+    <string name="glance_battery_charging">Nagcha-charge</string>
+    <string name="glance_battery_low">Mahina ang baterya</string>
+    <string name="glance_battery_full_in">%1$s — Puno sa loob ng %2$s</string>
+    <string name="glance_torch_on">Nakabukas ang flashlight</string>
+    <string name="glance_torch_off_action">I-tap para i-off</string>
+    <string name="pref_glance_google_title">Panahon at mga event</string>
+    <string name="pref_glance_google_summary">Mula sa Smartspace widget ng Google app</string>
+    <string name="pref_glance_battery_title">Status ng baterya</string>
+    <string name="pref_glance_torch_title">Status ng flashlight</string>
+    <string name="pref_glance_media_title">Nagpe-play ngayon</string>
 
     <string name="pref_blur_unsupported_warning"><![CDATA[Maaaring hindi lubusang sinusuportahan o naka-enable ng OEM/ROM na ito ang pag-blur ng wallpaper; Kung may makitang problema, subukang hanapin ang opsyong &quot;Allow window-level blurs&quot; sa Display Options o Developer Options.<br/>Bilang alternatibo, subukang i-enable ang <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">Magisk module na ito</a> sa mga naka-root na device]]></string>
 

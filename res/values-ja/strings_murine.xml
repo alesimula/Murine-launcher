@@ -42,6 +42,7 @@
     <string name="pref_label_grid_height">グリッドの高さ</string>
     <string name="pref_label_icon_size">アイコンのサイズ (%)</string>
     <string name="pref_label_icon_label_size">ラベルのサイズ (%)</string>
+    <string name="pref_label_custom">カスタム</string>
 
     <string name="pref_label_visibility_title">ラベルの表示</string>
     <string name="label_visibility_never">表示しない</string>
@@ -123,6 +124,19 @@
     <string name="pref_smartspace_summary_clock">今日の日付と時計を表示します</string>
     <string name="pref_smartspace_summary_google">Google Smartspace ウィジェットを表示します</string>
     <string name="pref_smartspace_summary_disabled">最初の画面にウィジェットを表示しません</string>
+
+    <!-- At a Glance widget -->
+    <string name="glance_widget_label">スナップショット</string>
+    <string name="glance_battery_charging">充電中</string>
+    <string name="glance_battery_low">バッテリー残量低下</string>
+    <string name="glance_battery_full_in">%1$s — 残り %2$s で充電完了</string>
+    <string name="glance_torch_on">ライトがオン</string>
+    <string name="glance_torch_off_action">タップしてオフにする</string>
+    <string name="pref_glance_google_title">天気と予定</string>
+    <string name="pref_glance_google_summary">Google アプリの Smartspace ウィジェットから</string>
+    <string name="pref_glance_battery_title">バッテリーの状態</string>
+    <string name="pref_glance_torch_title">ライトの状態</string>
+    <string name="pref_glance_media_title">再生中</string>
 
     <string name="pref_blur_unsupported_warning"><![CDATA[壁紙のぼかしは、このOEM/ROMでは完全にサポートされていないか、有効になっていない場合があります。問題が発生する場合は、ディスプレイ設定または開発者向けオプションで &quot;ウィンドウレベルのぼかしを許可&quot; の項目を確認してください。<br/>また、root化された端末では <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">このMagiskモジュール</a> を有効にする方法もあります]]></string>
 

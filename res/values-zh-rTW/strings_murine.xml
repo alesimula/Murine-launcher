@@ -42,6 +42,7 @@
     <string name="pref_label_grid_height">格線高度</string>
     <string name="pref_label_icon_size">圖示大小 (%)</string>
     <string name="pref_label_icon_label_size">標籤大小 (%)</string>
+    <string name="pref_label_custom">自訂</string>
 
     <string name="pref_label_visibility_title">標籤顯示</string>
     <string name="label_visibility_never">永不</string>
@@ -123,6 +124,19 @@
     <string name="pref_smartspace_summary_clock">顯示含今日日期的時鐘</string>
     <string name="pref_smartspace_summary_google">顯示 Google 的 Smartspace 小工具</string>
     <string name="pref_smartspace_summary_disabled">首頁畫面不顯示小工具</string>
+
+    <!-- At a Glance widget -->
+    <string name="glance_widget_label">一覽</string>
+    <string name="glance_battery_charging">充電中</string>
+    <string name="glance_battery_low">電量不足</string>
+    <string name="glance_battery_full_in">%1$s — %2$s後充飽</string>
+    <string name="glance_torch_on">手電筒已開啟</string>
+    <string name="glance_torch_off_action">輕觸即可關閉</string>
+    <string name="pref_glance_google_title">天氣和活動</string>
+    <string name="pref_glance_google_summary">來自 Google 應用程式的 Smartspace 小工具</string>
+    <string name="pref_glance_battery_title">電池狀態</string>
+    <string name="pref_glance_torch_title">手電筒狀態</string>
+    <string name="pref_glance_media_title">現正播放</string>
 
     <string name="pref_blur_unsupported_warning"><![CDATA[此 OEM/ROM 可能未完全支援或未啟用桌布模糊；如果遇到問題，請在顯示選項或開發人員選項中尋找&quot;允許視窗層級模糊&quot;選項。<br/>或者，可以在已 root 的裝置上嘗試啟用<a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">此 Magisk 模組</a>]]></string>
 

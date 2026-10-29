@@ -42,6 +42,7 @@
     <string name="pref_label_grid_height">Висота сітки</string>
     <string name="pref_label_icon_size">Розмір значків (%)</string>
     <string name="pref_label_icon_label_size">Розмір підписів (%)</string>
+    <string name="pref_label_custom">Власна</string>
 
     <string name="pref_label_visibility_title">Відображення підписів</string>
     <string name="label_visibility_never">Ніколи</string>
@@ -123,6 +124,19 @@
     <string name="pref_smartspace_summary_clock">Показує годинник із сьогоднішньою датою</string>
     <string name="pref_smartspace_summary_google">Показує віджет Google Smartspace</string>
     <string name="pref_smartspace_summary_disabled">Без віджета на першому екрані</string>
+
+    <!-- At a Glance widget -->
+    <string name="glance_widget_label">Коротко</string>
+    <string name="glance_battery_charging">Заряджається</string>
+    <string name="glance_battery_low">Низький заряд батареї</string>
+    <string name="glance_battery_full_in">%1$s — Повний заряд через %2$s</string>
+    <string name="glance_torch_on">Ліхтарик увімкнено</string>
+    <string name="glance_torch_off_action">Торкніться, щоб вимкнути</string>
+    <string name="pref_glance_google_title">Погода та події</string>
+    <string name="pref_glance_google_summary">З віджета Smartspace застосунку Google</string>
+    <string name="pref_glance_battery_title">Стан батареї</string>
+    <string name="pref_glance_torch_title">Стан ліхтарика</string>
+    <string name="pref_glance_media_title">Зараз грає</string>
 
     <string name="pref_blur_unsupported_warning"><![CDATA[Розмиття шпалер може не повністю підтримуватися або бути вимкненим цим OEM/ROM; якщо виникнуть проблеми, пошукайте параметр &quot;Дозволити розмиття на рівні вікон&quot; у налаштуваннях екрана або в параметрах розробника.<br/>Також можна ввімкнути <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">цей модуль Magisk</a> на пристроях із root-доступом]]></string>
 

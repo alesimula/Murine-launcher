@@ -42,6 +42,7 @@
     <string name="pref_label_grid_height">Wysokość siatki</string>
     <string name="pref_label_icon_size">Rozmiar ikon (%)</string>
     <string name="pref_label_icon_label_size">Rozmiar etykiet (%)</string>
+    <string name="pref_label_custom">Własny</string>
 
     <string name="pref_label_visibility_title">Widoczność etykiet</string>
     <string name="label_visibility_never">Nigdy</string>
@@ -123,6 +124,19 @@
     <string name="pref_smartspace_summary_clock">Pokazuje zegar z dzisiejszą datą</string>
     <string name="pref_smartspace_summary_google">Pokazuje widżet Google Smartspace</string>
     <string name="pref_smartspace_summary_disabled">Brak widżetu na pierwszym ekranie</string>
+
+    <!-- At a Glance widget -->
+    <string name="glance_widget_label">W skrócie</string>
+    <string name="glance_battery_charging">Ładowanie</string>
+    <string name="glance_battery_low">Niski poziom baterii</string>
+    <string name="glance_battery_full_in">%1$s — Pełne naładowanie za %2$s</string>
+    <string name="glance_torch_on">Latarka włączona</string>
+    <string name="glance_torch_off_action">Dotknij, aby wyłączyć</string>
+    <string name="pref_glance_google_title">Pogoda i wydarzenia</string>
+    <string name="pref_glance_google_summary">Z widżetu Smartspace aplikacji Google</string>
+    <string name="pref_glance_battery_title">Stan baterii</string>
+    <string name="pref_glance_torch_title">Stan latarki</string>
+    <string name="pref_glance_media_title">Teraz odtwarzane</string>
 
     <string name="pref_blur_unsupported_warning"><![CDATA[Rozmycie tapety może nie być w pełni obsługiwane lub włączone przez ten OEM/ROM; w razie problemów poszukaj opcji &quot;Zezwalaj na rozmycia na poziomie okna&quot; w opcjach wyświetlania lub opcjach programisty.<br/>Alternatywnie spróbuj włączyć <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">ten moduł Magisk</a> na urządzeniach z rootem]]></string>
 

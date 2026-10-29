@@ -42,6 +42,7 @@
     <string name="pref_label_grid_height">ارتفاع شبکه</string>
     <string name="pref_label_icon_size">اندازه نمادها (%)</string>
     <string name="pref_label_icon_label_size">اندازه برچسب‌ها (%)</string>
+    <string name="pref_label_custom">سفارشی</string>
 
     <string name="pref_label_visibility_title">نمایش برچسب‌ها</string>
     <string name="label_visibility_never">هرگز</string>
@@ -123,6 +124,19 @@
     <string name="pref_smartspace_summary_clock">ساعتی همراه با تاریخ امروز نمایش می‌دهد</string>
     <string name="pref_smartspace_summary_google">ابزارک Google Smartspace را نمایش می‌دهد</string>
     <string name="pref_smartspace_summary_disabled">بدون ابزارک در صفحه اول</string>
+
+    <!-- At a Glance widget -->
+    <string name="glance_widget_label">در یک نگاه</string>
+    <string name="glance_battery_charging">در حال شارژ</string>
+    <string name="glance_battery_low">باتری ضعیف</string>
+    <string name="glance_battery_full_in">%1$s — شارژ کامل تا %2$s دیگر</string>
+    <string name="glance_torch_on">چراغ‌قوه روشن است</string>
+    <string name="glance_torch_off_action">برای خاموش کردن ضربه بزنید</string>
+    <string name="pref_glance_google_title">آب‌وهوا و رویدادها</string>
+    <string name="pref_glance_google_summary">از ابزارک Smartspace برنامه Google</string>
+    <string name="pref_glance_battery_title">وضعیت باتری</string>
+    <string name="pref_glance_torch_title">وضعیت چراغ‌قوه</string>
+    <string name="pref_glance_media_title">درحال پخش</string>
 
     <string name="pref_blur_unsupported_warning"><![CDATA[ممکن است تاری کاغذدیواری در این OEM/ROM به‌طور کامل پشتیبانی یا فعال نشده باشد؛ اگر با مشکل روبه‌رو شدید، در تنظیمات نمایش یا گزینه‌های برنامه‌نویس به دنبال گزینه &quot;اجازه دادن به تاری در سطح پنجره&quot; بگردید.<br/>همچنین می‌توانید در دستگاه‌های روت‌شده <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">این ماژول Magisk</a> را فعال کنید]]></string>
 

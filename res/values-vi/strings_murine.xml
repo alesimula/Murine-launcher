@@ -42,6 +42,7 @@
     <string name="pref_label_grid_height">Chiều cao lưới</string>
     <string name="pref_label_icon_size">Kích thước biểu tượng (%)</string>
     <string name="pref_label_icon_label_size">Kích thước nhãn (%)</string>
+    <string name="pref_label_custom">Tùy chỉnh</string>
 
     <string name="pref_label_visibility_title">Hiển thị nhãn</string>
     <string name="label_visibility_never">Không bao giờ</string>
@@ -123,6 +124,19 @@
     <string name="pref_smartspace_summary_clock">Hiển thị đồng hồ kèm ngày hôm nay</string>
     <string name="pref_smartspace_summary_google">Hiển thị tiện ích Smartspace của Google</string>
     <string name="pref_smartspace_summary_disabled">Không có tiện ích trên màn hình đầu tiên</string>
+
+    <!-- At a Glance widget -->
+    <string name="glance_widget_label">Xem nhanh</string>
+    <string name="glance_battery_charging">Đang sạc</string>
+    <string name="glance_battery_low">Pin yếu</string>
+    <string name="glance_battery_full_in">%1$s — Đầy sau %2$s</string>
+    <string name="glance_torch_on">Đèn pin đang bật</string>
+    <string name="glance_torch_off_action">Nhấn để tắt</string>
+    <string name="pref_glance_google_title">Thời tiết và sự kiện</string>
+    <string name="pref_glance_google_summary">Từ tiện ích Smartspace của ứng dụng Google</string>
+    <string name="pref_glance_battery_title">Trạng thái pin</string>
+    <string name="pref_glance_torch_title">Trạng thái đèn pin</string>
+    <string name="pref_glance_media_title">Đang phát</string>
 
     <string name="pref_blur_unsupported_warning"><![CDATA[Hiệu ứng làm mờ hình nền có thể không được OEM/ROM này hỗ trợ hoặc bật đầy đủ; Nếu gặp sự cố, hãy thử tìm tùy chọn &quot;Cho phép làm mờ ở cấp cửa sổ&quot; trong Tùy chọn hiển thị hoặc Tùy chọn nhà phát triển.<br/>Ngoài ra, hãy thử bật <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">mô-đun Magisk này</a> trên thiết bị đã root]]></string>
 

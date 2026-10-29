@@ -42,6 +42,7 @@
     <string name="pref_label_grid_height">Rasterhoogte</string>
     <string name="pref_label_icon_size">Pictogramgrootte (%)</string>
     <string name="pref_label_icon_label_size">Labelgrootte (%)</string>
+    <string name="pref_label_custom">Aangepast</string>
 
     <string name="pref_label_visibility_title">Zichtbaarheid van labels</string>
     <string name="label_visibility_never">Nooit</string>
@@ -123,6 +124,19 @@
     <string name="pref_smartspace_summary_clock">Toont een klok met de datum van vandaag</string>
     <string name="pref_smartspace_summary_google">Toont de Google Smartspace-widget</string>
     <string name="pref_smartspace_summary_disabled">Geen widget op het eerste scherm</string>
+
+    <!-- At a Glance widget -->
+    <string name="glance_widget_label">In één oogopslag</string>
+    <string name="glance_battery_charging">Opladen</string>
+    <string name="glance_battery_low">Batterij bijna leeg</string>
+    <string name="glance_battery_full_in">%1$s — Vol over %2$s</string>
+    <string name="glance_torch_on">Zaklamp aan</string>
+    <string name="glance_torch_off_action">Tik om uit te zetten</string>
+    <string name="pref_glance_google_title">Weer en afspraken</string>
+    <string name="pref_glance_google_summary">Van de Smartspace-widget van de Google-app</string>
+    <string name="pref_glance_battery_title">Batterijstatus</string>
+    <string name="pref_glance_torch_title">Zaklampstatus</string>
+    <string name="pref_glance_media_title">Speelt nu</string>
 
     <string name="pref_blur_unsupported_warning"><![CDATA[De achtergrondvervaging wordt door deze OEM/ROM mogelijk niet volledig ondersteund of ingeschakeld; als je problemen ondervindt, zoek dan naar een optie &quot;Vervaging op vensterniveau toestaan&quot; in de weergave-opties of de ontwikkelaarsopties.<br/>Je kunt ook <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">deze Magisk-module</a> inschakelen op apparaten met root]]></string>
 

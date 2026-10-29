@@ -42,6 +42,7 @@
     <string name="pref_label_grid_height">Rasterhöhe</string>
     <string name="pref_label_icon_size">Symbolgröße (%)</string>
     <string name="pref_label_icon_label_size">Beschriftungsgröße (%)</string>
+    <string name="pref_label_custom">Benutzerdefiniert</string>
 
     <string name="pref_label_visibility_title">Sichtbarkeit der Beschriftungen</string>
     <string name="label_visibility_never">Nie</string>
@@ -123,6 +124,19 @@
     <string name="pref_smartspace_summary_clock">Zeigt eine Uhr mit dem heutigen Datum</string>
     <string name="pref_smartspace_summary_google">Zeigt das Google Smartspace-Widget</string>
     <string name="pref_smartspace_summary_disabled">Kein Widget auf dem ersten Bildschirm</string>
+
+    <!-- At a Glance widget -->
+    <string name="glance_widget_label">Auf einen Blick</string>
+    <string name="glance_battery_charging">Wird geladen</string>
+    <string name="glance_battery_low">Akku schwach</string>
+    <string name="glance_battery_full_in">%1$s — Voll geladen in %2$s</string>
+    <string name="glance_torch_on">Taschenlampe an</string>
+    <string name="glance_torch_off_action">Zum Ausschalten tippen</string>
+    <string name="pref_glance_google_title">Wetter und Termine</string>
+    <string name="pref_glance_google_summary">Vom Smartspace-Widget der Google App</string>
+    <string name="pref_glance_battery_title">Akkustatus</string>
+    <string name="pref_glance_torch_title">Taschenlampenstatus</string>
+    <string name="pref_glance_media_title">Aktuelle Wiedergabe</string>
 
     <string name="pref_blur_unsupported_warning"><![CDATA[Die Hintergrund-Weichzeichnung wird von diesem OEM/ROM möglicherweise nicht vollständig unterstützt oder aktiviert; falls Probleme auftreten, suche in den Anzeigeoptionen oder den Entwickleroptionen nach einer Option &quot;Unschärfe auf Fensterebene zulassen&quot;.<br/>Alternativ kannst du auf gerooteten Geräten <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">dieses Magisk-Modul</a> aktivieren]]></string>
 

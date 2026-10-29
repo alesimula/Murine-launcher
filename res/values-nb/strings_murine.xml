@@ -42,6 +42,7 @@
     <string name="pref_label_grid_height">Rutenetthøyde</string>
     <string name="pref_label_icon_size">Ikonstørrelse (%)</string>
     <string name="pref_label_icon_label_size">Etikettstørrelse (%)</string>
+    <string name="pref_label_custom">Egendefinert</string>
 
     <string name="pref_label_visibility_title">Visning av etiketter</string>
     <string name="label_visibility_never">Aldri</string>
@@ -123,6 +124,19 @@
     <string name="pref_smartspace_summary_clock">Viser en klokke med dagens dato</string>
     <string name="pref_smartspace_summary_google">Viser Google Smartspace-modulen</string>
     <string name="pref_smartspace_summary_disabled">Ingen modul på den første skjermen</string>
+
+    <!-- At a Glance widget -->
+    <string name="glance_widget_label">Kort fortalt</string>
+    <string name="glance_battery_charging">Lader</string>
+    <string name="glance_battery_low">Lavt batterinivå</string>
+    <string name="glance_battery_full_in">%1$s — Fulladet om %2$s</string>
+    <string name="glance_torch_on">Lommelykt på</string>
+    <string name="glance_torch_off_action">Trykk for å slå av</string>
+    <string name="pref_glance_google_title">Vær og hendelser</string>
+    <string name="pref_glance_google_summary">Fra Smartspace-modulen i Google-appen</string>
+    <string name="pref_glance_battery_title">Batteristatus</string>
+    <string name="pref_glance_torch_title">Lommelyktstatus</string>
+    <string name="pref_glance_media_title">Spilles nå</string>
 
     <string name="pref_blur_unsupported_warning"><![CDATA[Uskarp bakgrunn støttes eller aktiveres kanskje ikke fullt ut av denne produsenten/ROM-en. Hvis du får problemer, kan du se etter «Tillat uskarphet på vindusnivå» under skjerm- eller utvikleralternativene.<br/>På enheter med root kan du alternativt prøve å aktivere <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">denne Magisk-modulen</a>.]]></string>
 

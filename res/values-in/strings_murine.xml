@@ -42,6 +42,7 @@
     <string name="pref_label_grid_height">Tinggi petak</string>
     <string name="pref_label_icon_size">Ukuran ikon (%)</string>
     <string name="pref_label_icon_label_size">Ukuran label (%)</string>
+    <string name="pref_label_custom">Kustom</string>
 
     <string name="pref_label_visibility_title">Tampilan label</string>
     <string name="label_visibility_never">Tidak pernah</string>
@@ -123,6 +124,19 @@
     <string name="pref_smartspace_summary_clock">Menampilkan jam dan tanggal hari ini</string>
     <string name="pref_smartspace_summary_google">Menampilkan widget Google Smartspace</string>
     <string name="pref_smartspace_summary_disabled">Tidak ada widget di layar pertama</string>
+
+    <!-- At a Glance widget -->
+    <string name="glance_widget_label">Sekilas</string>
+    <string name="glance_battery_charging">Mengisi daya</string>
+    <string name="glance_battery_low">Baterai lemah</string>
+    <string name="glance_battery_full_in">%1$s — Penuh dalam %2$s</string>
+    <string name="glance_torch_on">Senter menyala</string>
+    <string name="glance_torch_off_action">Ketuk untuk mematikan</string>
+    <string name="pref_glance_google_title">Cuaca dan acara</string>
+    <string name="pref_glance_google_summary">Dari widget Smartspace aplikasi Google</string>
+    <string name="pref_glance_battery_title">Status baterai</string>
+    <string name="pref_glance_torch_title">Status senter</string>
+    <string name="pref_glance_media_title">Sedang diputar</string>
 
     <string name="pref_blur_unsupported_warning"><![CDATA[Efek buram wallpaper mungkin tidak sepenuhnya didukung oleh OEM/ROM ini; jika terjadi masalah, cari opsi &quot;Izinkan efek buram jendela&quot; di setelan layar atau opsi pengembang.<br/>Sebagai alternatif, coba aktifkan <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">modul Magisk ini</a> pada perangkat yang sudah di-root]]></string>
 

@@ -42,6 +42,7 @@
     <string name="pref_label_grid_height">그리드 높이</string>
     <string name="pref_label_icon_size">아이콘 크기 (%)</string>
     <string name="pref_label_icon_label_size">라벨 크기 (%)</string>
+    <string name="pref_label_custom">맞춤</string>
 
     <string name="pref_label_visibility_title">라벨 표시</string>
     <string name="label_visibility_never">표시 안 함</string>
@@ -123,6 +124,19 @@
     <string name="pref_smartspace_summary_clock">오늘 날짜와 함께 시계를 표시합니다</string>
     <string name="pref_smartspace_summary_google">Google Smartspace 위젯을 표시합니다</string>
     <string name="pref_smartspace_summary_disabled">첫 화면에 위젯 없음</string>
+
+    <!-- At a Glance widget -->
+    <string name="glance_widget_label">한눈에 보기</string>
+    <string name="glance_battery_charging">충전 중</string>
+    <string name="glance_battery_low">배터리 부족</string>
+    <string name="glance_battery_full_in">%1$s — %2$s 후 완충</string>
+    <string name="glance_torch_on">손전등 켜짐</string>
+    <string name="glance_torch_off_action">탭하여 끄기</string>
+    <string name="pref_glance_google_title">날씨 및 일정</string>
+    <string name="pref_glance_google_summary">Google 앱의 Smartspace 위젯에서 가져옴</string>
+    <string name="pref_glance_battery_title">배터리 상태</string>
+    <string name="pref_glance_torch_title">손전등 상태</string>
+    <string name="pref_glance_media_title">지금 재생 중</string>
 
     <string name="pref_blur_unsupported_warning"><![CDATA[배경화면 흐림 효과는 이 OEM/ROM에서 완전히 지원되지 않거나 사용 설정되어 있지 않을 수 있습니다. 문제가 발생하면 디스플레이 설정 또는 개발자 옵션에서 &quot;창 수준 흐림 허용&quot; 항목을 확인해 보세요.<br/>또는 루팅된 기기에서 <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">이 Magisk 모듈</a>을 사용 설정해 볼 수 있습니다]]></string>
 

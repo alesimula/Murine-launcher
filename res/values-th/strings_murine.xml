@@ -42,6 +42,7 @@
     <string name="pref_label_grid_height">ความสูงของตาราง</string>
     <string name="pref_label_icon_size">ขนาดไอคอน (%)</string>
     <string name="pref_label_icon_label_size">ขนาดป้ายชื่อ (%)</string>
+    <string name="pref_label_custom">กำหนดเอง</string>
 
     <string name="pref_label_visibility_title">การแสดงป้ายชื่อ</string>
     <string name="label_visibility_never">ไม่แสดงเลย</string>
@@ -123,6 +124,19 @@
     <string name="pref_smartspace_summary_clock">แสดงนาฬิกาพร้อมวันที่ของวันนี้</string>
     <string name="pref_smartspace_summary_google">แสดงวิดเจ็ต Smartspace ของ Google</string>
     <string name="pref_smartspace_summary_disabled">ไม่มีวิดเจ็ตบนหน้าจอแรก</string>
+
+    <!-- At a Glance widget -->
+    <string name="glance_widget_label">ข้อมูลโดยย่อ</string>
+    <string name="glance_battery_charging">กำลังชาร์จ</string>
+    <string name="glance_battery_low">แบตเตอรี่เหลือน้อย</string>
+    <string name="glance_battery_full_in">%1$s — ชาร์จเต็มในอีก %2$s</string>
+    <string name="glance_torch_on">ไฟฉายเปิดอยู่</string>
+    <string name="glance_torch_off_action">แตะเพื่อปิด</string>
+    <string name="pref_glance_google_title">สภาพอากาศและกิจกรรม</string>
+    <string name="pref_glance_google_summary">จากวิดเจ็ต Smartspace ของแอป Google</string>
+    <string name="pref_glance_battery_title">สถานะแบตเตอรี่</string>
+    <string name="pref_glance_torch_title">สถานะไฟฉาย</string>
+    <string name="pref_glance_media_title">กำลังเล่น</string>
 
     <string name="pref_blur_unsupported_warning"><![CDATA[OEM/ROM นี้อาจรองรับหรือเปิดใช้การเบลอวอลเปเปอร์ได้ไม่เต็มที่ หากพบปัญหา ลองมองหาตัวเลือก &quot;Allow window-level blurs&quot; ในตัวเลือกการแสดงผลหรือตัวเลือกสำหรับนักพัฒนา<br/>หรืออีกทางหนึ่ง ลองเปิดใช้ <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">โมดูล Magisk นี้</a> บนอุปกรณ์ที่รูทแล้ว]]></string>
 

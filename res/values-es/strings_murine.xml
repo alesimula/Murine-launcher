@@ -43,6 +43,7 @@
     <string name="pref_label_grid_height">Alto de la cuadrícula</string>
     <string name="pref_label_icon_size">Tamaño del icono (%)</string>
     <string name="pref_label_icon_label_size">Tamaño de la etiqueta (%)</string>
+    <string name="pref_label_custom">Personalizado</string>
 
     <string name="pref_label_visibility_title">Visibilidad de etiquetas</string>
     <string name="label_visibility_never">Nunca</string>
@@ -125,6 +126,19 @@
     <string name="pref_smartspace_summary_clock">Muestra reloj con la fecha de hoy</string>
     <string name="pref_smartspace_summary_google">Muestra widget Smartspace de Google</string>
     <string name="pref_smartspace_summary_disabled">Sin widget en pantalla principal</string>
+
+    <!-- At a Glance widget -->
+    <string name="glance_widget_label">De un vistazo</string>
+    <string name="glance_battery_charging">Cargando</string>
+    <string name="glance_battery_low">Batería baja</string>
+    <string name="glance_battery_full_in">%1$s — Carga completa en %2$s</string>
+    <string name="glance_torch_on">Linterna encendida</string>
+    <string name="glance_torch_off_action">Toca para apagar</string>
+    <string name="pref_glance_google_title">Tiempo y eventos</string>
+    <string name="pref_glance_google_summary">Del widget Smartspace de la app de Google</string>
+    <string name="pref_glance_battery_title">Estado de la batería</string>
+    <string name="pref_glance_torch_title">Estado de la linterna</string>
+    <string name="pref_glance_media_title">Reproduciendo ahora</string>
 
     <string name="pref_blur_unsupported_warning"><![CDATA[El desenfoque del fondo puede no estar completamente soportado o habilitado por este OEM/ROM; si encuentras problemas, intenta buscar una opción de &quot;Permitir desenfoques a nivel de ventana&quot; en las opciones de pantalla o en las opciones de desarrollador.<br/>Alternativamente, prueba a activar <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">este módulo de Magisk</a> en dispositivos con root]]></string>
 
