@@ -125,6 +125,19 @@
     <string name="pref_smartspace_summary_google">Mostra il widget Google Smartspace</string>
     <string name="pref_smartspace_summary_disabled">Nessun widget nella prima schermata</string>
 
+    <!-- At a Glance widget -->
+    <string name="glance_widget_label">Colpo d\'occhio</string>
+    <string name="glance_battery_charging">In carica</string>
+    <string name="glance_battery_low">Batteria scarica</string>
+    <string name="glance_battery_full_in">%1$s — Carica completa tra %2$s</string>
+    <string name="glance_torch_on">Torcia accesa</string>
+    <string name="glance_torch_off_action">Tocca per spegnere</string>
+    <string name="pref_glance_google_title">Meteo ed eventi</string>
+    <string name="pref_glance_google_summary">Dal widget Smartspace dell\'app Google</string>
+    <string name="pref_glance_battery_title">Stato della batteria</string>
+    <string name="pref_glance_torch_title">Stato della torcia</string>
+    <string name="pref_glance_media_title">In riproduzione</string>
+
     <string name="pref_blur_unsupported_warning"><![CDATA[La sfocatura dello sfondo potrebbe non essere completamente supportata o abilitata da questo OEM/ROM; se riscontri problemi, prova a cercare un\'opzione &quot;Consenti sfocature a livello di finestra&quot; nelle opzioni di visualizzazione o nelle opzioni sviluppatore.<br/>In alternativa, prova ad abilitare <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">questo modulo Magisk</a> su dispositivi con root]]></string>
 
     <!-- Notification badges -->

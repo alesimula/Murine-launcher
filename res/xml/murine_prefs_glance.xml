@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.android.settingslib.widget.SegmentedButtonPreference
+        android:key="pref_glance_theme"
+        android:title="@string/pref_subcategory_day_night"
+        android:persistent="false" />
+    <com.android.settingslib.widget.SpacePreference
+        android:layout_height="12dp" />
+
+    <app.murinelauncher.widget.CustomSeekBarPreference
+        android:key="pref_glance_alpha"
+        android:title="@string/pref_group_qsb_transparency"
+        android:defaultValue="85"
+        android:min="0"
+        android:max="100"
+        app:units="%"
+        app:tickInterval="10"
+        app:showIncrementButtons="true"
+        app:showTicks="true" />
+
+    <SwitchPreferenceCompat
+        android:key="pref_glance_google"
+        android:title="@string/pref_glance_google_title"
+        android:summary="@string/pref_glance_google_summary"
+        android:defaultValue="true" />
+
+    <SwitchPreferenceCompat
+        android:key="pref_glance_battery"
+        android:title="@string/pref_glance_battery_title"
+        android:defaultValue="true" />
+
+    <SwitchPreferenceCompat
+        android:key="pref_glance_torch"
+        android:title="@string/pref_glance_torch_title"
+        android:defaultValue="true" />
+
+    <SwitchPreferenceCompat
+        android:key="pref_glance_media"
+        android:title="@string/pref_glance_media_title"
+        android:persistent="false" />
+
+</androidx.preference.PreferenceScreen>

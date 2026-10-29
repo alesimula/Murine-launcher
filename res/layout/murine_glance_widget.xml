@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- At a Glance widget: date and weather, the active cards as chips below -->
+<app.murinelauncher.widget.smartspace.GlanceView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginVertical="@dimen/glance_margin_vertical"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/glance_padding"
+    android:paddingTop="@dimen/glance_padding"
+    android:paddingEnd="@dimen/glance_padding_end"
+    android:paddingBottom="@dimen/glance_padding">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical">
+
+        <TextClock
+            android:id="@+id/glance_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:fontFamily="@font/murine_gantari_medium"
+            android:format12Hour="EEEE d MMM"
+            android:format24Hour="EEEE d MMM"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:textSize="@dimen/glance_date_size" />
+
+        <LinearLayout
+            android:id="@+id/glance_weather"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:visibility="gone">
+
+            <View
+                android:id="@+id/glance_divider"
+                android:layout_width="1.5dp"
+                android:layout_height="@dimen/glance_divider_height"
+                android:layout_marginHorizontal="@dimen/glance_padding" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/glance_weather_icon"
+                    android:layout_width="@dimen/glance_weather_icon_size"
+                    android:layout_height="@dimen/glance_weather_icon_size"
+                    android:importantForAccessibility="no"
+                    android:scaleType="fitCenter" />
+
+                <TextView
+                    android:id="@+id/glance_temperature"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/murine_gantari_medium"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:textSize="@dimen/glance_temperature_size" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <app.murinelauncher.widget.smartspace.GlanceChipRow
+        android:id="@+id/glance_chips"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/glance_chip_height"
+        android:layout_marginTop="@dimen/glance_chips_margin_top" />
+</app.murinelauncher.widget.smartspace.GlanceView>

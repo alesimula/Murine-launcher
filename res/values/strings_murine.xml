@@ -125,6 +125,19 @@
     <string name="pref_smartspace_summary_google">Shows Google\'s Smartspace widget</string>
     <string name="pref_smartspace_summary_disabled">No widget on the first screen</string>
 
+    <!-- At a Glance widget -->
+    <string name="glance_widget_label">At a Glance</string>
+    <string name="glance_battery_charging">Charging</string>
+    <string name="glance_battery_low">Battery low</string>
+    <string name="glance_battery_full_in">%1$s — Full in %2$s</string>
+    <string name="glance_torch_on">Flashlight on</string>
+    <string name="glance_torch_off_action">Tap to turn off</string>
+    <string name="pref_glance_google_title">Weather and events</string>
+    <string name="pref_glance_google_summary">From the Google app\'s Smartspace widget</string>
+    <string name="pref_glance_battery_title">Battery status</string>
+    <string name="pref_glance_torch_title">Flashlight status</string>
+    <string name="pref_glance_media_title">Now playing</string>
+
     <string name="pref_blur_unsupported_warning"><![CDATA[The wallpaper blur may or may not be fully supported or enabled by this OEM/ROM; If you encounter issues, try to check for an &quot;Allow window-level blurs&quot; option in Display Options or Developer Options.<br/>Alternatively, try enabling <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">this Magisk module</a> on rooted devices]]></string>
 
     <!-- Notification badges -->

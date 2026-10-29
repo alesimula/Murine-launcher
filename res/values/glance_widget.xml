@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- At a Glance widget -->
+<resources>
+    <dimen name="glance_margin_vertical">6dp</dimen>
+    <dimen name="glance_padding">14dp</dimen>
+    <dimen name="glance_padding_end">18dp</dimen>
+    <dimen name="glance_corner_radius">28dp</dimen>
+    <dimen name="glance_date_size">21sp</dimen>
+    <dimen name="glance_divider_height">34dp</dimen>
+    <dimen name="glance_weather_icon_size">24dp</dimen>
+    <dimen name="glance_temperature_size">12sp</dimen>
+    <dimen name="glance_chips_margin_top">12dp</dimen>
+    <dimen name="glance_chip_height">26dp</dimen>
+    <dimen name="glance_chip_gap">8dp</dimen>
+    <dimen name="glance_chip_min_width">90dp</dimen>
+    <dimen name="glance_chip_icon_size">15dp</dimen>
+    <dimen name="glance_chip_text_size">13sp</dimen>
+</resources>

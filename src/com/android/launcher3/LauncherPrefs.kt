@@ -24,6 +24,7 @@ import app.murinelauncher.settings.prefs.AdaptiveIcons
 import app.murinelauncher.settings.prefs.LabelVisibility
 import app.murinelauncher.settings.SettingsDrawerFragment
 import app.murinelauncher.settings.SettingsGeneralFragment
+import app.murinelauncher.settings.SettingsGlanceFragment
 import app.murinelauncher.settings.SettingsHomeFragment
 import app.murinelauncher.settings.SettingsIconsFragment
 import app.murinelauncher.settings.SettingsQsbFragment
@@ -432,6 +433,18 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
         val PENDING_SMARTSPACE_REMOVAL = nonRestorableItem("pending_smartspace_removal", false)
         @JvmField
         val PENDING_SMARTSPACE_WIDGET_ID = nonRestorableItem("pending_smartspace_widget_id", -1)
+        @JvmField
+        val GLANCE_GOOGLE = backedUpItem(SettingsGlanceFragment.GOOGLE, true)
+        @JvmField
+        val GLANCE_BATTERY = backedUpItem(SettingsGlanceFragment.BATTERY, true)
+        @JvmField
+        val GLANCE_TORCH = backedUpItem(SettingsGlanceFragment.TORCH, true)
+        @JvmField
+        val GLANCE_MEDIA = backedUpItem(SettingsGlanceFragment.MEDIA, true)
+        @JvmField
+        val GLANCE_ALPHA = backedUpItem(SettingsGlanceFragment.ALPHA, 85)
+        @JvmField
+        val GLANCE_THEME = backedUpItem(SettingsGlanceFragment.THEME, SettingsGlanceFragment.THEME_DEFAULT)
         @JvmField
         val FIXED_LANDSCAPE_MODE = backedUpItem(SettingsHomeFragment.FIXED_LANDSCAPE_MODE, false)
         @JvmField

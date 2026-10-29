@@ -207,6 +207,7 @@
     <!--  Used for custom widgets  -->
     <array name="custom_widget_providers">
         <item>app.murinelauncher.widget.smartspace.MurineClockWidgetPlugin</item>
+        <item>app.murinelauncher.widget.smartspace.GlanceWidgetPlugin</item>
     </array>
 
     <!-- Embed parameters -->
