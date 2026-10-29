@@ -16,44 +16,119 @@
         android:layout_height="0dp"
         android:layout_weight="2" />
 
-    <TextClock
-        android:id="@+id/murine_clock"
+    <!-- Infinity X style clock: hour (white) + minutes (red) side by side.
+         Text size is set from the widget height in MurineClockView. -->
+    <LinearLayout
+        android:id="@+id/murine_clock_row"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_gravity="start"
         android:layout_weight="11"
-        android:autoSizeTextType="uniform"
-        android:fontFamily="@font/murine_gantari_medium"
-        android:format12Hour="h:mm"
-        android:format24Hour="HH:mm"
-        android:includeFontPadding="false"
-        android:letterSpacing="-0.02"
-        android:autoSizeMinTextSize="0.1sp"
-        android:autoSizeStepGranularity="1sp"
-        android:singleLine="true"
-        android:textColor="?attr/workspaceTextColor"
-        android:textSize="72sp" />
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:gravity="start|center_vertical"
+        android:orientation="horizontal">
 
-    <TextClock
-        android:id="@+id/murine_clock_date"
+        <app.murinelauncher.widget.smartspace.FirstCharAccentTextClock
+            android:id="@+id/murine_clock_hour"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/murine_gantari_medium"
+            android:format12Hour="h"
+            android:format24Hour="HH"
+            android:includeFontPadding="false"
+            android:letterSpacing="-0.04"
+            android:shadowColor="#A0000000"
+            android:shadowDx="0"
+            android:shadowDy="2"
+            android:shadowRadius="6"
+            android:ellipsize="none"
+            android:singleLine="true"
+            android:textColor="@color/murine_clock_text"
+            android:textSize="72sp" />
+
+        <TextView
+            android:id="@+id/murine_clock_colon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/murine_gantari_medium"
+            android:includeFontPadding="false"
+            android:letterSpacing="-0.04"
+            android:shadowColor="#A0000000"
+            android:shadowDx="0"
+            android:shadowDy="2"
+            android:shadowRadius="6"
+            android:ellipsize="none"
+            android:singleLine="true"
+            android:text=":"
+            android:textColor="@color/murine_clock_text"
+            android:textSize="72sp" />
+
+        <TextClock
+            android:id="@+id/murine_clock_minute"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/murine_gantari_medium"
+            android:format12Hour="mm"
+            android:format24Hour="mm"
+            android:includeFontPadding="false"
+            android:letterSpacing="-0.04"
+            android:shadowColor="#A0000000"
+            android:shadowDx="0"
+            android:shadowDy="2"
+            android:shadowRadius="6"
+            android:ellipsize="none"
+            android:singleLine="true"
+            android:textColor="@color/murine_clock_minute"
+            android:textSize="72sp" />
+    </LinearLayout>
+
+    <!-- date + optional weather on one line; text size is set from the widget height in code -->
+    <LinearLayout
+        android:id="@+id/murine_clock_info_row"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_gravity="start"
         android:layout_marginTop="@fraction/_001sdp"
         android:layout_weight="3"
-        android:alpha="0.85"
-        android:autoSizeTextType="uniform"
-        android:fontFamily="@font/murine_gantari_medium"
-        android:format12Hour="EEEE MMMM d"
-        android:format24Hour="EEEE MMMM d"
-        android:includeFontPadding="false"
-        android:autoSizeMinTextSize="0.1sp"
-        android:autoSizeStepGranularity="0.1sp"
-        android:shadowColor="#A0000000"
-        android:shadowDx="0"
-        android:shadowDy="2"
-        android:shadowRadius="4"
-        android:singleLine="true"
-        android:textColor="?attr/workspaceTextColor"
-        android:textSize="16sp" />
+        android:clipChildren="false"
+        android:gravity="start|top"
+        android:orientation="horizontal">
+
+        <TextClock
+            android:id="@+id/murine_clock_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:alpha="0.9"
+            android:fontFamily="@font/murine_gantari_medium"
+            android:format12Hour="EEE, MMM d"
+            android:format24Hour="EEE, MMM d"
+            android:includeFontPadding="false"
+            android:shadowColor="#A0000000"
+            android:shadowDx="0"
+            android:shadowDy="2"
+            android:shadowRadius="4"
+            android:ellipsize="none"
+            android:singleLine="true"
+            android:textColor="@color/murine_clock_text"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/murine_clock_weather"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:alpha="0.9"
+            android:fontFamily="@font/murine_gantari_medium"
+            android:includeFontPadding="false"
+            android:shadowColor="#A0000000"
+            android:shadowDx="0"
+            android:shadowDy="2"
+            android:shadowRadius="4"
+            android:ellipsize="none"
+            android:singleLine="true"
+            android:textColor="@color/murine_clock_text"
+            android:textSize="16sp"
+            android:visibility="gone" />
+    </LinearLayout>
 </app.murinelauncher.widget.smartspace.MurineClockView>

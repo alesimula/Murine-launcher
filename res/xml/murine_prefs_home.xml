@@ -55,6 +55,34 @@
             android:persistent="true"
             app:showPreviewIcon="false"/>
 
+        <SwitchPreferenceCompat
+            android:key="pref_clock_style_infinityx"
+            android:title="Infinity X clock style"
+            android:summary="Red hour, white minutes, short date. Turn off for the original Murine clock"
+            android:defaultValue="true"
+            android:persistent="true" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_clock_weather"
+            android:title="Show weather"
+            android:summary="Temperature and conditions next to the date. Uses the internet (Open-Meteo), no GPS needed"
+            android:defaultValue="false"
+            android:persistent="true" />
+
+        <app.murinelauncher.settings.WeatherLocationPreference
+            android:key="pref_clock_weather_location"
+            android:title="Weather location"
+            android:persistent="false" />
+
+        <ListPreference
+            android:key="pref_clock_weather_unit"
+            android:title="Temperature unit"
+            android:entries="@array/clock_weather_unit_entries"
+            android:entryValues="@array/clock_weather_unit_values"
+            android:defaultValue="c"
+            android:persistent="true"
+            app:useSimpleSummaryProvider="true" />
+
         <com.android.settingslib.widget.ExpandablePreference
             android:title="@string/pref_group_grid_size_title"
             android:summary="@string/pref_group_grid_size_desc">

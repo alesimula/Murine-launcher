@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Infinity X style clock: hour = red, colon + minutes + date = white -->
+    <color name="murine_clock_hour">#FFD50000</color>
+    <color name="murine_clock_minute">#FFFFFFFF</color>
+    <color name="murine_clock_text">#FFFFFFFF</color>
+</resources>

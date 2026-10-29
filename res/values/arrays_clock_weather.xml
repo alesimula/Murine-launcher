@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="clock_weather_unit_entries">
+        <item>Celsius</item>
+        <item>Fahrenheit</item>
+    </string-array>
+    <string-array name="clock_weather_unit_values">
+        <item>c</item>
+        <item>f</item>
+    </string-array>
+</resources>

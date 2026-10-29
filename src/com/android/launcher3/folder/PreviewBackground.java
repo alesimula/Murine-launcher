@@ -86,6 +86,8 @@ public class PreviewBackground extends DelegatedCellDrawing {
     private View mInvalidateDelegate;
 
     int previewSize;
+    /** > 0 for super folders: edge length of the (bigger) square background. */
+    int previewSizeOverride;
     int basePreviewOffsetX;
     int basePreviewOffsetY;
 
@@ -175,10 +177,11 @@ public class PreviewBackground extends DelegatedCellDrawing {
         ta.recycle();
 
         DeviceProfile grid = activity.getDeviceProfile();
-        previewSize = grid.folderIconSizePx;
+        previewSize = previewSizeOverride > 0 ? previewSizeOverride : grid.folderIconSizePx;
 
         basePreviewOffsetX = (availableSpaceX - previewSize) / 2;
-        basePreviewOffsetY = topPadding + grid.folderIconOffsetYPx;
+        basePreviewOffsetY = topPadding
+                + (previewSizeOverride > 0 ? 0 : grid.folderIconOffsetYPx);
 
         // Stroke width is 1dp
         mStrokeWidth = context.getResources().getDisplayMetrics().density;
