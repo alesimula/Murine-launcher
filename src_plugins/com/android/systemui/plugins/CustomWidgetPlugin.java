@@ -19,6 +19,7 @@ package com.android.systemui.plugins;
 import android.appwidget.AppWidgetHostView;
 import android.appwidget.AppWidgetProviderInfo;
 import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 
 import com.android.systemui.plugins.annotations.ProvidesInterface;
@@ -66,6 +67,14 @@ public interface CustomWidgetPlugin extends Plugin {
      * to the standard icon preview. Called on the UI thread, and only if {@link #useLivePreview()}.
      */
     default View createPreviewView(Context context) {
+        return null;
+    }
+
+    /**
+     * Returns the intent opening this widget's settings, or {@code null} if it has none. When set,
+     * the widget gets the reconfigure button and the "Widget settings" drop target (Android 12+).
+     */
+    default Intent getConfigureIntent(Context context) {
         return null;
     }
 }

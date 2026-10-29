@@ -45,6 +45,7 @@ import com.android.launcher3.R;
 import com.android.launcher3.Utilities;
 import com.android.launcher3.dagger.LauncherComponentProvider;
 import com.android.launcher3.model.data.ItemInfo;
+import com.android.launcher3.model.data.LauncherAppWidgetInfo;
 import com.android.launcher3.testing.TestLogging;
 import com.android.launcher3.testing.shared.TestProtocol;
 import com.android.launcher3.util.SafeCloseable;
@@ -264,6 +265,14 @@ public class LauncherWidgetHolder {
     private void startConfigActivity(@NonNull BaseActivity activity, int widgetId,
                                      int requestCode, int retryCount) {
         if (!WIDGETS_ENABLED) {
+            sendActionCancelled(activity, requestCode);
+            return;
+        }
+
+        if (widgetId <= LauncherAppWidgetInfo.CUSTOM_WIDGET_ID) {
+            // The system doesn't know custom widgets: open their settings directly
+            Intent intent = CustomWidgetManager.INSTANCE.get(activity).getConfigureIntent(widgetId);
+            if (intent != null) activity.startActivity(intent);
             sendActionCancelled(activity, requestCode);
             return;
         }

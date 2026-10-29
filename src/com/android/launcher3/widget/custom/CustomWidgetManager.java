@@ -24,6 +24,7 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProviderInfo;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Parcel;
 import android.os.Process;
 import android.util.Log;
@@ -34,6 +35,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
 import com.android.launcher3.R;
+import com.android.launcher3.Utilities;
 import com.android.launcher3.dagger.ApplicationContext;
 import com.android.launcher3.dagger.LauncherAppSingleton;
 import com.android.launcher3.dagger.LauncherBaseAppComponent;
@@ -113,6 +115,14 @@ public class CustomWidgetManager implements PluginListener<CustomWidgetPlugin> {
         CustomAppWidgetProviderInfo info = getAndAddInfo(new ComponentName(
                 mContext.getPackageName(), CLS_CUSTOM_WIDGET_PREFIX + plugin.getClass().getName()));
         if (info != null) {
+            // The info is cloned from an installed provider: clear its configure activity, and set
+            // the plugin's own (optional, so adding the widget never opens it)
+            Intent configure = Utilities.ATLEAST_S ? plugin.getConfigureIntent(mContext) : null;
+            info.configure = configure != null ? configure.getComponent() : null;
+            if (Utilities.ATLEAST_P) {
+                info.widgetFeatures = configure != null ? AppWidgetProviderInfo.WIDGET_FEATURE_RECONFIGURABLE
+                        | AppWidgetProviderInfo.WIDGET_FEATURE_CONFIGURATION_OPTIONAL : 0;
+            }
             plugin.updateWidgetInfo(info, mContext);
             mPlugins.put(info.provider, plugin);
             mWidgetRefreshCallbacks.forEach(MAIN_EXECUTOR::execute);
@@ -187,6 +197,17 @@ public class CustomWidgetManager implements PluginListener<CustomWidgetPlugin> {
             info = getAndAddInfo(cn);
         }
         return info;
+    }
+
+    /**
+     * Returns the settings intent of the custom widget with the given appWidgetId, if it has one.
+     */
+    @Nullable
+    public Intent getConfigureIntent(int appWidgetId) {
+        int index = CUSTOM_WIDGET_ID - appWidgetId;
+        if (index < 0 || index >= mCustomWidgets.size()) return null;
+        CustomWidgetPlugin plugin = mPlugins.get(mCustomWidgets.get(index).provider);
+        return plugin != null ? plugin.getConfigureIntent(mContext) : null;
     }
 
     /**

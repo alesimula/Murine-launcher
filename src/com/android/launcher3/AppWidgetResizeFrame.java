@@ -300,9 +300,12 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
         if (info.isReconfigurable()) {
             mReconfigureButton.setVisibility(VISIBLE);
             mReconfigureButton.setOnClickListener(view -> {
+                // Custom widget views report id 0: their real id is on the item
+                int widgetId = mWidgetView.getTag() instanceof LauncherAppWidgetInfo lai
+                        ? lai.appWidgetId : mWidgetView.getAppWidgetId();
                 mLauncher.setWaitingForResult(
                         PendingRequestArgs.forWidgetInfo(
-                                mWidgetView.getAppWidgetId(),
+                                widgetId,
                                 // Widget add handler is null since we're reconfiguring an existing
                                 // widget.
                                 /* widgetHandler= */ null,
@@ -311,7 +314,7 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
                         .getAppWidgetHolder()
                         .startConfigActivity(
                                 mLauncher,
-                                mWidgetView.getAppWidgetId(),
+                                widgetId,
                                 ActivityCodes.REQUEST_RECONFIGURE_APPWIDGET);
             });
             if (!hasSeenReconfigurableWidgetEducationTip()) {

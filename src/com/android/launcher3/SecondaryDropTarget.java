@@ -42,6 +42,7 @@ import com.android.launcher3.logging.StatsLogManager;
 import com.android.launcher3.logging.StatsLogManager.StatsLogger;
 import com.android.launcher3.model.data.ItemInfo;
 import com.android.launcher3.model.data.ItemInfoWithIcon;
+import com.android.launcher3.model.data.LauncherAppWidgetInfo;
 import com.android.launcher3.pm.UserCache;
 import com.android.launcher3.util.ApplicationInfoWrapper;
 import com.android.launcher3.widget.LauncherAppWidgetProviderInfo;
@@ -264,7 +265,9 @@ public class SecondaryDropTarget extends ButtonDropTarget implements OnAlarmList
                 .getWidgetFeatures() & WIDGET_FEATURE_RECONFIGURABLE) == 0) {
             return INVALID_APPWIDGET_ID;
         }
-        return hostView.getAppWidgetId();
+        // Custom widget views report id 0 (INVALID_APPWIDGET_ID): their real id is on the item
+        return hostView.getTag() instanceof LauncherAppWidgetInfo lai
+                ? lai.appWidgetId : hostView.getAppWidgetId();
     }
 
     /**
