@@ -1,7 +1,7 @@
 
 #-keep,allowshrinking,allowoptimization class com.android.launcher3.** {*;}
 #-keepclasseswithmembernames class com.android.launcher3.** {*;}
--keep class ** implements com.android.launcher3.widget.custom.CustomWidgetPlugin {
+-keep class ** implements com.android.systemui.plugins.CustomWidgetPlugin {
     public <init>(android.content.Context);
 }
 
