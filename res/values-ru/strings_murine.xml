@@ -124,6 +124,7 @@
     <string name="pref_smartspace_summary_clock">Показывает часы с сегодняшней датой</string>
     <string name="pref_smartspace_summary_google">Показывает виджет Google Smartspace</string>
     <string name="pref_smartspace_summary_disabled">Без виджета на первом экране</string>
+    <string name="pref_clock_open_app_title">Коснитесь, чтобы открыть часы</string>
 
     <!-- At a Glance widget -->
     <string name="glance_widget_label">Коротко о главном</string>

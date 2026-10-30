@@ -31,7 +31,7 @@ languages:
     name: French
     native: Français
     status: mostly
-    strings: 160
+    strings: 161
     by: My mum
     by_git: Valkyr2
 
@@ -39,134 +39,134 @@ languages:
     name: Spanish
     native: Español
     status: mostly
-    strings: 160
+    strings: 161
     by: EJDV
 
   - code: de
     name: German
     native: Deutsch
     status: ai
-    strings: 160
+    strings: 161
 
   - code: pt
     name: Portuguese
     native: Português
     status: mostly
-    strings: 160
+    strings: 161
     by_git: Marcos6226
 
   - code: ru
     name: Russian
     native: Русский
     status: ai
-    strings: 160
+    strings: 161
 
   - code: nl
     name: Dutch
     native: Nederlands
     status: ai
-    strings: 160
+    strings: 161
 
   - code: pl
     name: Polish
     native: Polski
     status: ai
-    strings: 160
+    strings: 161
 
   - code: tr
     name: Turkish
     native: Türkçe
     status: ai
-    strings: 160
+    strings: 161
 
   - code: uk
     name: Ukrainian
     native: Українська
     status: ai
-    strings: 160
+    strings: 161
 
   - code: ca
     name: Catalan
     native: Català
     status: ai
-    strings: 160
+    strings: 161
 
   - code: ja
     name: Japanese
     native: 日本語
     status: ai
-    strings: 160
+    strings: 161
 
   - code: ko
     name: Korean
     native: 한국어
     status: ai
-    strings: 160
+    strings: 161
 
   - code: ar
     name: Arabic
     native: العربية
     status: ai
-    strings: 160
+    strings: 161
 
   - code: fa
     name: Persian
     native: فارسی
     status: ai
-    strings: 160
+    strings: 161
 
   - code: iw
     name: Hebrew
     native: עברית
     status: ai
-    strings: 160
+    strings: 161
 
   - code: in
     name: Indonesian
     native: Bahasa Indonesia
     status: mostly
     by_git: db3150
-    strings: 160
+    strings: 161
 
   - code: vi
     name: Vietnamese
     native: Tiếng Việt
     status: ai
-    strings: 160
+    strings: 161
 
   - code: zh-rCN
     name: Chinese (Simplified)
     native: 简体中文
     status: ai
-    strings: 160
+    strings: 161
 
   - code: zh-rTW
     name: Chinese (Traditional)
     native: 繁體中文
     status: ai
-    strings: 160
+    strings: 161
 
   - code: hi
     name: Hindi
     native: हिन्दी
     status: ai
-    strings: 160
+    strings: 161
 
   - code: th
     name: Thai
     native: ไทย
     status: ai
-    strings: 160
+    strings: 161
 
   - code: tl
     name: Filipino
     native: Filipino
     status: ai
-    strings: 160
+    strings: 161
 
   - code: nb
     name: Norwegian
     native: Norsk bokmål
     status: mostly
-    strings: 160
+    strings: 161
     by_git: oddhap

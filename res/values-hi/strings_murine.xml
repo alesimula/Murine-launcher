@@ -124,6 +124,7 @@
     <string name="pref_smartspace_summary_clock">आज की तारीख के साथ घड़ी दिखाता है</string>
     <string name="pref_smartspace_summary_google">Google का Smartspace विजेट दिखाता है</string>
     <string name="pref_smartspace_summary_disabled">पहली स्क्रीन पर कोई विजेट नहीं</string>
+    <string name="pref_clock_open_app_title">घड़ी खोलने के लिए टैप करें</string>
 
     <!-- At a Glance widget -->
     <string name="glance_widget_label">एक नज़र में</string>

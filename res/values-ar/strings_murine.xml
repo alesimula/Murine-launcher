@@ -124,6 +124,7 @@
     <string name="pref_smartspace_summary_clock">تعرض ساعة مع تاريخ اليوم</string>
     <string name="pref_smartspace_summary_google">تعرض أداة Google Smartspace</string>
     <string name="pref_smartspace_summary_disabled">لا توجد أداة في الشاشة الأولى</string>
+    <string name="pref_clock_open_app_title">انقر لفتح الساعة</string>
 
     <!-- At a Glance widget -->
     <string name="glance_widget_label">نظرة سريعة</string>

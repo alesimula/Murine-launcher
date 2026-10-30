@@ -124,6 +124,7 @@
     <string name="pref_smartspace_summary_clock">แสดงนาฬิกาพร้อมวันที่ของวันนี้</string>
     <string name="pref_smartspace_summary_google">แสดงวิดเจ็ต Smartspace ของ Google</string>
     <string name="pref_smartspace_summary_disabled">ไม่มีวิดเจ็ตบนหน้าจอแรก</string>
+    <string name="pref_clock_open_app_title">แตะเพื่อเปิดนาฬิกา</string>
 
     <!-- At a Glance widget -->
     <string name="glance_widget_label">ข้อมูลโดยย่อ</string>

@@ -124,6 +124,7 @@
     <string name="pref_smartspace_summary_clock">Bugünün tarihiyle birlikte bir saat gösterir</string>
     <string name="pref_smartspace_summary_google">Google Smartspace widget\'ını gösterir</string>
     <string name="pref_smartspace_summary_disabled">İlk ekranda widget yok</string>
+    <string name="pref_clock_open_app_title">Saati açmak için dokun</string>
 
     <!-- At a Glance widget -->
     <string name="glance_widget_label">Bir Bakışta</string>

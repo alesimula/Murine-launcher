@@ -124,6 +124,7 @@
     <string name="pref_smartspace_summary_clock">Hiển thị đồng hồ kèm ngày hôm nay</string>
     <string name="pref_smartspace_summary_google">Hiển thị tiện ích Smartspace của Google</string>
     <string name="pref_smartspace_summary_disabled">Không có tiện ích trên màn hình đầu tiên</string>
+    <string name="pref_clock_open_app_title">Nhấn để mở đồng hồ</string>
 
     <!-- At a Glance widget -->
     <string name="glance_widget_label">Xem nhanh</string>

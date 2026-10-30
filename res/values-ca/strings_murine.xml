@@ -124,6 +124,7 @@
     <string name="pref_smartspace_summary_clock">Mostra un rellotge amb la data d\'avui</string>
     <string name="pref_smartspace_summary_google">Mostra el widget Google Smartspace</string>
     <string name="pref_smartspace_summary_disabled">Cap widget a la primera pantalla</string>
+    <string name="pref_clock_open_app_title">Toca per obrir el rellotge</string>
 
     <!-- At a Glance widget -->
     <string name="glance_widget_label">D\'un cop d\'ull</string>

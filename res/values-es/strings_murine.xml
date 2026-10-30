@@ -126,6 +126,7 @@
     <string name="pref_smartspace_summary_clock">Muestra reloj con la fecha de hoy</string>
     <string name="pref_smartspace_summary_google">Muestra widget Smartspace de Google</string>
     <string name="pref_smartspace_summary_disabled">Sin widget en pantalla principal</string>
+    <string name="pref_clock_open_app_title">Toca para abrir el reloj</string>
 
     <!-- At a Glance widget -->
     <string name="glance_widget_label">De un vistazo</string>

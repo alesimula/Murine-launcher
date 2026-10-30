@@ -124,6 +124,7 @@
     <string name="pref_smartspace_summary_clock">Pokazuje zegar z dzisiejszą datą</string>
     <string name="pref_smartspace_summary_google">Pokazuje widżet Google Smartspace</string>
     <string name="pref_smartspace_summary_disabled">Brak widżetu na pierwszym ekranie</string>
+    <string name="pref_clock_open_app_title">Dotknij, aby otworzyć zegar</string>
 
     <!-- At a Glance widget -->
     <string name="glance_widget_label">W skrócie</string>

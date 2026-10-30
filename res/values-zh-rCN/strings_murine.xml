@@ -124,6 +124,7 @@
     <string name="pref_smartspace_summary_clock">显示带有今天日期的时钟</string>
     <string name="pref_smartspace_summary_google">显示 Google 的 Smartspace 小部件</string>
     <string name="pref_smartspace_summary_disabled">首屏不显示小部件</string>
+    <string name="pref_clock_open_app_title">点按即可打开时钟</string>
 
     <!-- At a Glance widget -->
     <string name="glance_widget_label">概览</string>

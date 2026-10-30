@@ -124,6 +124,7 @@
     <string name="pref_smartspace_summary_clock">Toont een klok met de datum van vandaag</string>
     <string name="pref_smartspace_summary_google">Toont de Google Smartspace-widget</string>
     <string name="pref_smartspace_summary_disabled">Geen widget op het eerste scherm</string>
+    <string name="pref_clock_open_app_title">Tik om de klok te openen</string>
 
     <!-- At a Glance widget -->
     <string name="glance_widget_label">In één oogopslag</string>
