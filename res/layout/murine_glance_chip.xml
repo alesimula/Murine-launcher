@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- One At a Glance card, as a chip in GlanceChipRow -->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:background="@drawable/glance_chip_background"
+    android:drawablePadding="6dp"
+    android:ellipsize="end"
+    android:fontFamily="@font/murine_gantari_medium"
+    android:gravity="center_vertical"
+    android:includeFontPadding="false"
+    android:maxLines="1"
+    android:paddingStart="8dp"
+    android:paddingEnd="11dp"
+    android:textSize="@dimen/glance_chip_text_size" />
