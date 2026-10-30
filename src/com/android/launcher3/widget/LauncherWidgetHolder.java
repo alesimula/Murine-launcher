@@ -272,7 +272,9 @@ public class LauncherWidgetHolder {
         if (widgetId <= LauncherAppWidgetInfo.CUSTOM_WIDGET_ID) {
             // The system doesn't know custom widgets: open their settings directly
             Intent intent = CustomWidgetManager.INSTANCE.get(activity).getConfigureIntent(widgetId);
-            if (intent != null) activity.startActivity(intent);
+            // A fresh task: a settings screen left open in the background would otherwise just come back to the front
+            if (intent != null) activity.startActivity(intent.addFlags(
+                    Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
             sendActionCancelled(activity, requestCode);
             return;
         }

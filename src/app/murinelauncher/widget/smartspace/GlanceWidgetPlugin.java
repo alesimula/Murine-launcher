@@ -43,8 +43,7 @@ public class GlanceWidgetPlugin implements CustomWidgetPlugin {
     @Override
     public Intent getConfigureIntent(Context context) {
         return new Intent(context, SettingsActivity.class)
-                .putExtra(SettingsActivity.EXTRA_FRAGMENT, SettingsGlanceFragment.class.getName())
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                .putExtra(SettingsActivity.EXTRA_FRAGMENT, SettingsGlanceFragment.class.getName());
     }
 
     @Override
