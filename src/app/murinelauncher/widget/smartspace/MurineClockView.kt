@@ -1,7 +1,9 @@
 package app.murinelauncher.widget.smartspace
 
 import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
+import android.provider.AlarmClock
 import android.util.AttributeSet
 import android.view.Gravity
 import android.widget.LinearLayout
@@ -27,7 +29,7 @@ class MurineClockView @JvmOverloads constructor(
     private var attached = false
     private var currentLocale: Locale? = null
     private var sidePadding = 0
-    private val prefListener = LauncherPrefChangeListener { _ -> applyAlignment() }
+    private val prefListener = LauncherPrefChangeListener { _ -> applyPrefs() }
 
     override fun onFinishInflate() {
         super.onFinishInflate()
@@ -35,27 +37,15 @@ class MurineClockView @JvmOverloads constructor(
         dateText = findViewById(R.id.murine_clock_date)
         sidePadding = paddingStart
         applyLocaleDateFormat()
-        applyAlignment()
-
-        // Uncomment to show alarms when clicked
-        /*setOnClickListener {
-            try {
-                val intent = Intent(AlarmClock.ACTION_SHOW_ALARMS).apply {
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                }
-                context.startActivity(intent)
-            } catch (_: Exception) {
-                // No clock app available
-            }
-        }*/
+        applyPrefs()
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         if (!attached) {
             attached = true
-            LauncherPrefs.get(context).addListener(prefListener, LauncherPrefs.CLOCK_ALIGNMENT)
-            applyAlignment()
+            LauncherPrefs.get(context).addListener(prefListener, LauncherPrefs.CLOCK_ALIGNMENT, LauncherPrefs.CLOCK_OPEN_APP)
+            applyPrefs()
         }
     }
 
@@ -63,7 +53,7 @@ class MurineClockView @JvmOverloads constructor(
         super.onDetachedFromWindow()
         if (attached) {
             attached = false
-            LauncherPrefs.get(context).removeListener(prefListener, LauncherPrefs.CLOCK_ALIGNMENT)
+            LauncherPrefs.get(context).removeListener(prefListener, LauncherPrefs.CLOCK_ALIGNMENT, LauncherPrefs.CLOCK_OPEN_APP)
         }
     }
 
@@ -108,8 +98,8 @@ class MurineClockView @JvmOverloads constructor(
         }
     }
 
-    /** Start (default), center or end, from the widget settings; off start, the padding goes on both sides. */
-    private fun applyAlignment() {
+    /** Apply widget settings */
+    private fun applyPrefs() {
         val alignment = LauncherPrefs.CLOCK_ALIGNMENT.get(context)
         val gravity = when (alignment) {
             1 -> Gravity.CENTER_HORIZONTAL
@@ -118,6 +108,18 @@ class MurineClockView @JvmOverloads constructor(
         }
         listOfNotNull(clockView, dateText).forEach { it.gravity = gravity or Gravity.TOP }
         setPaddingRelative(sidePadding, 0, if (alignment == 0) 0 else sidePadding, 0)
+
+        if (LauncherPrefs.CLOCK_OPEN_APP.get(context)) {
+            setOnClickListener {
+                // The app that shows alarms, opened normally: showing them directly needs the SET_ALARM permission
+                val pm = context.packageManager
+                Intent(AlarmClock.ACTION_SHOW_ALARMS).resolveActivity(pm)?.packageName
+                    ?.let(pm::getLaunchIntentForPackage)?.let { runCatching { context.startActivity(it) } }
+            }
+        } else {
+            setOnClickListener(null)
+            isClickable = false
+        }
     }
 
     fun setTextColor(color: Int) {

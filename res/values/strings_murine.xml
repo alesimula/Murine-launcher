@@ -124,6 +124,7 @@
     <string name="pref_smartspace_summary_clock">Shows a clock with today\'s date</string>
     <string name="pref_smartspace_summary_google">Shows Google\'s Smartspace widget</string>
     <string name="pref_smartspace_summary_disabled">No widget on the first screen</string>
+    <string name="pref_clock_open_app_title">Tap to open clock</string>
 
     <!-- At a Glance widget -->
     <string name="glance_widget_label">At a Glance</string>

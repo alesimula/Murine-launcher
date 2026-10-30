@@ -124,6 +124,7 @@
     <string name="pref_smartspace_summary_clock">Mostra un orologio con la data di oggi</string>
     <string name="pref_smartspace_summary_google">Mostra il widget Google Smartspace</string>
     <string name="pref_smartspace_summary_disabled">Nessun widget nella prima schermata</string>
+    <string name="pref_clock_open_app_title">Tocca per aprire l\'orologio</string>
 
     <!-- At a Glance widget -->
     <string name="glance_widget_label">Colpo d\'occhio</string>

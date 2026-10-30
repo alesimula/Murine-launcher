@@ -6,4 +6,9 @@
         android:key="pref_clock_alignment"
         android:persistent="false" />
 
+    <SwitchPreferenceCompat
+        android:key="pref_clock_open_app"
+        android:title="@string/pref_clock_open_app_title"
+        android:defaultValue="true" />
+
 </androidx.preference.PreferenceScreen>
