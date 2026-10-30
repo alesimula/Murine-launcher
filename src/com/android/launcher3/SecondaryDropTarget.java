@@ -252,7 +252,7 @@ public class SecondaryDropTarget extends ButtonDropTarget implements OnAlarmList
      * Verifies that the view is an reconfigurable widget and returns the corresponding widget Id,
      * otherwise return {@code INVALID_APPWIDGET_ID}
      */
-    private int getReconfigurableWidgetId(View view) {
+    public static int getReconfigurableWidgetId(View view) {
         if (!(view instanceof AppWidgetHostView)) {
             return INVALID_APPWIDGET_ID;
         }
@@ -261,7 +261,7 @@ public class SecondaryDropTarget extends ButtonDropTarget implements OnAlarmList
         if (widgetInfo == null || widgetInfo.configure == null) {
             return INVALID_APPWIDGET_ID;
         }
-        if ( (LauncherAppWidgetProviderInfo.fromProviderInfo(getContext(), widgetInfo)
+        if ( (LauncherAppWidgetProviderInfo.fromProviderInfo(view.getContext(), widgetInfo)
                 .getWidgetFeatures() & WIDGET_FEATURE_RECONFIGURABLE) == 0) {
             return INVALID_APPWIDGET_ID;
         }

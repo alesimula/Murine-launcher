@@ -15,6 +15,7 @@
  */
 package com.android.launcher3.touch;
 
+import static android.appwidget.AppWidgetManager.INVALID_APPWIDGET_ID;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
@@ -22,10 +23,12 @@ import static com.android.launcher3.LauncherState.ALL_APPS;
 import static com.android.launcher3.LauncherState.EDIT_MODE;
 import static com.android.launcher3.LauncherState.NORMAL;
 import static com.android.launcher3.LauncherState.OVERVIEW;
+import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.IGNORE;
 import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_ALLAPPS_ITEM_LONG_PRESSED;
 
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.view.View;
 import android.view.View.OnLongClickListener;
 
@@ -34,6 +37,8 @@ import com.android.launcher3.DragSource;
 import com.android.launcher3.DropTarget;
 import com.android.launcher3.Launcher;
 import com.android.launcher3.LauncherPrefs;
+import com.android.launcher3.R;
+import com.android.launcher3.SecondaryDropTarget;
 import com.android.launcher3.celllayout.CellInfo;
 import com.android.launcher3.config.FeatureFlags;
 import com.android.launcher3.dragndrop.DragController;
@@ -47,11 +52,15 @@ import com.android.launcher3.model.data.PrivateSpaceInstallAppButtonInfo;
 import com.android.launcher3.testing.TestLogging;
 import com.android.launcher3.testing.shared.TestProtocol;
 import com.android.launcher3.views.BubbleTextHolder;
+import com.android.launcher3.views.OptionsPopupView;
+import com.android.launcher3.views.OptionsPopupView.OptionItem;
 import com.android.launcher3.widget.LauncherAppWidgetHostView;
 import com.android.launcher3.widget.NavigableAppWidgetHostView;
 import com.android.launcher3.widget.PendingItemDragHelper;
 import com.android.launcher3.widget.WidgetCell;
 import com.android.launcher3.widget.WidgetImageView;
+
+import java.util.List;
 
 import app.murinelauncher.widget.smartspace.SmartspaceMode;
 
@@ -87,7 +96,17 @@ public class ItemLongClickListener {
                 && lai.container == com.android.launcher3.LauncherSettings.Favorites.CONTAINER_DESKTOP
                 && lai.screenId == com.android.launcher3.WorkspaceLayoutManager.FIRST_SCREEN_ID
                 && lai.cellX == 0 && lai.cellY == 0) {
-            return false;
+            // Fixed widget: offer its settings instead of the drag, unless the home screen is locked
+            int widgetId = SecondaryDropTarget.getReconfigurableWidgetId(v);
+            if (!launcher.isDraggingEnabled() || widgetId == INVALID_APPWIDGET_ID) return false;
+            Rect r = new Rect();
+            launcher.getDragLayer().getDescendantRectRelativeToSelf(v, r);
+            OptionsPopupView.show(launcher, new RectF(r), List.of(new OptionItem(launcher,
+                    R.string.gadget_setup_text, R.drawable.ic_setting, IGNORE, view -> {
+                        launcher.getDropTargetHandler().reconfigureWidget(widgetId, lai);
+                        return true;
+                    })), true);
+            return true;
         }
 
         // Home screen locked: still show the long-press popup but never start the drag
