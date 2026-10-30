@@ -3,10 +3,14 @@ package app.murinelauncher.widget.smartspace;
 import android.appwidget.AppWidgetHostView;
 import android.appwidget.AppWidgetProviderInfo;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import app.murinelauncher.settings.SettingsClockFragment;
+
 import com.android.launcher3.R;
+import com.android.launcher3.settings.SettingsActivity;
 import com.android.launcher3.widget.LauncherAppWidgetProviderInfo;
 import com.android.systemui.plugins.CustomWidgetPlugin;
 
@@ -61,5 +65,11 @@ public class MurineClockWidgetPlugin implements CustomWidgetPlugin {
         info.minHeight = 48;
         info.resizeMode = AppWidgetProviderInfo.RESIZE_HORIZONTAL | AppWidgetProviderInfo.RESIZE_VERTICAL;
         info.icon = R.drawable.ic_pref_smartspace_clock;
+    }
+
+    @Override
+    public Intent getConfigureIntent(Context context) {
+        return new Intent(context, SettingsActivity.class)
+                .putExtra(SettingsActivity.EXTRA_FRAGMENT, SettingsClockFragment.class.getName());
     }
 }

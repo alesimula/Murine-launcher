@@ -22,6 +22,7 @@ import androidx.annotation.VisibleForTesting
 import app.murinelauncher.graphics.WorkspaceBlurUtils
 import app.murinelauncher.settings.prefs.AdaptiveIcons
 import app.murinelauncher.settings.prefs.LabelVisibility
+import app.murinelauncher.settings.SettingsClockFragment
 import app.murinelauncher.settings.SettingsDrawerFragment
 import app.murinelauncher.settings.SettingsGeneralFragment
 import app.murinelauncher.settings.SettingsGlanceFragment
@@ -445,6 +446,8 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
         val GLANCE_ALPHA = backedUpItem(SettingsGlanceFragment.ALPHA, 85)
         @JvmField
         val GLANCE_THEME = backedUpItem(SettingsGlanceFragment.THEME, SettingsGlanceFragment.THEME_DEFAULT)
+        @JvmField
+        val CLOCK_ALIGNMENT = backedUpItem(SettingsClockFragment.ALIGNMENT, 0)
         @JvmField
         val FIXED_LANDSCAPE_MODE = backedUpItem(SettingsHomeFragment.FIXED_LANDSCAPE_MODE, false)
         @JvmField

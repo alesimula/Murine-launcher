@@ -1,0 +1,2 @@
+<!-- Material icon "format_align_center", Apache 2.0 -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android" android:tint="?android:attr/colorAccent" android:width="24dp" android:height="24dp" android:viewportWidth="24" android:viewportHeight="24"><path android:fillColor="#FFF" android:pathData="M7 15v2h10v-2zm-4 6h18v-2H3zm0-8h18v-2H3zm4-6v2h10V7zM3 3v2h18V3z"/></vector>

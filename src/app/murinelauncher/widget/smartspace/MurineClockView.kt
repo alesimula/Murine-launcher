@@ -3,8 +3,11 @@ package app.murinelauncher.widget.smartspace
 import android.content.Context
 import android.content.res.Configuration
 import android.util.AttributeSet
+import android.view.Gravity
 import android.widget.LinearLayout
 import android.widget.TextClock
+import com.android.launcher3.LauncherPrefChangeListener
+import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.R
 import com.android.launcher3.Utilities
 import java.util.Locale
@@ -23,12 +26,16 @@ class MurineClockView @JvmOverloads constructor(
     private var clockView: TextClock? = null
     private var attached = false
     private var currentLocale: Locale? = null
+    private var sidePadding = 0
+    private val prefListener = LauncherPrefChangeListener { _ -> applyAlignment() }
 
     override fun onFinishInflate() {
         super.onFinishInflate()
         clockView = findViewById(R.id.murine_clock)
         dateText = findViewById(R.id.murine_clock_date)
+        sidePadding = paddingStart
         applyLocaleDateFormat()
+        applyAlignment()
 
         // Uncomment to show alarms when clicked
         /*setOnClickListener {
@@ -47,7 +54,8 @@ class MurineClockView @JvmOverloads constructor(
         super.onAttachedToWindow()
         if (!attached) {
             attached = true
-            // Custom logic
+            LauncherPrefs.get(context).addListener(prefListener, LauncherPrefs.CLOCK_ALIGNMENT)
+            applyAlignment()
         }
     }
 
@@ -55,7 +63,7 @@ class MurineClockView @JvmOverloads constructor(
         super.onDetachedFromWindow()
         if (attached) {
             attached = false
-            // Custom logic
+            LauncherPrefs.get(context).removeListener(prefListener, LauncherPrefs.CLOCK_ALIGNMENT)
         }
     }
 
@@ -98,6 +106,18 @@ class MurineClockView @JvmOverloads constructor(
                 ?: tc.format24Hour ?: tc.format12Hour ?: return@forEach
             tc.text = android.text.format.DateFormat.format(pattern, now)
         }
+    }
+
+    /** Start (default), center or end, from the widget settings; off start, the padding goes on both sides. */
+    private fun applyAlignment() {
+        val alignment = LauncherPrefs.CLOCK_ALIGNMENT.get(context)
+        val gravity = when (alignment) {
+            1 -> Gravity.CENTER_HORIZONTAL
+            2 -> Gravity.END
+            else -> Gravity.START
+        }
+        listOfNotNull(clockView, dateText).forEach { it.gravity = gravity or Gravity.TOP }
+        setPaddingRelative(sidePadding, 0, if (alignment == 0) 0 else sidePadding, 0)
     }
 
     fun setTextColor(color: Int) {
