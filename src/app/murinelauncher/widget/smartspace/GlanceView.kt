@@ -131,12 +131,11 @@ class GlanceView(context: Context, attrs: AttributeSet?) : LinearLayout(context,
             weather.setOnClickListener(weatherCard::launch)
         }
 
-        // Highest priority first, the next alarm last; with nothing to show, a placeholder keeps the size
-        val shown = (cards.filter { !it.isWeather } + listOfNotNull(nextAlarmCard())).sortedByDescending { it.score }
-            .ifEmpty { listOf(GlanceCard(title = PLACEHOLDER)) }
+        // With nothing to show, a placeholder keeps the size
+        val shown = chipCards(context, cards).ifEmpty { listOf(GlanceCard(title = PLACEHOLDER)) }
         chips.removeAllViews()
         shown.forEach { card ->
-            chips.addView(chipView(card, listOf(card.title, card.subtitle).filter { !it.isNullOrEmpty() }.joinToString(" · ")))
+            chips.addView(chipView(card, card.text))
             // Right after the full chip, see GlanceChipRow
             card.compactTitle?.let { chips.addView(chipView(card, it).apply { tag = GlanceChipRow.COMPACT }) }
         }
@@ -144,33 +143,11 @@ class GlanceView(context: Context, attrs: AttributeSet?) : LinearLayout(context,
 
     private fun chipView(card: GlanceCard, text: CharSequence): TextView {
         val chip = LayoutInflater.from(context).inflate(R.layout.murine_glance_chip, chips, false) as TextView
-        chip.text = text
-        chip.setTextColor(textColor)
+        chip.showCard(card, text, textColor)
         chip.applyShadow()
         chip.backgroundTintList = ColorStateList.valueOf(ColorUtils.setAlphaComponent(textColor, 0x1A))
-        val iconSize = resources.getDimensionPixelSize(R.dimen.glance_chip_icon_size)
-        val icon = card.icon?.loadDrawable(context)?.mutate()?.apply {
-            setBounds(0, 0, iconSize, iconSize)
-            setTint(textColor)
-        }
-        // Not the relative variant: it's only resolved once attached, and the picker's preview never is
-        if (resources.configuration.layoutDirection == LAYOUT_DIRECTION_RTL) chip.setCompoundDrawables(null, null, icon, null)
-        else chip.setCompoundDrawables(icon, null, null, null)
-        if (icon == null) chip.setPaddingRelative(chip.paddingEnd, 0, chip.paddingEnd, 0)
-        chip.setOnClickListener(card::launch)
+        if (card.icon == null) chip.setPaddingRelative(chip.paddingEnd, 0, chip.paddingEnd, 0)
         return chip
-    }
-
-    private fun nextAlarmCard(): GlanceCard? {
-        val alarm = context.getSystemService<AlarmManager>()?.nextAlarmClock ?: return null
-        val skeleton = if (DateFormat.is24HourFormat(context)) "EEEHm" else "EEEhma"
-        val pattern = DateFormat.getBestDateTimePattern(resources.configuration.locales.get(0), skeleton)
-        return GlanceCard(
-            title = DateFormat.format(pattern, alarm.triggerTime),
-            icon = Icon.createWithResource(context, R.drawable.ic_glance_alarm),
-            score = GlanceCard.SCORE_ALARM,
-            pendingIntent = alarm.showIntent,
-        )
     }
 
     /** Opens the calendar at today. */
@@ -192,6 +169,38 @@ class GlanceView(context: Context, attrs: AttributeSet?) : LinearLayout(context,
         const val DATE_SKELETON = "EEEEdMMM"
         const val PLACEHOLDER = "\u24DB\u2A4A\u24DB" // ⓛ⩊ⓛ
     }
+}
+
+/** The cards shown as chips, highest priority first: all of [cards] but the weather, and the next alarm last. */
+fun chipCards(context: Context, cards: List<GlanceCard>) =
+    (cards.filter { !it.isWeather } + listOfNotNull(nextAlarmCard(context))).sortedByDescending { it.score }
+
+private fun nextAlarmCard(context: Context): GlanceCard? {
+    val alarm = context.getSystemService<AlarmManager>()?.nextAlarmClock ?: return null
+    val skeleton = if (DateFormat.is24HourFormat(context)) "EEEHm" else "EEEhma"
+    val pattern = DateFormat.getBestDateTimePattern(context.resources.configuration.locales.get(0), skeleton)
+    return GlanceCard(
+        title = DateFormat.format(pattern, alarm.triggerTime),
+        icon = Icon.createWithResource(context, R.drawable.ic_glance_alarm),
+        score = GlanceCard.SCORE_ALARM,
+        pendingIntent = alarm.showIntent,
+    )
+}
+
+/** Shows [card] here: [text] after its icon, both in [color], and its action on click; null clears it. */
+fun TextView.showCard(card: GlanceCard?, text: CharSequence? = card?.text, color: Int = currentTextColor) {
+    this.text = text
+    setTextColor(color)
+    val iconSize = resources.getDimensionPixelSize(R.dimen.glance_chip_icon_size)
+    val icon = card?.icon?.loadDrawable(context)?.mutate()?.apply {
+        setBounds(0, 0, iconSize, iconSize)
+        setTint(color)
+    }
+    // Not the relative variant: it's only resolved once attached, and the picker's preview never is
+    if (resources.configuration.layoutDirection == View.LAYOUT_DIRECTION_RTL) setCompoundDrawables(null, null, icon, null)
+    else setCompoundDrawables(icon, null, null, null)
+    setOnClickListener(card?.let { c -> View.OnClickListener { c.launch(it) } })
+    isClickable = card != null
 }
 
 /**

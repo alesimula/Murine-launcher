@@ -451,6 +451,8 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
         @JvmField
         val CLOCK_OPEN_APP = backedUpItem(SettingsClockFragment.OPEN_APP, true)
         @JvmField
+        val CLOCK_GLANCE = backedUpItem(SettingsClockFragment.GLANCE, true)
+        @JvmField
         val FIXED_LANDSCAPE_MODE = backedUpItem(SettingsHomeFragment.FIXED_LANDSCAPE_MODE, false)
         @JvmField
         val THEME_DAY_NIGHT = backedUpItem(SettingsGeneralFragment.LAUNCHER_THEME_DAY_NIGHT, if (ThemeOverride.supportsSystemTheme) ThemeOverride.THEME_SYSTEM else ThemeOverride.THEME_DARK)

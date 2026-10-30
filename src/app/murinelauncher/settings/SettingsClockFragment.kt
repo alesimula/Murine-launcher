@@ -14,6 +14,7 @@ class SettingsClockFragment : AbstractSettingsFragment() {
         /** 0: start (default), 1: center, 2: end */
         const val ALIGNMENT = "pref_clock_alignment"
         const val OPEN_APP = "pref_clock_open_app"
+        const val GLANCE = "pref_clock_glance"
     }
 
     override fun getPreferenceScreenResId() = R.xml.murine_prefs_clock

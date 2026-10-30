@@ -8,6 +8,9 @@ import android.util.AttributeSet
 import android.view.Gravity
 import android.widget.LinearLayout
 import android.widget.TextClock
+import android.widget.TextView
+import app.murinelauncher.widget.smartspace.glance.GlanceCard
+import app.murinelauncher.widget.smartspace.glance.SmartspaceProvider
 import com.android.launcher3.LauncherPrefChangeListener
 import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.R
@@ -31,10 +34,22 @@ class MurineClockView @JvmOverloads constructor(
     private var sidePadding = 0
     private val prefListener = LauncherPrefChangeListener { _ -> applyPrefs() }
 
+    // At a Glance's top card, in the top padding
+    private var glance: TextView? = null
+    private var cards = emptyList<GlanceCard>()
+    private val cardsListener: (List<GlanceCard>) -> Unit = { cards = it; showGlance() }
+    private var listening = false
+
     override fun onFinishInflate() {
         super.onFinishInflate()
         clockView = findViewById(R.id.murine_clock)
         dateText = findViewById(R.id.murine_clock_date)
+        // The glance chip, without its chip: looks like the date
+        glance = findViewById<TextView>(R.id.murine_clock_glance)?.apply {
+            background = null
+            setPaddingRelative(0, 0, 0, 0)
+            dateText?.let { setShadowLayer(it.shadowRadius, it.shadowDx, it.shadowDy, it.shadowColor); alpha = it.alpha }
+        }
         sidePadding = paddingStart
         applyLocaleDateFormat()
         applyPrefs()
@@ -44,7 +59,7 @@ class MurineClockView @JvmOverloads constructor(
         super.onAttachedToWindow()
         if (!attached) {
             attached = true
-            LauncherPrefs.get(context).addListener(prefListener, LauncherPrefs.CLOCK_ALIGNMENT, LauncherPrefs.CLOCK_OPEN_APP)
+            LauncherPrefs.get(context).addListener(prefListener, LauncherPrefs.CLOCK_ALIGNMENT, LauncherPrefs.CLOCK_OPEN_APP, LauncherPrefs.CLOCK_GLANCE)
             applyPrefs()
         }
     }
@@ -53,8 +68,28 @@ class MurineClockView @JvmOverloads constructor(
         super.onDetachedFromWindow()
         if (attached) {
             attached = false
-            LauncherPrefs.get(context).removeListener(prefListener, LauncherPrefs.CLOCK_ALIGNMENT, LauncherPrefs.CLOCK_OPEN_APP)
+            LauncherPrefs.get(context).removeListener(prefListener, LauncherPrefs.CLOCK_ALIGNMENT, LauncherPrefs.CLOCK_OPEN_APP, LauncherPrefs.CLOCK_GLANCE)
+            setListening(false)
         }
+    }
+
+    override fun onWindowVisibilityChanged(visibility: Int) {
+        super.onWindowVisibilityChanged(visibility)
+        if (visibility != VISIBLE || !listening) return
+        SmartspaceProvider.get(context).onVisible()
+        showGlance() // The next alarm may have changed while away
+    }
+
+    private fun setListening(listen: Boolean) {
+        if (listen == listening) return
+        listening = listen
+        val provider = SmartspaceProvider.get(context)
+        if (listen) provider.addListener(cardsListener) else provider.removeListener(cardsListener)
+    }
+
+    /** Like At a Glance's first chip, colored like the date. */
+    private fun showGlance() {
+        glance?.showCard(if (listening) chipCards(context, cards).firstOrNull() else null, color = dateText?.currentTextColor ?: 0)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -107,24 +142,31 @@ class MurineClockView @JvmOverloads constructor(
             else -> Gravity.START
         }
         listOfNotNull(clockView, dateText).forEach { it.gravity = gravity or Gravity.TOP }
+        glance?.let { (it.layoutParams as LayoutParams).gravity = gravity; it.requestLayout() }
         setPaddingRelative(sidePadding, 0, if (alignment == 0) 0 else sidePadding, 0)
 
+        setListening(LauncherPrefs.CLOCK_GLANCE.get(context) && attached)
+        showGlance()
+
+        // Only on the time, so taps meant for the glance or the date don't open it
+        val clock = clockView ?: return
         if (LauncherPrefs.CLOCK_OPEN_APP.get(context)) {
-            setOnClickListener {
+            clock.setOnClickListener {
                 // The app that shows alarms, opened normally: showing them directly needs the SET_ALARM permission
                 val pm = context.packageManager
                 Intent(AlarmClock.ACTION_SHOW_ALARMS).resolveActivity(pm)?.packageName
                     ?.let(pm::getLaunchIntentForPackage)?.let { runCatching { context.startActivity(it) } }
             }
         } else {
-            setOnClickListener(null)
-            isClickable = false
+            clock.setOnClickListener(null)
+            clock.isClickable = false
         }
     }
 
     fun setTextColor(color: Int) {
         clockView?.setTextColor(color)
         dateText?.setTextColor(color)
+        showGlance()
     }
 
     override fun setPadding(left: Int, top: Int, right: Int, bottom: Int) {

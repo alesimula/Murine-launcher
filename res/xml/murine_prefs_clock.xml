@@ -11,4 +11,9 @@
         android:title="@string/pref_clock_open_app_title"
         android:defaultValue="true" />
 
+    <SwitchPreferenceCompat
+        android:key="pref_clock_glance"
+        android:title="@string/glance_widget_label"
+        android:defaultValue="true" />
+
 </androidx.preference.PreferenceScreen>

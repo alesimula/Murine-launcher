@@ -23,6 +23,9 @@ class GlanceCard(
 ) {
     /** Runs the card's action: [intent], else [pendingIntent], else [onClick]. */
     fun launch(view: View) {
+    /** Title and subtitle, as one line. */
+    val text get() = listOf(title, subtitle).filter { !it.isNullOrEmpty() }.joinToString(" · ")
+
         runCatching {
             when {
                 intent != null -> view.context.startActivity(intent)
