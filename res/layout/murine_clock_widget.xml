@@ -30,7 +30,7 @@
         android:letterSpacing="-0.02"
         android:autoSizeMinTextSize="0.1sp"
         android:autoSizeStepGranularity="1sp"
-        android:singleLine="true"
+        android:maxLines="1"
         android:textColor="?attr/workspaceTextColor"
         android:textSize="72sp" />
 
@@ -53,7 +53,7 @@
         android:shadowDx="0"
         android:shadowDy="2"
         android:shadowRadius="4"
-        android:singleLine="true"
+        android:maxLines="1"
         android:textColor="?attr/workspaceTextColor"
         android:textSize="16sp" />
 </app.murinelauncher.widget.smartspace.MurineClockView>
