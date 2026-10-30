@@ -12,7 +12,6 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Icon
-import android.os.SystemClock
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -21,7 +20,9 @@ import android.widget.TextView
 import androidx.core.content.edit
 import com.android.launcher3.Launcher
 import com.android.launcher3.LauncherPrefs
+import com.android.launcher3.R
 import com.android.launcher3.util.Executors.MAIN_EXECUTOR
+import com.android.launcher3.views.ActivityContext
 
 /**
  * Reads weather and the current card from an invisible copy of the Google app's Smartspace widget.
@@ -46,22 +47,15 @@ class SmartspaceWidgetReader(context: Context) :
 
     override fun requiresSetup() = widget?.isBound == false
 
-    // Google's widget sometimes loses the weather in every launcher (its own widget included) until
-    // a new instance is added: do the same when the widget's last content had no weather.
-    // Throttled, in case Google really has no weather to show (no location, no connection...)
-    private var hasWeather = true
-    private var lastRefreshMillis = 0L
-
-    override fun onVisible() {
-        val widget = widget ?: return
-        val now = SystemClock.elapsedRealtime()
-        if (!hasWeather && widget.isBound && LauncherPrefs.get(context).get(LauncherPrefs.GLANCE_GOOGLE)
-            && now - lastRefreshMillis > REFRESH_THROTTLE_MILLIS) {
-            lastRefreshMillis = now
-            widget.rebind()
-            restart()
-        }
-    }
+    // Google's widget sometimes loses the weather in every launcher until its settings are opened (as
+    // adding it does), which fetches it again: shown in the weather's place, this opens them
+    private val missingWeather = GlanceCard(
+        title = context.getString(R.string.gadget_setup_text),
+        icon = Icon.createWithResource(context, R.drawable.ic_glance_weather_missing),
+        score = GlanceCard.SCORE_WEATHER,
+        isWeather = true,
+        onClick = { view -> widget?.configure(ActivityContext.lookupContext(view.context)) },
+    )
 
     override fun startSetup(launcher: Launcher) {
         val widget = widget ?: return
@@ -86,12 +80,8 @@ class SmartspaceWidgetReader(context: Context) :
             }
         }
         collect(appWidgetHostView)
-        if (texts.isEmpty()) {
-            hasWeather = false
-            return emptyList()
-        }
-        val weather = images.firstOrNull()?.let { parseWeather(it.bitmap, texts.last()) }
-        hasWeather = weather != null
+        if (texts.isEmpty()) return emptyList()
+        val weather = images.firstOrNull()?.let { parseWeather(it.bitmap, texts.last()) } ?: missingWeather
         // A second image means a card (event, reminder...) with its icon first, then its texts
         val card = if (images.size > 1 && texts.size > 2) {
             val title = texts[0]
@@ -113,14 +103,17 @@ class SmartspaceWidgetReader(context: Context) :
     private fun parseWeather(icon: Bitmap?, temperatureText: TextView): GlanceCard? {
         val temperature = temperatureText.text.toString()
         if (icon == null || temperature.none { it.isDigit() }) return null
+        // The click is on the weather's frame, a few levels up: the closest one with an action
+        val pendingIntent = generateSequence(temperatureText as View) { it.parent as? View }.firstNotNullOfOrNull { it.pendingIntent }
         return GlanceCard(
             title = "",
             subtitle = temperature,
             icon = Icon.createWithBitmap(icon),
             score = GlanceCard.SCORE_WEATHER,
             isWeather = true,
-            intent = Intent().setComponent(WEATHER_COMPONENT),
-            pendingIntent = (temperatureText.parent as? View)?.pendingIntent,
+            // Google's own action opens its weather screen, the exported activity only a search: kept as a fallback
+            pendingIntent = pendingIntent,
+            intent = if (pendingIntent == null) Intent().setComponent(WEATHER_COMPONENT) else null,
         )
     }
 
@@ -168,14 +161,8 @@ class SmartspaceWidgetReader(context: Context) :
             prefs.edit { putInt(PREF_WIDGET_ID, widgetId) }
         }
 
-        /**
-         * Replaces the widget with a freshly bound one. A newly added instance makes the provider
-         * push a new update to all its widgets, which is what brings back the Google weather.
-         */
-        fun rebind() {
-            host.deleteAppWidgetId(widgetId)
-            bind()
-        }
+        fun configure(launcher: Launcher) =
+            host.startAppWidgetConfigureActivityForResult(launcher, widgetId, 0, 0, null)
 
         fun getBindIntent() = Intent(AppWidgetManager.ACTION_APPWIDGET_BIND)
             .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
@@ -193,7 +180,6 @@ class SmartspaceWidgetReader(context: Context) :
     }
 
     companion object {
-        private const val REFRESH_THROTTLE_MILLIS = 5 * 60_000L
         private const val HOST_ID = 1028
         private const val PREF_WIDGET_ID = "smartspaceWidgetId"
         private const val GSA_PACKAGE = "com.google.android.googlequicksearchbox"

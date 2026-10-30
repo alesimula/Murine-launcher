@@ -21,7 +21,7 @@ import android.widget.TextView
 import androidx.core.content.getSystemService
 import androidx.core.graphics.ColorUtils
 import androidx.core.view.children
-import androidx.core.view.isVisible
+import androidx.core.view.isInvisible
 import app.murinelauncher.settings.SettingsGlanceFragment
 import app.murinelauncher.widget.smartspace.glance.GlanceCard
 import app.murinelauncher.widget.smartspace.glance.SmartspaceProvider
@@ -123,11 +123,11 @@ class GlanceView(context: Context, attrs: AttributeSet?) : LinearLayout(context,
 
     private fun update() {
         val weatherCard = cards.firstOrNull { it.isWeather }
-        weather.isVisible = weatherCard != null
+        weather.isInvisible = weatherCard == null // Still takes its room: the chips stay where they are
         if (weatherCard != null) {
             weatherIcon.setImageIcon(weatherCard.icon)
             temperature.text = weatherCard.subtitle
-            weather.contentDescription = weatherCard.subtitle
+            weather.contentDescription = weatherCard.subtitle ?: weatherCard.title
             weather.setOnClickListener(weatherCard::launch)
         }
 
