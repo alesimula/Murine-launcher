@@ -127,7 +127,7 @@ class GlanceView(context: Context, attrs: AttributeSet?) : LinearLayout(context,
         if (weatherCard != null) {
             weatherIcon.setImageIcon(weatherCard.icon)
             temperature.text = weatherCard.subtitle
-            weather.contentDescription = weatherCard.subtitle ?: weatherCard.title
+            weather.contentDescription = weatherCard.title.ifEmpty { weatherCard.subtitle }
             weather.setOnClickListener(weatherCard::launch)
         }
 

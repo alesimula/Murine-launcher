@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Missing weather: exclamation mark on a muted red Material cookie (ShapesProvider's four-sided one) -->
+<!-- Missing weather: exclamation mark on a muted red location pin, as it's about Google's location access -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"
     android:height="24dp"
-    android:viewportWidth="100"
-    android:viewportHeight="100">
+    android:viewportWidth="24"
+    android:viewportHeight="24">
     <path
         android:fillColor="#C0504D"
-        android:pathData="M40 5c6 2 14 2 20 0l4-2c21-9 42 12 33 33l-2 4c-2 6-2 14 0 20l2 4c9 21-12 42-33 33l-4-2c-6-2-14-2-20 0l-4 2c-21 9-42-12-33-33l2-4c2-6 2-14 0-20l-2-4c-9-21 12-42 33-33z" />
+        android:pathData="M12 2C8.1 2 5 5.1 5 9c0 5.3 7 13 7 13s7-7.7 7-13c0-3.9-3.1-7-7-7z" />
     <path
         android:fillColor="#FFF"
-        android:pathData="M44 28a6 6 0 0 1 12 0v26a6 6 0 0 1-12 0zM43.5 72.5a6.5 6.5 0 1 0 13 0a6.5 6.5 0 1 0-13 0z" />
+        android:pathData="M10.6 5.8a1.4 1.4 0 0 1 2.8 0v5.6a1.4 1.4 0 0 1-2.8 0zM10.5 15.6a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0-3 0z" />
 </vector>

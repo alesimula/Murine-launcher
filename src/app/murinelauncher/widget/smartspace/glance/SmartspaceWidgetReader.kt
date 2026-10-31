@@ -12,8 +12,10 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Icon
+import android.os.SystemClock
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.RemoteViews
 import android.widget.TextView
@@ -23,6 +25,8 @@ import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.R
 import com.android.launcher3.util.Executors.MAIN_EXECUTOR
 import com.android.launcher3.views.ActivityContext
+import com.android.launcher3.widget.LauncherAppWidgetProviderInfo
+import com.android.launcher3.widget.util.WidgetSizes
 
 /**
  * Reads weather and the current card from an invisible copy of the Google app's Smartspace widget.
@@ -31,9 +35,9 @@ import com.android.launcher3.views.ActivityContext
 class SmartspaceWidgetReader(context: Context) :
     SmartspaceDataSource(context, LauncherPrefs.GLANCE_GOOGLE) {
 
-    private val widget = AppWidgetManager.getInstance(context).getInstalledProvidersForPackage(GSA_PACKAGE, null)
+    private val widgetInfo = AppWidgetManager.getInstance(context).getInstalledProvidersForPackage(GSA_PACKAGE, null)
         .firstOrNull { it.provider.className == WIDGET_CLASS_NAME }
-        ?.let { HeadlessWidget(context, it) }
+    private val widget = widgetInfo?.let { HeadlessWidget(context, it) }
     override val isAvailable = widget != null
 
     override fun startSource() {
@@ -47,15 +51,62 @@ class SmartspaceWidgetReader(context: Context) :
 
     override fun requiresSetup() = widget?.isBound == false
 
-    // Google's widget sometimes loses the weather in every launcher until its settings are opened (as
-    // adding it does), which fetches it again: shown in the weather's place, this opens them
-    private val missingWeather = GlanceCard(
+    // Google's widget sometimes loses the weather in every launcher until one is added to a home screen (the
+    // headless one isn't enough): shown in the weather's place, this adds a short-lived one, then reloads
+    private fun missingWeather() = GlanceCard(
         title = context.getString(R.string.gadget_setup_text),
+        subtitle = "\u00B7\u00B7\u00B7", // In the temperature's place, keeping the icon "centered"
         icon = Icon.createWithResource(context, R.drawable.ic_glance_weather_missing),
         score = GlanceCard.SCORE_WEATHER,
         isWeather = true,
-        onClick = { view -> widget?.configure(ActivityContext.lookupContext(view.context)) },
+        onClick = { view ->
+            lastRefreshMillis = 0 // Skips the throttle on the next onVisible
+            addTemporaryWidget(ActivityContext.lookupContext(view.context))
+        },
     )
+
+    /**
+     * Adds Google's widget like dropping it on the home screen would (bound with its size, in the launcher's own
+     * host, set up through its settings), but drawn invisibly and taking no grid space; removed once back home
+     * and Google had time to refresh.
+     */
+    private fun addTemporaryWidget(launcher: Launcher) {
+        val info = widgetInfo ?: return
+        val holder = launcher.appWidgetHolder
+        val id = holder.allocateAppWidgetId()
+        val options = WidgetSizes.getWidgetSizeOptions(launcher, info.provider, 4, 1)
+        if (id == AppWidgetManager.INVALID_APPWIDGET_ID) return
+        if (!AppWidgetManager.getInstance(launcher).bindAppWidgetIdIfAllowed(id, info.profile, info.provider, options)) {
+            holder.deleteAppWidgetId(id)
+            return
+        }
+        val view = holder.createView(id, LauncherAppWidgetProviderInfo.fromProviderInfo(launcher, info))
+        view.alpha = 0.01f // Drawn, unlike at 0, but not visible
+        launcher.dragLayer.addView(view, FrameLayout.LayoutParams(1, 1))
+        holder.startConfigActivity(launcher, id, 0)
+        // if the launcher dies before this, the id stays allocated in its host until cleared
+        launcher.addEventCallback(Launcher.EVENT_RESUMED) {
+            view.postDelayed({
+                launcher.dragLayer.removeView(view)
+                holder.deleteAppWidgetId(id)
+            }, TEMPORARY_WIDGET_MILLIS)
+        }
+    }
+
+    // Throttled, in case Google really has no weather to show (no location, no connection...)
+    private var hasWeather = true
+    private var lastRefreshMillis = 0L
+
+    override fun onVisible() {
+        val widget = widget ?: return
+        val now = SystemClock.elapsedRealtime()
+        if (!hasWeather && widget.isBound && LauncherPrefs.get(context).get(LauncherPrefs.GLANCE_GOOGLE)
+            && (lastRefreshMillis == 0L || now - lastRefreshMillis > REFRESH_THROTTLE_MILLIS)) {
+            lastRefreshMillis = now
+            widget.rebind()
+            restart()
+        }
+    }
 
     override fun startSetup(launcher: Launcher) {
         val widget = widget ?: return
@@ -81,7 +132,8 @@ class SmartspaceWidgetReader(context: Context) :
         }
         collect(appWidgetHostView)
         if (texts.isEmpty()) return emptyList()
-        val weather = images.firstOrNull()?.let { parseWeather(it.bitmap, texts.last()) } ?: missingWeather
+        val weather = images.firstOrNull()?.let { parseWeather(it.bitmap, texts.last()) }
+        hasWeather = weather != null
         // A second image means a card (event, reminder...) with its icon first, then its texts
         val card = if (images.size > 1 && texts.size > 2) {
             val title = texts[0]
@@ -96,7 +148,7 @@ class SmartspaceWidgetReader(context: Context) :
         } else {
             null
         }
-        return listOfNotNull(card, weather)
+        return listOfNotNull(card, weather ?: missingWeather())
     }
 
     /** Lawnchair parses and converts the temperature; here Google's own text is shown as-is. */
@@ -161,8 +213,11 @@ class SmartspaceWidgetReader(context: Context) :
             prefs.edit { putInt(PREF_WIDGET_ID, widgetId) }
         }
 
-        fun configure(launcher: Launcher) =
-            host.startAppWidgetConfigureActivityForResult(launcher, widgetId, 0, 0, null)
+        /** Replaces the widget with a freshly bound one, which Google renders again from scratch. */
+        fun rebind() {
+            host.deleteAppWidgetId(widgetId)
+            bind()
+        }
 
         fun getBindIntent() = Intent(AppWidgetManager.ACTION_APPWIDGET_BIND)
             .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
@@ -180,6 +235,8 @@ class SmartspaceWidgetReader(context: Context) :
     }
 
     companion object {
+        private const val REFRESH_THROTTLE_MILLIS = 5 * 60_000L
+        private const val TEMPORARY_WIDGET_MILLIS = 30_000L // Google refreshed ~2s after a real add: plenty of margin, it's one pixel
         private const val HOST_ID = 1028
         private const val PREF_WIDGET_ID = "smartspaceWidgetId"
         private const val GSA_PACKAGE = "com.google.android.googlequicksearchbox"
