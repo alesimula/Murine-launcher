@@ -25,21 +25,29 @@
         android:key="pref_glance_google"
         android:title="@string/pref_glance_google_title"
         android:summary="@string/pref_glance_google_summary"
-        android:defaultValue="true" />
+        android:defaultValue="true">
+        <extra android:name="content" android:value="true" />
+    </SwitchPreferenceCompat>
 
     <SwitchPreferenceCompat
         android:key="pref_glance_battery"
         android:title="@string/pref_glance_battery_title"
-        android:defaultValue="true" />
+        android:defaultValue="true">
+        <extra android:name="content" android:value="true" />
+    </SwitchPreferenceCompat>
 
     <SwitchPreferenceCompat
         android:key="pref_glance_torch"
         android:title="@string/pref_glance_torch_title"
-        android:defaultValue="true" />
+        android:defaultValue="true">
+        <extra android:name="content" android:value="true" />
+    </SwitchPreferenceCompat>
 
     <SwitchPreferenceCompat
         android:key="pref_glance_media"
         android:title="@string/pref_glance_media_title"
-        android:persistent="false" />
+        android:persistent="false">
+        <extra android:name="content" android:value="true" />
+    </SwitchPreferenceCompat>
 
 </androidx.preference.PreferenceScreen>

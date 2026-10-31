@@ -2,6 +2,7 @@ package app.murinelauncher.settings
 
 import android.content.Intent
 import android.view.View
+import androidx.core.os.bundleOf
 import androidx.preference.Preference
 import app.murinelauncher.settings.common.AbstractSettingsFragment
 import app.murinelauncher.widget.SettingsSwitchPreference
@@ -37,7 +38,8 @@ class SettingsClockFragment : AbstractSettingsFragment() {
         // Its gear opens the At a Glance settings
         if (preference.key == GLANCE) (preference as SettingsSwitchPreference).onSettingsClick = View.OnClickListener {
             startActivity(Intent(it.context, SettingsActivity::class.java)
-                .putExtra(SettingsActivity.EXTRA_FRAGMENT, SettingsGlanceFragment::class.java.name))
+                .putExtra(SettingsActivity.EXTRA_FRAGMENT, SettingsGlanceFragment::class.java.name)
+                .putExtra(SettingsActivity.EXTRA_FRAGMENT_ARGS, bundleOf(SettingsGlanceFragment.CONTENT_ONLY to true)))
         }
         return true
     }

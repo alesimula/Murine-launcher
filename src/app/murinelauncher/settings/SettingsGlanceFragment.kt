@@ -22,6 +22,8 @@ class SettingsGlanceFragment : AbstractSettingsFragment() {
         const val MEDIA = "pref_glance_media"
         const val ALPHA = "pref_glance_alpha"
         const val THEME = "pref_glance_theme"
+        /** Fragment argument: show only what the cards show (the settings tagged with a "content" extra), not how they look */
+        const val CONTENT_ONLY = "content_only"
         /** Theme values, the same order as the UI theme in General: default (the launcher's), light, dark */
         const val THEME_DEFAULT = 0
         const val THEME_LIGHT = 1
@@ -31,7 +33,11 @@ class SettingsGlanceFragment : AbstractSettingsFragment() {
 
     override fun getPreferenceTitle(): Int? = R.string.glance_widget_label
 
+    // Untagged ones (the spacer...) hidden too in content-only mode
+    override fun initAnonymousPreference(preference: Preference, info: DisplayController.Info) = arguments?.getBoolean(CONTENT_ONLY) != true
+
     override fun initPreference(preference: Preference, info: DisplayController.Info): Boolean {
+        if (arguments?.getBoolean(CONTENT_ONLY) == true && !preference.extras.containsKey("content")) return false
         if (preference.key == THEME) (preference as SegmentedButtonPreference).apply {
             // Same buttons as the UI theme in General
             setUpButton(0, getString(R.string.pref_subcategory_day_night), R.drawable.ic_pref_ui_mode_system)
