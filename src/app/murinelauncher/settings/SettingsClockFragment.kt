@@ -1,9 +1,13 @@
 package app.murinelauncher.settings
 
+import android.content.Intent
+import android.view.View
 import androidx.preference.Preference
 import app.murinelauncher.settings.common.AbstractSettingsFragment
+import app.murinelauncher.widget.SettingsSwitchPreference
 import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.R
+import com.android.launcher3.settings.SettingsActivity
 import com.android.launcher3.util.DisplayController
 import com.android.settingslib.widget.SegmentedButtonPreference
 
@@ -29,6 +33,11 @@ class SettingsClockFragment : AbstractSettingsFragment() {
             for (i in 0..2) setButtonVisibility(i, true)
             setCheckedIndex(LauncherPrefs.CLOCK_ALIGNMENT.get(context))
             setOnButtonClickListener { _, _, _ -> LauncherPrefs.get(context).put(LauncherPrefs.CLOCK_ALIGNMENT, getCheckedIndex()) }
+        }
+        // Its gear opens the At a Glance settings
+        if (preference.key == GLANCE) (preference as SettingsSwitchPreference).onSettingsClick = View.OnClickListener {
+            startActivity(Intent(it.context, SettingsActivity::class.java)
+                .putExtra(SettingsActivity.EXTRA_FRAGMENT, SettingsGlanceFragment::class.java.name))
         }
         return true
     }

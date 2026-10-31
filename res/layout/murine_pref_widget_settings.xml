@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Settings button before a preference's own widget, see SettingsSwitchPreference -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/ExpressiveSelectorWithWidgetPreferenceExtraWidgetContainerStyle">
+
+    <!-- Sized and rippled like the app info sheet's settings button -->
+    <ImageView
+        android:id="@+id/pref_settings_button"
+        style="@style/ExpressiveSelectorWithWidgetPreferenceExtraWidgetImageStyle"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@drawable/murine_search_btn_ripple" />
+
+    <View
+        style="@style/ExpressiveSelectorWithWidgetPreferenceExtraWidgetDividerStyle"
+        android:layout_marginStart="@dimen/settingslib_expressive_space_extrasmall2"
+        android:layout_marginEnd="@dimen/settingslib_expressive_space_extrasmall4" />
+</LinearLayout>
