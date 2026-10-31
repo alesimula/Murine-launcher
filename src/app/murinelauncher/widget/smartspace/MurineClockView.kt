@@ -4,11 +4,15 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.provider.AlarmClock
+import android.text.StaticLayout
+import android.text.TextPaint
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.Gravity
 import android.widget.LinearLayout
 import android.widget.TextClock
 import android.widget.TextView
+import androidx.core.view.children
 import app.murinelauncher.widget.smartspace.glance.GlanceCard
 import app.murinelauncher.widget.smartspace.glance.SmartspaceProvider
 import com.android.launcher3.LauncherPrefChangeListener
@@ -71,6 +75,31 @@ class MurineClockView @JvmOverloads constructor(
             LauncherPrefs.get(context).removeListener(prefListener, LauncherPrefs.CLOCK_ALIGNMENT, LauncherPrefs.CLOCK_OPEN_APP, LauncherPrefs.CLOCK_GLANCE)
             setListening(false)
         }
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        // Glance text auto-sized to its line's height only (long text ellipsizes), before measuring to avoid a stale frame
+        glance?.let { line ->
+            val params = children.map { it.layoutParams as LayoutParams }
+            val free = MeasureSpec.getSize(heightMeasureSpec) - paddingTop - paddingBottom - params.sumOf { it.topMargin + it.bottomMargin }
+            val height = free * (line.layoutParams as LayoutParams).weight / params.sumOf { it.weight.toDouble() }.toFloat()
+            val size = height * REFERENCE_SIZE / line.lineHeightAt(REFERENCE_SIZE)
+            if (size > 0 && size != line.textSize) {
+                line.setTextSize(TypedValue.COMPLEX_UNIT_PX, size)
+                showGlance() // Resizes the icon to the text
+            }
+        }
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+    }
+
+    /** This text's line height at [size], with the taller lines of fallback fonts (CJK...) it uses, as TextView lays it out. */
+    private fun TextView.lineHeightAt(size: Float): Int {
+        val text = text.ifEmpty { "A" }
+        val paint = TextPaint(paint).apply { textSize = size }
+        return StaticLayout.Builder.obtain(text, 0, text.length, paint, Int.MAX_VALUE / 2)
+            .setIncludePad(false)
+            .apply { if (Utilities.ATLEAST_P) setUseLineSpacingFromFallbacks(true) }
+            .build().height
     }
 
     override fun onWindowVisibilityChanged(visibility: Int) {
@@ -176,5 +205,6 @@ class MurineClockView @JvmOverloads constructor(
     companion object {
         // Order-independent skeleton: weekday + month + day-of-month
         private const val DATE_SKELETON = "EEEEMMMMd"
+        private const val REFERENCE_SIZE = 100f
     }
 }

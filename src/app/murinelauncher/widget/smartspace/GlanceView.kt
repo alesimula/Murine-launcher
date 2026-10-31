@@ -191,7 +191,7 @@ private fun nextAlarmCard(context: Context): GlanceCard? {
 fun TextView.showCard(card: GlanceCard?, text: CharSequence? = card?.text, color: Int = currentTextColor) {
     this.text = text
     setTextColor(color)
-    val iconSize = resources.getDimensionPixelSize(R.dimen.glance_chip_icon_size)
+    val iconSize = (textSize * 1.15f).toInt() // 15dp next to a 13sp chip, and in proportion elsewhere
     val icon = card?.icon?.loadDrawable(context)?.mutate()?.apply {
         setBounds(0, 0, iconSize, iconSize)
         setTint(color)

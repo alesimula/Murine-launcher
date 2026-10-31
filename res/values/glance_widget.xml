@@ -13,6 +13,5 @@
     <dimen name="glance_chip_height">26dp</dimen>
     <dimen name="glance_chip_gap">8dp</dimen>
     <dimen name="glance_chip_min_width">90dp</dimen>
-    <dimen name="glance_chip_icon_size">15dp</dimen>
     <dimen name="glance_chip_text_size">13sp</dimen>
 </resources>
