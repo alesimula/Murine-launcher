@@ -1,7 +1,6 @@
 package com.android.launcher3;
 
 import static android.appwidget.AppWidgetManager.INVALID_APPWIDGET_ID;
-import static android.appwidget.AppWidgetProviderInfo.WIDGET_FEATURE_RECONFIGURABLE;
 
 import static com.android.launcher3.accessibility.LauncherAccessibilityDelegate.DISMISS_PREDICTION;
 import static com.android.launcher3.accessibility.LauncherAccessibilityDelegate.INVALID;
@@ -258,11 +257,8 @@ public class SecondaryDropTarget extends ButtonDropTarget implements OnAlarmList
         }
         AppWidgetHostView hostView = (AppWidgetHostView) view;
         AppWidgetProviderInfo widgetInfo = hostView.getAppWidgetInfo();
-        if (widgetInfo == null || widgetInfo.configure == null) {
-            return INVALID_APPWIDGET_ID;
-        }
-        if ( (LauncherAppWidgetProviderInfo.fromProviderInfo(view.getContext(), widgetInfo)
-                .getWidgetFeatures() & WIDGET_FEATURE_RECONFIGURABLE) == 0) {
+        if (widgetInfo == null
+                || !LauncherAppWidgetProviderInfo.fromProviderInfo(view.getContext(), widgetInfo).isReconfigurable()) {
             return INVALID_APPWIDGET_ID;
         }
         // Custom widget views report id 0 (INVALID_APPWIDGET_ID): their real id is on the item

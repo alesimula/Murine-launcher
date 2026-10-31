@@ -56,6 +56,14 @@ public class CustomAppWidgetProviderInfo extends LauncherAppWidgetProviderInfo
     @VisibleForTesting
     CustomAppWidgetProviderInfo() {}
 
+    /** Whether its plugin has settings, see {@link CustomWidgetManager#getConfigureIntent}. */
+    public boolean reconfigurable;
+
+    @Override
+    public boolean isReconfigurable() {
+        return reconfigurable;
+    }
+
     @Override
     public void initSpans(Context context, InvariantDeviceProfile idp) {
         mIsMinSizeFulfilled = Math.min(spanX, minSpanX) <= idp.numColumns

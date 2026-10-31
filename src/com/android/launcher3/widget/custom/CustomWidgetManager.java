@@ -35,7 +35,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
 import com.android.launcher3.R;
-import com.android.launcher3.Utilities;
 import com.android.launcher3.dagger.ApplicationContext;
 import com.android.launcher3.dagger.LauncherAppSingleton;
 import com.android.launcher3.dagger.LauncherBaseAppComponent;
@@ -115,14 +114,10 @@ public class CustomWidgetManager implements PluginListener<CustomWidgetPlugin> {
         CustomAppWidgetProviderInfo info = getAndAddInfo(new ComponentName(
                 mContext.getPackageName(), CLS_CUSTOM_WIDGET_PREFIX + plugin.getClass().getName()));
         if (info != null) {
-            // The info is cloned from an installed provider: clear its configure activity, and set
-            // the plugin's own (optional, so adding the widget never opens it)
-            Intent configure = Utilities.ATLEAST_S ? plugin.getConfigureIntent(mContext) : null;
-            info.configure = configure != null ? configure.getComponent() : null;
-            if (Utilities.ATLEAST_P) {
-                info.widgetFeatures = configure != null ? AppWidgetProviderInfo.WIDGET_FEATURE_RECONFIGURABLE
-                        | AppWidgetProviderInfo.WIDGET_FEATURE_CONFIGURATION_OPTIONAL : 0;
-            }
+            // The info is cloned from an installed provider: clear its configure activity, so adding the
+            // widget never opens one. The plugin's settings are opened by the launcher, on any Android version
+            info.configure = null;
+            info.reconfigurable = plugin.getConfigureIntent(mContext) != null;
             plugin.updateWidgetInfo(info, mContext);
             mPlugins.put(info.provider, plugin);
             mWidgetRefreshCallbacks.forEach(MAIN_EXECUTOR::execute);
