@@ -21,7 +21,6 @@ import static android.platform.test.flag.junit.SetFlagsRule.DefaultInitValueType
 import static com.android.dx.mockito.inline.extended.ExtendedMockito.spyOn;
 import static com.android.launcher3.AbstractFloatingView.TYPE_SNACKBAR;
 import static com.android.launcher3.Flags.FLAG_ENABLE_DISMISS_PREDICTION_UNDO;
-import static com.android.launcher3.Flags.FLAG_ENABLE_PRIVATE_SPACE;
 import static com.android.launcher3.LauncherSettings.Favorites.CONTAINER_ALL_APPS;
 import static com.android.launcher3.LauncherSettings.Favorites.CONTAINER_HOTSEAT_PREDICTION;
 import static com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_APPLICATION;
@@ -349,28 +348,29 @@ public class SystemShortcutTest {
 
 
     @Test
-    @DisableFlags(FLAG_ENABLE_PRIVATE_SPACE)
-    public void testUninstallGetShortcutWithPrivateSpaceOff() {
+    public void testUninstallGetShortcutWithNullItemInfo() {
         SystemShortcut systemShortcut = SystemShortcut.UNINSTALL_APP.getShortcut(
                 mTestContext, null, mView);
         Assert.assertNull(systemShortcut);
     }
 
     @Test
-    @EnableFlags(FLAG_ENABLE_PRIVATE_SPACE)
     public void testUninstallGetShortcutWithNonPrivateItemInfo() {
         mAppInfo = new AppInfo();
         mAppInfo.user = MAIN_HANDLE;
-        when(mUserIconInfo.isPrivate()).thenReturn(false);
+        mAppInfo.itemType = ITEM_TYPE_APPLICATION;
+        mAppInfo.intent = mIntent;
+        mAppInfo.componentName = new ComponentName(mTestContext, getClass());
+        when(mLauncherActivityInfo.getComponentName()).thenReturn(mAppInfo.componentName);
+        mApplicationInfo.flags = 0;
 
         SystemShortcut systemShortcut = SystemShortcut.UNINSTALL_APP.getShortcut(
                 mTestContext, mAppInfo, mView);
-        verify(mUserIconInfo).isPrivate();
-        Assert.assertNull(systemShortcut);
+        verify(mLauncherActivityInfo).getComponentName();
+        Assert.assertNotNull(systemShortcut);
     }
 
     @Test
-    @EnableFlags(FLAG_ENABLE_PRIVATE_SPACE)
     public void testUninstallGetShortcutWithSystemItemInfo() {
         mAppInfo = new AppInfo();
         mAppInfo.user = PRIVATE_HANDLE;
@@ -378,7 +378,6 @@ public class SystemShortcutTest {
         mAppInfo.intent = mIntent;
         mAppInfo.componentName = new ComponentName(mTestContext, getClass());
         when(mLauncherActivityInfo.getComponentName()).thenReturn(mAppInfo.componentName);
-        when(mUserIconInfo.isPrivate()).thenReturn(true);
         // System App
         mApplicationInfo.flags = 1;
 
@@ -389,14 +388,12 @@ public class SystemShortcutTest {
     }
 
     @Test
-    @EnableFlags(FLAG_ENABLE_PRIVATE_SPACE)
     public void testUninstallGetShortcutWithPrivateItemInfo() {
         mAppInfo = new AppInfo();
         mAppInfo.user = PRIVATE_HANDLE;
         mAppInfo.itemType = ITEM_TYPE_APPLICATION;
         mAppInfo.intent = mIntent;
         mAppInfo.componentName = new ComponentName(mTestContext, getClass());
-        when(mUserIconInfo.isPrivate()).thenReturn(true);
         when(mLauncherActivityInfo.getComponentName()).thenReturn(mAppInfo.componentName);
         // 3rd party app, not system app.
         mApplicationInfo.flags = 0;
