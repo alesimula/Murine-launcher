@@ -135,6 +135,7 @@
     <string name="glance_torch_off_action">הקש לכיבוי</string>
     <string name="pref_glance_google_title">מזג אוויר ואירועים</string>
     <string name="pref_glance_google_summary">מהווידג׳ט Smartspace של אפליקציית Google</string>
+    <string name="pref_glance_alerts_title">התראות ועוד</string>
     <string name="pref_glance_battery_title">מצב הסוללה</string>
     <string name="pref_glance_torch_title">מצב הפנס</string>
     <string name="pref_glance_media_title">מתנגן עכשיו</string>

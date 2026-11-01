@@ -135,6 +135,7 @@
     <string name="glance_torch_off_action">Торкніться, щоб вимкнути</string>
     <string name="pref_glance_google_title">Погода та події</string>
     <string name="pref_glance_google_summary">З віджета Smartspace застосунку Google</string>
+    <string name="pref_glance_alerts_title">Сповіщення та інше</string>
     <string name="pref_glance_battery_title">Стан батареї</string>
     <string name="pref_glance_torch_title">Стан ліхтарика</string>
     <string name="pref_glance_media_title">Зараз грає</string>

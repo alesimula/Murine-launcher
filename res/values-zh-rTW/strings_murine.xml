@@ -135,6 +135,7 @@
     <string name="glance_torch_off_action">輕觸即可關閉</string>
     <string name="pref_glance_google_title">天氣和活動</string>
     <string name="pref_glance_google_summary">來自 Google 應用程式的 Smartspace 小工具</string>
+    <string name="pref_glance_alerts_title">警報及其他</string>
     <string name="pref_glance_battery_title">電池狀態</string>
     <string name="pref_glance_torch_title">手電筒狀態</string>
     <string name="pref_glance_media_title">現正播放</string>

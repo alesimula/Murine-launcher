@@ -135,6 +135,7 @@
     <string name="glance_torch_off_action">Nhấn để tắt</string>
     <string name="pref_glance_google_title">Thời tiết và sự kiện</string>
     <string name="pref_glance_google_summary">Từ tiện ích Smartspace của ứng dụng Google</string>
+    <string name="pref_glance_alerts_title">Cảnh báo và hơn thế nữa</string>
     <string name="pref_glance_battery_title">Trạng thái pin</string>
     <string name="pref_glance_torch_title">Trạng thái đèn pin</string>
     <string name="pref_glance_media_title">Đang phát</string>

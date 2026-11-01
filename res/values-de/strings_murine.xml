@@ -135,6 +135,7 @@
     <string name="glance_torch_off_action">Zum Ausschalten tippen</string>
     <string name="pref_glance_google_title">Wetter und Termine</string>
     <string name="pref_glance_google_summary">Vom Smartspace-Widget der Google App</string>
+    <string name="pref_glance_alerts_title">Warnungen und mehr</string>
     <string name="pref_glance_battery_title">Akkustatus</string>
     <string name="pref_glance_torch_title">Taschenlampenstatus</string>
     <string name="pref_glance_media_title">Aktuelle Wiedergabe</string>

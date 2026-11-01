@@ -135,6 +135,7 @@
     <string name="glance_torch_off_action">برای خاموش کردن ضربه بزنید</string>
     <string name="pref_glance_google_title">آب‌وهوا و رویدادها</string>
     <string name="pref_glance_google_summary">از ابزارک Smartspace برنامه Google</string>
+    <string name="pref_glance_alerts_title">هشدارها و موارد دیگر</string>
     <string name="pref_glance_battery_title">وضعیت باتری</string>
     <string name="pref_glance_torch_title">وضعیت چراغ‌قوه</string>
     <string name="pref_glance_media_title">درحال پخش</string>

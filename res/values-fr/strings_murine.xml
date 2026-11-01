@@ -135,6 +135,7 @@
     <string name="glance_torch_off_action">Appuyer pour éteindre</string>
     <string name="pref_glance_google_title">Météo et événements</string>
     <string name="pref_glance_google_summary">Depuis le widget Smartspace de l\'appli Google</string>
+    <string name="pref_glance_alerts_title">Alertes et plus</string>
     <string name="pref_glance_battery_title">État de la batterie</string>
     <string name="pref_glance_torch_title">État de la lampe torche</string>
     <string name="pref_glance_media_title">En cours de lecture</string>

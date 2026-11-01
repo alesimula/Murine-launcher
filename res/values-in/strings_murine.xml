@@ -135,6 +135,7 @@
     <string name="glance_torch_off_action">Ketuk untuk mematikan</string>
     <string name="pref_glance_google_title">Cuaca dan acara</string>
     <string name="pref_glance_google_summary">Dari widget Smartspace aplikasi Google</string>
+    <string name="pref_glance_alerts_title">Peringatan dan lainnya</string>
     <string name="pref_glance_battery_title">Status baterai</string>
     <string name="pref_glance_torch_title">Status senter</string>
     <string name="pref_glance_media_title">Sedang diputar</string>

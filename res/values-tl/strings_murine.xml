@@ -135,6 +135,7 @@
     <string name="glance_torch_off_action">I-tap para i-off</string>
     <string name="pref_glance_google_title">Panahon at mga event</string>
     <string name="pref_glance_google_summary">Mula sa Smartspace widget ng Google app</string>
+    <string name="pref_glance_alerts_title">Mga alerto at iba pa</string>
     <string name="pref_glance_battery_title">Status ng baterya</string>
     <string name="pref_glance_torch_title">Status ng flashlight</string>
     <string name="pref_glance_media_title">Nagpe-play ngayon</string>

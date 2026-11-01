@@ -135,6 +135,7 @@
     <string name="glance_torch_off_action">タップしてオフにする</string>
     <string name="pref_glance_google_title">天気と予定</string>
     <string name="pref_glance_google_summary">Google アプリの Smartspace ウィジェットから</string>
+    <string name="pref_glance_alerts_title">アラートなど</string>
     <string name="pref_glance_battery_title">バッテリーの状態</string>
     <string name="pref_glance_torch_title">ライトの状態</string>
     <string name="pref_glance_media_title">再生中</string>

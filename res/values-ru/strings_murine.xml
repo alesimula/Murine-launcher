@@ -135,6 +135,7 @@
     <string name="glance_torch_off_action">Коснитесь, чтобы выключить</string>
     <string name="pref_glance_google_title">Погода и события</string>
     <string name="pref_glance_google_summary">Из виджета Smartspace приложения Google</string>
+    <string name="pref_glance_alerts_title">Оповещения и другое</string>
     <string name="pref_glance_battery_title">Состояние батареи</string>
     <string name="pref_glance_torch_title">Состояние фонарика</string>
     <string name="pref_glance_media_title">Сейчас играет</string>

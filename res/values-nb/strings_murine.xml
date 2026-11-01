@@ -135,6 +135,7 @@
     <string name="glance_torch_off_action">Trykk for å slå av</string>
     <string name="pref_glance_google_title">Vær og hendelser</string>
     <string name="pref_glance_google_summary">Fra Smartspace-modulen i Google-appen</string>
+    <string name="pref_glance_alerts_title">Varsler og mer</string>
     <string name="pref_glance_battery_title">Batteristatus</string>
     <string name="pref_glance_torch_title">Lommelyktstatus</string>
     <string name="pref_glance_media_title">Spilles nå</string>

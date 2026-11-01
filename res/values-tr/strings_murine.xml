@@ -135,6 +135,7 @@
     <string name="glance_torch_off_action">Kapatmak için dokun</string>
     <string name="pref_glance_google_title">Hava durumu ve etkinlikler</string>
     <string name="pref_glance_google_summary">Google uygulamasının Smartspace widget\'ından</string>
+    <string name="pref_glance_alerts_title">Uyarılar ve daha fazlası</string>
     <string name="pref_glance_battery_title">Pil durumu</string>
     <string name="pref_glance_torch_title">Fener durumu</string>
     <string name="pref_glance_media_title">Şimdi çalıyor</string>

@@ -137,6 +137,7 @@
     <string name="glance_torch_off_action">Toca para apagar</string>
     <string name="pref_glance_google_title">Tiempo y eventos</string>
     <string name="pref_glance_google_summary">Del widget Smartspace de la app de Google</string>
+    <string name="pref_glance_alerts_title">Alertas y más</string>
     <string name="pref_glance_battery_title">Estado de la batería</string>
     <string name="pref_glance_torch_title">Estado de la linterna</string>
     <string name="pref_glance_media_title">Reproduciendo ahora</string>

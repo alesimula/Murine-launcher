@@ -135,6 +135,7 @@
     <string name="glance_torch_off_action">탭하여 끄기</string>
     <string name="pref_glance_google_title">날씨 및 일정</string>
     <string name="pref_glance_google_summary">Google 앱의 Smartspace 위젯에서 가져옴</string>
+    <string name="pref_glance_alerts_title">알림 및 기타</string>
     <string name="pref_glance_battery_title">배터리 상태</string>
     <string name="pref_glance_torch_title">손전등 상태</string>
     <string name="pref_glance_media_title">지금 재생 중</string>

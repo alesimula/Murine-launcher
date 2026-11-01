@@ -135,6 +135,7 @@
     <string name="glance_torch_off_action">Dotknij, aby wyłączyć</string>
     <string name="pref_glance_google_title">Pogoda i wydarzenia</string>
     <string name="pref_glance_google_summary">Z widżetu Smartspace aplikacji Google</string>
+    <string name="pref_glance_alerts_title">Alerty i więcej</string>
     <string name="pref_glance_battery_title">Stan baterii</string>
     <string name="pref_glance_torch_title">Stan latarki</string>
     <string name="pref_glance_media_title">Teraz odtwarzane</string>
