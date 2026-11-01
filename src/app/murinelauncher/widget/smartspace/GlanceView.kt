@@ -228,6 +228,8 @@ class GlanceView(context: Context, attrs: AttributeSet?) : FrameLayout(context, 
     /** The locale's best weekday + day + month pattern; the TextClock keeps it up to date by itself. */
     private fun applyLocaleDateFormat() {
         val pattern = DateFormat.getBestDateTimePattern(resources.configuration.locales.get(0), DATE_SKELETON)
+        // Fixex the picker's live preview on Android 8-9
+        date.text = DateFormat.format(pattern, System.currentTimeMillis())
         date.format12Hour = pattern
         date.format24Hour = pattern
     }
