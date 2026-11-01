@@ -17,6 +17,7 @@ class SettingsGlanceFragment : AbstractSettingsFragment() {
 
     companion object {
         const val GOOGLE = "pref_glance_google"
+        const val ALERTS = "pref_glance_alerts"
         const val BATTERY = "pref_glance_battery"
         const val TORCH = "pref_glance_torch"
         const val MEDIA = "pref_glance_media"

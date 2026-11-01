@@ -437,6 +437,8 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
         @JvmField
         val GLANCE_GOOGLE = backedUpItem(SettingsGlanceFragment.GOOGLE, true)
         @JvmField
+        val GLANCE_ALERTS = backedUpItem(SettingsGlanceFragment.ALERTS, true)
+        @JvmField
         val GLANCE_BATTERY = backedUpItem(SettingsGlanceFragment.BATTERY, true)
         @JvmField
         val GLANCE_TORCH = backedUpItem(SettingsGlanceFragment.TORCH, true)

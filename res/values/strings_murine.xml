@@ -135,6 +135,7 @@
     <string name="glance_torch_off_action">Tap to turn off</string>
     <string name="pref_glance_google_title">Weather and events</string>
     <string name="pref_glance_google_summary">From the Google app\'s Smartspace widget</string>
+    <string name="pref_glance_alerts_title">Alerts and more</string>
     <string name="pref_glance_battery_title">Battery status</string>
     <string name="pref_glance_torch_title">Flashlight status</string>
     <string name="pref_glance_media_title">Now playing</string>

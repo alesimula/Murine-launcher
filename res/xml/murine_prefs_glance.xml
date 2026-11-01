@@ -30,6 +30,14 @@
     </SwitchPreferenceCompat>
 
     <SwitchPreferenceCompat
+        android:key="pref_glance_alerts"
+        android:title="@string/pref_glance_alerts_title"
+        android:summary="@string/pref_glance_google_summary"
+        android:defaultValue="true">
+        <extra android:name="content" android:value="true" />
+    </SwitchPreferenceCompat>
+
+    <SwitchPreferenceCompat
         android:key="pref_glance_battery"
         android:title="@string/pref_glance_battery_title"
         android:defaultValue="true">

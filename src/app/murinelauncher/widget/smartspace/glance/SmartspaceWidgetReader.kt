@@ -22,7 +22,9 @@ import android.widget.RemoteViews
 import android.widget.TextClock
 import android.widget.TextView
 import androidx.core.content.edit
+import androidx.core.view.descendants
 import com.android.launcher3.Launcher
+import com.android.launcher3.LauncherPrefChangeListener
 import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.R
 import com.android.launcher3.util.Executors.MAIN_EXECUTOR
@@ -42,13 +44,17 @@ class SmartspaceWidgetReader(context: Context) :
     private val widget = widgetInfo?.let { HeadlessWidget(context, it) }
     override val isAvailable = widget != null
 
+    private val alertsListener = LauncherPrefChangeListener { _ -> restart() }
+
     override fun startSource() {
         // Google's layout can change under us: an unexpected one shows nothing rather than crashing
         widget?.listen { publish(runCatching { extractWidgetLayout(it) }.getOrDefault(emptyList())) }
+        LauncherPrefs.get(context).addListener(alertsListener, LauncherPrefs.GLANCE_ALERTS)
     }
 
     override fun stopSource() {
         widget?.listen(null)
+        LauncherPrefs.get(context).removeListener(alertsListener, LauncherPrefs.GLANCE_ALERTS)
     }
 
     override fun requiresSetup() = widget?.isBound == false
@@ -128,13 +134,15 @@ class SmartspaceWidgetReader(context: Context) :
         // Loaded even without readable text: a never shown copy gets no date (a TextClock) nor
         // list items, the layout Google may switch to without weather
         var loaded = false
+        val lists = mutableListOf<AdapterView<*>>()
         fun collect(view: View) {
             when (view) {
                 is TextView -> {
                     if (view is TextClock) loaded = true
                     if (!view.text.isNullOrEmpty()) texts += view
                 }
-                is AdapterView<*> -> loaded = true
+                // Its rows (events, alerts...) are read on their own: the weather is still read as before
+                is AdapterView<*> -> { loaded = true; lists += view }
                 is ImageView -> if (view.drawable is BitmapDrawable) images += view
                 is ViewGroup -> for (i in 0 until view.childCount) collect(view.getChildAt(i))
             }
@@ -157,7 +165,32 @@ class SmartspaceWidgetReader(context: Context) :
         } else {
             null
         }
-        return listOfNotNull(card, weather ?: missingWeather())
+        // Events have their icon labelled as "Calendar events" by Google (in English, regardless of user language);
+        // TODO I still haven't found a way to distinguish between warnings (e.g. weather alerts) and other low-priority alerts
+        val alerts = LauncherPrefs.GLANCE_ALERTS.get(context)
+        val rows = lists.flatMap { list -> (0 until list.childCount).map(list::getChildAt) }
+            .filter { row -> alerts || (row as? ViewGroup)?.descendants?.any { it.contentDescription == EVENT_ICON_LABEL } == true }
+            .mapNotNull(::rowCard)
+        return listOfNotNull(card, weather ?: missingWeather()) + rows
+    }
+
+    /**
+     * A row of Google's list layout (an alert, an event, etc.): its first text is the title, the next the
+     * subtitle, its first image the icon. Rows have no actions of their own: tapping one clicks the row's
+     * first clickable view, as a tap on Google's own widget would.
+     */
+    private fun rowCard(row: View): GlanceCard? {
+        val views = (row as? ViewGroup)?.descendants ?: return null
+        val texts = views.filterIsInstance<TextView>().filter { !it.text.isNullOrEmpty() }.toList()
+        val title = texts.firstOrNull() ?: return null
+        val clickable = views.firstOrNull { it.isClickable }
+        return GlanceCard(
+            title = title.text,
+            subtitle = texts.getOrNull(1)?.text,
+            icon = views.filterIsInstance<ImageView>().firstNotNullOfOrNull { it.bitmap }?.let(Icon::createWithBitmap),
+            score = GlanceCard.SCORE_CALENDAR,
+            onClick = clickable?.let { View.OnClickListener { _ -> it.performClick() } },
+        )
     }
 
     /** Lawnchair parses and converts the temperature; here Google's own text is shown as-is. */
@@ -203,6 +236,7 @@ class SmartspaceWidgetReader(context: Context) :
             view?.updateCallback = null
             view = onUpdate?.let {
                 (host.createView(context, widgetId, info) as HostView).apply {
+                    layOut()
                     it(this)
                     updateCallback = it
                 }
@@ -238,7 +272,17 @@ class SmartspaceWidgetReader(context: Context) :
 
             override fun updateAppWidget(remoteViews: RemoteViews?) {
                 super.updateAppWidget(remoteViews)
+                layOut()
                 updateCallback?.invoke(this)
+            }
+
+            /** Lays itself out like a home screen widget, though never shown: lists only make their rows then. */
+            fun layOut() {
+                val metrics = resources.displayMetrics
+                val width = MeasureSpec.makeMeasureSpec(metrics.widthPixels, MeasureSpec.EXACTLY)
+                val height = MeasureSpec.makeMeasureSpec((LAYOUT_HEIGHT_DP * metrics.density).toInt(), MeasureSpec.EXACTLY)
+                measure(width, height)
+                layout(0, 0, measuredWidth, measuredHeight)
             }
         }
     }
@@ -247,6 +291,8 @@ class SmartspaceWidgetReader(context: Context) :
         private const val REFRESH_THROTTLE_MILLIS = 5 * 60_000L
         private const val TEMPORARY_WIDGET_MILLIS = 30_000L // Google refreshed ~2s after a real add: plenty of margin, it's one pixel
         private const val HOST_ID = 1028
+        private const val LAYOUT_HEIGHT_DP = 120 // Room for a row of Google's list
+        private const val EVENT_ICON_LABEL = "Calendar events"
         private const val PREF_WIDGET_ID = "smartspaceWidgetId"
         private const val GSA_PACKAGE = "com.google.android.googlequicksearchbox"
         private const val WIDGET_CLASS_NAME = "com.google.android.apps.gsa.staticplugins.smartspace.widget.SmartspaceWidgetProvider"
