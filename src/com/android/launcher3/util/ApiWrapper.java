@@ -128,7 +128,16 @@ public class ApiWrapper {
             }
         }
         // Legacy fallback: badge-based work profile detection
-        return isBadged(user) ? UserIconInfo.TYPE_WORK : UserIconInfo.TYPE_MAIN;
+        if (!isBadged(user)) return UserIconInfo.TYPE_MAIN;
+        if (!Utilities.ATLEAST_V) try {
+            // Badged doesn't mean managed: e.g. Samsung's Dual Messenger (user 95) is badged and treating it as work crashes on pause.
+            UserManager um = mContext.getSystemService(UserManager.class);
+            @SuppressLint("NewApi") boolean managed = um.isManagedProfile(user.getIdentifier());
+            return managed ? UserIconInfo.TYPE_WORK : UserIconInfo.TYPE_CLONED;
+        } catch (Throwable e) {
+            Log.w("ApiWrapper", "isManagedProfile failed, falling back to work profile assumption", e);
+        }
+        return UserIconInfo.TYPE_WORK;
     }
 
     boolean isBadged(UserHandle user) {
