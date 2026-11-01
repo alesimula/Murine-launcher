@@ -305,15 +305,19 @@ public class FolderAnimationManager {
                 mFolderClipToPadding = mFolder.getClipToPadding();
                 mContentClipChildren = mContent.getClipChildren();
                 mContentClipToPadding = mContent.getClipToPadding();
-                mCellLayoutClipChildren = mCellLayout.getClipChildren();
-                mCellLayoutClipPadding = mCellLayout.getClipToPadding();
+                if (mCellLayout != null) {
+                    mCellLayoutClipChildren = mCellLayout.getClipChildren();
+                    mCellLayoutClipPadding = mCellLayout.getClipToPadding();
+                }
 
                 mFolder.setClipChildren(false);
                 mFolder.setClipToPadding(false);
                 mContent.setClipChildren(false);
                 mContent.setClipToPadding(false);
-                mCellLayout.setClipChildren(false);
-                mCellLayout.setClipToPadding(false);
+                if (mCellLayout != null) {
+                    mCellLayout.setClipChildren(false);
+                    mCellLayout.setClipToPadding(false);
+                }
             }
 
             @Override
@@ -333,8 +337,10 @@ public class FolderAnimationManager {
                 mFolder.setClipToPadding(mFolderClipToPadding);
                 mContent.setClipChildren(mContentClipChildren);
                 mContent.setClipToPadding(mContentClipToPadding);
-                mCellLayout.setClipChildren(mCellLayoutClipChildren);
-                mCellLayout.setClipToPadding(mCellLayoutClipPadding);
+                if (mCellLayout != null) {
+                    mCellLayout.setClipChildren(mCellLayoutClipChildren);
+                    mCellLayout.setClipToPadding(mCellLayoutClipPadding);
+                }
             }
         });
 
