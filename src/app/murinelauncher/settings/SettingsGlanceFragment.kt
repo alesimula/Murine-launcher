@@ -1,5 +1,6 @@
 package app.murinelauncher.settings
 
+import android.view.View
 import androidx.preference.Preference
 import androidx.preference.TwoStatePreference
 import app.murinelauncher.settings.common.AbstractSettingsFragment
@@ -58,6 +59,10 @@ class SettingsGlanceFragment : AbstractSettingsFragment() {
                 setDefaultValue(LauncherPrefs.GLANCE_PROVIDER.defaultValue)
                 setTextProvider { c, provider -> provider.getLabel(c) }
                 setEnabledProvider { c, provider -> provider.isAvailable(c) }
+                // The provider's own settings, on the cog on its right
+                setExtraActionProvider { c, provider ->
+                    provider.openSettings?.takeIf { provider.isAvailable(c) }?.let { open -> View.OnClickListener { open(requireActivity()) } }
+                }
                 setOnSelected { provider -> launcherPrefs.forEach { it.isVisible = provider == GlanceProvider.LAUNCHER } }
             }
             return true

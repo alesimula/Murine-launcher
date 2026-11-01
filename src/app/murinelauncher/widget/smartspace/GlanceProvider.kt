@@ -1,6 +1,8 @@
 package app.murinelauncher.widget.smartspace
 
+import android.app.Activity
 import android.content.Context
+import app.murinelauncher.widget.smartspace.glance.SmartspaceWidgetReader
 import com.android.launcher3.R
 
 /** What the At a Glance widget shows: the launcher's own, or a provider's widget as is. */
@@ -19,5 +21,11 @@ enum class GlanceProvider {
     fun isAvailable(context: Context) = when (this) {
         LAUNCHER -> true
         GOOGLE -> SmartspaceMode.isGoogleSmartspaceAvailable(context)
+    }
+
+    /** Opens the provider's own settings from an activity; null when it has none (the launcher's are its own screen). */
+    val openSettings: ((Activity) -> Unit)? get() = when (this) {
+        LAUNCHER -> null
+        GOOGLE -> { activity -> SmartspaceWidgetReader.openGoogleSettings(activity) }
     }
 }

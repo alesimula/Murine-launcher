@@ -2,6 +2,7 @@
 package app.murinelauncher.widget.smartspace.glance
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.appwidget.AppWidgetHost
 import android.appwidget.AppWidgetHostView
 import android.appwidget.AppWidgetManager
@@ -268,6 +269,10 @@ class SmartspaceWidgetReader(context: Context) :
         /** A view of the widget to show as is, in [viewContext] (for its clicks to start activities from). */
         fun createView(viewContext: Context): View = host.createView(viewContext, widgetId, info)
 
+        fun configure(activity: Activity) {
+            runCatching { host.startAppWidgetConfigureActivityForResult(activity, widgetId, 0, 0, null) }
+        }
+
         fun getBindIntent() = Intent(AppWidgetManager.ACTION_APPWIDGET_BIND)
             .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
             .putExtra(AppWidgetManager.EXTRA_APPWIDGET_PROVIDER, info.provider)
@@ -335,11 +340,18 @@ class SmartspaceWidgetReader(context: Context) :
          * yet, which the read one asks for. ponytail: one shown copy, a second view of it takes over the first's updates
          */
         @JvmStatic
-        fun createGoogleView(context: Context): View? {
+        fun createGoogleView(context: Context): View? = boundShownWidget(context)?.createView(context)
+
+        /** Google's own settings for its widget (its setup screen, as when adding one); nothing until it can be bound. */
+        fun openGoogleSettings(activity: Activity) {
+            boundShownWidget(activity)?.configure(activity)
+        }
+
+        private fun boundShownWidget(context: Context): HeadlessWidget? {
             val info = findWidgetInfo(context) ?: return null
             val widget = shownWidget ?: HeadlessWidget(context.applicationContext, info, PREF_SHOWN_WIDGET_ID).also { shownWidget = it }
             widget.bind()
-            return if (widget.isBound) widget.createView(context) else null
+            return widget.takeIf { it.isBound }
         }
 
         private const val REFRESH_THROTTLE_MILLIS = 5 * 60_000L
