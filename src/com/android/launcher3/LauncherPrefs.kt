@@ -31,6 +31,7 @@ import app.murinelauncher.settings.SettingsIconsFragment
 import app.murinelauncher.settings.SettingsQsbFragment
 import app.murinelauncher.theme.ThemeOverride
 import app.murinelauncher.widget.search.SearchProvider
+import app.murinelauncher.widget.smartspace.GlanceProvider
 import app.murinelauncher.widget.smartspace.SmartspaceMode
 import com.android.launcher3.BuildConfig.WIDGET_ON_FIRST_SCREEN
 import com.android.launcher3.GridType.Companion.GRID_TYPE_ANY
@@ -434,6 +435,8 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
         val PENDING_SMARTSPACE_REMOVAL = nonRestorableItem("pending_smartspace_removal", false)
         @JvmField
         val PENDING_SMARTSPACE_WIDGET_ID = nonRestorableItem("pending_smartspace_widget_id", -1)
+        @JvmField
+        val GLANCE_PROVIDER = backedUpItem(SettingsGlanceFragment.PROVIDER, GlanceProvider.LAUNCHER)
         @JvmField
         val GLANCE_GOOGLE = backedUpItem(SettingsGlanceFragment.GOOGLE, true)
         @JvmField

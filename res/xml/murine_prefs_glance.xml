@@ -3,6 +3,15 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <app.murinelauncher.widget.radio.RadioGroupPreference
+        android:key="pref_glance_provider"
+        android:title="@string/app_info_source"
+        android:persistent="true"
+        app:showPreviewIcon="false" />
+
+    <!-- Only for displaying -->
+    <PreferenceCategory android:title="@string/pref_subcategory_options"/>
+
     <com.android.settingslib.widget.SegmentedButtonPreference
         android:key="pref_glance_theme"
         android:title="@string/pref_subcategory_day_night"

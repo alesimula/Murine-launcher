@@ -12,7 +12,9 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Icon
+import android.os.Bundle
 import android.os.SystemClock
+import android.util.SizeF
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
@@ -27,6 +29,7 @@ import com.android.launcher3.Launcher
 import com.android.launcher3.LauncherPrefChangeListener
 import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.R
+import com.android.launcher3.Utilities
 import com.android.launcher3.util.Executors.MAIN_EXECUTOR
 import com.android.launcher3.views.ActivityContext
 import com.android.launcher3.widget.LauncherAppWidgetProviderInfo
@@ -39,8 +42,7 @@ import com.android.launcher3.widget.util.WidgetSizes
 class SmartspaceWidgetReader(context: Context) :
     SmartspaceDataSource(context, LauncherPrefs.GLANCE_GOOGLE) {
 
-    private val widgetInfo = AppWidgetManager.getInstance(context).getInstalledProvidersForPackage(GSA_PACKAGE, null)
-        .firstOrNull { it.provider.className == WIDGET_CLASS_NAME }
+    private val widgetInfo = findWidgetInfo(context)
     private val widget = widgetInfo?.let { HeadlessWidget(context, it) }
     override val isAvailable = widget != null
 
@@ -217,14 +219,15 @@ class SmartspaceWidgetReader(context: Context) :
      * Hosts the widget without showing it, so its content can be read
      * (Lawnchair's HeadlessWidgetsManager, reduced to the one widget needed here).
      */
-    private class HeadlessWidget(private val context: Context, private val info: AppWidgetProviderInfo) {
+    private class HeadlessWidget(
+        private val context: Context,
+        private val info: AppWidgetProviderInfo,
+        private val prefKey: String = PREF_WIDGET_ID,
+    ) {
         private val prefs = LauncherPrefs.getDevicePrefs(context)
         private val widgetManager = AppWidgetManager.getInstance(context)
-        private val host = object : AppWidgetHost(context, HOST_ID) {
-            override fun onCreateView(context: Context, appWidgetId: Int, appWidget: AppWidgetProviderInfo?) =
-                HostView(context)
-        }.apply { startListening() }
-        private var widgetId = prefs.getInt(PREF_WIDGET_ID, -1)
+        private val host = sharedHost(context)
+        private var widgetId = prefs.getInt(prefKey, -1)
 
         val isBound: Boolean
             get() = widgetManager.getAppWidgetInfo(widgetId)?.provider == info.provider
@@ -253,7 +256,7 @@ class SmartspaceWidgetReader(context: Context) :
                 widgetId = host.allocateAppWidgetId()
                 widgetManager.bindAppWidgetIdIfAllowed(widgetId, info.profile, info.provider, null)
             }
-            prefs.edit { putInt(PREF_WIDGET_ID, widgetId) }
+            prefs.edit { putInt(prefKey, widgetId) }
         }
 
         /** Replaces the widget with a freshly bound one, which Google renders again from scratch. */
@@ -262,18 +265,45 @@ class SmartspaceWidgetReader(context: Context) :
             bind()
         }
 
+        /** A view of the widget to show as is, in [viewContext] (for its clicks to start activities from). */
+        fun createView(viewContext: Context): View = host.createView(viewContext, widgetId, info)
+
         fun getBindIntent() = Intent(AppWidgetManager.ACTION_APPWIDGET_BIND)
             .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
             .putExtra(AppWidgetManager.EXTRA_APPWIDGET_PROVIDER, info.provider)
 
         @SuppressLint("ViewConstructor")
-        private class HostView(context: Context) : AppWidgetHostView(context) {
+        class HostView(context: Context) : AppWidgetHostView(context) {
             var updateCallback: ((view: ViewGroup) -> Unit)? = null
+
+            // Shown as Google lays it out, like the launcher's own widgets: no framework padding, free to overflow
+            init {
+                clipChildren = false
+                clipToPadding = false
+            }
+
+            override fun setAppWidget(appWidgetId: Int, info: AppWidgetProviderInfo?) {
+                super.setAppWidget(appWidgetId, info)
+                setPadding(0, 0, 0, 0)
+            }
 
             override fun updateAppWidget(remoteViews: RemoteViews?) {
                 super.updateAppWidget(remoteViews)
+                val callback = updateCallback ?: return // Shown, not read
                 layOut()
-                updateCallback?.invoke(this)
+                callback(this)
+            }
+
+            // Shown: Google lays its widget out for the size it's told, as for one on the home screen
+            override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+                super.onSizeChanged(w, h, oldw, oldh)
+                if (!isAttachedToWindow) return // Headless
+                val width = w / resources.displayMetrics.density
+                val height = h / resources.displayMetrics.density
+                post {
+                    if (Utilities.ATLEAST_S) updateAppWidgetSize(Bundle(), listOf(SizeF(width, height)))
+                    else @Suppress("DEPRECATION") updateAppWidgetSize(Bundle(), width.toInt(), height.toInt(), width.toInt(), height.toInt())
+                }
             }
 
             /** Lays itself out like a home screen widget, though never shown: lists only make their rows then. */
@@ -288,12 +318,37 @@ class SmartspaceWidgetReader(context: Context) :
     }
 
     companion object {
+        private var sharedHost: AppWidgetHost? = null
+        private var shownWidget: HeadlessWidget? = null
+
+        // One for the read widget and the shown one: a second host with the same id would take over the first's updates
+        private fun sharedHost(context: Context) = sharedHost ?: object : AppWidgetHost(context.applicationContext, HOST_ID) {
+            override fun onCreateView(context: Context, appWidgetId: Int, appWidget: AppWidgetProviderInfo?) =
+                HeadlessWidget.HostView(context)
+        }.apply { startListening() }.also { sharedHost = it }
+
+        private fun findWidgetInfo(context: Context) = AppWidgetManager.getInstance(context)
+            .getInstalledProvidersForPackage(GSA_PACKAGE, null).firstOrNull { it.provider.className == WIDGET_CLASS_NAME }
+
+        /**
+         * Google's widget itself, shown as is (in [context], the widget's own); null when missing or not allowed to be bound
+         * yet, which the read one asks for. ponytail: one shown copy, a second view of it takes over the first's updates
+         */
+        @JvmStatic
+        fun createGoogleView(context: Context): View? {
+            val info = findWidgetInfo(context) ?: return null
+            val widget = shownWidget ?: HeadlessWidget(context.applicationContext, info, PREF_SHOWN_WIDGET_ID).also { shownWidget = it }
+            widget.bind()
+            return if (widget.isBound) widget.createView(context) else null
+        }
+
         private const val REFRESH_THROTTLE_MILLIS = 5 * 60_000L
         private const val TEMPORARY_WIDGET_MILLIS = 30_000L // Google refreshed ~2s after a real add: plenty of margin, it's one pixel
         private const val HOST_ID = 1028
         private const val LAYOUT_HEIGHT_DP = 120 // Room for a row of Google's list
         private const val EVENT_ICON_LABEL = "Calendar events"
         private const val PREF_WIDGET_ID = "smartspaceWidgetId"
+        private const val PREF_SHOWN_WIDGET_ID = "smartspaceShownWidgetId"
         private const val GSA_PACKAGE = "com.google.android.googlequicksearchbox"
         private const val WIDGET_CLASS_NAME = "com.google.android.apps.gsa.staticplugins.smartspace.widget.SmartspaceWidgetProvider"
         private val WEATHER_COMPONENT = ComponentName(GSA_PACKAGE, "com.google.android.apps.search.weather.WeatherExportedActivity")

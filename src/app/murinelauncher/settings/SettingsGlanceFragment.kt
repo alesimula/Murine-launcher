@@ -4,6 +4,8 @@ import androidx.preference.Preference
 import androidx.preference.TwoStatePreference
 import app.murinelauncher.settings.common.AbstractSettingsFragment
 import app.murinelauncher.widget.CustomSeekBarPreference
+import app.murinelauncher.widget.radio.RadioGroupPreference
+import app.murinelauncher.widget.smartspace.GlanceProvider
 import app.murinelauncher.widget.smartspace.glance.NowPlayingProvider
 import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.R
@@ -16,6 +18,7 @@ import com.android.settingslib.widget.SegmentedButtonPreference
 class SettingsGlanceFragment : AbstractSettingsFragment() {
 
     companion object {
+        const val PROVIDER = "pref_glance_provider"
         const val GOOGLE = "pref_glance_google"
         const val ALERTS = "pref_glance_alerts"
         const val BATTERY = "pref_glance_battery"
@@ -35,10 +38,31 @@ class SettingsGlanceFragment : AbstractSettingsFragment() {
     override fun getPreferenceTitle(): Int? = R.string.glance_widget_label
 
     // Untagged ones (the spacer...) hidden too in content-only mode
-    override fun initAnonymousPreference(preference: Preference, info: DisplayController.Info) = arguments?.getBoolean(CONTENT_ONLY) != true
+    override fun initAnonymousPreference(preference: Preference, info: DisplayController.Info) =
+        arguments?.getBoolean(CONTENT_ONLY) != true && ownsPreference(preference)
+
+    // All but the provider, shown only for the launcher's own widget: another provider's is shown as is
+    private val launcherPrefs = mutableListOf<Preference>()
+
+    private fun ownsPreference(preference: Preference): Boolean {
+        launcherPrefs += preference
+        preference.isVisible = LauncherPrefs.GLANCE_PROVIDER.get(requireContext()) == GlanceProvider.LAUNCHER
+        return true
+    }
 
     override fun initPreference(preference: Preference, info: DisplayController.Info): Boolean {
-        if (arguments?.getBoolean(CONTENT_ONLY) == true && !preference.extras.containsKey("content")) return false
+        val contentOnly = arguments?.getBoolean(CONTENT_ONLY) == true
+        if (contentOnly && !preference.extras.containsKey("content")) return false
+        if (preference.key == PROVIDER) {
+            (preference as RadioGroupPreference).asEnum(GlanceProvider::class.java).apply {
+                setDefaultValue(LauncherPrefs.GLANCE_PROVIDER.defaultValue)
+                setTextProvider { c, provider -> provider.getLabel(c) }
+                setEnabledProvider { c, provider -> provider.isAvailable(c) }
+                setOnSelected { provider -> launcherPrefs.forEach { it.isVisible = provider == GlanceProvider.LAUNCHER } }
+            }
+            return true
+        }
+        if (!contentOnly) ownsPreference(preference)
         if (preference.key == THEME) (preference as SegmentedButtonPreference).apply {
             // Same buttons as the UI theme in General
             setUpButton(0, getString(R.string.pref_subcategory_day_night), R.drawable.ic_pref_ui_mode_system)

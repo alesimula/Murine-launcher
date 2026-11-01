@@ -8,7 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import app.murinelauncher.settings.SettingsGlanceFragment;
+import app.murinelauncher.widget.smartspace.glance.SmartspaceWidgetReader;
 
+import com.android.launcher3.LauncherPrefChangeListener;
+import com.android.launcher3.LauncherPrefs;
 import com.android.launcher3.R;
 import com.android.launcher3.settings.SettingsActivity;
 import com.android.launcher3.widget.LauncherAppWidgetProviderInfo;
@@ -25,9 +28,36 @@ public class GlanceWidgetPlugin implements CustomWidgetPlugin {
 
     @Override
     public void onViewCreated(AppWidgetHostView parent) {
+        show(parent);
+        LauncherPrefChangeListener listener = key -> show(parent);
+        parent.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+            @Override
+            public void onViewAttachedToWindow(View v) {
+                LauncherPrefs.get(v.getContext()).addListener(listener, LauncherPrefs.GLANCE_PROVIDER);
+                show(parent); // Changed while away
+            }
+
+            @Override
+            public void onViewDetachedFromWindow(View v) {
+                LauncherPrefs.get(v.getContext()).removeListener(listener, LauncherPrefs.GLANCE_PROVIDER);
+            }
+        });
+    }
+
+    /** The provider's widget as is, else (or until it can be shown) the launcher's own. */
+    private static void show(AppWidgetHostView parent) {
+        Context context = parent.getContext();
+        boolean google = LauncherPrefs.GLANCE_PROVIDER.get(context) == GlanceProvider.GOOGLE;
+        View current = parent.getChildAt(0);
+        boolean own = current instanceof GlanceView;
+        if (current != null && own != google) return; // Already the right one
+        View view = google ? SmartspaceWidgetReader.createGoogleView(context) : null;
+        if (view == null && own) return;
         parent.removeAllViews();
-        parent.addView(LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.murine_glance_widget, parent, false));
+        // Google's may overflow its own bounds (as tall as they are), like it does as a widget of its own
+        parent.setClipChildren(view == null);
+        parent.addView(view != null ? view
+                : LayoutInflater.from(context).inflate(R.layout.murine_glance_widget, parent, false));
     }
 
     @Override
