@@ -146,7 +146,6 @@ class SettingsHiddenAppsFragment : AbstractSettingsFragment() {
 
         val filtered = activities
             .filter { !HIDE_SELF || it.componentName.packageName != selfPackage }
-            .sortedBy { (it.label ?: it.componentName.shortClassName).toString().lowercase() }
 
         // Master gate: check if querying/setting/unsetting app lock is supported
         val appLockAvailable = AppLock.isAvailable(ctx)
@@ -165,7 +164,7 @@ class SettingsHiddenAppsFragment : AbstractSettingsFragment() {
                 val appInfo = AppInfo(ctx, info, info.user)
                 iconCache.getTitleAndIcon(appInfo, info, CacheLookupFlag.DEFAULT_LOOKUP_FLAG)
                 Triple(info.componentName.flattenToString(), appInfo.title ?: info.label ?: info.componentName.shortClassName, appInfo.bitmap.newIcon(ctx))
-            }
+            }.sortedBy { it.second.toString().lowercase() } // Cached titles: no label loads, off the main thread
             Executors.MAIN_EXECUTOR.execute {
                 if (!isAdded) return@execute
                 results.forEach { (name, title, icon) ->
