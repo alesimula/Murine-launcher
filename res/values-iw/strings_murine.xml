@@ -121,6 +121,7 @@
     <string name="smartspace_mode_disabled">מושבת</string>
     <string name="pref_smartspace_title">ווידג\'ט המסך הראשון</string>
     <string name="pref_smartspace_summary_clock">מציג שעון עם התאריך של היום</string>
+    <string name="pref_smartspace_summary_glance">מציג את התאריך, מזג האוויר ועוד</string>
     <string name="pref_smartspace_summary_disabled">ללא ווידג\'ט במסך הראשון</string>
     <string name="pref_clock_open_app_title">הקש לפתיחת השעון</string>
 

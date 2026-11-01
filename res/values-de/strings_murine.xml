@@ -121,6 +121,7 @@
     <string name="smartspace_mode_disabled">Deaktiviert</string>
     <string name="pref_smartspace_title">Widget auf erstem Bildschirm</string>
     <string name="pref_smartspace_summary_clock">Zeigt eine Uhr mit dem heutigen Datum</string>
+    <string name="pref_smartspace_summary_glance">Zeigt das Datum, das Wetter und mehr</string>
     <string name="pref_smartspace_summary_disabled">Kein Widget auf dem ersten Bildschirm</string>
     <string name="pref_clock_open_app_title">Zum Öffnen der Uhr tippen</string>
 

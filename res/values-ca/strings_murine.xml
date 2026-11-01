@@ -121,6 +121,7 @@
     <string name="smartspace_mode_disabled">Desactivat</string>
     <string name="pref_smartspace_title">Widget de la primera pantalla</string>
     <string name="pref_smartspace_summary_clock">Mostra un rellotge amb la data d\'avui</string>
+    <string name="pref_smartspace_summary_glance">Mostra la data, el temps i més</string>
     <string name="pref_smartspace_summary_disabled">Cap widget a la primera pantalla</string>
     <string name="pref_clock_open_app_title">Toca per obrir el rellotge</string>
 

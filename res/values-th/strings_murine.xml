@@ -121,6 +121,7 @@
     <string name="smartspace_mode_disabled">ปิดใช้งาน</string>
     <string name="pref_smartspace_title">วิดเจ็ตหน้าจอแรก</string>
     <string name="pref_smartspace_summary_clock">แสดงนาฬิกาพร้อมวันที่ของวันนี้</string>
+    <string name="pref_smartspace_summary_glance">แสดงวันที่ สภาพอากาศ และอื่นๆ</string>
     <string name="pref_smartspace_summary_disabled">ไม่มีวิดเจ็ตบนหน้าจอแรก</string>
     <string name="pref_clock_open_app_title">แตะเพื่อเปิดนาฬิกา</string>
 

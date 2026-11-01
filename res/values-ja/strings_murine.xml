@@ -121,6 +121,7 @@
     <string name="smartspace_mode_disabled">無効</string>
     <string name="pref_smartspace_title">最初の画面のウィジェット</string>
     <string name="pref_smartspace_summary_clock">今日の日付と時計を表示します</string>
+    <string name="pref_smartspace_summary_glance">日付や天気などを表示します</string>
     <string name="pref_smartspace_summary_disabled">最初の画面にウィジェットを表示しません</string>
     <string name="pref_clock_open_app_title">タップして時計を開く</string>
 

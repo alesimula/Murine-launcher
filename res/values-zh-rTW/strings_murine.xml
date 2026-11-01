@@ -121,6 +121,7 @@
     <string name="smartspace_mode_disabled">已停用</string>
     <string name="pref_smartspace_title">首頁畫面小工具</string>
     <string name="pref_smartspace_summary_clock">顯示含今日日期的時鐘</string>
+    <string name="pref_smartspace_summary_glance">顯示日期、天氣等資訊</string>
     <string name="pref_smartspace_summary_disabled">首頁畫面不顯示小工具</string>
     <string name="pref_clock_open_app_title">輕觸即可開啟時鐘</string>
 
