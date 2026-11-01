@@ -69,27 +69,28 @@ class ViewCluster(
                 val right = cs.cellX + cs.spanX
                 val top = cs.cellY
                 val bottom = cs.cellY + cs.spanY
+                // Clamped to the grid to prevent ArrayIndexOutOfBoundsException
                 when (which) {
                     LEFT ->
-                        for (j in top until bottom) {
+                        for (j in top.coerceAtLeast(0) until bottom.coerceAtMost(leftEdge.size)) {
                             if (left < leftEdge[j] || leftEdge[j] < 0) {
                                 leftEdge[j] = left
                             }
                         }
                     RIGHT ->
-                        for (j in top until bottom) {
+                        for (j in top.coerceAtLeast(0) until bottom.coerceAtMost(rightEdge.size)) {
                             if (right > rightEdge[j]) {
                                 rightEdge[j] = right
                             }
                         }
                     TOP ->
-                        for (j in left until right) {
+                        for (j in left.coerceAtLeast(0) until right.coerceAtMost(topEdge.size)) {
                             if (top < topEdge[j] || topEdge[j] < 0) {
                                 topEdge[j] = top
                             }
                         }
                     BOTTOM ->
-                        for (j in left until right) {
+                        for (j in left.coerceAtLeast(0) until right.coerceAtMost(bottomEdge.size)) {
                             if (bottom > bottomEdge[j]) {
                                 bottomEdge[j] = bottom
                             }
@@ -120,7 +121,7 @@ class ViewCluster(
     }
 
     private fun edgeContainsValue(start: Int, end: Int, edge: IntArray, value: Int): Boolean {
-        for (i in start until end) {
+        for (i in start.coerceAtLeast(0) until end.coerceAtMost(edge.size)) {
             if (edge[i] == value) {
                 return true
             }
