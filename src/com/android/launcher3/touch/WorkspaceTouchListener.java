@@ -240,6 +240,8 @@ public class WorkspaceTouchListener extends GestureDetector.SimpleOnGestureListe
             if (accessibility != null) {
                 accessibility.performGlobalAction(AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN);
             } else if (!LauncherPrefs.ACCESSIBILITY_DISCLOSURE_ACCEPTED.get(mLauncher)) {
+                // A stopped launcher can still get touches, but can't show a dialog fragment
+                if (mLauncher.getSupportFragmentManager().isStateSaved()) return;
                 AlertDialogSheet.show(mLauncher,
                         mLauncher.getString(R.string.pref_accessibility_disclosure_title),
                         mLauncher.getString(R.string.pref_accessibility_disclosure_desc),
