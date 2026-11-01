@@ -19,6 +19,7 @@ public final class SettingsGeneralFragment: AbstractSettingsFragment() {
         const val LAUNCHER_THEME_DAY_NIGHT: String = "pref_launcher_theme_day_night"
         const val BLUR_PREVIEW: String = "pref_blur_preview"
         const val BLUR_WARNING: String = "pref_blur_warning"
+        const val APP_INFO_SHEET: String = "pref_app_info_sheet"
     }
 
     override fun getPreferenceScreenResId() = R.xml.murine_prefs_general

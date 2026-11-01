@@ -462,6 +462,8 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
         @JvmField
         val BLUR_PREVIEW = backedUpItem(SettingsGeneralFragment.BLUR_PREVIEW, WorkspaceBlurUtils.isBlurSupported)
         @JvmField
+        val APP_INFO_SHEET = backedUpItem(SettingsGeneralFragment.APP_INFO_SHEET, true)
+        @JvmField
         val DRAWER_TYPE = backedUpItem(SettingsDrawerFragment.DRAWER_TYPE, if (WorkspaceBlurUtils.isBlurSupported) WorkspaceBlurUtils.Companion.DRAWER_TYPES.GLASS else WorkspaceBlurUtils.Companion.DRAWER_TYPES.NONE).listen { value ->
             WorkspaceBlurUtils.blurType = value.type
         }

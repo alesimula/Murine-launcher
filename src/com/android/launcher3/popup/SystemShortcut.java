@@ -149,7 +149,8 @@ public abstract class SystemShortcut<T extends ActivityContext> extends ItemInfo
 
     public static final Factory<ActivityContext> APP_INFO = AppInfo::new;
 
-    public static class AppInfo<T extends ActivityContext> extends SystemShortcut<T> {
+    public static class AppInfo<T extends ActivityContext> extends SystemShortcut<T>
+            implements View.OnLongClickListener {
 
         @Nullable
         private SplitAccessibilityInfo mSplitA11yInfo;
@@ -191,8 +192,19 @@ public abstract class SystemShortcut<T extends ActivityContext> extends ItemInfo
 
         @Override
         public void onClick(View view) {
+            open(view, LauncherPrefs.APP_INFO_SHEET.get(view.getContext()));
+        }
+
+        /** Long press does whichever of sheet / system settings a tap doesn't. */
+        @Override
+        public boolean onLongClick(View view) {
+            open(view, !LauncherPrefs.APP_INFO_SHEET.get(view.getContext()));
+            return true;
+        }
+
+        private void open(View view, boolean showSheet) {
             AbstractFloatingView.closeAllOpenViews(mTarget);
-            if (mTarget instanceof BaseActivity) {
+            if (showSheet && mTarget instanceof BaseActivity) {
                 AppInfoBottomSheet.show((BaseActivity) mTarget, mItemInfo);
             } else {
                 Rect sourceBounds = Utilities.getViewBounds(view);

@@ -518,6 +518,9 @@ public class PopupContainerWithArrow<T extends Context & ActivityContext>
         }
         view.setTag(info);
         view.setOnClickListener(info);
+        if (info instanceof View.OnLongClickListener) {
+            view.setOnLongClickListener((View.OnLongClickListener) info);
+        }
         return view;
     }
 

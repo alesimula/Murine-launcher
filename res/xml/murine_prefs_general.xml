@@ -25,20 +25,30 @@
             android:title="Screen Mode" />
         <com.android.settingslib.widget.SpacePreference
             android:layout_height="12dp" />
-        <SwitchPreferenceCompat
-            android:key="pref_blur_preview"
-            android:title="@string/pref_blur_preview_title"
-            android:summary="@string/pref_blur_preview_desc"
-            android:persistent="true"
-            launcher:logIdOn="615"
-            launcher:logIdOff="616" />
-        <app.murinelauncher.widget.WarningCardPreference
-            android:key="pref_blur_warning"
-            android:visible="false"
-            app:formatHtml="true"
-            app:cardIcon="@android:drawable/ic_dialog_alert"
-            app:cardText="@string/pref_blur_unsupported_warning"
-            app:cardBackgroundColor="@color/settingslib_colorBackgroundLevel_medium"
-            app:cardContentColor="@color/settingslib_materialColorOnSurface" />
     </PreferenceCategory>
+
+    <SwitchPreferenceCompat
+        android:key="pref_blur_preview"
+        android:title="@string/pref_blur_preview_title"
+        android:summary="@string/pref_blur_preview_desc"
+        android:persistent="true"
+        launcher:logIdOn="615"
+        launcher:logIdOff="616" />
+
+    <app.murinelauncher.widget.WarningCardPreference
+        android:key="pref_blur_warning"
+        android:visible="false"
+        app:formatHtml="true"
+        app:cardIcon="@android:drawable/ic_dialog_alert"
+        app:cardText="@string/pref_blur_unsupported_warning"
+        app:cardBackgroundColor="@color/settingslib_colorBackgroundLevel_medium"
+        app:cardContentColor="@color/settingslib_materialColorOnSurface" />
+
+    <SwitchPreferenceCompat
+        android:key="pref_app_info_sheet"
+        android:title="@string/pref_app_info_sheet_title"
+        android:summaryOn="@string/pref_app_info_sheet_summary_on"
+        android:summaryOff="@string/pref_app_info_sheet_summary_off"
+        android:defaultValue="true" />
+
 </androidx.preference.PreferenceScreen>
