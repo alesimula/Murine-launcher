@@ -118,11 +118,9 @@
 
     <!-- Murine smartspace / clock widget -->
     <string name="smartspace_mode_clock">Klokke</string>
-    <string name="smartspace_mode_google">Google Smartspace</string>
     <string name="smartspace_mode_disabled">Deaktivert</string>
     <string name="pref_smartspace_title">Modul på første skjerm</string>
     <string name="pref_smartspace_summary_clock">Viser en klokke med dagens dato</string>
-    <string name="pref_smartspace_summary_google">Viser Google Smartspace-modulen</string>
     <string name="pref_smartspace_summary_disabled">Ingen modul på den første skjermen</string>
     <string name="pref_clock_open_app_title">Trykk for å åpne klokken</string>
 

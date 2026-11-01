@@ -118,11 +118,9 @@
 
     <!-- Murine smartspace / clock widget -->
     <string name="smartspace_mode_clock">時計</string>
-    <string name="smartspace_mode_google">Google Smartspace</string>
     <string name="smartspace_mode_disabled">無効</string>
     <string name="pref_smartspace_title">最初の画面のウィジェット</string>
     <string name="pref_smartspace_summary_clock">今日の日付と時計を表示します</string>
-    <string name="pref_smartspace_summary_google">Google Smartspace ウィジェットを表示します</string>
     <string name="pref_smartspace_summary_disabled">最初の画面にウィジェットを表示しません</string>
     <string name="pref_clock_open_app_title">タップして時計を開く</string>
 

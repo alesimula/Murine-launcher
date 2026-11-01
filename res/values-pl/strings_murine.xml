@@ -118,11 +118,9 @@
 
     <!-- Murine smartspace / clock widget -->
     <string name="smartspace_mode_clock">Zegar</string>
-    <string name="smartspace_mode_google">Google Smartspace</string>
     <string name="smartspace_mode_disabled">Wyłączone</string>
     <string name="pref_smartspace_title">Widżet pierwszego ekranu</string>
     <string name="pref_smartspace_summary_clock">Pokazuje zegar z dzisiejszą datą</string>
-    <string name="pref_smartspace_summary_google">Pokazuje widżet Google Smartspace</string>
     <string name="pref_smartspace_summary_disabled">Brak widżetu na pierwszym ekranie</string>
     <string name="pref_clock_open_app_title">Dotknij, aby otworzyć zegar</string>
 

@@ -118,11 +118,9 @@
 
     <!-- Murine smartspace / clock widget -->
     <string name="smartspace_mode_clock">Saat</string>
-    <string name="smartspace_mode_google">Google Smartspace</string>
     <string name="smartspace_mode_disabled">Devre dışı</string>
     <string name="pref_smartspace_title">İlk ekran widget\'ı</string>
     <string name="pref_smartspace_summary_clock">Bugünün tarihiyle birlikte bir saat gösterir</string>
-    <string name="pref_smartspace_summary_google">Google Smartspace widget\'ını gösterir</string>
     <string name="pref_smartspace_summary_disabled">İlk ekranda widget yok</string>
     <string name="pref_clock_open_app_title">Saati açmak için dokun</string>
 
