@@ -118,6 +118,12 @@ public interface WorkspaceLayoutManager {
             }
             layout = getScreenWithId(screenId);
         }
+        if (layout == null) {
+            // No page or dock to add to, e.g. a folder item sent to another launcher instance
+            Log.e(TAG, "Skipping child, no layout for container " + container
+                    + " and screenId " + screenId);
+            return;
+        }
 
         ViewGroup.LayoutParams genericLp = child.getLayoutParams();
         CellLayoutLayoutParams lp;
