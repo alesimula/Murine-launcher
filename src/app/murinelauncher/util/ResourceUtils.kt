@@ -158,25 +158,20 @@ internal class LegacyValue(val density: Int, val type: Int, val data: Int, val p
  * Only reads the resource table entries of that one resource; bodies of other chunks are skipped.
  */
 fun loadLegacyIcon(res: Resources, appInfo: ApplicationInfo, resId: Int, density: Int): Drawable? {
-    var best: LegacyValue? = null
-    var bestApk: ZipFile? = null
     try {
+        var best: LegacyValue? = null
+        var bestPath: String? = null
         // Density values live in the config splits when installed from a bundle, else in the base
         for (path in listOfNotNull(*appInfo.splitSourceDirs.orEmpty(), appInfo.sourceDir)) {
-            val apk = ZipFile(path)
-            val value = findLegacyValue(apk, resId, density)
+            val value = ZipFile(path).use { findLegacyValue(it, resId, density) }
             if (value != null && (best == null || densityScore(value.density, density) < densityScore(best.density, density))) {
-                bestApk?.close()
                 best = value
-                bestApk = apk
-            } else {
-                apk.close()
+                bestPath = path
             }
         }
         val value = best ?: return null
-        val apk = bestApk!!
         return when (value.type) {
-            TYPE_STRING -> {
+            TYPE_STRING -> ZipFile(bestPath!!).use { apk ->
                 val file = readPoolString(apk, value.pool, value.data) ?: return null
                 if (file.endsWith(".xml")) {
                     val parser = res.assets.openXmlResourceParser(file)
@@ -199,8 +194,6 @@ fun loadLegacyIcon(res: Resources, appInfo: ApplicationInfo, resId: Int, density
     } catch (t: Exception) {
         Log.w(TAG, "Could not read the legacy icon of ${appInfo.packageName}", t)
         return null
-    } finally {
-        bestApk?.close()
     }
 }
 
