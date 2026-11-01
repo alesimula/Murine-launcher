@@ -2978,6 +2978,12 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
             } else {
                 cellLayout.findCellForSpan(mTargetCell, 1, 1);
             }
+            if (mTargetCell[0] < 0 || mTargetCell[1] < 0) {
+                // acceptDrop() let it through expecting a folder, but the page has no free cell
+                d.deferDragViewCleanupPostAnimation = false;
+                onNoCellFound(cellLayout, info, d.logInstanceId);
+                return;
+            }
             // Add the item to DB before adding to screen ensures that the container and other
             // values of the info is properly updated.
             mLauncher.getModelWriter().addOrMoveItemInDatabase(info, container, screenId,
