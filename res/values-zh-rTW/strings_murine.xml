@@ -80,6 +80,9 @@
 
     <string name="pref_blur_preview_title">模糊預覽模式</string>
     <string name="pref_blur_preview_desc">拖曳圖示與小工具時模糊桌布</string>
+    <string name="pref_app_info_sheet_title">應用程式資訊面板</string>
+    <string name="pref_app_info_sheet_summary_on">輕觸開啟</string>
+    <string name="pref_app_info_sheet_summary_off">長按開啟</string>
 
     <string name="pref_lock_home_screen_title">鎖定主畫面</string>
     <string name="pref_lock_home_screen_summary">防止移動圖示與小工具</string>

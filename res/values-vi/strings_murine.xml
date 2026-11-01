@@ -80,6 +80,9 @@
 
     <string name="pref_blur_preview_title">Chế độ xem trước làm mờ</string>
     <string name="pref_blur_preview_desc">Làm mờ hình nền khi kéo biểu tượng và tiện ích</string>
+    <string name="pref_app_info_sheet_title">Bảng thông tin ứng dụng</string>
+    <string name="pref_app_info_sheet_summary_on">Mở khi nhấn</string>
+    <string name="pref_app_info_sheet_summary_off">Mở khi nhấn giữ</string>
 
     <string name="pref_lock_home_screen_title">Khóa màn hình chính</string>
     <string name="pref_lock_home_screen_summary">Ngăn việc di chuyển biểu tượng và tiện ích</string>

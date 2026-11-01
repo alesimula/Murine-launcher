@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-
     <string name="pref_group_grid_size_title">Tamaño de la cuadrícula</string>
     <string name="pref_group_grid_size_desc">Cambiar el número de filas y columnas</string>
     <string name="pref_group_icon_scale_title">Escala de iconos</string>
@@ -81,6 +80,9 @@
 
     <string name="pref_blur_preview_title">Vista previa del modo desenfoque</string>
     <string name="pref_blur_preview_desc">Desenfocar el fondo mientras se arrastran iconos y widgets</string>
+    <string name="pref_app_info_sheet_title">Panel de información de la app</string>
+    <string name="pref_app_info_sheet_summary_on">Abrir al tocar</string>
+    <string name="pref_app_info_sheet_summary_off">Abrir al mantener pulsado</string>
 
     <string name="pref_lock_home_screen_title">Bloquear pantalla de inicio</string>
     <string name="pref_lock_home_screen_summary">Impide mover iconos y widgets</string>
@@ -98,7 +100,6 @@
     <string name="murine_voice_search_desc">Búsqueda por voz</string>
     <string name="murine_voice_search_prompt">Habla ahora...</string>
     <string name="murine_lens_desc">Búsqueda visual</string>
-
     <!-- Murine search bar preferences -->
     <string name="pref_qsb_show_search_bar_title">Mostrar barra de búsqueda</string>
     <string name="pref_qsb_search_provider_title">Proveedor de búsqueda</string>

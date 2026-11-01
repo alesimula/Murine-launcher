@@ -80,6 +80,9 @@
 
     <string name="pref_blur_preview_title">模糊预览模式</string>
     <string name="pref_blur_preview_desc">拖动图标和小部件时模糊壁纸</string>
+    <string name="pref_app_info_sheet_title">应用信息面板</string>
+    <string name="pref_app_info_sheet_summary_on">点按打开</string>
+    <string name="pref_app_info_sheet_summary_off">长按打开</string>
 
     <string name="pref_lock_home_screen_title">锁定主屏幕</string>
     <string name="pref_lock_home_screen_summary">禁止移动图标和小部件</string>

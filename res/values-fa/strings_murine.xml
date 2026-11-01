@@ -80,6 +80,9 @@
 
     <string name="pref_blur_preview_title">تاری در حالت پیش‌نمایش</string>
     <string name="pref_blur_preview_desc">تار کردن کاغذدیواری هنگام کشیدن نمادها و ابزارک‌ها</string>
+    <string name="pref_app_info_sheet_title">پنل اطلاعات برنامه</string>
+    <string name="pref_app_info_sheet_summary_on">باز کردن با ضربه</string>
+    <string name="pref_app_info_sheet_summary_off">باز کردن با فشار طولانی</string>
 
     <string name="pref_lock_home_screen_title">قفل صفحه اصلی</string>
     <string name="pref_lock_home_screen_summary">جلوگیری از جابه‌جایی نمادها و ابزارک‌ها</string>
