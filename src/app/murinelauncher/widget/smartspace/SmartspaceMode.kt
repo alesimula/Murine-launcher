@@ -17,9 +17,15 @@ enum class SmartspaceMode(
         iconRes = R.drawable.ic_pref_smartspace_clock,
         summaryRes = R.string.pref_smartspace_summary_clock
     ),
+    MURINE_GLANCE(
+        displayNameRes = R.string.glance_widget_label,
+        iconRes = R.drawable.ic_pref_smartspace_glance,
+        summaryRes = R.string.pref_smartspace_summary_glance
+    ),
+    /** Discontinued, kept to read old settings: switched to [MURINE_GLANCE] once found, see ModelCallbacks */
     GOOGLE_SMARTSPACE(
         displayNameRes = R.string.smartspace_mode_google,
-        iconRes = R.drawable.ic_pref_smartspace_google,
+        iconRes = R.drawable.ic_pref_smartspace_glance,
         summaryRes = R.string.pref_smartspace_summary_google
     ),
     DISABLED(

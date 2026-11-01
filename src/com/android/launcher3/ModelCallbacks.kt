@@ -28,6 +28,7 @@ import com.android.launcher3.util.TraceHelper
 import com.android.launcher3.util.ViewOnDrawExecutor
 import java.util.function.Predicate
 import android.content.ComponentName
+import app.murinelauncher.widget.smartspace.GlanceWidgetPlugin
 import app.murinelauncher.widget.smartspace.MurineClockWidgetPlugin
 import app.murinelauncher.widget.smartspace.SmartspaceMode
 import com.android.launcher3.model.data.LauncherAppWidgetInfo
@@ -297,6 +298,16 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
         android.util.Log.d(TAG, "bindSmartspaceWidget: mode=$mode spanX=$spanX " +
             "cols=${idp.numColumns} searchCols=${idp.numSearchContainerColumns}")
 
+        // Discontinued: its widget goes and At a Glance takes over, bound on the reload the mode change triggers
+        if (mode == SmartspaceMode.GOOGLE_SMARTSPACE) {
+            findExistingSmartspaceView(cl, arrayOf(GOOGLE_SMARTSPACE_CN))?.let(launcher.workspace::removeWorkspaceItem)
+            findExistingSmartspaceInBgModel(firstScreenId, arrayOf(GOOGLE_SMARTSPACE_CN))?.let {
+                launcher.modelWriter.deleteWidgetInfo(it, launcher.appWidgetHolder, "smartspace discontinued")
+            }
+            LauncherPrefs.get(launcher).put(LauncherPrefs.SMARTSPACE_MODE, SmartspaceMode.MURINE_GLANCE)
+            return
+        }
+
         // Both widget types are persisted in DB.
         val existingInDb = findExistingSmartspaceInBgModel(firstScreenId)
         val existingView = findExistingSmartspaceView(cl)
@@ -315,14 +326,14 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
             if (existingView != null) {
                 (existingView.layoutParams as? CellLayoutLayoutParams)?.canReorder = false
             }
-            // For the Murine clock, the view inflated on BG thread may be empty because
+            // For the Murine (custom) widgets, the view inflated on BG thread may be empty because
             // CustomWidgetManager.onPluginConnected runs async on MAIN_EXECUTOR and
             // wasn't ready when WidgetInflater ran. Recreate the VIEW (not DB entry).
-            if (mode == SmartspaceMode.MURINE_CLOCK && existingView != null) {
+            if (existingView != null) {
                 val vg = existingView as? android.view.ViewGroup
                 if (vg == null || vg.childCount == 0) {
                     launcher.workspace.removeWorkspaceItem(existingView)
-                    recreateClockView(cl, existingInDb)
+                    recreateCustomView(existingInDb)
                 }
             }
             android.util.Log.d(TAG, "bindSmartspaceWidget: keeping existing, match OK")
@@ -360,9 +371,9 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
 
         android.util.Log.d(TAG, "bindSmartspaceWidget: creating new widget, mode=$mode")
         when (mode) {
-            SmartspaceMode.MURINE_CLOCK -> addMurineClockWidget(cl, spanX, firstScreenId)
-            SmartspaceMode.GOOGLE_SMARTSPACE -> addGoogleSmartspaceWidget(cl, spanX, firstScreenId)
-            else -> {}
+            SmartspaceMode.MURINE_CLOCK -> addCustomWidget(MURINE_CLOCK_CN, spanX, firstScreenId)
+            SmartspaceMode.MURINE_GLANCE -> addCustomWidget(MURINE_GLANCE_CN, spanX, firstScreenId)
+            SmartspaceMode.GOOGLE_SMARTSPACE, SmartspaceMode.DISABLED -> {}
         }
     }
 
@@ -373,12 +384,21 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
             MurineClockWidgetPlugin::class.java.name
     )}
 
+    private val MURINE_GLANCE_CN by lazy { ComponentName(
+        launcher.packageName,
+        LauncherAppWidgetProviderInfo.CLS_CUSTOM_WIDGET_PREFIX +
+            GlanceWidgetPlugin::class.java.name
+    )}
+
+    // The first screen widgets the launcher manages
+    private val MANAGED_CNS get() = arrayOf(MURINE_CLOCK_CN, MURINE_GLANCE_CN)
+
     private val GOOGLE_SMARTSPACE_CN = ComponentName(
         SmartspaceMode.GOOGLE_SMARTSPACE_PACKAGE,
         SmartspaceMode.GOOGLE_SMARTSPACE_PROVIDER
     )
 
-    private fun findExistingSmartspaceInBgModel(firstScreenId: Int): LauncherAppWidgetInfo? {
+    private fun findExistingSmartspaceInBgModel(firstScreenId: Int, providers: Array<ComponentName> = MANAGED_CNS): LauncherAppWidgetInfo? {
         val bgDataModel = LauncherAppState.getInstance(launcher).model.bgDataModel
         synchronized(bgDataModel) {
             for (i in 0 until bgDataModel.itemsIdMap.size()) {
@@ -387,7 +407,7 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
                     && item.container == LauncherSettings.Favorites.CONTAINER_DESKTOP
                     && item.screenId == firstScreenId
                     && item.rank == MANAGED_SMARTSPACE_RANK
-                    && (item.providerName == MURINE_CLOCK_CN || item.providerName == GOOGLE_SMARTSPACE_CN)
+                    && item.providerName in providers
                 ) {
                     return item
                 }
@@ -399,18 +419,17 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
     private fun existingMatchesMode(info: LauncherAppWidgetInfo, mode: SmartspaceMode): Boolean {
         return when (mode) {
             SmartspaceMode.MURINE_CLOCK -> info.isCustomWidget() && info.providerName == MURINE_CLOCK_CN
-            SmartspaceMode.GOOGLE_SMARTSPACE -> !info.isCustomWidget() && info.providerName == GOOGLE_SMARTSPACE_CN
-            SmartspaceMode.DISABLED -> false
+            SmartspaceMode.MURINE_GLANCE -> info.isCustomWidget() && info.providerName == MURINE_GLANCE_CN
+            SmartspaceMode.GOOGLE_SMARTSPACE, SmartspaceMode.DISABLED -> false
         }
     }
 
-    private fun findExistingSmartspaceView(cl: CellLayout): android.view.View? {
+    private fun findExistingSmartspaceView(cl: CellLayout, providers: Array<ComponentName> = MANAGED_CNS): android.view.View? {
         val container = cl.shortcutsAndWidgets
         for (i in 0 until container.childCount) {
             val child = container.getChildAt(i) ?: continue
             val info = child.tag as? LauncherAppWidgetInfo ?: continue
-            if (info.rank == MANAGED_SMARTSPACE_RANK
-                && (info.providerName == MURINE_CLOCK_CN || info.providerName == GOOGLE_SMARTSPACE_CN)) {
+            if (info.rank == MANAGED_SMARTSPACE_RANK && info.providerName in providers) {
                 return child
             }
         }
@@ -441,9 +460,9 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
         }
     }
 
-    private fun recreateClockView(cl: CellLayout, info: LauncherAppWidgetInfo) {
+    private fun recreateCustomView(info: LauncherAppWidgetInfo) {
         val cwm = CustomWidgetManager.INSTANCE.get(launcher)
-        val providerInfo = cwm.getWidgetProvider(MURINE_CLOCK_CN) ?: return
+        val providerInfo = cwm.getWidgetProvider(info.providerName) ?: return
         val hostView = launcher.appWidgetHolder.createView(info.appWidgetId, providerInfo)
         hostView.setTag(info)
         hostView.visibility = android.view.View.VISIBLE
@@ -454,69 +473,15 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
         launcher.workspace.addInScreen(hostView, info)
     }
 
-    private fun addMurineClockWidget(cl: CellLayout, spanX: Int, screenId: Int) {
+    private fun addCustomWidget(provider: ComponentName, spanX: Int, screenId: Int) {
         val cwm = CustomWidgetManager.INSTANCE.get(launcher)
-        val providerInfo = cwm.getWidgetProvider(MURINE_CLOCK_CN) ?: run {
-            android.util.Log.w(TAG, "addMurineClockWidget: provider is null, plugin not ready")
+        val providerInfo = cwm.getWidgetProvider(provider) ?: run {
+            android.util.Log.w(TAG, "addCustomWidget: $provider is null, plugin not ready")
             return
         }
-        val appWidgetId = cwm.allocateCustomAppWidgetId(MURINE_CLOCK_CN)
+        val appWidgetId = cwm.allocateCustomAppWidgetId(provider)
         val hostView = launcher.appWidgetHolder.createView(appWidgetId, providerInfo)
 
-        val widgetInfo = LauncherAppWidgetInfo(appWidgetId, providerInfo.provider, providerInfo, hostView)
-        widgetInfo.spanX = spanX
-        widgetInfo.spanY = 1
-        widgetInfo.minSpanX = spanX
-        widgetInfo.minSpanY = 1
-        widgetInfo.rank = MANAGED_SMARTSPACE_RANK
-
-        launcher.modelWriter.addItemToDatabase(
-            widgetInfo,
-            LauncherSettings.Favorites.CONTAINER_DESKTOP,
-            screenId,
-            0, 0
-        )
-        hostView.setTag(widgetInfo)
-        hostView.visibility = android.view.View.VISIBLE
-        // Pre-set layout params with canReorder=false so addInScreen reuses them
-        hostView.layoutParams = CellLayoutLayoutParams(0, 0, spanX, 1).apply {
-            canReorder = false
-        }
-        launcher.workspace.addInScreen(hostView, widgetInfo)
-    }
-
-    private fun addGoogleSmartspaceWidget(cl: CellLayout, spanX: Int, screenId: Int) {
-        val wmh = com.android.launcher3.widget.WidgetManagerHelper(launcher)
-        val providerInfo = wmh.findProvider(GOOGLE_SMARTSPACE_CN, android.os.Process.myUserHandle()) ?: run {
-            android.util.Log.w(TAG, "addGoogleSmartspaceWidget: Google provider not found")
-            return
-        }
-
-        // Use pre-bound widget ID if available (from a previous bind-permission grant)
-        val pendingId = LauncherPrefs.PENDING_SMARTSPACE_WIDGET_ID.get(launcher)
-        val appWidgetId: Int
-        if (pendingId > 0) {
-            appWidgetId = pendingId
-            LauncherPrefs.get(launcher).put(LauncherPrefs.PENDING_SMARTSPACE_WIDGET_ID, -1)
-            android.util.Log.d(TAG, "addGoogleSmartspaceWidget: using pre-bound widget ID $appWidgetId")
-        } else {
-            appWidgetId = launcher.appWidgetHolder.allocateAppWidgetId()
-            val bound = wmh.bindAppWidgetIdIfAllowed(appWidgetId, providerInfo, null)
-            if (!bound) {
-                // Not allowed - request permission via the system bind dialog
-                android.util.Log.d(TAG, "addGoogleSmartspaceWidget: requesting bind permission")
-                LauncherPrefs.get(launcher).put(
-                    LauncherPrefs.PENDING_SMARTSPACE_WIDGET_ID, appWidgetId
-                )
-                launcher.appWidgetHolder.startBindFlow(
-                    launcher, appWidgetId, providerInfo,
-                    LauncherConstants.ActivityCodes.REQUEST_BIND_SMARTSPACE
-                )
-                return
-            }
-        }
-
-        val hostView = launcher.appWidgetHolder.createView(appWidgetId, providerInfo)
         val widgetInfo = LauncherAppWidgetInfo(appWidgetId, providerInfo.provider, providerInfo, hostView)
         widgetInfo.spanX = spanX
         widgetInfo.spanY = 1

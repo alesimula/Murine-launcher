@@ -122,6 +122,7 @@
     <string name="smartspace_mode_disabled">Disattivato</string>
     <string name="pref_smartspace_title">Widget prima schermata</string>
     <string name="pref_smartspace_summary_clock">Mostra un orologio con la data di oggi</string>
+    <string name="pref_smartspace_summary_glance">Mostra la data, il meteo e altro</string>
     <string name="pref_smartspace_summary_google">Mostra il widget Google Smartspace</string>
     <string name="pref_smartspace_summary_disabled">Nessun widget nella prima schermata</string>
     <string name="pref_clock_open_app_title">Tocca per aprire l\'orologio</string>

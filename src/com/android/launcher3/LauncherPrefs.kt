@@ -434,8 +434,6 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
         @JvmField
         val PENDING_SMARTSPACE_REMOVAL = nonRestorableItem("pending_smartspace_removal", false)
         @JvmField
-        val PENDING_SMARTSPACE_WIDGET_ID = nonRestorableItem("pending_smartspace_widget_id", -1)
-        @JvmField
         val GLANCE_PROVIDER = backedUpItem(SettingsGlanceFragment.PROVIDER, GlanceProvider.LAUNCHER)
         @JvmField
         val GLANCE_GOOGLE = backedUpItem(SettingsGlanceFragment.GOOGLE, true)

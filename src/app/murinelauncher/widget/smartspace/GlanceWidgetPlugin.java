@@ -93,6 +93,6 @@ public class GlanceWidgetPlugin implements CustomWidgetPlugin {
         info.minWidth = 250;
         info.minHeight = 48;
         info.resizeMode = AppWidgetProviderInfo.RESIZE_HORIZONTAL | AppWidgetProviderInfo.RESIZE_VERTICAL;
-        info.icon = R.drawable.ic_pref_smartspace_google;
+        info.icon = R.drawable.ic_pref_smartspace_glance;
     }
 }
