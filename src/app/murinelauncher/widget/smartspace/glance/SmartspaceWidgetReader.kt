@@ -15,9 +15,11 @@ import android.graphics.drawable.Icon
 import android.os.SystemClock
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.RemoteViews
+import android.widget.TextClock
 import android.widget.TextView
 import androidx.core.content.edit
 import com.android.launcher3.Launcher
@@ -123,16 +125,23 @@ class SmartspaceWidgetReader(context: Context) :
     private fun extractWidgetLayout(appWidgetHostView: ViewGroup): List<GlanceCard> {
         val texts = mutableListOf<TextView>()
         val images = mutableListOf<ImageView>()
+        // Loaded even without readable text: a never shown copy gets no date (a TextClock) nor
+        // list items, the layout Google may switch to without weather
+        var loaded = false
         fun collect(view: View) {
             when (view) {
-                is TextView -> if (!view.text.isNullOrEmpty()) texts += view
+                is TextView -> {
+                    if (view is TextClock) loaded = true
+                    if (!view.text.isNullOrEmpty()) texts += view
+                }
+                is AdapterView<*> -> loaded = true
                 is ImageView -> if (view.drawable is BitmapDrawable) images += view
                 is ViewGroup -> for (i in 0 until view.childCount) collect(view.getChildAt(i))
             }
         }
         collect(appWidgetHostView)
-        if (texts.isEmpty()) return emptyList()
-        val weather = images.firstOrNull()?.let { parseWeather(it.bitmap, texts.last()) }
+        if (texts.isEmpty() && !loaded) return emptyList()
+        val weather = texts.lastOrNull()?.let { temperature -> images.firstOrNull()?.let { parseWeather(it.bitmap, temperature) } }
         hasWeather = weather != null
         // A second image means a card (event, reminder...) with its icon first, then its texts
         val card = if (images.size > 1 && texts.size > 2) {
