@@ -25,8 +25,7 @@ import android.appwidget.AppWidgetProviderInfo;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Parcel;
-import android.os.Process;
+import android.content.pm.ActivityInfo;
 import android.util.Log;
 import android.view.View;
 
@@ -114,11 +113,10 @@ public class CustomWidgetManager implements PluginListener<CustomWidgetPlugin> {
         CustomAppWidgetProviderInfo info = getAndAddInfo(new ComponentName(
                 mContext.getPackageName(), CLS_CUSTOM_WIDGET_PREFIX + plugin.getClass().getName()));
         if (info != null) {
-            // The info is cloned from an installed provider: clear its configure activity, so adding the
-            // widget never opens one. The plugin's settings are opened by the launcher, on any Android version
-            info.configure = null;
             info.reconfigurable = plugin.getConfigureIntent(mContext) != null;
             plugin.updateWidgetInfo(info, mContext);
+            // AppWidgetHostView uses it as the widget's content description
+            info.providerInfo.nonLocalizedLabel = info.label;
             mPlugins.put(info.provider, plugin);
             mWidgetRefreshCallbacks.forEach(MAIN_EXECUTOR::execute);
         }
@@ -218,17 +216,15 @@ public class CustomWidgetManager implements PluginListener<CustomWidgetPlugin> {
             if (info.provider.equals(cn)) return info;
         }
 
-        List<AppWidgetProviderInfo> providers = mAppWidgetManager
-                .getInstalledProvidersForProfile(Process.myUserHandle());
-        if (providers.isEmpty()) return null;
-        Parcel parcel = Parcel.obtain();
-        providers.get(0).writeToParcel(parcel, 0);
-        parcel.setDataPosition(0);
-        CustomAppWidgetProviderInfo info = new CustomAppWidgetProviderInfo(parcel, false);
-        parcel.recycle();
-
+        // Built locally instead of cloned from an installed provider: no binder call (this runs on
+        // the main thread at startup) and no fields inherited from an unrelated app's widget
+        CustomAppWidgetProviderInfo info = new CustomAppWidgetProviderInfo();
+        info.providerInfo = new ActivityInfo();
+        info.providerInfo.applicationInfo = mContext.getApplicationInfo();
+        info.providerInfo.packageName = cn.getPackageName();
+        info.providerInfo.name = cn.getClassName();
         info.provider = cn;
-        info.initialLayout = 0;
+        info.widgetCategory = AppWidgetProviderInfo.WIDGET_CATEGORY_HOME_SCREEN;
         mCustomWidgets.add(info);
         return info;
     }

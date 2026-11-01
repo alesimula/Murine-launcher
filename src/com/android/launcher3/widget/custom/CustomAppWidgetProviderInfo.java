@@ -21,8 +21,6 @@ import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import androidx.annotation.VisibleForTesting;
-
 import com.android.launcher3.InvariantDeviceProfile;
 import com.android.launcher3.Utilities;
 import com.android.launcher3.widget.LauncherAppWidgetProviderInfo;
@@ -53,7 +51,6 @@ public class CustomAppWidgetProviderInfo extends LauncherAppWidgetProviderInfo
         }
     }
 
-    @VisibleForTesting
     CustomAppWidgetProviderInfo() {}
 
     /** Whether its plugin has settings, see {@link CustomWidgetManager#getConfigureIntent}. */

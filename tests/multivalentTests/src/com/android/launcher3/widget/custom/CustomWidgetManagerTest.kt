@@ -29,7 +29,6 @@ import com.android.launcher3.util.PluginManagerWrapper
 import com.android.launcher3.util.SafeCloseable
 import com.android.launcher3.util.WidgetUtils
 import com.android.launcher3.widget.LauncherAppWidgetHostView
-import com.android.launcher3.widget.LauncherAppWidgetProviderInfo
 import com.android.systemui.plugins.CustomWidgetPlugin
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -42,7 +41,6 @@ import org.mockito.Captor
 import org.mockito.Mock
 import org.mockito.Mockito.mock
 import org.mockito.MockitoAnnotations
-import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.same
@@ -81,16 +79,6 @@ class CustomWidgetManagerTest {
         verify(tracker).addCloseable(closableCaptor.capture())
         closableCaptor.allValues.forEach(SafeCloseable::close)
         verify(pluginManager).removePluginListener(same(underTest))
-    }
-
-    @Test
-    fun on_plugin_connected_no_provider_info() {
-        doReturn(emptyList<LauncherAppWidgetProviderInfo>())
-            .whenever(mockAppWidgetManager)
-            .getInstalledProvidersForProfile(any())
-        val mockPlugin = mock(CustomWidgetPlugin::class.java)
-        underTest.onPluginConnected(mockPlugin, context)
-        assertEquals(0, underTest.plugins.size)
     }
 
     @Test
