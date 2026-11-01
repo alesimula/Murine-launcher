@@ -66,12 +66,13 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
         // Floating panels (except the full widget sheet) are associated with individual icons. If
         // we are starting a fresh bind, close all such panels as all the icons are about
         // to go away.
+        // Set first, so close handlers see the workspace loading and skip stale DB writes
+        workspaceLoading = true
         AbstractFloatingView.closeOpenViews(
             launcher,
             true,
             AbstractFloatingView.TYPE_ALL and AbstractFloatingView.TYPE_REBIND_SAFE.inv(),
         )
-        workspaceLoading = true
 
         // Clear the workspace because it's going to be rebound
         launcher.dragController.cancelDrag()

@@ -546,8 +546,9 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
 
-        // We are done with resizing the widget. Save the widget size & position to LauncherModel
-        resizeWidgetIfNeeded(true);
+        // We are done with resizing the widget. Save the widget size & position to LauncherModel.
+        // A rebind closes us with stale ItemInfos; the views are rebuilt from the DB anyway
+        if (!mLauncher.isWorkspaceLoading()) resizeWidgetIfNeeded(true);
         mLauncher.getStatsLogManager()
                 .logger()
                 .withInstanceId(logInstanceId)
