@@ -3,7 +3,6 @@
 <resources>
     <dimen name="glance_margin_vertical">6dp</dimen>
     <dimen name="glance_padding">14dp</dimen>
-    <dimen name="glance_padding_end">18dp</dimen>
     <dimen name="glance_corner_radius">28dp</dimen>
     <dimen name="glance_date_size">21sp</dimen>
     <dimen name="glance_divider_height">34dp</dimen>
