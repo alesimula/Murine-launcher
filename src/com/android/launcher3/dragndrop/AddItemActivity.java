@@ -338,6 +338,7 @@ public class AddItemActivity extends BaseActivity
      * Called when place-automatically button is clicked.
      */
     public void onPlaceAutomaticallyClick(View v) {
+        if (!mRequest.isValid()) return; // Already accepted (e.g. a double tap) or expired
         if (mRequest.getRequestType() == PinItemRequest.REQUEST_TYPE_SHORTCUT) {
             ShortcutInfo shortcutInfo = mRequest.getShortcutInfo();
             ItemInstallQueue.INSTANCE.get(this).queueItem(shortcutInfo);
