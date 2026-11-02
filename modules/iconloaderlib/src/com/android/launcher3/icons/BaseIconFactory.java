@@ -311,8 +311,7 @@ public class BaseIconFactory implements AutoCloseable {
          */
         if (info == null) {
             // Simple check to check if the provided user is work profile or not based on badging
-            NoopDrawable d = new NoopDrawable(4);
-            boolean isWork = (d != mPm.getUserBadgedIcon(d, user));
+            boolean isWork = isUserBadged(mPm, user);
             info = new UserIconInfo(user, isWork ? UserIconInfo.TYPE_WORK : UserIconInfo.TYPE_MAIN);
             mCachedUserInfo.put(key, info);
         }
@@ -717,6 +716,23 @@ public class BaseIconFactory implements AutoCloseable {
         public int getIntrinsicWidth() {
             return getBitmap().getWidth();
         }
+    }
+
+    /**
+     * Whether the system badges icons of the given user: badges a 1px placeholder like AOSP.
+     * Some OEMs (e.g. Vivo's app clone) size their badge bitmaps from it and fail at that size: retry with a 64x64 size
+     */
+    public static boolean isUserBadged(@NonNull PackageManager pm, @NonNull UserHandle user) {
+        RuntimeException error = null;
+        for (int size : new int[] {1, 64}) {
+            NoopDrawable d = new NoopDrawable(size);
+            try {
+                return d != pm.getUserBadgedIcon(d, user);
+            } catch (RuntimeException e) {
+                error = e;
+            }
+        }
+        throw error;
     }
 
     public static class NoopDrawable extends ColorDrawable {

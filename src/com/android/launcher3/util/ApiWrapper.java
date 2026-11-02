@@ -48,7 +48,7 @@ import com.android.launcher3.Utilities;
 import com.android.launcher3.dagger.ApplicationContext;
 import com.android.launcher3.dagger.LauncherAppComponent;
 import com.android.launcher3.dagger.LauncherAppSingleton;
-import com.android.launcher3.icons.BaseIconFactory.NoopDrawable;
+import com.android.launcher3.icons.BaseIconFactory;
 
 import java.util.Collections;
 import java.util.List;
@@ -147,8 +147,7 @@ public class ApiWrapper {
     }
 
     boolean isBadged(UserHandle user) {
-        NoopDrawable d = new NoopDrawable(4);
-        return (d != mContext.getPackageManager().getUserBadgedIcon(d, user));
+        return BaseIconFactory.isUserBadged(mContext.getPackageManager(), user);
     }
 
     /**
