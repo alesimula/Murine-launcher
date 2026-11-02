@@ -32,6 +32,32 @@
       });
     }
 
+    // --- Pages bubble ---
+    var pagesBtn = document.getElementById('pagesBtn');
+    var bubble = document.getElementById('pagesBubble');
+    function placeBubble() { // centred under the button, kept 12px inside the viewport; the tail follows the button
+      var r = pagesBtn.getBoundingClientRect(), w = bubble.offsetWidth, vw = document.documentElement.clientWidth;
+      var cx = r.left + r.width / 2, left = Math.min(Math.max(cx - w / 2, 12), vw - w - 12);
+      bubble.style.left = left + 'px';
+      bubble.style.top = (r.bottom + 12) + 'px';
+      bubble.style.setProperty('--tail-x', (cx - left) + 'px');
+    }
+    function setBubbleOpen(open) {
+      if (open) placeBubble();
+      bubble.classList.toggle('open', open);
+      pagesBtn.setAttribute('aria-expanded', open);
+    }
+    if (pagesBtn && bubble) {
+      pagesBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        setBubbleOpen(!bubble.classList.contains('open'));
+      });
+      document.addEventListener('click', function (e) { if (!bubble.contains(e.target)) setBubbleOpen(false); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setBubbleOpen(false); });
+      window.addEventListener('resize', function () { if (bubble.classList.contains('open')) placeBubble(); });
+      window.addEventListener('scroll', function () { setBubbleOpen(false); }, { passive: true });
+    }
+
     // --- Nav scroll shadow ---
     var nav = document.getElementById('topNav');
     if (nav) {

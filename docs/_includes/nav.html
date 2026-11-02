@@ -6,10 +6,23 @@
     </a>
 
     <div class="nav-actions">
-      <a href="{{ '/' | relative_url }}" class="nav-link {% if page.url == '/' or page.url == '/index.html' %}active{% endif %}">
+      {%- assign home_active = false -%}
+      {%- if page.url == '/' or page.url == '/index.html' -%}{%- assign home_active = true -%}{%- endif -%}
+      {%- assign shapes_active = false -%}
+      {%- if page.url contains '/icon-shapes' -%}{%- assign shapes_active = true -%}{%- endif %}
+      <button class="nav-link nav-pages {% if home_active or shapes_active %}active{% endif %}" id="pagesBtn" aria-haspopup="menu" aria-expanded="false" aria-controls="pagesBubble">
+        {%- if shapes_active %}
+        <span class="material-symbols-outlined">&#xE602;</span> <!-- shapes -->
+        <span class="nav-link-label">Icon shapes</span>
+        {%- elsif home_active %}
         <span class="material-symbols-outlined">&#xE88A;</span> <!-- home -->
         <span class="nav-link-label">Home</span>
-      </a>
+        {%- else %}
+        <span class="material-symbols-outlined">&#xE5D2;</span> <!-- menu -->
+        <span class="nav-link-label">Pages</span>
+        {%- endif %}
+        <span class="material-symbols-outlined nav-pages-caret">&#xE5CF;</span> <!-- expand_more -->
+      </button>
       <a href="{{ '/download' | relative_url }}" class="nav-pill {% if page.url contains 'download' %}active{% endif %}">
         <span class="material-symbols-outlined">&#xF090;</span> <!-- download -->
         <span class="nav-link-label">Download</span>
@@ -18,5 +31,16 @@
         <span class="material-symbols-outlined" id="themeIcon">&#xE51C;</span> <!-- dark_mode -->
       </button>
     </div>
+  </div>
+
+  <div class="pages-bubble" id="pagesBubble" role="menu" aria-labelledby="pagesBtn">
+    <a href="{{ '/' | relative_url }}" class="pages-item {% if home_active %}active{% endif %}" role="menuitem">
+      <span class="material-symbols-outlined">&#xE88A;</span> <!-- home -->
+      Home
+    </a>
+    <a href="{{ '/icon-shapes/' | relative_url }}" class="pages-item {% if shapes_active %}active{% endif %}" role="menuitem">
+      <span class="material-symbols-outlined">&#xE602;</span> <!-- shapes -->
+      <span>Icon shapes<small>Make your own icon shape</small></span>
+    </a>
   </div>
 </nav>
