@@ -65,6 +65,9 @@ public class ApiWrapper {
     public static final DaggerSingletonObject<ApiWrapper> INSTANCE = new DaggerSingletonObject<>(
             LauncherAppComponent::getApiWrapper);
 
+    /** Prefix of UserManager's full (non-profile) user types: system, secondary, guest... */
+    public static final String USER_TYPE_FULL_PREFIX = "android.os.usertype.full.";
+
     protected final Context mContext;
     private final String[] mLegacyMultiInstanceSupportedApps;
 
@@ -115,11 +118,14 @@ public class ApiWrapper {
             LauncherApps launcherApps = mContext.getSystemService(LauncherApps.class);
             if (launcherApps != null) try {
                 LauncherUserInfo userInfo = launcherApps.getLauncherUserInfo(user);
-                if (userInfo != null) switch (userInfo.getUserType()) {
+                String userType = userInfo != null ? userInfo.getUserType() : null;
+                if (userInfo != null) switch (userType) {
                     case UserManager.USER_TYPE_PROFILE_MANAGED: return UserIconInfo.TYPE_WORK;
                     case UserManager.USER_TYPE_PROFILE_CLONE: return UserIconInfo.TYPE_CLONED;
                     case UserManager.USER_TYPE_PROFILE_PRIVATE : return UserIconInfo.TYPE_PRIVATE;
-                    default: return UserIconInfo.TYPE_MAIN;
+                    // Own user first: never hide the launcher's own apps over an odd OEM type
+                    default: return user.equals(Process.myUserHandle()) || userType.startsWith(USER_TYPE_FULL_PREFIX) ?
+                            UserIconInfo.TYPE_MAIN : UserIconInfo.TYPE_UNKNOWN;
                 }
                 // If it returned null without throwing SecurityException, it may be a private space unlocked by a previously-set default launcher
                 else return isBadged(user) ? UserIconInfo.TYPE_PRIVATE : UserIconInfo.TYPE_MAIN;

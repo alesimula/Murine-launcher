@@ -30,6 +30,8 @@ import androidx.annotation.NonNull;
  * which affects rendering
  */
 public class UserIconInfo {
+    /** A profile of a type the launcher doesn't know: left out of {@code UserCache#getUserProfiles} and left unmanaged */
+    public static final int TYPE_UNKNOWN = -1;
 
     public static final int TYPE_MAIN = 0;
     public static final int TYPE_WORK = 1;
@@ -37,7 +39,7 @@ public class UserIconInfo {
 
     public static final int TYPE_PRIVATE = 3;
 
-    @IntDef({TYPE_MAIN, TYPE_WORK, TYPE_CLONED, TYPE_PRIVATE})
+    @IntDef({TYPE_UNKNOWN, TYPE_MAIN, TYPE_WORK, TYPE_CLONED, TYPE_PRIVATE})
     public @interface UserType { }
 
     public final UserHandle user;

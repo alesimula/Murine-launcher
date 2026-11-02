@@ -30,6 +30,7 @@ import android.content.pm.ShortcutInfo
 import android.os.Bundle
 import android.os.Flags.allowPrivateProfile
 import android.os.IBinder
+import android.os.Process
 import android.os.UserHandle
 import android.os.UserManager
 import android.util.ArrayMap
@@ -45,6 +46,7 @@ import com.android.launcher3.dagger.ApplicationContext
 import com.android.launcher3.dagger.LauncherAppSingleton
 import com.android.launcher3.proxy.ProxyActivityStarter
 import com.android.launcher3.util.ApiWrapper
+import com.android.launcher3.util.ApiWrapper.USER_TYPE_FULL_PREFIX
 import com.android.launcher3.util.Executors
 import com.android.launcher3.util.StartActivityParams
 import com.android.launcher3.util.UserIconInfo
@@ -80,7 +82,12 @@ open class SystemApiWrapper @Inject constructor(@ApplicationContext context: Con
                             UserManager.USER_TYPE_PROFILE_MANAGED -> UserIconInfo.TYPE_WORK
                             UserManager.USER_TYPE_PROFILE_CLONE -> UserIconInfo.TYPE_CLONED
                             UserManager.USER_TYPE_PROFILE_PRIVATE -> UserIconInfo.TYPE_PRIVATE
-                            else -> UserIconInfo.TYPE_MAIN
+                            // Own user first: never hide the launcher's own apps over an OEM type
+                            else ->
+                                if (user == Process.myUserHandle() ||
+                                    userType.startsWith(USER_TYPE_FULL_PREFIX)
+                                ) UserIconInfo.TYPE_MAIN
+                                else UserIconInfo.TYPE_UNKNOWN
                         },
                         userSerialNumber.toLong(),
                     )

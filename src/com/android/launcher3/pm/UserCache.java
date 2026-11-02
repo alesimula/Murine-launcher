@@ -50,6 +50,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -200,7 +201,11 @@ public class UserCache {
      * @see UserManager#getUserProfiles()
      */
     public List<UserHandle> getUserProfiles() {
-        return List.copyOf(mUserToSerialMap.keySet());
+        // Unknown profile types stay in the map (for their serial numbers) but aren't handled
+        return mUserToSerialMap.entrySet().stream()
+                .filter(e -> e.getValue().type != UserIconInfo.TYPE_UNKNOWN)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
     }
 
     /**

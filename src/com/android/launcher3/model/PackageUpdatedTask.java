@@ -57,6 +57,7 @@ import com.android.launcher3.util.ItemInfoMatcher;
 import com.android.launcher3.util.PackageManagerHelper;
 import com.android.launcher3.util.PackageUserKey;
 import com.android.launcher3.util.SafeCloseable;
+import com.android.launcher3.util.UserIconInfo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -107,6 +108,9 @@ public class PackageUpdatedTask implements ModelUpdateTask {
     public void execute(@NonNull ModelTaskController taskController, @NonNull BgDataModel dataModel,
             @NonNull AllAppsList appsList) {
         final Context context = taskController.getContext();
+        if (UserCache.INSTANCE.get(context).getUserInfo(mUser).type == UserIconInfo.TYPE_UNKNOWN) {
+            return; // A profile type the launcher doesn't handle, see UserCache#getUserProfiles
+        }
         final IconCache iconCache = taskController.getIconCache();
 
         final String[] packages = mPackages;
