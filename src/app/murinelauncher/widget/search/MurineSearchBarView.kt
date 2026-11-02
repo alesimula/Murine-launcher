@@ -164,7 +164,7 @@ class MurineSearchBarView @JvmOverloads constructor(
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
             context.startActivity(intent)
-        } catch (e: ActivityNotFoundException) {
+        } catch (e: Exception) {
             try {
                 val intent = Intent(Intent.ACTION_VIEW).apply {
                     data = Uri.parse("google://lens")
@@ -176,14 +176,14 @@ class MurineSearchBarView @JvmOverloads constructor(
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 }
                 context.startActivity(intent)
-            } catch (e2: ActivityNotFoundException) {
+            } catch (e2: Exception) {
                 try {
                     // Fallback: try the camera
                     val intent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE).apply {
                         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     }
                     context.startActivity(intent)
-                } catch (e3: ActivityNotFoundException) {
+                } catch (e3: Exception) {
                     Log.w(TAG, "No visual search or camera found", e2)
                 }
             }
