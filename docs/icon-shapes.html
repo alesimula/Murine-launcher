@@ -18,7 +18,11 @@ noindex: true    # and out of search engines
 .se-preset > svg { width: 48px; height: 48px; fill: var(--md-primary); }
 .se-preset[hidden] { display: none; }
 #se-presets { margin-bottom: 12px; }
-.se-presets-more { display: block; margin: 0 auto 2rem; }
+.se-lib-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-top: 40px; } /* row gap: when the pager wraps under the switch */
+.se-pager { display: flex; align-items: center; gap: 4px; margin-left: auto; } /* stays right when it wraps under the title */
+.se-pager .se-btn { display: inline-flex; padding: 4px; }
+.se-pager .material-symbols-outlined { font-size: 20px; }
+#se-page-num { min-width: 3.5em; text-align: center; font-size: .85rem; font-variant-numeric: tabular-nums; color: var(--md-on-surface-variant); }
 
 .se-editor { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 24px; align-items: start; }
 @media (max-width: 760px) { .se-editor { grid-template-columns: 1fr; } }
@@ -271,11 +275,22 @@ noindex: true    # and out of search engines
 .se-btn-primary { background: var(--md-primary); color: var(--md-on-primary); border-color: var(--md-primary); }
 .se-btn-primary:hover:not(:disabled) { background: var(--md-primary); filter: brightness(1.08); }
 /* Saved shapes: the Presets / Custom switch is the section's title; custom tiles get rename and delete corners. */
-.page-body h2.se-lib-title { margin: 40px 0 0; }
+.page-body h2.se-lib-title { margin: 0; }
 .se-seg-title { margin: 0; }
 .se-seg-title button { font: inherit; padding: 4px 18px; } /* the size of the other section titles */
+/* Before the pager wraps under the switch, the switch's buttons give up side padding, all together: the inner
+   sides (by the divider) 18px down to 4px, the outer ones down to 8px; 48px in all, between a 369px and a 321px
+   row. 297px = both labels + borders (~172px) + gap (8px) + pager (~116px) with this font; another font only
+   shifts where the squishing starts, the wrap still catches it. Once wrapped (< 321px), full padding again. */
+@supports (width: 1cqw) {
+  .se-lib-row { container-type: inline-size; }
+  .se-seg-title { --se-out: clamp(8px, 8px + (100cqw - 321px) * 10 / 48, 18px); --se-in: clamp(4px, 4px + (100cqw - 321px) * 14 / 48, 18px); }
+  .se-seg-title button:first-child { padding-inline: var(--se-out) var(--se-in); }
+  .se-seg-title button:last-child { padding-inline: var(--se-in) var(--se-out); }
+  @container (width < 321px) { .se-seg-title button:first-child, .se-seg-title button:last-child { padding-inline: 18px; } }
+}
 .se-seg-title button[aria-pressed="false"] { color: var(--md-on-surface-variant); }
-.se-presets[hidden], .se-presets-more[hidden], .se-saved[hidden] { display: none; }
+.se-presets[hidden], .se-pager[hidden], .se-saved[hidden] { display: none; }
 #se-add-lib { margin: 0; }
 .se-saved { position: relative; display: flex; }
 .se-saved > .se-preset { flex: 1; min-width: 0; padding-top: 22px; }
@@ -301,13 +316,19 @@ noindex: true    # and out of search engines
 #se-measure { position: absolute; width: 0; height: 0; overflow: hidden; }
 </style>
 
+<div class="se-lib-row">
 <h2 class="se-lib-title"><span id="se-lib" class="se-seg se-seg-title" role="group" aria-label="Shapes to start from">
   <button type="button" data-lib="presets" aria-pressed="true">Presets</button><button type="button" data-lib="custom" aria-pressed="false" title="Shapes you saved, kept in this browser">Custom</button>
 </span></h2>
+<div id="se-pager" class="se-pager" role="group" aria-label="Pages" hidden>
+  <button id="se-page-prev" class="se-btn" type="button" aria-label="Previous page"><span class="material-symbols-outlined" aria-hidden="true">&#xe5cb;</span></button>
+  <span id="se-page-num" aria-live="polite"></span>
+  <button id="se-page-next" class="se-btn" type="button" aria-label="Next page"><span class="material-symbols-outlined" aria-hidden="true">&#xe5cc;</span></button>
+</div>
+</div>
 <div id="se-presets" class="se-presets"></div>
 <div id="se-custom" class="se-presets" hidden></div>
 <p id="se-custom-msg" class="se-hint se-custom-msg" role="status" hidden><span></span> <button type="button" class="se-btn" id="se-custom-undo" hidden>Undo</button></p>
-<button id="se-presets-more" class="se-btn se-presets-more" type="button" aria-expanded="false" aria-controls="se-presets">More shapes</button>
 
 <div class="se-title-row">
   <h2>Editor</h2>

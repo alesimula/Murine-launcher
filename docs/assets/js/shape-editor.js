@@ -1619,24 +1619,28 @@
     const b = document.createElement('button');
     b.type = 'button';
     b.className = 'se-preset';
-    if (k >= presetsShown) b.hidden = b.dataset.more = true;
     b.innerHTML = `${presetSvg(name)}<span>${name}</span>`;
     b.onclick = () => { loadIcon(presetShapes(name), presetWhole(name)); svg.scrollIntoView({ behavior: 'smooth', block: 'center' }); };
     $('se-presets').append(b);
   });
-  // Both grids (Presets and Custom, see renderCustom) show the first `visible` tiles; one button shows the
-  // rest of whichever grid is open, and the other grid follows when switched to.
-  let moreOpen = false;
-  function showMore() {
-    const grid = $('se-presets').hidden ? $('se-custom') : $('se-presets'), more = $('se-presets-more');
-    for (const b of document.querySelectorAll('#se-presets [data-more], #se-custom [data-more]')) b.hidden = !moreOpen;
-    more.hidden = grid.children.length <= presetsShown;
-    more.setAttribute('aria-controls', grid.id);
-    more.setAttribute('aria-expanded', moreOpen);
-    more.textContent = moreOpen ? 'Fewer shapes' : 'More shapes';
+  // Both grids (Presets and Custom, see renderCustom) are paged, `visible` tiles a page; each keeps its own
+  // page (clamped when the Custom grid shrinks). The pager shows only when the open grid has more than one.
+  const page = { 'se-presets': 0, 'se-custom': 0 };
+  function showPage(step = 0) {
+    const grid = $('se-presets').hidden ? $('se-custom') : $('se-presets'), per = Math.max(1, presetsShown);
+    const tiles = [...grid.children].filter((el) => !el.classList.contains('se-hint'));
+    const pages = Math.max(1, Math.ceil(tiles.length / per));
+    const p = page[grid.id] = Math.min(Math.max(page[grid.id] + step, 0), pages - 1);
+    tiles.forEach((el, k) => (el.hidden = Math.floor(k / per) !== p));
+    $('se-pager').hidden = pages < 2;
+    $('se-pager').setAttribute('aria-controls', grid.id);
+    $('se-page-num').textContent = `${p + 1} / ${pages}`;
+    $('se-page-prev').disabled = p === 0;
+    $('se-page-next').disabled = p === pages - 1;
   }
-  $('se-presets-more').onclick = () => { moreOpen = !moreOpen; showMore(); };
-  showMore();
+  $('se-page-prev').onclick = () => showPage(-1);
+  $('se-page-next').onclick = () => showPage(1);
+  showPage();
 
   // ---------- SVG import ----------
 
@@ -2106,12 +2110,12 @@
     $('se-custom-msg').hidden = !text; $('se-custom-msg').firstChild.textContent = text; $('se-custom-undo').hidden = !undo;
   };
   function renderCustom() {
-    $('se-custom').innerHTML = library.length ? library.map((it, k) => `<div class="se-saved"${k >= presetsShown ? ' data-more' : ''}>
+    $('se-custom').innerHTML = library.length ? library.map((it, k) => `<div class="se-saved">
         <button type="button" class="se-preset" data-k="${k}" title="${esc(it.name)}">${iconSvg(it.shapes, it.whole ?? null)}<span>${esc(it.name)}</span></button>
         <button type="button" class="se-tile-btn se-tile-edit" data-rename="${k}" title="Rename" aria-label="Rename ${esc(it.name)}">${icon('e3c9')}</button>
         <button type="button" class="se-tile-btn se-tile-del" data-del="${k}" title="Delete" aria-label="Delete ${esc(it.name)}">${icon('e92e')}</button>
       </div>`).join('') : `<p class="se-hint">${EMPTY}</p>`;
-    showMore();
+    showPage();
   }
   $('se-custom').addEventListener('click', (e) => {
     const b = e.target.closest('button');
@@ -2149,7 +2153,7 @@
     const custom = b.dataset.lib === 'custom';
     for (const x of $('se-lib').children) x.setAttribute('aria-pressed', x === b);
     $('se-presets').hidden = custom; $('se-custom').hidden = !custom;
-    showMore();
+    showPage();
     customMsg(''); lastDeleted = null;
   });
   renderCustom();
