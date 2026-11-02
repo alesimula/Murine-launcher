@@ -311,7 +311,7 @@ public class BaseIconFactory implements AutoCloseable {
          */
         if (info == null) {
             // Simple check to check if the provided user is work profile or not based on badging
-            NoopDrawable d = new NoopDrawable();
+            NoopDrawable d = new NoopDrawable(4);
             boolean isWork = (d != mPm.getUserBadgedIcon(d, user));
             info = new UserIconInfo(user, isWork ? UserIconInfo.TYPE_WORK : UserIconInfo.TYPE_MAIN);
             mCachedUserInfo.put(key, info);
@@ -719,15 +719,39 @@ public class BaseIconFactory implements AutoCloseable {
         }
     }
 
-    private static class NoopDrawable extends ColorDrawable {
+    public static class NoopDrawable extends ColorDrawable {
+        private final int size;
+        public NoopDrawable() {
+            this(1);
+        }
+        public NoopDrawable(int size) {
+            this.size = Math.max(1, size);
+            setBounds(0, 0, this.size, this.size);
+        }
+
         @Override
         public int getIntrinsicHeight() {
-            return 1;
+            return size;
         }
 
         @Override
         public int getIntrinsicWidth() {
-            return 1;
+            return size;
+        }
+
+        @Override
+        public ConstantState getConstantState() {
+            return new ConstantState() {
+                @Override
+                public Drawable newDrawable() {
+                    return new NoopDrawable(size);
+                }
+
+                @Override
+                public int getChangingConfigurations() {
+                    return 0;
+                }
+            };
         }
     }
 

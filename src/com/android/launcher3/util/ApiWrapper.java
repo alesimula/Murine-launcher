@@ -31,7 +31,6 @@ import android.content.pm.LauncherActivityInfo;
 import android.content.pm.LauncherApps;
 import android.content.pm.LauncherUserInfo;
 import android.content.pm.ShortcutInfo;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Process;
@@ -49,6 +48,7 @@ import com.android.launcher3.Utilities;
 import com.android.launcher3.dagger.ApplicationContext;
 import com.android.launcher3.dagger.LauncherAppComponent;
 import com.android.launcher3.dagger.LauncherAppSingleton;
+import com.android.launcher3.icons.BaseIconFactory.NoopDrawable;
 
 import java.util.Collections;
 import java.util.List;
@@ -147,7 +147,7 @@ public class ApiWrapper {
     }
 
     boolean isBadged(UserHandle user) {
-        NoopDrawable d = new NoopDrawable();
+        NoopDrawable d = new NoopDrawable(4);
         return (d != mContext.getPackageManager().getUserBadgedIcon(d, user));
     }
 
@@ -297,17 +297,5 @@ public class ApiWrapper {
      */
     public boolean isFileDrawable(@NonNull ShortcutInfo shortcutInfo) {
         return false;
-    }
-
-    private static class NoopDrawable extends ColorDrawable {
-        @Override
-        public int getIntrinsicHeight() {
-            return 1;
-        }
-
-        @Override
-        public int getIntrinsicWidth() {
-            return 1;
-        }
     }
 }
