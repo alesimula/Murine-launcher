@@ -256,7 +256,7 @@ class AppInfoPreferenceFragment : SettingsBasePreferenceFragment() {
             iconProvider = { i ->
                 val p = entries[i].packageName
                 if (p == IconPackManager.ICON_PACK_DEFAULT_GLOBAL)
-                    ResourcesCompat.getDrawable(resources, R.drawable.ic_app_info_icon_pack, ctx.theme)
+                    ResourcesCompat.getDrawable(ctx.resources, R.drawable.ic_app_info_icon_pack, ctx.theme)
                 else IconPackManager.getPackIcon(ctx, p)
             },
             iconTint = null,
