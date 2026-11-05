@@ -17,10 +17,10 @@ Some OEM/ROMs may hide or disable window-level blurs; if that's your case try to
 Alternatively, try enabling <a href="https://github.com/Magisk-Modules-Alt-Repo/enable-blurs">this Magisk module</a> on rooted devices
 
 ## Screenshots
-<img width="320" src="/fastlane/metadata/android/en-US/images/phoneScreenshots/1.png"/>    <img width="320" src="/fastlane/metadata/android/en-US/images/phoneScreenshots/2.png"/>
-<img width="320" src="/fastlane/metadata/android/en-US/images/phoneScreenshots/3.png"/>    <img width="320" src="/fastlane/metadata/android/en-US/images/phoneScreenshots/4.png"/>
-<img width="320" src="/fastlane/metadata/android/en-US/images/phoneScreenshots/5.png"/>    <img width="320" src="/fastlane/metadata/android/en-US/images/phoneScreenshots/6.png"/>
-<img width="320" src="/fastlane/metadata/android/en-US/images/phoneScreenshots/7.png"/>
+<img width="320" src="/image/github/screenshots_uncompressed/1.png"/>    <img width="320" src="/image/github/screenshots_uncompressed/2.png"/>
+<img width="320" src="/image/github/screenshots_uncompressed/3.png"/>    <img width="320" src="/image/github/screenshots_uncompressed/4.png"/>
+<img width="320" src="/image/github/screenshots_uncompressed/5.png"/>    <img width="320" src="/image/github/screenshots_uncompressed/6.png"/>
+<img width="320" src="/image/github/screenshots_uncompressed/7.png"/>
 
 ## Translations
 
