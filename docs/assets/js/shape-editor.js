@@ -251,8 +251,18 @@
     const kx = lockX ? 50 / Math.max(50 - bb.x, bb.x + bb.width - 50) : 100 / bb.width;
     const ky = lockY ? 50 / Math.max(50 - bb.y, bb.y + bb.height - 50) : 100 / bb.height;
     const k = Math.min(kx, ky), cx = lockX ? 50 : bb.x + bb.width / 2, cy = lockY ? 50 : bb.y + bb.height / 2;
-    return list.map((s) => transform(s, k, cx, cy, 50, 50));
+    return list.map((s) => { const o = transform(s, k, cx, cy, 50, 50); return s.src ? { ...o, src: fitSrc(s.src, k, cx, cy) } : o; });
   }
+  // A shape made from a readable form (Generate, or a link's polygon or box) keeps that form as src, so its edit
+  // link can keep the short form. Edits leave src alone: the link writes it only while the shape still matches it
+  // (see linkShape), so undo and redo bring the short form back with the shape. mirror isn't part of it.
+  const srcOf = (s) => ({ ...(Array.isArray(s.box) ? { box: s.box.slice(0, 5).map(Number) } : { polygon: s.polygon.slice(0, 6).map(Number) }),
+    ...(s.at !== undefined && { at: s.at.slice(0, 4).map(Number) }), ...(+s.angle && { angle: +s.angle }) });
+  // src moved the way transform(sh, k, cx, cy, 50, 50) moves its shape: its rectangle (the box without at) scaled.
+  const fitSrc = (src, k, cx, cy) => {
+    const [x, y, w, h] = src.at || [0, 0, 100, 100];
+    return { ...src, at: [50 + k * (x - cx), 50 + k * (y - cy), k * w, k * h] };
+  };
   // One shape of a preset entry in the readable forms (an `icon:` entry is the editor's own format instead, read
   // by cleanShape; see snapshot() on keeping the formats in step), as written: its corners (box, polygon or pts)
   // or outline (path), in the 0-100 box or stretched onto the rectangle `at` = [x, y, width, height] like an
@@ -476,11 +486,22 @@
   //  - the readable preset forms (box, polygon, pts, path, at, angle: see presetItem, its reverse readable()
   //    for the YAML export, and the comments at the top of _data/icon_shapes.yml), if the change should be
   //    writable there too;
-  //  - "Link format" in icon-shapes.html, which documents this JSON for hand-written links.
+  //  - "Link format" in icon-shapes.html, which documents this JSON for hand-written links. Links also accept the
+  //    readable box and polygon forms (with at and angle), read through presetItem: see the top of cleanShape;
+  //    they're also written back while unchanged (see srcOf and linkShape).
   // The whole-icon transform (whole, see wholeShape) is written in those same places, and read for presets too.
   const snapshot = () => ({ shapes, active, groups, ...(multi.size > 1 && { multi: [...multi] }), ...(whole && { whole }) });
   // Also reads edit links, i.e. anything anyone can type into a URL: rebuild every field, keep nothing unchecked.
   function cleanShape(s) {
+    // Hand-written links may use the readable box and polygon forms too, with at and angle (see "Link format"):
+    // they become corners here and then go through the pts checks below, keeping the form as src (see srcOf).
+    if (Array.isArray(s?.box) || Array.isArray(s?.polygon)) {
+      // polygon() builds sides (star: 2 x sides) corners before anything is checked: cap them first.
+      if (s.polygon && !(Number.isInteger(+s.polygon[0]) && s.polygon[0] >= 3 && s.polygon[0] <= 100)) return null;
+      if (s.at !== undefined && !(Array.isArray(s.at) && s.at[2] > 0 && s.at[3] > 0)) return null;
+      const sh = presetItem(s), out = sh && cleanShape({ ...sh, id: s.id });
+      return out && { ...out, src: srcOf(s) };
+    }
     const mirror = Object.hasOwn(MIRRORS, s?.mirror) ? s.mirror : 'none', rot = wrap(+(s?.rot ?? 0));
     if (!Number.isFinite(rot)) return null;
     const st = cleanSt(s?.st);
@@ -500,7 +521,8 @@
     if (!Array.isArray(s?.pts) || s.pts.length < 3 || s.pts.length > 200) return null;
     // r and s may be left out of hand-written links (see "Link format" on the page): sharp corners.
     const p = s.pts.map((q) => ({ x: clamp(+q?.x, -500, 600), y: clamp(+q?.y, -500, 600), r: clamp(+(q?.r ?? 0), 0, 500), s: clamp(+(q?.s ?? 0), 0, 1) }));
-    return p.every((q) => [q.x, q.y, q.r, q.s].every(Number.isFinite)) ? { pts: p, mirror, rot, ...extra } : null;
+    const src = (Array.isArray(s.src?.box) || Array.isArray(s.src?.polygon)) && cleanShape(s.src) ? { src: srcOf(s.src) } : {};
+    return p.every((q) => [q.x, q.y, q.r, q.s].every(Number.isFinite)) ? { pts: p, mirror, rot, ...extra, ...src } : null;
   }
   // A stretch: a symmetric matrix brought back to determinant 1, and its centre; undefined for none, null if broken.
   function cleanSt(st) {
@@ -539,7 +561,7 @@
     if (!Array.isArray(o?.shapes) || !o.shapes.length || o.shapes.length > 20) return false;
     const list = o.shapes.map(cleanShape);
     if (list.includes(null)) return false;
-    shapes = list;
+    shapes = o.fit === true ? fitted(list) : list; // fit: from hand-written links (see "Link format"), never saved
     groups = (Array.isArray(o.groups) ? o.groups.slice(0, 50) : []).map(cleanGroup).filter(Boolean);
     whole = cleanWhole(o.whole); wholeOn = false;
     active = Number.isInteger(o.active) ? o.active : 0;
@@ -579,8 +601,16 @@
 
   // Built after every change, so a click can copy or open them without waiting.
   let links = { edit: '', import: '' }, linkRun = 0;
+  // A shape as the edit link writes it: its short form (src) while it still makes these exact corners, else as stored.
+  function linkShape({ src, ...sh }) {
+    const g = src && cleanShape({ ...src, mirror: sh.mirror });
+    const same = g && g.pts.length === sh.pts.length && !g.st === !sh.st && Math.abs(g.rot - (sh.rot || 0)) < 1e-6
+      && [...g.pts.flatMap((q, i) => [q.x - sh.pts[i].x, q.y - sh.pts[i].y, q.r - sh.pts[i].r, q.s - sh.pts[i].s]),
+        ...(g.st || []).map((v, i) => v - sh.st[i])].every((dv) => Math.abs(dv) < 1e-4);
+    return same ? { ...src, ...(sh.mirror !== 'none' && { mirror: sh.mirror }), ...(sh.id !== undefined && { id: sh.id }) } : sh;
+  }
   async function refreshLinks(d, bad) {
-    const run = ++linkRun, state = JSON.stringify(snapshot());
+    const run = ++linkRun, state = JSON.stringify({ ...snapshot(), shapes: shapes.map(linkShape) });
     const [e, i] = await Promise.all([pack(state), pack(compactPath(d))]);
     if (run !== linkRun) return; // a newer change already started its own
     links = { edit: location.origin + location.pathname + '#edit=' + e, import: bad ? '' : IMPORT + i };
@@ -1447,8 +1477,8 @@
   $('se-gen').onclick = () => {
     const n = clamp(+$('se-sides').value || 6, 3, 24), inner = clamp(+$('se-inner').value || 100, 10, 100) / 100;
     const num = (id, max) => clamp(+$(id).value || 0, 0, max); // empty or junk input counts as 0
-    const pts = fit(polygon(n, inner, +$('se-rot').value || 0, num('se-gen-r', 50), num('se-gen-ir', 50), num('se-gen-s', 100) / 100));
-    replaceShape({ pts, mirror: 'none' }); // a fresh full-size shape: no leftover mirroring either
+    const sh = cleanShape({ polygon: [Math.round(n), inner, +$('se-rot').value || 0, num('se-gen-r', 50), num('se-gen-ir', 50), num('se-gen-s', 100) / 100] });
+    if (sh) replaceShape(fitted([sh])[0]); // a fresh full-size shape: no leftover mirroring either
   };
 
   $('se-show-grid').onchange = (e) => { grid.show = e.target.checked; drawGrid(); };
@@ -1502,7 +1532,7 @@
   // What the devmode row copies: the icon's shapes in the editor's format (what edit links and `icon:` presets
   // hold), rounded the way presets want them (corners 2 decimals, stretches 4) and without the editor's ids.
   const rd = (v, d) => +(+v).toFixed(d);
-  const iconData = () => ({ shapes: shapes.map(({ id, ...sh }) => ({
+  const iconData = () => ({ shapes: shapes.map(({ id, src, ...sh }) => ({
     ...sh,
     ...(sh.pts && { pts: sh.pts.map((q) => ({ x: rd(q.x, 2), y: rd(q.y, 2), r: rd(q.r, 2), s: rd(q.s, 2) })) }),
     ...(sh.a !== undefined && { a: rd(sh.a, 4), x: rd(sh.x, 2), y: rd(sh.y, 2), ang: rd(sh.ang, 2) }),
@@ -2192,4 +2222,6 @@
     console.assert(/^M [\d. -]+( [LC] [\d. -]+)* Z$/.test(sample) && !/[eE]|--|\.\d+\./.test(sample),
       'shape-editor: path not in launcher-safe format', sample);
   }
+  console.assert(cleanShape({ polygon: [5, 0.5, 0, 8] })?.pts.length === 10 && cleanShape({ polygon: [1e9, 1, 0, 8] }) === null,
+    'shape-editor: links no longer read the polygon form as documented');
 })();

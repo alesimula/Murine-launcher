@@ -551,7 +551,53 @@ noindex: true    # and out of search engines
       and then moved by <code>x</code>, <code>y</code> (default 0).</li>
     <li><code>ang</code> (optional, default 0): a turn in degrees, clockwise, around the outline's centre.</li>
   </ul>
-  <p>Next to <code>shapes</code>, an optional <code>whole</code> transforms the icon as a whole, after its shapes are
+  <p>Two common shapes can also be written in short, by their measurements instead of their corners: a rounded
+    rectangle (<code>box</code>) and a regular polygon or star (<code>polygon</code>). They're turned into corners when
+    the link is opened, so they're edited like any other corner shape. <strong>Share</strong> keeps the short form while
+    the shape is as it was made, and writes <code>pts</code> once the shape itself is changed (a different
+    <code>mirror</code> alone keeps it; undoing the change brings it back). They can be mixed with the other kinds in the same icon:</p>
+<pre><code>{"shapes": [{"polygon": [6, 1, 0, 14]}], "fit": true}</code></pre>
+  <ul>
+    <li><code>polygon</code>: <code>[sides, inner, angle, corner size, inner corner size, smoothing]</code>, the first
+      four required.
+      <ul>
+        <li><code>sides</code>: a whole number, 3 to 100.</li>
+        <li><code>inner</code>: <code>1</code> for a regular polygon. Between 0 and 1, a star: it gets twice as many
+          corners, alternating between the outer points and inner points that sit at that fraction of the outer radius
+          (<code>0.5</code> is halfway to the centre).</li>
+        <li><code>angle</code>: a turn in degrees, clockwise. At <code>0</code> the first outer point is straight above
+          the centre: a triangle points up, and 4 sides make a diamond (<code>45</code> stands it on a flat side).</li>
+        <li><code>corner size</code>: <code>r</code> (see above) of every outer point.</li>
+        <li><code>inner corner size</code> (optional, default the corner size): <code>r</code> of a star's inner points.</li>
+        <li><code>smoothing</code> (optional, default <code>0.5</code>, a circular arc): <code>s</code> of every corner.
+          Note that this default differs from <code>pts</code>, where a left-out <code>s</code> is 0.</li>
+      </ul>
+      The polygon is centred on <code>(50, 50)</code> with its outer points 50 from the centre, so it only reaches the
+      box's edges where a point does, and rounding pulls it in further; <code>fit</code> (below) makes it fill the box.
+      Corner size is measured along the edges, not as a radius: on a regular polygon, a circular corner of radius
+      <em>R</em> (smoothing 0.5) is a corner size of <em>R</em> &times; tan(180&deg; / sides), for instance
+      <em>R</em> &times; 0.577 on a hexagon.</li>
+    <li><code>box</code>: <code>[top-left, top-right, bottom-right, bottom-left, smoothing]</code>, a rectangle filling the
+      box: the corner size (<code>r</code>) of each of its four corners, then the smoothing (<code>s</code>) of all of them
+      (optional, default <code>0.5</code>). <code>[50, 50, 50, 50]</code> is a circle.</li>
+    <li><code>at</code> (optional): <code>[x, y, width, height]</code>, a rectangle in the box to stretch the shape onto,
+      like an image, instead of the whole box. Width and height must be above 0. Everything the shape draws in the
+      100 &times; 100 box lands in the rectangle, rounding included, so a circle in a wide one becomes an ellipse. In the
+      editor the shape opens with that stretch (<strong>Unstretch</strong> undoes it). It's mostly useful with several
+      shapes, to place each one.</li>
+    <li><code>angle</code> (optional, default 0): a turn in degrees, clockwise, around the centre of the shape's
+      rectangle (<code>at</code>, or the box without it), after the stretch. Unlike a polygon's own angle, it turns the
+      stretched result.</li>
+    <li><code>mirror</code> works as for the other shapes. For a different smoothing per corner, or any other corner
+      layout, write the corners out as <code>pts</code>.</li>
+  </ul>
+  <p>Next to <code>shapes</code>, an optional <code>"fit": true</code> scales and centres all the shapes together, keeping
+    their places relative to each other, so that the icon's outline (rounding and mirrored copies included) fills the box
+    in its longer direction and is centred in the other; corner sizes scale with it. With a <code>mirror</code>, the icon
+    stays centred on that mirror's line, so the copies still meet. It applies to every kind of shape and happens when the
+    link is opened, before <code>whole</code> (below). It isn't kept as an option: <strong>Share</strong> gives the shapes
+    as fitted, a fitted <code>polygon</code> or <code>box</code> with the <code>at</code> that places it there.</p>
+  <p>Also next to <code>shapes</code>, an optional <code>whole</code> transforms the icon as a whole, after its shapes are
     merged (mirrored copies included), without changing them: <code>{"shapes": [...], "whole": {"a": 0.9, "x": 5, "y": 5,
     "ang": 30, "flip": true}}</code>. In order: <code>flip</code> (optional, default false) turns the icon over left to
     right within the 100 × 100 box; <code>a</code> (default 1) scales it and <code>x</code>, <code>y</code> (default 0)
@@ -562,6 +608,16 @@ noindex: true    # and out of search engines
   <ul class="se-docs-links">
     <li>Compressed: <a href="#edit=q1YqzkgsSC1WsoquVioogdAVSlamBnoGOkqVSlYmILpIycrQSEcJKGugZ1arA1Zhaa5nBlZhbKFnil2JuaWeCViJpQkuJUYGUFPwKIEags2eWCAEAA">https://www.murinelauncher.app/icon-shapes/#edit=q1YqzkgsSC1WsoquVioogdAVSlamBnoGOkqVSlYmILpIycrQSEcJKGugZ1arA1Zhaa5nBlZhbKFnil2JuaWeCViJpQkuJUYGUFPwKIEags2eWCAEAA</a></li>
     <li>Raw: <a href="#edit-raw=%7B%22shapes%22%3A%5B%7B%22pts%22%3A%5B%7B%22x%22%3A50.0%2C%22y%22%3A4.0%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%2C%7B%22x%22%3A97.6%2C%22y%22%3A38.5%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%2C%7B%22x%22%3A79.4%2C%22y%22%3A94.5%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%2C%7B%22x%22%3A20.6%2C%22y%22%3A94.5%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%2C%7B%22x%22%3A2.4%2C%22y%22%3A38.5%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%5D%7D%5D%7D">https://www.murinelauncher.app/icon-shapes/#edit-raw=%7B%22shapes%22%3A%5B%7B%22pts%22%3A%5B%7B%22x%22%3A50.0%2C%22y%22%3A4.0%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%2C%7B%22x%22%3A97.6%2C%22y%22%3A38.5%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%2C%7B%22x%22%3A79.4%2C%22y%22%3A94.5%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%2C%7B%22x%22%3A20.6%2C%22y%22%3A94.5%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%2C%7B%22x%22%3A2.4%2C%22y%22%3A38.5%2C%22r%22%3A12%2C%22s%22%3A0.6%7D%5D%7D%5D%7D</a></li>
+  </ul>
+  <p>A five-pointed star with rounded tips, written as a polygon and fitted to the box: <code>{"shapes":[{"polygon":[5,0.5,0,8,3]}],"fit":true}</code></p>
+  <ul class="se-docs-links">
+    <li>Compressed: <a href="#edit=q1YqzkgsSC1WsoquVirIz6lMz88Dsk11DPSAWMdCxzi2NlZHKS2zRMmqpKg0tRYA">https://www.murinelauncher.app/icon-shapes/#edit=q1YqzkgsSC1WsoquVirIz6lMz88Dsk11DPSAWMdCxzi2NlZHKS2zRMmqpKg0tRYA</a></li>
+    <li>Raw: <a href="#edit-raw=%7B%22shapes%22%3A%5B%7B%22polygon%22%3A%5B5%2C0.5%2C0%2C8%2C3%5D%7D%5D%2C%22fit%22%3Atrue%7D">https://www.murinelauncher.app/icon-shapes/#edit-raw=%7B%22shapes%22%3A%5B%7B%22polygon%22%3A%5B5%2C0.5%2C0%2C8%2C3%5D%7D%5D%2C%22fit%22%3Atrue%7D</a></li>
+  </ul>
+  <p>A cloud made of two boxes, each placed with <code>at</code>, then fitted together: <code>{"shapes":[{"box":[20,20,20,20],"at":[4,48,92,34]},{"box":[50,50,50,50],"at":[24,18,50,50]}],"fit":true}</code></p>
+  <ul class="se-docs-links">
+    <li>Compressed: <a href="#edit=q1YqzkgsSC1WsoquVkrKrwDSRgY6MBSro5RYAhQy0TGx0LE00jE2ia3VgakzNdCBIZg6IxMdQwuoUC1QMC0TKFpSVJpaCwA">https://www.murinelauncher.app/icon-shapes/#edit=q1YqzkgsSC1WsoquVkrKrwDSRgY6MBSro5RYAhQy0TGx0LE00jE2ia3VgakzNdCBIZg6IxMdQwuoUC1QMC0TKFpSVJpaCwA</a></li>
+    <li>Raw: <a href="#edit-raw=%7B%22shapes%22%3A%5B%7B%22box%22%3A%5B20%2C20%2C20%2C20%5D%2C%22at%22%3A%5B4%2C48%2C92%2C34%5D%7D%2C%7B%22box%22%3A%5B50%2C50%2C50%2C50%5D%2C%22at%22%3A%5B24%2C18%2C50%2C50%5D%7D%5D%2C%22fit%22%3Atrue%7D">https://www.murinelauncher.app/icon-shapes/#edit-raw=%7B%22shapes%22%3A%5B%7B%22box%22%3A%5B20%2C20%2C20%2C20%5D%2C%22at%22%3A%5B4%2C48%2C92%2C34%5D%7D%2C%7B%22box%22%3A%5B50%2C50%2C50%2C50%5D%2C%22at%22%3A%5B24%2C18%2C50%2C50%5D%7D%5D%2C%22fit%22%3Atrue%7D</a></li>
   </ul>
 </details>
 
