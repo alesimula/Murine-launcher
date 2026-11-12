@@ -6,10 +6,12 @@ import android.graphics.drawable.Icon
 import android.hardware.camera2.CameraManager
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import androidx.core.content.getSystemService
 import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.R
+import com.android.launcher3.util.Executors.ORDERED_BG_EXECUTOR
 
 /** "Flashlight on", tapping it turns the flashlight off. */
 class TorchProvider(context: Context) :
@@ -31,11 +33,15 @@ class TorchProvider(context: Context) :
     override fun startSource() {
         torchCameraId = null
         publish(emptyList())
-        cameraManager?.registerTorchCallback(callback, Handler(Looper.getMainLooper()))
+        // Off the main thread: connecting to the camera service can block for seconds on some OEMs (e.g. Xiaomi)
+        onCameraThread { registerTorchCallback(callback, Handler(Looper.getMainLooper())) }
     }
 
-    override fun stopSource() {
-        cameraManager?.unregisterTorchCallback(callback)
+    override fun stopSource() = onCameraThread { unregisterTorchCallback(callback) }
+
+    private fun onCameraThread(action: CameraManager.() -> Unit) = ORDERED_BG_EXECUTOR.execute {
+        val cm = cameraManager ?: return@execute
+        runCatching { cm.action() }.onFailure { Log.d("TorchProvider", "camera call failed", it) }
     }
 
     private fun getCard(cameraId: String) = GlanceCard(
@@ -43,6 +49,6 @@ class TorchProvider(context: Context) :
         subtitle = context.getString(R.string.glance_torch_off_action),
         icon = Icon.createWithResource(context, R.drawable.ic_glance_flashlight_off),
         score = GlanceCard.SCORE_FLASHLIGHT,
-        onClick = View.OnClickListener { runCatching { cameraManager?.setTorchMode(cameraId, false) } },
+        onClick = View.OnClickListener { onCameraThread { setTorchMode(cameraId, false) } },
     )
 }
